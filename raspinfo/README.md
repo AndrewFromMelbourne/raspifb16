@@ -17,6 +17,7 @@ see main readme.
 
 #install
 From withing the build directory
+
     sudo make install
     sudo cp ../raspinfo/raspinfo.init.d /etc/init.d/raspinfo
     sudo update-rc.d raspinfo defaults
