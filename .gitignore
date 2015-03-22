@@ -26,3 +26,11 @@
 *.exe
 *.out
 *.app
+
+# build
+
+build/
+
+# other directories
+
+*_/
