@@ -56,16 +56,16 @@ getCpuStats(
     }
 
     fscanf(fp, "%*s");
-    fscanf(fp, "%"SCNu32, &(cpuStats.user));
-    fscanf(fp, "%"SCNu32, &(cpuStats.nice));
-    fscanf(fp, "%"SCNu32, &(cpuStats.system));
-    fscanf(fp, "%"SCNu32, &(cpuStats.idle));
-    fscanf(fp, "%"SCNu32, &(cpuStats.iowait));
-    fscanf(fp, "%"SCNu32, &(cpuStats.irq));
-    fscanf(fp, "%"SCNu32, &(cpuStats.softirq));
-    fscanf(fp, "%"SCNu32, &(cpuStats.steal));
-    fscanf(fp, "%"SCNu32, &(cpuStats.guest));
-    fscanf(fp, "%"SCNu32, &(cpuStats.guest_nice));
+    fscanf(fp, "%" SCNu32, &(cpuStats.user));
+    fscanf(fp, "%" SCNu32, &(cpuStats.nice));
+    fscanf(fp, "%" SCNu32, &(cpuStats.system));
+    fscanf(fp, "%" SCNu32, &(cpuStats.idle));
+    fscanf(fp, "%" SCNu32, &(cpuStats.iowait));
+    fscanf(fp, "%" SCNu32, &(cpuStats.irq));
+    fscanf(fp, "%" SCNu32, &(cpuStats.softirq));
+    fscanf(fp, "%" SCNu32, &(cpuStats.steal));
+    fscanf(fp, "%" SCNu32, &(cpuStats.guest));
+    fscanf(fp, "%" SCNu32, &(cpuStats.guest_nice));
 
     fclose(fp);
 }

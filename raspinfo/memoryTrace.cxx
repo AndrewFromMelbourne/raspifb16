@@ -64,7 +64,7 @@ getMemoryStats(
         char name[64];
         uint32_t value;
 
-        if (sscanf(buffer, "%[a-zA-Z]: %"SCNu32" kB", name, &value) == 2)
+        if (sscanf(buffer, "%[a-zA-Z]: %" SCNu32 " kB", name, &value) == 2)
         {
             if (strcmp(name, "MemTotal") == 0)
             {
