@@ -59,10 +59,7 @@ void
 CImage565:: clear(
     uint16_t rgb)
 {
-    for (uint16_t& pixel : m_buffer)
-    {
-        pixel = rgb;
-    }
+    std::fill(m_buffer.begin(), m_buffer.end(), rgb);
 }
 
 //-------------------------------------------------------------------------
