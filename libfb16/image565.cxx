@@ -59,7 +59,7 @@ void
 CImage565:: clear(
     uint16_t rgb)
 {
-    for (auto& pixel : m_buffer)
+    for (uint16_t& pixel : m_buffer)
     {
         pixel = rgb;
     }
