@@ -48,7 +48,7 @@ CImage565:: CImage565(
 
 void
 CImage565:: clear(
-    const CRGB565& rgb) const
+    const CRGB565& rgb)
 {
     clear(rgb.get565());
 }
@@ -57,9 +57,9 @@ CImage565:: clear(
 
 void
 CImage565:: clear(
-    uint16_t rgb) const
+    uint16_t rgb)
 {
-    for (auto pixel : m_buffer)
+    for (auto& pixel : m_buffer)
     {
         pixel = rgb;
     }

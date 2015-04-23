@@ -46,8 +46,8 @@ public:
     int16_t getWidth() const { return m_width; }
     int16_t getHeight() const { return m_height; }
 
-    void clear(const CRGB565& rgb) const;
-    void clear(uint16_t rgb) const;
+    void clear(const CRGB565& rgb);
+    void clear(uint16_t rgb);
 
     bool setPixel(int16_t x, int16_t y, const CRGB565& rgb);
     bool setPixel(int16_t x, int16_t y, uint16_t rgb);
