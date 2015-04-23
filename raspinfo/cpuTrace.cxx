@@ -235,10 +235,21 @@ show(
     {
         index = m_image.getWidth() - 1;
 
-        rotate(m_user.begin(), m_user.begin() + 1, m_user.end());
-        rotate(m_nice.begin(), m_nice.begin() + 1, m_nice.end());
-        rotate(m_system.begin(), m_system.begin() + 1, m_system.end());
-        rotate(m_time.begin(), m_time.begin() + 1, m_time.end());
+        std::rotate(m_user.begin(),
+                    m_user.begin() + 1,
+                    m_user.end());
+
+        std::rotate(m_nice.begin(),
+                    m_nice.begin() + 1,
+                    m_nice.end());
+
+        std::rotate(m_system.begin(),
+                    m_system.begin() + 1,
+                    m_system.end());
+
+        std::rotate(m_time.begin(),
+                    m_time.begin() + 1,
+                    m_time.end());
     }
 
     m_user[index] = user;

@@ -217,10 +217,21 @@ show(
     {
         index = m_image.getWidth() - 1;
 
-        rotate(m_used.begin(), m_used.begin() + 1, m_used.end());
-        rotate(m_buffers.begin(), m_buffers.begin() + 1, m_buffers.end());
-        rotate(m_cached.begin(), m_cached.begin() + 1, m_cached.end());
-        rotate(m_time.begin(), m_time.begin() + 1, m_time.end());
+        std::rotate(m_used.begin(),
+                    m_used.begin() + 1,
+                    m_used.end());
+
+        std::rotate(m_buffers.begin(),
+                    m_buffers.begin() + 1,
+                    m_buffers.end());
+
+        std::rotate(m_cached.begin(),
+                    m_cached.begin() + 1,
+                    m_cached.end());
+
+        std::rotate(m_time.begin(),
+                    m_time.begin() + 1,
+                    m_time.end());
     }
 
     m_used[index] = used;

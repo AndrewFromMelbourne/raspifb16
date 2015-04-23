@@ -146,11 +146,13 @@ show(
     {
         index = m_image.getWidth() - 1;
 
-        rotate(m_temperature.begin(),
-               m_temperature.begin() + 1,
-               m_temperature.end());
+        std::rotate(m_temperature.begin(),
+                    m_temperature.begin() + 1,
+                    m_temperature.end());
 
-        rotate(m_time.begin(), m_time.begin() + 1, m_time.end());
+        std::rotate(m_time.begin(),
+                    m_time.begin() + 1,
+                    m_time.end());
     }
 
     m_temperature[index] = temperature;
