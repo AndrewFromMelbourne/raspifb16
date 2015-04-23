@@ -29,6 +29,7 @@
 #define __STDC_FORMAT_MACROS
 #endif
 
+#include <algorithm>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -145,8 +146,11 @@ show(
     {
         index = m_image.getWidth() - 1;
 
-        memmove(&(m_temperature[0]), &(m_temperature[1]), index);
-        memmove(&(m_time[0]), &(m_time[1]), index);
+        rotate(m_temperature.begin(),
+               m_temperature.begin() + 1,
+               m_temperature.end());
+
+        rotate(m_time.begin(), m_time.begin() + 1, m_time.end());
     }
 
     m_temperature[index] = temperature;

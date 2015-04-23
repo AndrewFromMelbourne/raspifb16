@@ -29,6 +29,7 @@
 #define __STDC_FORMAT_MACROS
 #endif
 
+#include <algorithm>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -216,10 +217,10 @@ show(
     {
         index = m_image.getWidth() - 1;
 
-        memmove(&(m_used[0]), &(m_used[1]), index);
-        memmove(&(m_buffers[0]), &(m_buffers[1]), index);
-        memmove(&(m_cached[0]), &(m_cached[1]), index);
-        memmove(&(m_time[0]), &(m_time[1]), index);
+        rotate(m_used.begin(), m_used.begin() + 1, m_used.end());
+        rotate(m_buffers.begin(), m_buffers.begin() + 1, m_buffers.end());
+        rotate(m_cached.begin(), m_cached.begin() + 1, m_cached.end());
+        rotate(m_time.begin(), m_time.begin() + 1, m_time.end());
     }
 
     m_used[index] = used;
