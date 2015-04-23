@@ -31,6 +31,7 @@
 //-------------------------------------------------------------------------
 
 #include <cstdint>
+#include <vector>
 
 #include <sys/time.h>
 
@@ -65,8 +66,6 @@ public:
               int16_t yPosition,
               int16_t gridHeight = 20);
 
-    virtual ~CCpuTrace();
-
     int16_t getBottom() const { return m_yPosition + m_image.getHeight(); }
 
     void show(const CFrameBuffer565& fb, time_t now);
@@ -77,10 +76,10 @@ private:
     int16_t m_yPosition;
     int16_t m_gridHeight;
     int16_t m_values;
-    int8_t* m_user;
-    int8_t* m_nice;
-    int8_t* m_system;
-    int8_t* m_time;
+    std::vector<int8_t> m_user;
+    std::vector<int8_t> m_nice;
+    std::vector<int8_t> m_system;
+    std::vector<int8_t> m_time;
     SCpuStats m_currentStats;
     SCpuStats m_previousStats;
     CImage565 m_image;

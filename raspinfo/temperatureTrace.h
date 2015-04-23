@@ -31,6 +31,7 @@
 //-------------------------------------------------------------------------
 
 #include <cstdint>
+#include <vector>
 
 #include "framebuffer565.h"
 #include "image565.h"
@@ -47,8 +48,6 @@ public:
                       int16_t yPosition,
                       int16_t gridHeight = 20);
 
-    virtual ~CTemperatureTrace();
-
     int16_t getBottom() const { return m_yPosition + m_image.getHeight(); }
 
     void show(const CFrameBuffer565& fb, time_t now);
@@ -59,8 +58,8 @@ private:
     int16_t m_yPosition;
     int16_t m_gridHeight;
     uint16_t m_values;
-    int8_t* m_temperature;
-    int8_t* m_time;
+    std::vector<int8_t> m_temperature;
+    std::vector<int8_t> m_time;
     CImage565 m_image;
     CRGB565 m_graphColour;
     CRGB565 m_graphGridColour;

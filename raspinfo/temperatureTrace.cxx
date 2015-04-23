@@ -75,8 +75,8 @@ CTemperatureTrace(
     m_yPosition(yPosition),
     m_gridHeight(gridHeight),
     m_values(0),
-    m_temperature(0),
-    m_time(0),
+    m_temperature(width),
+    m_time(width),
     m_image(width, traceHeight + sc_fontHeight + 4),
     m_graphColour(102, 167, 225),
     m_graphGridColour(102, 167, 225),
@@ -84,9 +84,6 @@ CTemperatureTrace(
     m_background(0, 0, 0),
     m_gridColour(48, 48, 48)
 {
-    m_temperature = new int8_t[width];
-    m_time = new int8_t[width];
-
     m_graphGridColour = CRGB565::blend(63, m_gridColour, m_graphColour);
 
     //---------------------------------------------------------------------
@@ -127,15 +124,6 @@ CTemperatureTrace(
             m_image.setPixel(i, j, m_gridColour);
         }
     }
-}
-
-//-------------------------------------------------------------------------
-
-CTemperatureTrace::
-~CTemperatureTrace()
-{
-    delete [] m_temperature;
-    delete [] m_time;
 }
 
 //-------------------------------------------------------------------------

@@ -56,7 +56,7 @@ drawChar(
     int16_t y,
     uint8_t c,
     const CRGB565& rgb,
-    const CImage565& image);
+    CImage565& image);
 
 SFontPosition
 drawChar(
@@ -64,7 +64,7 @@ drawChar(
     int16_t y,
     uint8_t c,
     uint16_t rgb,
-    const CImage565& image);
+    CImage565& image);
 
 SFontPosition
 drawString(
@@ -72,7 +72,7 @@ drawString(
     int16_t y,
     const char* string,
     const CRGB565& rgb,
-    const CImage565& image);
+    CImage565& image);
 
 SFontPosition
 drawString(
@@ -80,7 +80,7 @@ drawString(
     int16_t y,
     const std::string& string,
     const CRGB565& rgb,
-    const CImage565& image);
+    CImage565& image);
 
 //-------------------------------------------------------------------------
 

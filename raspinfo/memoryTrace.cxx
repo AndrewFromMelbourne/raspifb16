@@ -106,10 +106,10 @@ CMemoryTrace(
     m_yPosition(yPosition),
     m_gridHeight(gridHeight),
     m_values(0),
-    m_used(0),
-    m_buffers(0),
-    m_cached(0),
-    m_time(0),
+    m_used(width),
+    m_buffers(width),
+    m_cached(width),
+    m_time(width),
     m_image(width, traceHeight + sc_fontHeight + 4),
     m_usedColour(0, 109, 44),
     m_usedGridColour(0, 109, 44),
@@ -121,11 +121,6 @@ CMemoryTrace(
     m_background(0, 0, 0),
     m_gridColour(48, 48, 48)
 {
-    m_used = new int8_t[width];
-    m_buffers = new int8_t[width];
-    m_cached = new int8_t[width];
-    m_time = new int8_t[width];
-
     m_usedGridColour = CRGB565::blend(63, m_gridColour, m_usedColour);
     m_buffersGridColour = CRGB565::blend(63, m_gridColour, m_buffersColour);
     m_cachedGridColour = CRGB565::blend(63, m_gridColour, m_cachedColour);
@@ -192,17 +187,6 @@ CMemoryTrace(
             m_image.setPixel(i, j, m_gridColour);
         }
     }
-}
-
-//-------------------------------------------------------------------------
-
-CMemoryTrace::
-~CMemoryTrace()
-{
-    delete [] m_used;
-    delete [] m_buffers;
-    delete [] m_cached;
-    delete [] m_time;
 }
 
 //-------------------------------------------------------------------------

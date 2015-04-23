@@ -4650,7 +4650,7 @@ drawChar(
     int16_t y,
     uint8_t c,
     const CRGB565& rgb,
-    const CImage565& image)
+    CImage565& image)
 {
     return drawChar(x, y, c, rgb.get565(), image);
 }
@@ -4663,7 +4663,7 @@ drawChar(
     int16_t y,
     uint8_t c,
     uint16_t rgb,
-    const CImage565& image)
+    CImage565& image)
 {
     for (int16_t j = 0 ; j < sc_fontHeight ; ++j)
     {
@@ -4694,7 +4694,7 @@ drawString(
     int16_t y,
     const char* string,
     const CRGB565& rgb,
-    const CImage565& image)
+    CImage565& image)
 {
     if (string != nullptr)
     {
@@ -4728,7 +4728,7 @@ drawString(
     int16_t y,
     const std::string& string,
     const CRGB565& rgb,
-    const CImage565& image)
+    CImage565& image)
 {
     return drawString(x, y, string.c_str(), rgb, image);
 }

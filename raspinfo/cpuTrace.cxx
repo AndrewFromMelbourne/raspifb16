@@ -105,10 +105,10 @@ CCpuTrace(
     m_yPosition(yPosition),
     m_gridHeight(gridHeight),
     m_values(0),
-    m_user(0),
-    m_nice(0),
-    m_system(0),
-    m_time(0),
+    m_user(width),
+    m_nice(width),
+    m_system(width),
+    m_time(width),
     m_image(width, traceHeight + sc_fontHeight + 4),
     m_userColour(4, 90, 141),
     m_userGridColour(4, 90, 141),
@@ -121,11 +121,6 @@ CCpuTrace(
     m_gridColour(48, 48, 48)
 
 {
-    m_user = new int8_t[width];
-    m_nice = new int8_t[width];
-    m_system = new int8_t[width];
-    m_time = new int8_t[width];
-
     m_userGridColour = CRGB565::blend(63, m_gridColour, m_userColour);
     m_niceGridColour = CRGB565::blend(63, m_gridColour, m_niceColour);
     m_systemGridColour = CRGB565::blend(63, m_gridColour, m_systemColour);
@@ -196,17 +191,6 @@ CCpuTrace(
     //---------------------------------------------------------------------
 
     getCpuStats(m_currentStats);
-}
-
-//-------------------------------------------------------------------------
-
-CCpuTrace::
-~CCpuTrace()
-{
-    delete [] m_user;
-    delete [] m_nice;
-    delete [] m_system;
-    delete [] m_time;
 }
 
 //-------------------------------------------------------------------------

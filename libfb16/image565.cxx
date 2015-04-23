@@ -40,23 +40,8 @@ CImage565:: CImage565(
 :
     m_width(width),
     m_height(height),
-    m_length(width * height),
-    m_buffer(nullptr)
+    m_buffer(width * height)
 {
-    m_buffer = new uint16_t[m_length];
-
-    if (m_buffer == nullptr)
-    {
-        perror("image: memory exhausted\n");
-        exit(EXIT_FAILURE);
-    }
-}
-
-//-------------------------------------------------------------------------
-
-CImage565:: ~CImage565()
-{
-    delete [] m_buffer;
 }
 
 //-------------------------------------------------------------------------
@@ -74,11 +59,9 @@ void
 CImage565:: clear(
     uint16_t rgb) const
 {
-    uint16_t* buffer = m_buffer;
-
-    for (int32_t i = 0 ; i < m_length ; ++i)
+    for (auto pixel : m_buffer)
     {
-        *(buffer++) = rgb;
+        pixel = rgb;
     }
 }
 
@@ -88,7 +71,7 @@ bool
 CImage565:: setPixel(
     int16_t x,
     int16_t y,
-    const CRGB565& rgb) const
+    const CRGB565& rgb)
 {
     bool isValid = validPixel(x, y);
 
@@ -106,7 +89,7 @@ bool
 CImage565:: setPixel(
     int16_t x,
     int16_t y,
-    uint16_t rgb) const
+    uint16_t rgb)
 {
     bool isValid = validPixel(x, y);
 
@@ -156,13 +139,13 @@ CImage565:: getPixel(
 
 //-------------------------------------------------------------------------
 
-uint16_t*
+const uint16_t*
 CImage565:: getRow(
     int16_t y) const
 {
     if (validPixel(0, y))
     {
-        return m_buffer + (y * m_width);
+        return m_buffer.data() + (y * m_width);
     }
     else
     {

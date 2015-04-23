@@ -31,6 +31,7 @@
 //-------------------------------------------------------------------------
 
 #include <cstdint>
+#include <vector>
 
 #include "rgb565.h"
 
@@ -41,7 +42,6 @@ class CImage565
 public:
 
     CImage565(int16_t width, int16_t height);
-    ~CImage565();
 
     int16_t getWidth() const { return m_width; }
     int16_t getHeight() const { return m_height; }
@@ -49,13 +49,13 @@ public:
     void clear(const CRGB565& rgb) const;
     void clear(uint16_t rgb) const;
 
-    bool setPixel(int16_t x, int16_t y, const CRGB565& rgb) const;
-    bool setPixel(int16_t x, int16_t y, uint16_t rgb) const;
+    bool setPixel(int16_t x, int16_t y, const CRGB565& rgb);
+    bool setPixel(int16_t x, int16_t y, uint16_t rgb);
 
     bool getPixel(int16_t x, int16_t y, CRGB565& rgb) const;
     bool getPixel(int16_t x, int16_t y, uint16_t& rgb) const;
 
-    uint16_t* getRow(int16_t y) const;
+    const uint16_t* getRow(int16_t y) const;
 
 private:
 
@@ -63,8 +63,7 @@ private:
 
     int16_t m_width;
     int16_t m_height;
-    int32_t m_length;
-    uint16_t* m_buffer;
+    std::vector<uint16_t> m_buffer;
 };
 
 //-------------------------------------------------------------------------
