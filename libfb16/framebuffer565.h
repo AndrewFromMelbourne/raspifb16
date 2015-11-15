@@ -50,6 +50,9 @@ public:
     CFrameBuffer565(const CFrameBuffer565& fb) = delete;
     CFrameBuffer565& operator=(const CFrameBuffer565& fb) = delete;
 
+    CFrameBuffer565(CFrameBuffer565&& fb) = delete;
+    CFrameBuffer565& operator=(CFrameBuffer565&& fb) = delete;
+
     int getWidth() const;
     int getHeight() const;
 
