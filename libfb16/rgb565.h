@@ -46,11 +46,11 @@ public:
     uint8_t getGreen() const;
     uint8_t getBlue() const;
 
-    uint16_t get565() const;
+    uint16_t get565() const { return m_rgb; }
 
     void setRGB(uint8_t red, uint8_t green, uint8_t blue);
 
-    void set565(uint16_t rgb);
+    void set565(uint16_t rgb) { m_rgb = rgb; }
 
     static CRGB565 blend(uint8_t alpha, const CRGB565& a, const CRGB565& b);
 

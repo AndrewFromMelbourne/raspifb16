@@ -48,36 +48,9 @@ CImage565:: CImage565(
 
 void
 CImage565:: clear(
-    const CRGB565& rgb)
-{
-    clear(rgb.get565());
-}
-
-//-------------------------------------------------------------------------
-
-void
-CImage565:: clear(
     uint16_t rgb)
 {
     std::fill(m_buffer.begin(), m_buffer.end(), rgb);
-}
-
-//-------------------------------------------------------------------------
-
-bool
-CImage565:: setPixel(
-    int16_t x,
-    int16_t y,
-    const CRGB565& rgb)
-{
-    bool isValid = validPixel(x, y);
-
-    if (isValid)
-    {
-        m_buffer[x + (y * m_width)] = rgb.get565();
-    }
-
-    return isValid;
 }
 
 //-------------------------------------------------------------------------

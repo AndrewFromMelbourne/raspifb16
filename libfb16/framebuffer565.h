@@ -53,13 +53,13 @@ public:
     CFrameBuffer565(CFrameBuffer565&& fb) = delete;
     CFrameBuffer565& operator=(CFrameBuffer565&& fb) = delete;
 
-    int getWidth() const;
-    int getHeight() const;
+    int getWidth() const { return m_vinfo.xres; }
+    int getHeight() const { return m_vinfo.yres; }
 
     bool hideCursor();
 
     void clear() const;
-    void clear(const CRGB565& rgb) const;
+    void clear(const CRGB565& rgb) const { clear(rgb.get565()); }
     void clear(uint16_t rgb) const;
 
     bool setPixel(int x, int y, const CRGB565& rgb) const;

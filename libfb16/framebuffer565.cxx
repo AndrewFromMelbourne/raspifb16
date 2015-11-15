@@ -112,22 +112,6 @@ CFrameBuffer565:: ~CFrameBuffer565()
 
 //-------------------------------------------------------------------------
 
-int
-CFrameBuffer565:: getWidth() const
-{
-    return m_vinfo.xres;
-}
-
-//-------------------------------------------------------------------------
-
-int
-CFrameBuffer565:: getHeight() const
-{
-    return m_vinfo.yres;
-}
-
-//-------------------------------------------------------------------------
-
 bool
 CFrameBuffer565:: hideCursor()
 {
@@ -164,15 +148,6 @@ CFrameBuffer565:: clear() const
 
 void
 CFrameBuffer565:: clear(
-    const CRGB565& rgb) const
-{
-    clear(rgb.get565());
-}
-
-//-------------------------------------------------------------------------
-
-void
-CFrameBuffer565:: clear(
     uint16_t rgb) const
 {
     uint16_t* fbp = m_fbp;
@@ -198,9 +173,7 @@ CFrameBuffer565:: setPixel(
 
     if (isValid)
     {
-        size_t location = x + y * (m_finfo.line_length / 2);
-
-        m_fbp[location] = rgb.get565();
+        m_fbp[x + y * (m_finfo.line_length / 2)] = rgb.get565();
     }
 
     return isValid;
@@ -218,9 +191,7 @@ CFrameBuffer565:: setPixel(
 
     if (isValid)
     {
-        size_t location = x + y * (m_finfo.line_length / 2);
-
-        m_fbp[location] = rgb;
+        m_fbp[x + y * (m_finfo.line_length / 2)] = rgb;
     }
 
     return isValid;
@@ -238,9 +209,7 @@ CFrameBuffer565:: getPixel(
 
     if (isValid)
     {
-        size_t location = x + y * (m_finfo.line_length / 2);
-
-        rgb.set565(m_fbp[location]);
+        rgb.set565(m_fbp[x + y * (m_finfo.line_length / 2)]);
     }
 
     return isValid;
@@ -258,9 +227,7 @@ CFrameBuffer565:: getPixel(
 
     if (isValid)
     {
-        size_t location = x + y * (m_finfo.line_length / 2);
-
-        rgb = m_fbp[location];
+        rgb = m_fbp[x + y * (m_finfo.line_length / 2)];
     }
 
     return isValid;
