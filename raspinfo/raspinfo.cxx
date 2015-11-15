@@ -32,6 +32,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <iostream>
+#include <system_error>
 
 #include <errno.h>
 #include <fcntl.h>
@@ -54,7 +56,6 @@
 #include "memoryTrace.h"
 
 using namespace std;
-
 
 //-------------------------------------------------------------------------
 
@@ -316,57 +317,65 @@ main(
 
     //---------------------------------------------------------------------
 
-    CFrameBuffer565 fb(device);
-
-    fb.clear(CRGB565(0, 0, 0));
-
-    //---------------------------------------------------------------------
-
-    int16_t traceHeight = 100;
-
-    // FIXME - need a better way to work out height of trace windows.
-
-    if (fb.getHeight() == 240)
+    try
     {
-        traceHeight = 80;
-    }
+        CFrameBuffer565 fb(device);
 
-    int16_t gridHeight = traceHeight / 5;
-
-    CDynamicInfo dynamicInfo(fb.getWidth(), 0);
-
-    CCpuTrace cpuTrace(fb.getWidth(),
-                       traceHeight,
-                       dynamicInfo.getBottom() + 1,
-                       gridHeight);
-
-    CMemoryTrace memoryTrace(fb.getWidth(),
-                             traceHeight,
-                             cpuTrace.getBottom() + 1,
-                             gridHeight);
-
-    //---------------------------------------------------------------------
-
-    sleep(1);
-
-    while (run)
-    {
-        struct timeval now;
-        gettimeofday(&now, NULL);
+        fb.clear(CRGB565(0, 0, 0));
 
         //-----------------------------------------------------------------
 
-        dynamicInfo.show(fb);
-        cpuTrace.show(fb, now.tv_sec);
-        memoryTrace.show(fb, now.tv_sec);
+        int16_t traceHeight = 100;
+
+        // FIXME - need a better way to work out height of trace windows.
+
+        if (fb.getHeight() == 240)
+        {
+            traceHeight = 80;
+        }
+
+        int16_t gridHeight = traceHeight / 5;
+
+        CDynamicInfo dynamicInfo(fb.getWidth(), 0);
+
+        CCpuTrace cpuTrace(fb.getWidth(),
+                           traceHeight,
+                           dynamicInfo.getBottom() + 1,
+                           gridHeight);
+
+        CMemoryTrace memoryTrace(fb.getWidth(),
+                                 traceHeight,
+                                 cpuTrace.getBottom() + 1,
+                                 gridHeight);
 
         //-----------------------------------------------------------------
 
-        gettimeofday(&now, NULL);
-        usleep(1000000L - now.tv_usec);
-    }
+        sleep(1);
 
-    fb.clear();
+        while (run)
+        {
+            struct timeval now;
+            gettimeofday(&now, NULL);
+
+            //-------------------------------------------------------------
+
+            dynamicInfo.show(fb);
+            cpuTrace.show(fb, now.tv_sec);
+            memoryTrace.show(fb, now.tv_sec);
+
+            //-------------------------------------------------------------
+
+            gettimeofday(&now, NULL);
+            usleep(1000000L - now.tv_usec);
+        }
+
+        fb.clear();
+    }
+    catch (std::system_error& error)
+    {
+        std::cerr << "Error: " << error.what() << "\n";
+        exit(EXIT_FAILURE);
+    }
 
     //---------------------------------------------------------------------
 

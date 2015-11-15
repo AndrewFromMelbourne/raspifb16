@@ -36,6 +36,8 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 
+#include <system_error>
+
 #include "framebuffer565.h"
 
 //-------------------------------------------------------------------------
@@ -50,20 +52,24 @@ CFrameBuffer565:: CFrameBuffer565(
 {
     if (m_fbfd == -1)
     {
-        perror("Error: cannot open framebuffer device");
-        exit(EXIT_FAILURE);
+        throw std::system_error(errno,
+                                std::system_category(), 
+                                "cannot open framebuffer device");
     }
 
     if (ioctl(m_fbfd, FBIOGET_FSCREENINFO, &(m_finfo)) == -1)
     {
-        perror("Error: reading fixed frame buffer information");
+        throw std::system_error(errno,
+                                std::system_category(), 
+                                "reading fixed framebuffer information");
         exit(EXIT_FAILURE);
     }
 
     if (ioctl(m_fbfd, FBIOGET_VSCREENINFO, &(m_vinfo)) == -1)
     {
-        perror("Error: reading variable frame buffer information");
-        exit(EXIT_FAILURE);
+        throw std::system_error(errno,
+                                std::system_category(), 
+                                "reading variable framebuffer information");
     }
 
     //---------------------------------------------------------------------
@@ -77,8 +83,9 @@ CFrameBuffer565:: CFrameBuffer565(
 
     if (fbp == MAP_FAILED)
     {
-        perror("Error: failed to map framebuffer device to memory");
-        exit(EXIT_FAILURE);
+        throw std::system_error(errno,
+                                std::system_category(), 
+                                "mapping framebuffer device to memory");
     }
 
     m_fbp = static_cast<uint16_t*>(fbp);

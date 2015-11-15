@@ -25,6 +25,9 @@
 //
 //-------------------------------------------------------------------------
 
+#include <iostream>
+#include <system_error>
+
 #include <unistd.h>
 
 #include "font.h"
@@ -36,30 +39,38 @@
 int
 main(void)
 {
-    CFrameBuffer565 fb("/dev/fb1");
-    fb.clear();
+    try
+    {
+        CFrameBuffer565 fb("/dev/fb1");
+        fb.clear();
 
-    CImage565 image(48, 48);
-    image.clear(CRGB565(255, 0, 0));
+        CImage565 image(48, 48);
+        image.clear(CRGB565(255, 0, 0));
 
-    fb.putImage((fb.getWidth() - image.getWidth()) / 2, 
-                (fb.getHeight() - image.getHeight()) / 2,
-                image);
+        fb.putImage((fb.getWidth() - image.getWidth()) / 2, 
+                    (fb.getHeight() - image.getHeight()) / 2,
+                    image);
 
-    CImage565 textImage(168, 16);
-    textImage.clear(CRGB565(0, 0, 63));
-    drawString(0,
-               0,
-               "This is a test string",
-               CRGB565(255, 255, 255),
-               textImage);
-    fb.putImage((fb.getWidth() - textImage.getWidth()) / 2, 
-                (fb.getHeight() - textImage.getHeight()) / 3,
-                textImage);
+        CImage565 textImage(168, 16);
+        textImage.clear(CRGB565(0, 0, 63));
+        drawString(0,
+                   0,
+                   "This is a test string",
+                   CRGB565(255, 255, 255),
+                   textImage);
+        fb.putImage((fb.getWidth() - textImage.getWidth()) / 2, 
+                    (fb.getHeight() - textImage.getHeight()) / 3,
+                    textImage);
 
-    sleep(10);
+        sleep(10);
 
-    fb.clear();
+        fb.clear();
+    }
+	catch (std::system_error& error)
+    {
+        std::cerr << "Error: " << error.what() << "\n";
+        exit(EXIT_FAILURE);
+    }
 
     return 0;
 }
