@@ -154,7 +154,7 @@ CFrameBuffer565:: clear(
 
     for (
         size_t location = 0 ;
-        location < m_finfo.smem_len / 2 ;
+        location < m_finfo.smem_len / bytesPerPixel ;
         ++location)
     {
         *(fbp++) = rgb;
@@ -173,7 +173,7 @@ CFrameBuffer565:: setPixel(
 
     if (isValid)
     {
-        m_fbp[x + y * (m_finfo.line_length / 2)] = rgb.get565();
+        m_fbp[x + y * (m_finfo.line_length / bytesPerPixel)] = rgb.get565();
     }
 
     return isValid;
@@ -191,7 +191,7 @@ CFrameBuffer565:: setPixel(
 
     if (isValid)
     {
-        m_fbp[x + y * (m_finfo.line_length / 2)] = rgb;
+        m_fbp[x + y * (m_finfo.line_length / bytesPerPixel)] = rgb;
     }
 
     return isValid;
@@ -209,7 +209,7 @@ CFrameBuffer565:: getPixel(
 
     if (isValid)
     {
-        rgb.set565(m_fbp[x + y * (m_finfo.line_length / 2)]);
+        rgb.set565(m_fbp[x + y * (m_finfo.line_length / bytesPerPixel)]);
     }
 
     return isValid;
@@ -227,7 +227,7 @@ CFrameBuffer565:: getPixel(
 
     if (isValid)
     {
-        rgb = m_fbp[x + y * (m_finfo.line_length / 2)];
+        rgb = m_fbp[x + y * (m_finfo.line_length / bytesPerPixel)];
     }
 
     return isValid;
@@ -255,7 +255,7 @@ CFrameBuffer565:: putImage(
 
     for (int j = 0 ; j < image.getHeight() ; ++j)
     {
-        memcpy(m_fbp + ((j + y) * (m_finfo.line_length / 2)) + x,
+        memcpy(m_fbp + ((j+y) * (m_finfo.line_length/bytesPerPixel)) + x,
                image.getRow(j),
                rowSize);
     }
@@ -311,7 +311,7 @@ CFrameBuffer565:: putImagePartial(
 
     for (int j = yStart ; j <= yEnd ; ++j)
     {
-        memcpy(m_fbp + ((j + y) * (m_finfo.line_length / 2 )) + x,
+        memcpy(m_fbp + ((j+y) * (m_finfo.line_length/bytesPerPixel )) + x,
                image.getRow(j) + xStart,
                rowSize);
     }

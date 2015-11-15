@@ -43,6 +43,8 @@ class CFrameBuffer565
 {
 public:
 
+    static const size_t bytesPerPixel = 2;
+
     explicit CFrameBuffer565(const char* device = "/dev/fb0");
 
     ~CFrameBuffer565();
