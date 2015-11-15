@@ -38,6 +38,6 @@ install (TARGETS raspinfo RUNTIME DESTINATION bin)
 
 #--------------------------------------------------------------------------
 
-add_executable(test test/test.cxx)
-target_link_libraries(test ${PROJECT_BINARY_DIR}/lib/libfb16.a)
+add_executable(fb16test test/test.cxx)
+target_link_libraries(fb16test ${PROJECT_BINARY_DIR}/lib/libfb16.a)
 
