@@ -31,6 +31,6 @@ From withing the build directory
 	sudo rm /usr/local/bin/raspinfo
 ## Raspian Jessie
 	sudo systemctl stop raspinfo@1
-	sudo systemctl disable raspinfo@1
+	sudo systemctl disable raspinfo@1.service
 	sudo rm /etc/systemd/system/raspinfo@.service
 	sudo rm /usr/local/bin/raspinfo
