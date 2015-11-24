@@ -43,18 +43,18 @@ public:
     CPanel(int16_t width,
            int16_t height,
            int16_t yPosition)
-	:
-		m_yPosition{yPosition},
-		m_image{width, height}
-	{ }
+    :
+        m_yPosition{yPosition},
+        m_image{width, height}
+    { }
 
 
-	virtual ~CPanel() = default;
+    virtual ~CPanel() = default;
 
     int16_t getBottom() const { return m_yPosition + m_image.getHeight(); }
 
     CImage565& getImage() { return m_image; }
-	const CImage565& getImage() const { return m_image; }
+    const CImage565& getImage() const { return m_image; }
 
     void putImage(const CFrameBuffer565& fb) const { fb.putImage(0, m_yPosition, m_image); }
 

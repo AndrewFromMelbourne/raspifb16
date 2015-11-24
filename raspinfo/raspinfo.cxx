@@ -336,21 +336,21 @@ main(
 
         int16_t gridHeight = traceHeight / 5;
 
-		using APanels = std::vector<std::unique_ptr<CPanel>>;
+        using APanels = std::vector<std::unique_ptr<CPanel>>;
 
         APanels panels;
 
-		auto panelTop = [](const APanels& panels) -> int16_t
-		{
-			if (panels.empty())
-			{
-				return 0;
-			}
-			else
-			{
+        auto panelTop = [](const APanels& panels) -> int16_t
+        {
+            if (panels.empty())
+            {
+                return 0;
+            }
+            else
+            {
                 return panels.back()->getBottom() + 1;
-			}
-		};
+            }
+        };
 
         panels.push_back(
             std::unique_ptr<CPanel>(
