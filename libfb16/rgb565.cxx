@@ -34,7 +34,7 @@ CRGB565:: CRGB565(
     uint8_t green,
     uint8_t blue)
 :
-    m_rgb(0)
+    m_rgb{0}
 {
     setRGB(red, green, blue);
 }
@@ -44,7 +44,7 @@ CRGB565:: CRGB565(
 CRGB565:: CRGB565(
     uint16_t rgb)
 :
-    m_rgb(rgb)
+    m_rgb{rgb}
 {
 }
 
@@ -53,7 +53,7 @@ CRGB565:: CRGB565(
 uint8_t
 CRGB565:: getRed() const
 {
-    uint8_t r5 = (m_rgb >> 11) & 0x1F;
+    auto r5 = (m_rgb >> 11) & 0x1F;
 
     return (r5 << 3) | (r5 >> 2);
 }
@@ -63,7 +63,7 @@ CRGB565:: getRed() const
 uint8_t
 CRGB565:: getGreen() const
 {
-    uint8_t g6 = (m_rgb >> 5) & 0x3F;
+    auto g6 = (m_rgb >> 5) & 0x3F;
 
     return (g6 << 2) | (g6 >> 4);
 }
@@ -73,7 +73,7 @@ CRGB565:: getGreen() const
 uint8_t
 CRGB565:: getBlue() const
 {
-    uint8_t b5 = m_rgb & 0x1F;
+    auto b5 = m_rgb & 0x1F;
 
     return (b5 << 3) | (b5 >> 2);
 }
@@ -97,17 +97,17 @@ CRGB565:: blend(
     const CRGB565& a,
     const CRGB565& b)
 {
-    uint8_t red = (((int16_t)(a.getRed()) * alpha)
-                + ((int16_t)(b.getRed()) * (255 - alpha)))
-                / 255;
+    auto red = (((int16_t)(a.getRed()) * alpha)
+             + ((int16_t)(b.getRed()) * (255 - alpha)))
+             / 255;
 
-    uint8_t green = (((int16_t)(a.getGreen()) * alpha)
-                  + ((int16_t)(b.getGreen()) * (255 - alpha)))
-                  / 255;
+    auto green = (((int16_t)(a.getGreen()) * alpha)
+               + ((int16_t)(b.getGreen()) * (255 - alpha)))
+               / 255;
 
-    uint8_t blue = (((int16_t)(a.getBlue()) * alpha)
-                 + ((int16_t)(b.getBlue()) * (255 - alpha)))
-                 / 255;
+    auto blue = (((int16_t)(a.getBlue()) * alpha)
+              + ((int16_t)(b.getBlue()) * (255 - alpha)))
+              / 255;
 
     return CRGB565(red, green, blue);
 }

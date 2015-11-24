@@ -72,13 +72,12 @@ CTemperatureTrace(
     int16_t yPosition,
     int16_t gridHeight)
 :
+    CPanel(width,  traceHeight + sc_fontHeight + 4, yPosition),
     m_traceHeight(traceHeight),
-    m_yPosition(yPosition),
     m_gridHeight(gridHeight),
     m_values(0),
     m_temperature(width),
     m_time(width),
-    m_image(width, traceHeight + sc_fontHeight + 4),
     m_graphColour(102, 167, 225),
     m_graphGridColour(102, 167, 225),
     m_foreground(255, 255, 255),
@@ -89,40 +88,40 @@ CTemperatureTrace(
 
     //---------------------------------------------------------------------
 
-    m_image.clear(m_background);
+    getImage().clear(m_background);
 
     uint8_t smallSquare = 0xFE;
 
     SFontPosition position = 
         drawString(0,
-                   m_image.getHeight() - 2 - sc_fontHeight,
+                   getImage().getHeight() - 2 - sc_fontHeight,
                    "Temperature",
                    m_foreground,
-                   m_image);
+                   getImage());
 
     position = drawString(position.x,
                           position.y,
                           " (temperature:",
                           m_foreground,
-                          m_image);
+                          getImage());
 
     position = drawChar(position.x,
                         position.y,
                         smallSquare,
                         m_graphColour,
-                        m_image);
+                        getImage());
 
     position = drawString(position.x,
                           position.y,
                           ")",
                           m_foreground,
-                          m_image);
+                          getImage());
 
     for (int32_t j = 0 ; j < traceHeight + 1 ; j+= m_gridHeight)
     {
-        for (int32_t i = 0 ; i < m_image.getWidth() ;  ++i)
+        for (int32_t i = 0 ; i < getImage().getWidth() ;  ++i)
         {
-            m_image.setPixel(i, j, m_gridColour);
+            getImage().setPixel(i, j, m_gridColour);
         }
     }
 }
@@ -138,13 +137,13 @@ show(
     int8_t temperature = (getTemperature() * m_traceHeight) / 100;
     int16_t index;
 
-    if (m_values < m_image.getWidth())
+    if (m_values < getImage().getWidth())
     {
         index = m_values++;
     }
     else
     {
-        index = m_image.getWidth() - 1;
+        index = getImage().getWidth() - 1;
 
         std::rotate(m_temperature.begin(),
                     m_temperature.begin() + 1,
@@ -168,11 +167,11 @@ show(
         {
             if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
             {
-                m_image.setPixel(i, j--, m_graphGridColour);
+                getImage().setPixel(i, j--, m_graphGridColour);
             }
             else
             {
-                m_image.setPixel(i, j--, m_graphColour);
+                getImage().setPixel(i, j--, m_graphColour);
             }
         }
 
@@ -180,15 +179,15 @@ show(
         {
             if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
             {
-                m_image.setPixel(i, j, m_gridColour);
+                getImage().setPixel(i, j, m_gridColour);
             }
             else
             {
-                m_image.setPixel(i, j, m_background);
+                getImage().setPixel(i, j, m_background);
             }
         }
     }
 
-    fb.putImage(0, m_yPosition, m_image);
+    putImage(fb);
 }
 

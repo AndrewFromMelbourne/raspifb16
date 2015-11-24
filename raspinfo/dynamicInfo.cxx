@@ -144,13 +144,13 @@ getTemperature()
 
 std::string
 CDynamicInfo::
-getTime()
+getTime(
+    time_t now)
 {
     char buffer[128];
 
-    time_t t = time(NULL);
     struct tm result;
-    struct tm *lt = localtime_r(&t, &result);
+    struct tm *lt = localtime_r(&now, &result);
     strftime(buffer, sizeof(buffer), "%T", lt);
 
     return buffer;
@@ -163,8 +163,7 @@ CDynamicInfo(
     int16_t width,
     int16_t yPosition)
 :
-    m_yPosition(yPosition),
-    m_image(width, 2 * (sc_fontHeight + 4)), 
+    CPanel{width, 2 * (sc_fontHeight + 4), yPosition},
     m_heading(255, 255, 0),
     m_foreground(255, 255, 255),
     m_background(0, 0, 0)
@@ -175,9 +174,11 @@ CDynamicInfo(
 
 void
 CDynamicInfo::
-show(const CFrameBuffer565& fb)
+show(
+    const CFrameBuffer565& fb,
+    time_t now)
 {
-    m_image.clear(m_background);
+    getImage().clear(m_background);
 
     //---------------------------------------------------------------------
 
@@ -187,7 +188,7 @@ show(const CFrameBuffer565& fb)
                           position.y,
                           "ip(",
                           m_heading,
-                          m_image);
+                          getImage());
 
     char interface = ' ';
     std::string ipaddress = getIpAddress(interface);
@@ -196,25 +197,25 @@ show(const CFrameBuffer565& fb)
                         position.y,
                         interface,
                         m_foreground,
-                        m_image);
+                        getImage());
 
     position = drawString(position.x,
                           position.y,
                           ") ",
                           m_heading,
-                          m_image);
+                          getImage());
 
     position = drawString(position.x,
                           position.y,
                           ipaddress,
                           m_foreground,
-                          m_image);
+                          getImage());
 
     position = drawString(position.x,
                           position.y,
                           " memory ",
                           m_heading,
-                          m_image);
+                          getImage());
 
     std::string memorySplit = getMemorySplit();
 
@@ -222,13 +223,13 @@ show(const CFrameBuffer565& fb)
                           position.y,
                           memorySplit,
                           m_foreground,
-                          m_image);
+                          getImage());
 
     position = drawString(position.x,
                           position.y,
                           " MB",
                           m_foreground,
-                          m_image);
+                          getImage());
 
     //---------------------------------------------------------------------
 
@@ -239,21 +240,21 @@ show(const CFrameBuffer565& fb)
                           position.y,
                           "time ",
                           m_heading,
-                          m_image);
+                          getImage());
 
-    std::string timeString = getTime();
+    std::string timeString = getTime(now);
 
     position = drawString(position.x,
                           position.y,
                           timeString,
                           m_foreground,
-                          m_image);
+                          getImage());
 
     position = drawString(position.x,
                           position.y,
                           " temperature ",
                           m_heading,
-                          m_image);
+                          getImage());
 
     std::string temperatureString = getTemperature();
 
@@ -261,7 +262,7 @@ show(const CFrameBuffer565& fb)
                           position.y,
                           temperatureString,
                           m_foreground,
-                          m_image);
+                          getImage());
 
     uint8_t degreeSymbol = 0xF8;
 
@@ -269,17 +270,17 @@ show(const CFrameBuffer565& fb)
                         position.y,
                         degreeSymbol,
                         m_foreground,
-                        m_image);
+                        getImage());
 
 
     position = drawString(position.x,
                           position.y,
                           "C",
                           m_foreground,
-                          m_image);
+                          getImage());
 
     //---------------------------------------------------------------------
     
-    fb.putImage(0, m_yPosition, m_image);
+    putImage(fb);
 }
 

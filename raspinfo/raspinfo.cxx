@@ -33,7 +33,9 @@
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
+#include <memory>
 #include <system_error>
+#include <vector>
 
 #include <errno.h>
 #include <fcntl.h>
@@ -54,8 +56,6 @@
 #include "dynamicInfo.h"
 #include "framebuffer565.h"
 #include "memoryTrace.h"
-
-using namespace std;
 
 //-------------------------------------------------------------------------
 
@@ -336,17 +336,39 @@ main(
 
         int16_t gridHeight = traceHeight / 5;
 
-        CDynamicInfo dynamicInfo(fb.getWidth(), 0);
+		using APanels = std::vector<std::unique_ptr<CPanel>>;
 
-        CCpuTrace cpuTrace(fb.getWidth(),
-                           traceHeight,
-                           dynamicInfo.getBottom() + 1,
-                           gridHeight);
+        APanels panels;
 
-        CMemoryTrace memoryTrace(fb.getWidth(),
+		auto panelTop = [](const APanels& panels) -> int16_t
+		{
+			if (panels.empty())
+			{
+				return 0;
+			}
+			else
+			{
+                return panels.back()->getBottom() + 1;
+			}
+		};
+
+        panels.push_back(
+            std::unique_ptr<CPanel>(
+                new CDynamicInfo(fb.getWidth(), panelTop(panels))));
+
+        panels.push_back(
+            std::unique_ptr<CPanel>(
+                new CCpuTrace(fb.getWidth(),
+                              traceHeight,
+                              panelTop(panels),
+                              gridHeight)));
+
+        panels.push_back(
+            std::unique_ptr<CPanel>(
+                new CMemoryTrace(fb.getWidth(),
                                  traceHeight,
-                                 cpuTrace.getBottom() + 1,
-                                 gridHeight);
+                                 panelTop(panels),
+                                 gridHeight)));
 
         //-----------------------------------------------------------------
 
@@ -359,9 +381,10 @@ main(
 
             //-------------------------------------------------------------
 
-            dynamicInfo.show(fb);
-            cpuTrace.show(fb, now.tv_sec);
-            memoryTrace.show(fb, now.tv_sec);
+            for (auto& panel : panels)
+            {
+                panel->show(fb, now.tv_sec);
+            }
 
             //-------------------------------------------------------------
 

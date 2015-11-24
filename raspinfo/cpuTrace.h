@@ -37,6 +37,7 @@
 
 #include "framebuffer565.h"
 #include "image565.h"
+#include "panel.h"
 #include "rgb565.h"
 
 //-------------------------------------------------------------------------
@@ -58,6 +59,8 @@ struct SCpuStats
 //-------------------------------------------------------------------------
 
 class CCpuTrace
+:
+    public CPanel
 {
 public:
 
@@ -66,23 +69,22 @@ public:
               int16_t yPosition,
               int16_t gridHeight = 20);
 
-    int16_t getBottom() const { return m_yPosition + m_image.getHeight(); }
-
-    void show(const CFrameBuffer565& fb, time_t now);
+    virtual void show(const CFrameBuffer565& fb, time_t now) override;
 
 private:
 
     int16_t m_traceHeight;
-    int16_t m_yPosition;
     int16_t m_gridHeight;
     int16_t m_values;
+
     std::vector<int8_t> m_user;
     std::vector<int8_t> m_nice;
     std::vector<int8_t> m_system;
     std::vector<int8_t> m_time;
+
     SCpuStats m_currentStats;
     SCpuStats m_previousStats;
-    CImage565 m_image;
+
     CRGB565 m_userColour;
     CRGB565 m_userGridColour;
     CRGB565 m_niceColour;

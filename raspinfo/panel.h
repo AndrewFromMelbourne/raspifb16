@@ -25,67 +25,45 @@
 //
 //-------------------------------------------------------------------------
 
-#ifndef MEMORY_TRACE_H
-#define MEMORY_TRACE_H
+#ifndef PANEL_H
+#define PANEL_H
 
 //-------------------------------------------------------------------------
 
 #include <cstdint>
-#include <vector>
 
 #include "framebuffer565.h"
-#include "image565.h"
-#include "panel.h"
-#include "rgb565.h"
 
 //-------------------------------------------------------------------------
 
-struct SMemoryStats
-{
-    uint32_t total;
-    uint32_t free;
-    uint32_t buffers;
-    uint32_t cached;
-    uint32_t used;
-};
-
-//-------------------------------------------------------------------------
-
-class CMemoryTrace
-:
-    public CPanel
+class CPanel
 {
 public:
 
-    CMemoryTrace(int16_t width,
-                 int16_t traceHeight,
-                 int16_t yPosition,
-                 int16_t gridHeight = 20);
+    CPanel(int16_t width,
+           int16_t height,
+           int16_t yPosition)
+	:
+		m_yPosition{yPosition},
+		m_image{width, height}
+	{ }
 
-    virtual void show(const CFrameBuffer565& fb, time_t now) override;
+
+	virtual ~CPanel() = default;
+
+    int16_t getBottom() const { return m_yPosition + m_image.getHeight(); }
+
+    CImage565& getImage() { return m_image; }
+	const CImage565& getImage() const { return m_image; }
+
+    void putImage(const CFrameBuffer565& fb) const { fb.putImage(0, m_yPosition, m_image); }
+
+    virtual void show(const CFrameBuffer565& fb, time_t now) = 0;
 
 private:
 
-    int16_t m_traceHeight;
-    int16_t m_gridHeight;
-    uint16_t m_values;
-
-    std::vector<int8_t> m_used;
-    std::vector<int8_t> m_buffers;
-    std::vector<int8_t> m_cached;
-    std::vector<int8_t> m_time;
-
-    CRGB565 m_usedColour;
-    CRGB565 m_usedGridColour;
-    CRGB565 m_buffersColour;
-    CRGB565 m_buffersGridColour;
-    CRGB565 m_cachedColour;
-    CRGB565 m_cachedGridColour;
-    CRGB565 m_foreground;
-    CRGB565 m_background;
-    CRGB565 m_gridColour;
-
-    static void getMemoryStats(SMemoryStats& memoryStats);
+    int16_t m_yPosition;
+    CImage565 m_image;
 };
 
 //-------------------------------------------------------------------------

@@ -36,6 +36,7 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 
+#include <string>
 #include <system_error>
 
 #include "framebuffer565.h"
@@ -46,30 +47,30 @@
 CFrameBuffer565:: CFrameBuffer565(
     const char* device)
 :
-    m_fbfd(open(device, O_RDWR)),
-    m_consolefd(-1),
-    m_fbp(nullptr)
+    m_fbfd{open(device, O_RDWR)},
+    m_consolefd{-1},
+    m_fbp{nullptr}
 {
     if (m_fbfd == -1)
     {
-        throw std::system_error(errno,
+        throw std::system_error{errno,
                                 std::system_category(), 
-                                "cannot open framebuffer device");
+                                "cannot open framebuffer device"};
     }
 
     if (ioctl(m_fbfd, FBIOGET_FSCREENINFO, &(m_finfo)) == -1)
     {
-        throw std::system_error(errno,
+        throw std::system_error{errno,
                                 std::system_category(), 
-                                "reading fixed framebuffer information");
+                                "reading fixed framebuffer information"};
         exit(EXIT_FAILURE);
     }
 
     if (ioctl(m_fbfd, FBIOGET_VSCREENINFO, &(m_vinfo)) == -1)
     {
-        throw std::system_error(errno,
+        throw std::system_error{errno,
                                 std::system_category(), 
-                                "reading variable framebuffer information");
+                                "reading variable framebuffer information"};
     }
 
     //---------------------------------------------------------------------
@@ -115,13 +116,13 @@ CFrameBuffer565:: ~CFrameBuffer565()
 bool
 CFrameBuffer565:: hideCursor()
 {
-    const char* consoleDevice = "/dev/console";
+    std::string name{ttyname(0)};
 
-    char* name = ttyname(0);
-
-    if (strstr(name, "/dev/pts"))
+    if (name.find("/dev/pts") != std::string::npos)
     {
-        m_consolefd = open(consoleDevice, O_NONBLOCK);
+        static const std::string consoleDevice{"/dev/console"};
+
+        m_consolefd = open(consoleDevice.c_str(), O_NONBLOCK);
 
         if (m_consolefd == -1)
         {
@@ -153,7 +154,7 @@ CFrameBuffer565:: clear(
     uint16_t* fbp = m_fbp;
 
     for (
-        size_t location = 0 ;
+        auto location = 0 ;
         location < m_finfo.smem_len / bytesPerPixel ;
         ++location)
     {
@@ -169,7 +170,7 @@ CFrameBuffer565:: setPixel(
     int y,
     const CRGB565& rgb) const
 {
-    bool isValid = validPixel(x, y);
+    bool isValid{validPixel(x, y)};
 
     if (isValid)
     {
@@ -187,7 +188,7 @@ CFrameBuffer565:: setPixel(
     int y,
     uint16_t rgb) const
 {
-    bool isValid = validPixel(x, y);
+    bool isValid{validPixel(x, y)};
 
     if (isValid)
     {
@@ -205,7 +206,7 @@ CFrameBuffer565:: getPixel(
     int y,
     CRGB565& rgb) const
 {
-    bool isValid = validPixel(x, y);
+    bool isValid{validPixel(x, y)};
 
     if (isValid)
     {
@@ -223,7 +224,7 @@ CFrameBuffer565:: getPixel(
     int y,
     uint16_t& rgb) const
 {
-    bool isValid = validPixel(x, y);
+    bool isValid{validPixel(x, y)};
 
     if (isValid)
     {
@@ -269,11 +270,11 @@ CFrameBuffer565:: putImagePartial(
     int y,
     const CImage565& image) const
 {
-    int xStart = 0;
-    int xEnd = image.getWidth() - 1;
+    auto xStart = 0;
+    auto xEnd = image.getWidth() - 1;
 
-    int yStart = 0;
-    int yEnd = image.getHeight() - 1;
+    auto yStart = 0;
+    auto yEnd = image.getHeight() - 1;
 
     if (x < 0)
     {
@@ -307,9 +308,9 @@ CFrameBuffer565:: putImagePartial(
         return false;
     }
 
-    size_t rowSize = (xEnd - xStart + 1) * sizeof(uint16_t);
+    auto rowSize = (xEnd - xStart + 1) * sizeof(uint16_t);
 
-    for (int j = yStart ; j <= yEnd ; ++j)
+    for (auto j = yStart ; j <= yEnd ; ++j)
     {
         memcpy(m_fbp + ((j+y) * (m_finfo.line_length/bytesPerPixel )) + x,
                image.getRow(j) + xStart,

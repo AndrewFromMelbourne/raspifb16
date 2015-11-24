@@ -102,15 +102,14 @@ CCpuTrace(
     int16_t yPosition,
     int16_t gridHeight)
 :
+    CPanel(width, traceHeight + sc_fontHeight + 4, yPosition),
     m_traceHeight(traceHeight),
-    m_yPosition(yPosition),
     m_gridHeight(gridHeight),
     m_values(0),
     m_user(width),
     m_nice(width),
     m_system(width),
     m_time(width),
-    m_image(width, traceHeight + sc_fontHeight + 4),
     m_userColour(4, 90, 141),
     m_userGridColour(4, 90, 141),
     m_niceColour(116, 169, 207),
@@ -128,64 +127,64 @@ CCpuTrace(
 
     //---------------------------------------------------------------------
 
-    m_image.clear(m_background);
+    getImage().clear(m_background);
 
     uint8_t smallSquare = 0xFE;
 
     SFontPosition position = 
         drawString(0,
-                   m_image.getHeight() - 2 - sc_fontHeight,
+                   getImage().getHeight() - 2 - sc_fontHeight,
                    "CPU",
                    m_foreground,
-                   m_image);
+                   getImage());
 
     position = drawString(position.x,
                           position.y,
                           " (user:",
                           m_foreground,
-                          m_image);
+                          getImage());
 
     position = drawChar(position.x,
                         position.y,
                         smallSquare,
                         m_userColour,
-                        m_image);
+                        getImage());
 
     position = drawString(position.x,
                           position.y,
                           " nice:",
                           m_foreground,
-                          m_image);
+                          getImage());
 
     position = drawChar(position.x,
                         position.y,
                         smallSquare,
                         m_niceColour,
-                        m_image);
+                        getImage());
 
     position = drawString(position.x,
                           position.y,
                           " system:",
                           m_foreground,
-                          m_image);
+                          getImage());
 
     position = drawChar(position.x,
                         position.y,
                         smallSquare,
                         m_systemColour,
-                        m_image);
+                        getImage());
 
     position = drawString(position.x,
                           position.y,
                           ")",
                           m_foreground,
-                          m_image);
+                          getImage());
 
     for (int32_t j = 0 ; j < traceHeight + 1 ; j+= m_gridHeight)
     {
-        for (int32_t i = 0 ; i < m_image.getWidth() ;  ++i)
+        for (int32_t i = 0 ; i < getImage().getWidth() ;  ++i)
         {
-            m_image.setPixel(i, j, m_gridColour);
+            getImage().setPixel(i, j, m_gridColour);
         }
     }
 
@@ -227,13 +226,13 @@ show(
 
     int16_t index;
 
-    if (m_values < m_image.getWidth())
+    if (m_values < getImage().getWidth())
     {
         index = m_values++;
     }
     else
     {
-        index = m_image.getWidth() - 1;
+        index = getImage().getWidth() - 1;
 
         std::rotate(m_user.begin(),
                     m_user.begin() + 1,
@@ -267,11 +266,11 @@ show(
         {
             if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
             {
-                m_image.setPixel(i, j--, m_userGridColour);
+                getImage().setPixel(i, j--, m_userGridColour);
             }
             else
             {
-                m_image.setPixel(i, j--, m_userColour);
+                getImage().setPixel(i, j--, m_userColour);
             }
         }
 
@@ -279,11 +278,11 @@ show(
         {
             if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
             {
-                m_image.setPixel(i, j--, m_niceGridColour);
+                getImage().setPixel(i, j--, m_niceGridColour);
             }
             else
             {
-                m_image.setPixel(i, j--, m_niceColour);
+                getImage().setPixel(i, j--, m_niceColour);
             }
         }
 
@@ -291,11 +290,11 @@ show(
         {
             if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
             {
-                m_image.setPixel(i, j--, m_systemGridColour);
+                getImage().setPixel(i, j--, m_systemGridColour);
             }
             else
             {
-                m_image.setPixel(i, j--, m_systemColour);
+                getImage().setPixel(i, j--, m_systemColour);
             }
         }
 
@@ -303,15 +302,15 @@ show(
         {
             if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
             {
-                m_image.setPixel(i, j, m_gridColour);
+                getImage().setPixel(i, j, m_gridColour);
             }
             else
             {
-                m_image.setPixel(i, j, m_background);
+                getImage().setPixel(i, j, m_background);
             }
         }
     }
 
-    fb.putImage(0, m_yPosition, m_image);
+    putImage(fb);
 }
 

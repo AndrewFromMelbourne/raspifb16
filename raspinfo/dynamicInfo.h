@@ -35,23 +35,22 @@
 
 #include "framebuffer565.h"
 #include "image565.h"
+#include "panel.h"
 #include "rgb565.h"
 
 //-------------------------------------------------------------------------
 
 class CDynamicInfo
+:
+    public CPanel
 {
 public:
 
     CDynamicInfo(int16_t width, int16_t yPosition);
 
-    int16_t getBottom() const { return m_yPosition + m_image.getHeight(); }
-    void show(const CFrameBuffer565& fb);
+    virtual void show(const CFrameBuffer565& fb, time_t now) override;
 
 private:
-
-    int16_t m_yPosition;
-    CImage565 m_image;
 
     CRGB565 m_heading;
     CRGB565 m_foreground;
@@ -60,7 +59,7 @@ private:
     static std::string getIpAddress(char& interface);
     static std::string getMemorySplit();
     static std::string getTemperature();
-    static std::string getTime();
+    static std::string getTime(time_t now);
 };
 
 //-------------------------------------------------------------------------

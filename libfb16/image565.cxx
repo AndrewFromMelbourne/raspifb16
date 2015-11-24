@@ -34,12 +34,14 @@
 
 //-------------------------------------------------------------------------
 
+using size_type = std::vector<uint16_t>::size_type;
+
 CImage565:: CImage565(
     int16_t width,
     int16_t height)
 :
-    m_width(width),
-    m_height(height),
+    m_width{width},
+    m_height{height},
     m_buffer(width * height)
 {
 }
@@ -61,7 +63,7 @@ CImage565:: setPixel(
     int16_t y,
     uint16_t rgb)
 {
-    bool isValid = validPixel(x, y);
+    bool isValid{validPixel(x, y)};
 
     if (isValid)
     {
@@ -79,7 +81,7 @@ CImage565:: getPixel(
     int16_t y,
     CRGB565& rgb) const
 {
-    bool isValid = validPixel(x, y);
+    bool isValid{validPixel(x, y)};
 
     if (isValid)
     {
@@ -97,7 +99,7 @@ CImage565:: getPixel(
     int16_t y,
     uint16_t& rgb) const
 {
-    bool isValid = validPixel(x, y);
+    bool isValid{validPixel(x, y)};
 
     if (isValid)
     {
