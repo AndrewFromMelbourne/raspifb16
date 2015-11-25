@@ -103,12 +103,12 @@ CCpuTrace(
 :
     CTrace(width,
            traceHeight,
-		   yPosition,
-		   gridHeight,
-		   3,
-		   "CPU",
-		   std::vector<std::string>{"user", "nice", "system"},
-		   std::vector<CRGB565>{{4,90,141},{116,169,207},{241,238,246}}),
+           yPosition,
+           gridHeight,
+           3,
+           "CPU",
+           std::vector<std::string>{"user", "nice", "system"},
+           std::vector<CRGB565>{{4,90,141},{116,169,207},{241,238,246}}),
     m_traceHeight{traceHeight}
 {
     getCpuStats(m_currentStats);
@@ -145,7 +145,7 @@ show(
     int8_t nice = (diff.nice * m_traceHeight) / totalCpu;
     int8_t system = (diff.system * m_traceHeight) / totalCpu;
 
-	update(std::vector<int8_t>{user, nice, system}, now);
+    update(std::vector<int8_t>{user, nice, system}, now);
 
     putImage(fb);
 }
