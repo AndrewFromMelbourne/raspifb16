@@ -28,7 +28,9 @@ add_executable(raspinfo raspinfo/raspinfo.cxx
 						raspinfo/cpuTrace.cxx
 						raspinfo/dynamicInfo.cxx
 						raspinfo/memoryTrace.cxx
-						raspinfo/temperatureTrace.cxx)
+						raspinfo/temperatureTrace.cxx
+						raspinfo/trace.cxx)
+
 target_link_libraries(raspinfo ${PROJECT_BINARY_DIR}/lib/libfb16.a
 							   /opt/vc/lib/libbcm_host.so
 							   -lbsd)
