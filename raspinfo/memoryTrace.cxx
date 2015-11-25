@@ -103,90 +103,16 @@ CMemoryTrace(
     int16_t yPosition,
     int16_t gridHeight)
 :
-    CPanel(width, traceHeight + sc_fontHeight + 4, yPosition),
-    m_traceHeight(traceHeight),
-    m_gridHeight(gridHeight),
-    m_values(0),
-    m_used(width),
-    m_buffers(width),
-    m_cached(width),
-    m_time(width),
-    m_usedColour(0, 109, 44),
-    m_usedGridColour(0, 109, 44),
-    m_buffersColour(102, 194, 164),
-    m_buffersGridColour(102, 194, 164),
-    m_cachedColour(237, 248, 251),
-    m_cachedGridColour(237, 248, 251),
-    m_foreground(255, 255, 255),
-    m_background(0, 0, 0),
-    m_gridColour(48, 48, 48)
+    CTrace(width,
+           traceHeight,
+           yPosition,
+           gridHeight,
+           3,
+           "Memory",
+           std::vector<std::string>{"used", "buffers", "cached"},
+           std::vector<CRGB565>{{0,109,44},{102,194,164},{237,248,251}}),
+    m_traceHeight(traceHeight)
 {
-    m_usedGridColour = CRGB565::blend(63, m_gridColour, m_usedColour);
-    m_buffersGridColour = CRGB565::blend(63, m_gridColour, m_buffersColour);
-    m_cachedGridColour = CRGB565::blend(63, m_gridColour, m_cachedColour);
-
-    //---------------------------------------------------------------------
-
-    getImage().clear(m_background);
-
-    uint8_t smallSquare = 0xFE;
-
-    SFontPosition position = 
-        drawString(0,
-                   getImage().getHeight() - 2 - sc_fontHeight,
-                   "Memory",
-                   m_foreground,
-                   getImage());
-
-    position = drawString(position.x,
-                          position.y,
-                          " (used:",
-                          m_foreground,
-                          getImage());
-
-    position = drawChar(position.x,
-                        position.y,
-                        smallSquare,
-                        m_usedColour,
-                        getImage());
-
-    position = drawString(position.x,
-                          position.y,
-                          " buffers:",
-                          m_foreground,
-                          getImage());
-
-    position = drawChar(position.x,
-                        position.y,
-                        smallSquare,
-                        m_buffersColour,
-                        getImage());
-
-    position = drawString(position.x,
-                          position.y,
-                          " cached:",
-                          m_foreground,
-                          getImage());
-
-    position = drawChar(position.x,
-                        position.y,
-                        smallSquare,
-                        m_cachedColour,
-                        getImage());
-
-    position = drawString(position.x,
-                          position.y,
-                          ")",
-                          m_foreground,
-                          getImage());
-
-    for (int32_t j = 0 ; j < traceHeight + 1 ; j+= m_gridHeight)
-    {
-        for (int32_t i = 0 ; i < getImage().getWidth() ;  ++i)
-        {
-            getImage().setPixel(i, j, m_gridColour);
-        }
-    }
 }
 
 //-------------------------------------------------------------------------
@@ -206,92 +132,7 @@ show(
     int8_t cached = (memoryStats.cached * m_traceHeight)
                  / memoryStats.total;
 
-    int16_t index;
-
-    if (m_values < getImage().getWidth())
-    {
-        index = m_values++;
-    }
-    else
-    {
-        index = getImage().getWidth() - 1;
-
-        std::rotate(m_used.begin(),
-                    m_used.begin() + 1,
-                    m_used.end());
-
-        std::rotate(m_buffers.begin(),
-                    m_buffers.begin() + 1,
-                    m_buffers.end());
-
-        std::rotate(m_cached.begin(),
-                    m_cached.begin() + 1,
-                    m_cached.end());
-
-        std::rotate(m_time.begin(),
-                    m_time.begin() + 1,
-                    m_time.end());
-    }
-
-    m_used[index] = used;
-    m_buffers[index] = buffers;
-    m_cached[index] = cached;
-    m_time[index] = now % 60;
-
-    //-----------------------------------------------------------------
-
-    for (int16_t i = 0 ; i < m_values ; ++i)
-    {
-        int16_t j = m_traceHeight - 1;
-
-        for (int16_t u = 0 ; u < m_used[i] ; ++u)
-        {
-            if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
-            {
-                getImage().setPixel(i, j--, m_usedGridColour);
-            }
-            else
-            {
-                getImage().setPixel(i, j--, m_usedColour);
-            }
-        }
-
-        for (int16_t b = 0 ; b < m_buffers[i] ; ++b)
-        {
-            if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
-            {
-                getImage().setPixel(i, j--, m_buffersGridColour);
-            }
-            else
-            {
-                getImage().setPixel(i, j--, m_buffersColour);
-            }
-        }
-
-        for (int16_t c = 0 ; c < m_cached[i] ; ++c)
-        {
-            if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
-            {
-                getImage().setPixel(i, j--, m_cachedGridColour);
-            }
-            else
-            {
-                getImage().setPixel(i, j--, m_cachedColour);
-            }
-        }
-
-        for ( ; j >= 0 ; --j)
-        {
-            if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
-            {
-                getImage().setPixel(i, j, m_gridColour);
-            }
-            else
-            {
-                getImage().setPixel(i, j, m_background);
-            }
-        }
-    }
+    update(std::vector<int8_t>{used, buffers, cached}, now);
 
     putImage(fb);
 }

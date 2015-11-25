@@ -29,7 +29,6 @@
 #define __STDC_FORMAT_MACROS
 #endif
 
-#include <algorithm>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -102,94 +101,16 @@ CCpuTrace(
     int16_t yPosition,
     int16_t gridHeight)
 :
-    CPanel(width, traceHeight + sc_fontHeight + 4, yPosition),
-    m_traceHeight(traceHeight),
-    m_gridHeight(gridHeight),
-    m_values(0),
-    m_user(width),
-    m_nice(width),
-    m_system(width),
-    m_time(width),
-    m_userColour(4, 90, 141),
-    m_userGridColour(4, 90, 141),
-    m_niceColour(116, 169, 207),
-    m_niceGridColour(116, 169, 207),
-    m_systemColour(241, 238, 246),
-    m_systemGridColour(241, 238, 246),
-    m_foreground(255, 255, 255),
-    m_background(0, 0, 0),
-    m_gridColour(48, 48, 48)
-
+    CTrace(width,
+           traceHeight,
+		   yPosition,
+		   gridHeight,
+		   3,
+		   "CPU",
+		   std::vector<std::string>{"user", "nice", "system"},
+		   std::vector<CRGB565>{{4,90,141},{116,169,207},{241,238,246}}),
+    m_traceHeight{traceHeight}
 {
-    m_userGridColour = CRGB565::blend(63, m_gridColour, m_userColour);
-    m_niceGridColour = CRGB565::blend(63, m_gridColour, m_niceColour);
-    m_systemGridColour = CRGB565::blend(63, m_gridColour, m_systemColour);
-
-    //---------------------------------------------------------------------
-
-    getImage().clear(m_background);
-
-    uint8_t smallSquare = 0xFE;
-
-    SFontPosition position = 
-        drawString(0,
-                   getImage().getHeight() - 2 - sc_fontHeight,
-                   "CPU",
-                   m_foreground,
-                   getImage());
-
-    position = drawString(position.x,
-                          position.y,
-                          " (user:",
-                          m_foreground,
-                          getImage());
-
-    position = drawChar(position.x,
-                        position.y,
-                        smallSquare,
-                        m_userColour,
-                        getImage());
-
-    position = drawString(position.x,
-                          position.y,
-                          " nice:",
-                          m_foreground,
-                          getImage());
-
-    position = drawChar(position.x,
-                        position.y,
-                        smallSquare,
-                        m_niceColour,
-                        getImage());
-
-    position = drawString(position.x,
-                          position.y,
-                          " system:",
-                          m_foreground,
-                          getImage());
-
-    position = drawChar(position.x,
-                        position.y,
-                        smallSquare,
-                        m_systemColour,
-                        getImage());
-
-    position = drawString(position.x,
-                          position.y,
-                          ")",
-                          m_foreground,
-                          getImage());
-
-    for (int32_t j = 0 ; j < traceHeight + 1 ; j+= m_gridHeight)
-    {
-        for (int32_t i = 0 ; i < getImage().getWidth() ;  ++i)
-        {
-            getImage().setPixel(i, j, m_gridColour);
-        }
-    }
-
-    //---------------------------------------------------------------------
-
     getCpuStats(m_currentStats);
 }
 
@@ -224,92 +145,7 @@ show(
     int8_t nice = (diff.nice * m_traceHeight) / totalCpu;
     int8_t system = (diff.system * m_traceHeight) / totalCpu;
 
-    int16_t index;
-
-    if (m_values < getImage().getWidth())
-    {
-        index = m_values++;
-    }
-    else
-    {
-        index = getImage().getWidth() - 1;
-
-        std::rotate(m_user.begin(),
-                    m_user.begin() + 1,
-                    m_user.end());
-
-        std::rotate(m_nice.begin(),
-                    m_nice.begin() + 1,
-                    m_nice.end());
-
-        std::rotate(m_system.begin(),
-                    m_system.begin() + 1,
-                    m_system.end());
-
-        std::rotate(m_time.begin(),
-                    m_time.begin() + 1,
-                    m_time.end());
-    }
-
-    m_user[index] = user;
-    m_nice[index] = nice;
-    m_system[index] = system;
-    m_time[index] = now % 60;
-
-    //-----------------------------------------------------------------
-
-    for (int16_t i = 0 ; i < m_values ; ++i)
-    {
-        int16_t j = m_traceHeight;
-
-        for (int16_t u = 0 ; u < m_user[i] ; ++u)
-        {
-            if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
-            {
-                getImage().setPixel(i, j--, m_userGridColour);
-            }
-            else
-            {
-                getImage().setPixel(i, j--, m_userColour);
-            }
-        }
-
-        for (int16_t n = 0 ; n < m_nice[i] ; ++n)
-        {
-            if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
-            {
-                getImage().setPixel(i, j--, m_niceGridColour);
-            }
-            else
-            {
-                getImage().setPixel(i, j--, m_niceColour);
-            }
-        }
-
-        for (int16_t s = 0 ; s < m_system[i] ; ++s)
-        {
-            if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
-            {
-                getImage().setPixel(i, j--, m_systemGridColour);
-            }
-            else
-            {
-                getImage().setPixel(i, j--, m_systemColour);
-            }
-        }
-
-        for ( ; j >= 0 ; --j)
-        {
-            if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
-            {
-                getImage().setPixel(i, j, m_gridColour);
-            }
-            else
-            {
-                getImage().setPixel(i, j, m_background);
-            }
-        }
-    }
+	update(std::vector<int8_t>{user, nice, system}, now);
 
     putImage(fb);
 }

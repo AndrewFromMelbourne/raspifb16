@@ -72,58 +72,16 @@ CTemperatureTrace(
     int16_t yPosition,
     int16_t gridHeight)
 :
-    CPanel(width,  traceHeight + sc_fontHeight + 4, yPosition),
-    m_traceHeight(traceHeight),
-    m_gridHeight(gridHeight),
-    m_values(0),
-    m_temperature(width),
-    m_time(width),
-    m_graphColour(102, 167, 225),
-    m_graphGridColour(102, 167, 225),
-    m_foreground(255, 255, 255),
-    m_background(0, 0, 0),
-    m_gridColour(48, 48, 48)
+    CTrace(width,
+           traceHeight,
+           yPosition,
+           gridHeight,
+           1,
+           "Temperature",
+           std::vector<std::string>{"temperature"},
+           std::vector<CRGB565>{{102,167,225}}),
+    m_traceHeight(traceHeight)
 {
-    m_graphGridColour = CRGB565::blend(63, m_gridColour, m_graphColour);
-
-    //---------------------------------------------------------------------
-
-    getImage().clear(m_background);
-
-    uint8_t smallSquare = 0xFE;
-
-    SFontPosition position = 
-        drawString(0,
-                   getImage().getHeight() - 2 - sc_fontHeight,
-                   "Temperature",
-                   m_foreground,
-                   getImage());
-
-    position = drawString(position.x,
-                          position.y,
-                          " (temperature:",
-                          m_foreground,
-                          getImage());
-
-    position = drawChar(position.x,
-                        position.y,
-                        smallSquare,
-                        m_graphColour,
-                        getImage());
-
-    position = drawString(position.x,
-                          position.y,
-                          ")",
-                          m_foreground,
-                          getImage());
-
-    for (int32_t j = 0 ; j < traceHeight + 1 ; j+= m_gridHeight)
-    {
-        for (int32_t i = 0 ; i < getImage().getWidth() ;  ++i)
-        {
-            getImage().setPixel(i, j, m_gridColour);
-        }
-    }
 }
 
 //-------------------------------------------------------------------------
@@ -135,58 +93,8 @@ show(
     time_t now)
 {
     int8_t temperature = (getTemperature() * m_traceHeight) / 100;
-    int16_t index;
 
-    if (m_values < getImage().getWidth())
-    {
-        index = m_values++;
-    }
-    else
-    {
-        index = getImage().getWidth() - 1;
-
-        std::rotate(m_temperature.begin(),
-                    m_temperature.begin() + 1,
-                    m_temperature.end());
-
-        std::rotate(m_time.begin(),
-                    m_time.begin() + 1,
-                    m_time.end());
-    }
-
-    m_temperature[index] = temperature;
-    m_time[index] = now % 60;
-
-    //-----------------------------------------------------------------
-
-    for (int16_t i = 0 ; i < m_values ; ++i)
-    {
-        int16_t j = m_traceHeight - 1;
-
-        for (int16_t t = 0 ; t < m_temperature[i] ; ++t)
-        {
-            if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
-            {
-                getImage().setPixel(i, j--, m_graphGridColour);
-            }
-            else
-            {
-                getImage().setPixel(i, j--, m_graphColour);
-            }
-        }
-
-        for ( ; j >= 0 ; --j)
-        {
-            if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
-            {
-                getImage().setPixel(i, j, m_gridColour);
-            }
-            else
-            {
-                getImage().setPixel(i, j, m_background);
-            }
-        }
-    }
+    update(std::vector<int8_t>{temperature}, now);
 
     putImage(fb);
 }

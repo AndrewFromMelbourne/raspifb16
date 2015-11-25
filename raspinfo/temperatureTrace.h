@@ -34,15 +34,15 @@
 #include <vector>
 
 #include "framebuffer565.h"
-#include "image565.h"
 #include "panel.h"
 #include "rgb565.h"
+#include "trace.h"
 
 //-------------------------------------------------------------------------
 
 class CTemperatureTrace
 :
-    public CPanel
+    public CTrace
 {
 public:
 
@@ -56,17 +56,6 @@ public:
 private:
 
     int16_t m_traceHeight;
-    int16_t m_gridHeight;
-    uint16_t m_values;
-
-    std::vector<int8_t> m_temperature;
-    std::vector<int8_t> m_time;
-
-    CRGB565 m_graphColour;
-    CRGB565 m_graphGridColour;
-    CRGB565 m_foreground;
-    CRGB565 m_background;
-    CRGB565 m_gridColour;
 
     static int8_t getTemperature();
 };

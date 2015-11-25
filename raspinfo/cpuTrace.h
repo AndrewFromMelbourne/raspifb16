@@ -36,9 +36,8 @@
 #include <sys/time.h>
 
 #include "framebuffer565.h"
-#include "image565.h"
-#include "panel.h"
 #include "rgb565.h"
+#include "trace.h"
 
 //-------------------------------------------------------------------------
 
@@ -60,40 +59,24 @@ struct SCpuStats
 
 class CCpuTrace
 :
-    public CPanel
+    public CTrace
 {
 public:
 
-    CCpuTrace(int16_t width,
-              int16_t traceHeight,
-              int16_t yPosition,
-              int16_t gridHeight = 20);
+    CCpuTrace(
+        int16_t width,
+        int16_t traceHeight,
+        int16_t yPosition,
+        int16_t gridHeight = 20);
 
     virtual void show(const CFrameBuffer565& fb, time_t now) override;
 
 private:
 
     int16_t m_traceHeight;
-    int16_t m_gridHeight;
-    int16_t m_values;
-
-    std::vector<int8_t> m_user;
-    std::vector<int8_t> m_nice;
-    std::vector<int8_t> m_system;
-    std::vector<int8_t> m_time;
 
     SCpuStats m_currentStats;
     SCpuStats m_previousStats;
-
-    CRGB565 m_userColour;
-    CRGB565 m_userGridColour;
-    CRGB565 m_niceColour;
-    CRGB565 m_niceGridColour;
-    CRGB565 m_systemColour;
-    CRGB565 m_systemGridColour;
-    CRGB565 m_foreground;
-    CRGB565 m_background;
-    CRGB565 m_gridColour;
 
     static void getCpuStats(SCpuStats& cpuStats);
     static void diffCpuStats(const SCpuStats& lhs,

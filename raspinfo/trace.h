@@ -25,47 +25,68 @@
 //
 //-------------------------------------------------------------------------
 
-#ifndef PANEL_H
-#define PANEL_H
+#ifndef TRACE_H
+#define TRACE_H
 
 //-------------------------------------------------------------------------
 
 #include <cstdint>
+#include <string>
+#include <vector>
+
+#include <sys/time.h>
 
 #include "framebuffer565.h"
+#include "panel.h"
+#include "rgb565.h"
 
 //-------------------------------------------------------------------------
 
-class CPanel
+struct STraceData
+{
+    std::string m_name;
+    CRGB565 m_traceColour;
+    CRGB565 m_gridColour;
+    std::vector<int8_t> m_values;
+};
+
+//-------------------------------------------------------------------------
+
+class CTrace
+:
+    public CPanel
 {
 public:
 
-    CPanel(int16_t width,
-           int16_t height,
-           int16_t yPosition)
-    :
-        m_yPosition{yPosition},
-        m_image{width, height}
-    { }
+    CTrace(
+        int16_t width,
+        int16_t traceHeight,
+        int16_t yPosition,
+        int16_t gridHeight,
+        int16_t traces,
+        const std::string& title,
+        const std::vector<std::string>& traceNames,
+        const std::vector<CRGB565>& traceColours);
 
-
-    virtual ~CPanel() = default;
-
-    int16_t getBottom() const { return m_yPosition + m_image.getHeight(); }
-
-    CImage565& getImage() { return m_image; }
-    const CImage565& getImage() const { return m_image; }
-
-    virtual void show(const CFrameBuffer565& fb, time_t now) = 0;
+    virtual void show(const CFrameBuffer565& fb, time_t now) override = 0;
 
 protected:
 
-    void putImage(const CFrameBuffer565& fb) const { fb.putImage(0, m_yPosition, m_image); }
+    void update(const std::vector<int8_t>& data, time_t now);
 
 private:
 
-    int16_t m_yPosition;
-    CImage565 m_image;
+    int16_t m_traceHeight;
+    int16_t m_gridHeight;
+    int16_t m_traces;
+    int16_t m_columns;
+
+    std::vector<STraceData> m_data;
+    std::vector<int8_t> m_time;
+
+    static const CRGB565 sc_foreground;
+    static const CRGB565 sc_background;
+    static const CRGB565 sc_gridColour;
 };
 
 //-------------------------------------------------------------------------

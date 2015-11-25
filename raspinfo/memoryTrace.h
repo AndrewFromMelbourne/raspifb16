@@ -34,9 +34,9 @@
 #include <vector>
 
 #include "framebuffer565.h"
-#include "image565.h"
 #include "panel.h"
 #include "rgb565.h"
+#include "trace.h"
 
 //-------------------------------------------------------------------------
 
@@ -53,7 +53,7 @@ struct SMemoryStats
 
 class CMemoryTrace
 :
-    public CPanel
+    public CTrace
 {
 public:
 
@@ -67,23 +67,6 @@ public:
 private:
 
     int16_t m_traceHeight;
-    int16_t m_gridHeight;
-    uint16_t m_values;
-
-    std::vector<int8_t> m_used;
-    std::vector<int8_t> m_buffers;
-    std::vector<int8_t> m_cached;
-    std::vector<int8_t> m_time;
-
-    CRGB565 m_usedColour;
-    CRGB565 m_usedGridColour;
-    CRGB565 m_buffersColour;
-    CRGB565 m_buffersGridColour;
-    CRGB565 m_cachedColour;
-    CRGB565 m_cachedGridColour;
-    CRGB565 m_foreground;
-    CRGB565 m_background;
-    CRGB565 m_gridColour;
 
     static void getMemoryStats(SMemoryStats& memoryStats);
 };
