@@ -79,9 +79,10 @@ private:
     SCpuStats m_previousStats;
 
     static void getCpuStats(SCpuStats& cpuStats);
-    static void diffCpuStats(const SCpuStats& lhs,
-                             const SCpuStats& rhs,
-                             SCpuStats& result);
+
+    static SCpuStats
+    diffCpuStats(const SCpuStats& lhs,
+                 const SCpuStats& rhs);
 };
 
 //-------------------------------------------------------------------------

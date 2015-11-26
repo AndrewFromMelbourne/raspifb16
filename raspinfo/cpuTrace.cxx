@@ -31,7 +31,6 @@
 
 #include <cstdint>
 #include <cstdio>
-#include <cstdlib>
 #include <cstring>
 
 #include <inttypes.h>
@@ -72,13 +71,14 @@ getCpuStats(
 
 //-------------------------------------------------------------------------
 
-void
+SCpuStats
 CCpuTrace::
 diffCpuStats(
     const SCpuStats& lhs,
-    const SCpuStats& rhs,
-    SCpuStats& result)
+    const SCpuStats& rhs)
 {
+    SCpuStats result;
+
     result.user = lhs.user - rhs.user;
     result.nice = lhs.nice - rhs.nice;
     result.system = lhs.system - rhs.system;
@@ -89,6 +89,8 @@ diffCpuStats(
     result.steal = lhs.steal - rhs.steal;
     result.guest = lhs.guest - rhs.guest;
     result.guest_nice = lhs.guest_nice - rhs.guest_nice;
+
+    return result;
 }
 
 //-------------------------------------------------------------------------
@@ -122,13 +124,11 @@ show(
     const CFrameBuffer565& fb,
     time_t now)
 {
-    SCpuStats diff;
-
-    memcpy(&m_previousStats, &m_currentStats, sizeof(m_previousStats));
+    m_previousStats = m_currentStats;
 
     getCpuStats(m_currentStats);
 
-    diffCpuStats(m_currentStats, m_previousStats, diff);
+    SCpuStats diff = diffCpuStats(m_currentStats, m_previousStats);
 
     uint32_t totalCpu = diff.user
                       + diff.nice
