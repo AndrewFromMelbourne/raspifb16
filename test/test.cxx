@@ -66,7 +66,7 @@ main(void)
 
         fb.clear();
     }
-	catch (std::system_error& error)
+    catch (std::system_error& error)
     {
         std::cerr << "Error: " << error.what() << "\n";
         exit(EXIT_FAILURE);
