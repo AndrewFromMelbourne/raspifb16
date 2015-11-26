@@ -81,7 +81,7 @@ private:
     int16_t m_traces;
     int16_t m_columns;
 
-    std::vector<STraceData> m_data;
+    std::vector<STraceData> m_traceData;
     std::vector<int8_t> m_time;
 
     static const CRGB565 sc_foreground;

@@ -47,7 +47,8 @@ const CRGB565 CTrace::sc_gridColour{48, 48, 48};
 
 //-------------------------------------------------------------------------
 
-CTrace::CTrace(
+CTrace::
+CTrace(
     int16_t width,
     int16_t traceHeight,
     int16_t yPosition,
@@ -62,13 +63,13 @@ CTrace::CTrace(
     m_gridHeight{gridHeight},
     m_traces{traces},
     m_columns{0},
-    m_data(traces),
+    m_traceData(traces),
     m_time(width)
 {
     auto traceName = traceNames.begin();
     auto traceColour = traceColours.begin();
 
-    for (auto& trace : m_data)
+    for (auto& trace : m_traceData)
     {
         trace.m_name = *(traceName++);
         trace.m_traceColour = *(traceColour++);
@@ -92,7 +93,7 @@ CTrace::CTrace(
                    getImage());
 
     bool first = true;
-    for (auto& trace : m_data)
+    for (auto& trace : m_traceData)
     {
         if (first)
         {
@@ -134,7 +135,8 @@ CTrace::CTrace(
 //-------------------------------------------------------------------------
 
  void
- CTrace::update(
+ CTrace::
+ update(
      const std::vector<int8_t>& data,
     time_t now)
 {
@@ -148,7 +150,7 @@ CTrace::CTrace(
     {
         index = getImage().getWidth() - 1;
 
-        for (auto& trace : m_data)
+        for (auto& trace : m_traceData)
         {
             std::rotate(trace.m_values.begin(),
                         trace.m_values.begin() + 1,
@@ -159,7 +161,7 @@ CTrace::CTrace(
     //-----------------------------------------------------------------
 
     auto value = data.begin();
-    for (auto& trace : m_data)
+    for (auto& trace : m_traceData)
     {
         trace.m_values[index] = *value;
     }
@@ -172,7 +174,7 @@ CTrace::CTrace(
     {
         int16_t j = m_traceHeight - 1;
 
-        for (auto& trace : m_data)
+        for (auto& trace : m_traceData)
         {
             for (int16_t v = 0 ; v < trace.m_values[i] ; ++v)
             {
