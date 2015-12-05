@@ -41,28 +41,34 @@ class CImage565
 {
 public:
 
-    CImage565(uint16_t width, uint16_t height);
+    CImage565(int16_t width, int16_t height);
 
-    uint16_t getWidth() const { return m_width; }
-    uint16_t getHeight() const { return m_height; }
+    int16_t getWidth() const { return m_width; }
+    int16_t getHeight() const { return m_height; }
 
     void clear(const CRGB565& rgb) { clear(rgb.get565()); }
     void clear(uint16_t rgb);
 
-    bool setPixel(uint16_t x, uint16_t y, const CRGB565& rgb) { return setPixel(x, y, rgb.get565()); }
-    bool setPixel(uint16_t x, uint16_t y, uint16_t rgb);
+    bool setPixel(int16_t x, int16_t y, const CRGB565& rgb) { return setPixel(x, y, rgb.get565()); }
+    bool setPixel(int16_t x, int16_t y, uint16_t rgb);
 
-    bool getPixel(uint16_t x, uint16_t y, CRGB565& rgb) const;
-    bool getPixel(uint16_t x, uint16_t y, uint16_t& rgb) const;
+    bool getPixel(int16_t x, int16_t y, CRGB565& rgb) const;
+    bool getPixel(int16_t x, int16_t y, uint16_t& rgb) const;
 
-    const uint16_t* getRow(uint16_t y) const;
+    const uint16_t* getRow(int16_t y) const;
 
 private:
 
-    bool validPixel(uint16_t x, uint16_t y) const;
+    bool
+    validPixel(
+        int16_t x,
+        int16_t y) const
+    {
+        return ((x >= 0) && (y >= 0) && (x < m_width) && (y < m_height));
+    }
 
-    uint16_t m_width;
-    uint16_t m_height;
+    int16_t m_width;
+    int16_t m_height;
     std::vector<uint16_t> m_buffer;
 };
 

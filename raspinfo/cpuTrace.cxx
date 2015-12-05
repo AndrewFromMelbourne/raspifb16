@@ -98,10 +98,10 @@ diffCpuStats(
 
 CCpuTrace::
 CCpuTrace(
-    uint16_t width,
-    uint16_t traceHeight,
-    uint16_t yPosition,
-    uint16_t gridHeight)
+    int16_t width,
+    int16_t traceHeight,
+    int16_t yPosition,
+    int16_t gridHeight)
 :
     CTrace(width,
            traceHeight,

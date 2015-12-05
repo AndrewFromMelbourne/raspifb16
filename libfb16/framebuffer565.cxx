@@ -177,8 +177,8 @@ CFrameBuffer565:: clear(
 
 bool
 CFrameBuffer565:: setPixel(
-    uint32_t x,
-    uint32_t y,
+    int32_t x,
+    int32_t y,
     const CRGB565& rgb) const
 {
     bool isValid{validPixel(x, y)};
@@ -195,8 +195,8 @@ CFrameBuffer565:: setPixel(
 
 bool
 CFrameBuffer565:: setPixel(
-    uint32_t x,
-    uint32_t y,
+    int32_t x,
+    int32_t y,
     uint16_t rgb) const
 {
     bool isValid{validPixel(x, y)};
@@ -213,8 +213,8 @@ CFrameBuffer565:: setPixel(
 
 bool
 CFrameBuffer565:: getPixel(
-    uint32_t x,
-    uint32_t y,
+    int32_t x,
+    int32_t y,
     CRGB565& rgb) const
 {
     bool isValid{validPixel(x, y)};
@@ -231,8 +231,8 @@ CFrameBuffer565:: getPixel(
 
 bool
 CFrameBuffer565:: getPixel(
-    uint32_t x,
-    uint32_t y,
+    int32_t x,
+    int32_t y,
     uint16_t& rgb) const
 {
     bool isValid{validPixel(x, y)};
@@ -249,23 +249,25 @@ CFrameBuffer565:: getPixel(
 
 bool
 CFrameBuffer565:: putImage(
-    uint32_t x,
-    uint32_t y,
+    int32_t x,
+    int32_t y,
     const CImage565& image) const
 {
-    if ((x < 0) || ((x + image.getWidth()) >  m_vinfo.xres))
+    if ((x < 0) ||
+        ((x + image.getWidth()) >  static_cast<int32_t>(m_vinfo.xres)))
     {
         return putImagePartial(x, y, image);
     }
 
-    if ((y < 0) || ((y + image.getHeight()) > m_vinfo.yres))
+    if ((y < 0) ||
+        ((y + image.getHeight()) > static_cast<int32_t>(m_vinfo.yres)))
     {
         return putImagePartial(x, y, image);
     }
 
     size_t rowSize = image.getWidth() * sizeof(uint16_t);
 
-    for (uint32_t j = 0 ; j < image.getHeight() ; ++j)
+    for (int32_t j = 0 ; j < image.getHeight() ; ++j)
     {
         memcpy(m_fbp + ((j+y) * m_lineLengthPixels) + x,
                image.getRow(j),
@@ -279,8 +281,8 @@ CFrameBuffer565:: putImage(
 
 bool
 CFrameBuffer565:: putImagePartial(
-    uint32_t x,
-    uint32_t y,
+    int32_t x,
+    int32_t y,
     const CImage565& image) const
 {
     auto xStart = 0;
@@ -295,7 +297,8 @@ CFrameBuffer565:: putImagePartial(
         x = 0;
     }
 
-    if ((x - xStart + image.getWidth()) > m_vinfo.xres)
+    if ((x - xStart + image.getWidth()) >
+        static_cast<int32_t>(m_vinfo.xres))
     {
         xEnd = m_vinfo.xres - 1 - (x - xStart);
     }
@@ -306,7 +309,8 @@ CFrameBuffer565:: putImagePartial(
         y = 0;
     }
 
-    if ((y - yStart + image.getHeight()) > m_vinfo.yres)
+    if ((y - yStart + image.getHeight()) >
+        static_cast<int32_t>(m_vinfo.yres))
     {
         yEnd = m_vinfo.yres - 1 - (y - yStart);
     }

@@ -64,16 +64,16 @@ class CCpuTrace
 public:
 
     CCpuTrace(
-        uint16_t width,
-        uint16_t traceHeight,
-        uint16_t yPosition,
-        uint16_t gridHeight = 20);
+        int16_t width,
+        int16_t traceHeight,
+        int16_t yPosition,
+        int16_t gridHeight = 20);
 
     virtual void show(const CFrameBuffer565& fb, time_t now) override;
 
 private:
 
-    uint16_t m_traceHeight;
+    int16_t m_traceHeight;
 
     SCpuStats m_currentStats;
     SCpuStats m_previousStats;

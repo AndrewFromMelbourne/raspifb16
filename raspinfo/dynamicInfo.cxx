@@ -163,8 +163,8 @@ getTime(
 
 CDynamicInfo::
 CDynamicInfo(
-    uint16_t width,
-    uint16_t yPosition)
+    int16_t width,
+    int16_t yPosition)
 :
     CPanel{width, 2 * (sc_fontHeight + 4), yPosition},
     m_heading(255, 255, 0),

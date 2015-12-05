@@ -328,7 +328,7 @@ main(
 
         //-----------------------------------------------------------------
 
-        uint16_t traceHeight = 100;
+        int16_t traceHeight = 100;
 
         // FIXME - need a better way to work out height of trace windows.
 
@@ -337,13 +337,13 @@ main(
             traceHeight = 80;
         }
 
-        uint16_t gridHeight = traceHeight / 5;
+        int16_t gridHeight = traceHeight / 5;
 
         using APanels = std::vector<std::unique_ptr<CPanel>>;
 
         APanels panels;
 
-        auto panelTop = [](const APanels& panels) -> uint16_t
+        auto panelTop = [](const APanels& panels) -> int16_t
         {
             if (panels.empty())
             {

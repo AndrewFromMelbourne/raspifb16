@@ -37,8 +37,8 @@
 using size_type = std::vector<uint16_t>::size_type;
 
 CImage565:: CImage565(
-    uint16_t width,
-    uint16_t height)
+    int16_t width,
+    int16_t height)
 :
     m_width{width},
     m_height{height},
@@ -59,8 +59,8 @@ CImage565:: clear(
 
 bool
 CImage565:: setPixel(
-    uint16_t x,
-    uint16_t y,
+    int16_t x,
+    int16_t y,
     uint16_t rgb)
 {
     bool isValid{validPixel(x, y)};
@@ -77,8 +77,8 @@ CImage565:: setPixel(
 
 bool
 CImage565:: getPixel(
-    uint16_t x,
-    uint16_t y,
+    int16_t x,
+    int16_t y,
     CRGB565& rgb) const
 {
     bool isValid{validPixel(x, y)};
@@ -95,8 +95,8 @@ CImage565:: getPixel(
 
 bool
 CImage565:: getPixel(
-    uint16_t x,
-    uint16_t y,
+    int16_t x,
+    int16_t y,
     uint16_t& rgb) const
 {
     bool isValid{validPixel(x, y)};
@@ -113,7 +113,7 @@ CImage565:: getPixel(
 
 const uint16_t*
 CImage565:: getRow(
-    uint16_t y) const
+    int16_t y) const
 {
     if (validPixel(0, y))
     {
@@ -122,23 +122,6 @@ CImage565:: getRow(
     else
     {
         return nullptr;
-    }
-}
-
-//-------------------------------------------------------------------------
-
-bool
-CImage565:: validPixel(
-    uint16_t x,
-    uint16_t y) const
-{
-    if ((x < 0) || (y < 0) || (x >= m_width) || (y >= m_height))
-    {
-        return false;
-    }
-    else
-    {
-        return true;
     }
 }
 

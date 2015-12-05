@@ -49,11 +49,11 @@ const CRGB565 CTrace::sc_gridColour{48, 48, 48};
 
 CTrace::
 CTrace(
-    uint16_t width,
-    uint16_t traceHeight,
-    uint16_t yPosition,
-    uint16_t gridHeight,
-    uint16_t traces,
+    int16_t width,
+    int16_t traceHeight,
+    int16_t yPosition,
+    int16_t gridHeight,
+    int16_t traces,
     const std::string& title,
     const std::vector<std::string>& traceNames,
     const std::vector<CRGB565>& traceColours)
@@ -66,7 +66,7 @@ CTrace(
     m_traceData(),
     m_time(width)
 {
-    for (uint16_t trace = 0 ; trace < traces ; ++trace)
+    for (int16_t trace = 0 ; trace < traces ; ++trace)
     {
 
         STraceData traceData =
@@ -141,7 +141,7 @@ CTrace(
      const std::vector<int8_t>& data,
     time_t now)
 {
-    uint16_t index{0};
+    int16_t index{0};
 
     if (m_columns < getImage().getWidth())
     {
@@ -171,13 +171,13 @@ CTrace(
 
     //-----------------------------------------------------------------
 
-    for (uint16_t i = 0 ; i < m_columns ; ++i)
+    for (int16_t i = 0 ; i < m_columns ; ++i)
     {
-        int16_t j = static_cast<int16_t>(m_traceHeight) - 1;
+        int16_t j = m_traceHeight - 1;
 
         for (auto& trace : m_traceData)
         {
-            for (uint16_t v = 0 ; v < trace.m_values[i] ; ++v)
+            for (int16_t v = 0 ; v < trace.m_values[i] ; ++v)
             {
                 if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
                 {
