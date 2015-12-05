@@ -60,14 +60,17 @@ CFrameBuffer565:: CFrameBuffer565(
 
     if (ioctl(m_fbfd, FBIOGET_FSCREENINFO, &(m_finfo)) == -1)
     {
+        close(m_fbfd);
+
         throw std::system_error{errno,
                                 std::system_category(), 
                                 "reading fixed framebuffer information"};
-        exit(EXIT_FAILURE);
     }
 
     if (ioctl(m_fbfd, FBIOGET_VSCREENINFO, &(m_vinfo)) == -1)
     {
+        close(m_fbfd);
+
         throw std::system_error{errno,
                                 std::system_category(), 
                                 "reading variable framebuffer information"};
@@ -84,6 +87,8 @@ CFrameBuffer565:: CFrameBuffer565(
 
     if (fbp == MAP_FAILED)
     {
+        close(m_fbfd);
+
         throw std::system_error(errno,
                                 std::system_category(), 
                                 "mapping framebuffer device to memory");
