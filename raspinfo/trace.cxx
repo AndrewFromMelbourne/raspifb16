@@ -63,20 +63,21 @@ CTrace(
     m_gridHeight{gridHeight},
     m_traces{traces},
     m_columns{0},
-    m_traceData(traces),
+    m_traceData(),
     m_time(width)
 {
-    auto traceName = traceNames.begin();
-    auto traceColour = traceColours.begin();
-
-    for (auto& trace : m_traceData)
+    for (int16_t trace = 0 ; trace < traces ; ++trace)
     {
-        trace.m_name = *(traceName++);
-        trace.m_traceColour = *(traceColour++);
-        trace.m_gridColour = CRGB565::blend(63,
-                                            sc_gridColour,
-                                            trace.m_traceColour);
-        trace.m_values.resize(width, 0);
+
+        STraceData traceData =
+        {
+            traceNames[trace],
+            traceColours[trace],
+            CRGB565::blend(63, sc_gridColour, traceColours[trace]),
+        };
+        traceData.m_values.resize(width, 0);
+
+        m_traceData.push_back(traceData);
     }
 
     //---------------------------------------------------------------------

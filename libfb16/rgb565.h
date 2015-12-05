@@ -38,7 +38,6 @@ class CRGB565
 {
 public:
 
-    CRGB565();
     CRGB565(uint8_t red, uint8_t green, uint8_t blue);
 
     explicit CRGB565(uint16_t rgb);
