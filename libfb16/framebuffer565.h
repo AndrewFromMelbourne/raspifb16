@@ -55,8 +55,8 @@ public:
     CFrameBuffer565(CFrameBuffer565&& fb) = delete;
     CFrameBuffer565& operator=(CFrameBuffer565&& fb) = delete;
 
-    int getWidth() const { return m_vinfo.xres; }
-    int getHeight() const { return m_vinfo.yres; }
+    uint32_t getWidth() const { return m_vinfo.xres; }
+    uint32_t getHeight() const { return m_vinfo.yres; }
 
     bool hideCursor();
 
@@ -64,24 +64,37 @@ public:
     void clear(const CRGB565& rgb) const { clear(rgb.get565()); }
     void clear(uint16_t rgb) const;
 
-    bool setPixel(int x, int y, const CRGB565& rgb) const;
-    bool setPixel(int x, int y, uint16_t rgb) const;
+    bool setPixel(uint32_t x, uint32_t y, const CRGB565& rgb) const;
+    bool setPixel(uint32_t x, uint32_t y, uint16_t rgb) const;
 
-    bool getPixel(int x, int y, CRGB565& rgb) const;
-    bool getPixel(int x, int y, uint16_t& rgb) const;
+    bool getPixel(uint32_t x, uint32_t y, CRGB565& rgb) const;
+    bool getPixel(uint32_t x, uint32_t y, uint16_t& rgb) const;
 
-    bool putImage(int x, int y, const CImage565& image) const;
+    bool putImage(uint32_t x, uint32_t y, const CImage565& image) const;
 
 private:
 
-    bool putImagePartial(int x, int y, const CImage565& image) const;
+    bool putImagePartial(uint32_t x, uint32_t y, const CImage565& image) const;
 
-    bool validPixel(int x, int y) const;
+    bool
+    validPixel(
+        uint32_t x,
+        uint32_t y) const
+    {
+        return (x >= 0) &&
+               (y >= 0) &&
+               (x < m_vinfo.xres) &&
+               (y < m_vinfo.yres);
+    }
 
     int m_fbfd;
     int m_consolefd;
+
     struct fb_fix_screeninfo m_finfo;
     struct fb_var_screeninfo m_vinfo;
+
+    uint32_t m_lineLengthPixels;
+
     uint16_t* m_fbp;
 };
 

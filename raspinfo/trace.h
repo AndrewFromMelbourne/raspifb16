@@ -59,11 +59,11 @@ class CTrace
 public:
 
     CTrace(
-        int16_t width,
-        int16_t traceHeight,
-        int16_t yPosition,
-        int16_t gridHeight,
-        int16_t traces,
+        uint16_t width,
+        uint16_t traceHeight,
+        uint16_t yPosition,
+        uint16_t gridHeight,
+        uint16_t traces,
         const std::string& title,
         const std::vector<std::string>& traceNames,
         const std::vector<CRGB565>& traceColours);
@@ -76,10 +76,10 @@ protected:
 
 private:
 
-    int16_t m_traceHeight;
-    int16_t m_gridHeight;
-    int16_t m_traces;
-    int16_t m_columns;
+    uint16_t m_traceHeight;
+    uint16_t m_gridHeight;
+    uint16_t m_traces;
+    uint16_t m_columns;
 
     std::vector<STraceData> m_traceData;
     std::vector<int8_t> m_time;

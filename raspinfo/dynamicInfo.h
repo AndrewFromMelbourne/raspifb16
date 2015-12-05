@@ -46,7 +46,7 @@ class CDynamicInfo
 {
 public:
 
-    CDynamicInfo(int16_t width, int16_t yPosition);
+    CDynamicInfo(uint16_t width, uint16_t yPosition);
 
     virtual void show(const CFrameBuffer565& fb, time_t now) override;
 

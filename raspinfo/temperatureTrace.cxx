@@ -38,7 +38,10 @@
 #include <inttypes.h>
 #include <unistd.h>
 
-#include "bcm_host.h"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#include <bcm_host.h>
+#pragma GCC diagnostic pop
 
 #include "font.h"
 #include "temperatureTrace.h"
@@ -67,10 +70,10 @@ getTemperature()
 
 CTemperatureTrace::
 CTemperatureTrace(
-    int16_t width,
-    int16_t traceHeight,
-    int16_t yPosition,
-    int16_t gridHeight)
+    uint16_t width,
+    uint16_t traceHeight,
+    uint16_t yPosition,
+    uint16_t gridHeight)
 :
     CTrace(width,
            traceHeight,

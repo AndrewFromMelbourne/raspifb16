@@ -38,7 +38,10 @@
 #include <netinet/in.h>
 #include <sys/types.h>
 
-#include "bcm_host.h"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#include <bcm_host.h>
+#pragma GCC diagnostic pop
 
 #include "font.h"
 #include "dynamicInfo.h"
@@ -160,8 +163,8 @@ getTime(
 
 CDynamicInfo::
 CDynamicInfo(
-    int16_t width,
-    int16_t yPosition)
+    uint16_t width,
+    uint16_t yPosition)
 :
     CPanel{width, 2 * (sc_fontHeight + 4), yPosition},
     m_heading(255, 255, 0),

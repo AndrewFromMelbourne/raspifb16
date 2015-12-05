@@ -36,6 +36,7 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 
+#include <algorithm>
 #include <string>
 #include <system_error>
 
@@ -49,6 +50,9 @@ CFrameBuffer565:: CFrameBuffer565(
 :
     m_fbfd{open(device, O_RDWR)},
     m_consolefd{-1},
+    m_finfo{},
+    m_vinfo{},
+    m_lineLengthPixels{0},
     m_fbp{nullptr}
 {
     if (m_fbfd == -1)
@@ -75,6 +79,10 @@ CFrameBuffer565:: CFrameBuffer565(
                                 std::system_category(), 
                                 "reading variable framebuffer information"};
     }
+
+    //---------------------------------------------------------------------
+
+    m_lineLengthPixels = m_finfo.line_length / bytesPerPixel;
 
     //---------------------------------------------------------------------
 
@@ -122,6 +130,7 @@ bool
 CFrameBuffer565:: hideCursor()
 {
     std::string name{ttyname(0)};
+    bool result = true;
 
     if (name.find("/dev/pts") != std::string::npos)
     {
@@ -131,7 +140,7 @@ CFrameBuffer565:: hideCursor()
 
         if (m_consolefd == -1)
         {
-            return false;
+            result = false;
         }
     }
     else
@@ -139,7 +148,12 @@ CFrameBuffer565:: hideCursor()
         m_consolefd = 0;
     }
 
-    ioctl(m_consolefd, KDSETMODE, KD_GRAPHICS);
+    if (m_consolefd != -1)
+    {
+        ioctl(m_consolefd, KDSETMODE, KD_GRAPHICS);
+    }
+
+    return result;
 }
 
 //-------------------------------------------------------------------------
@@ -156,30 +170,22 @@ void
 CFrameBuffer565:: clear(
     uint16_t rgb) const
 {
-    uint16_t* fbp = m_fbp;
-
-    for (
-        auto location = 0 ;
-        location < m_finfo.smem_len / bytesPerPixel ;
-        ++location)
-    {
-        *(fbp++) = rgb;
-    }
+    std::fill(m_fbp, m_fbp + (m_finfo.smem_len / bytesPerPixel), rgb);
 }
 
 //-------------------------------------------------------------------------
 
 bool
 CFrameBuffer565:: setPixel(
-    int x,
-    int y,
+    uint32_t x,
+    uint32_t y,
     const CRGB565& rgb) const
 {
     bool isValid{validPixel(x, y)};
 
     if (isValid)
     {
-        m_fbp[x + y * (m_finfo.line_length / bytesPerPixel)] = rgb.get565();
+        m_fbp[x + y * m_lineLengthPixels] = rgb.get565();
     }
 
     return isValid;
@@ -189,15 +195,15 @@ CFrameBuffer565:: setPixel(
 
 bool
 CFrameBuffer565:: setPixel(
-    int x,
-    int y,
+    uint32_t x,
+    uint32_t y,
     uint16_t rgb) const
 {
     bool isValid{validPixel(x, y)};
 
     if (isValid)
     {
-        m_fbp[x + y * (m_finfo.line_length / bytesPerPixel)] = rgb;
+        m_fbp[x + y * m_lineLengthPixels] = rgb;
     }
 
     return isValid;
@@ -207,15 +213,15 @@ CFrameBuffer565:: setPixel(
 
 bool
 CFrameBuffer565:: getPixel(
-    int x,
-    int y,
+    uint32_t x,
+    uint32_t y,
     CRGB565& rgb) const
 {
     bool isValid{validPixel(x, y)};
 
     if (isValid)
     {
-        rgb.set565(m_fbp[x + y * (m_finfo.line_length / bytesPerPixel)]);
+        rgb.set565(m_fbp[x + y * m_lineLengthPixels]);
     }
 
     return isValid;
@@ -225,15 +231,15 @@ CFrameBuffer565:: getPixel(
 
 bool
 CFrameBuffer565:: getPixel(
-    int x,
-    int y,
+    uint32_t x,
+    uint32_t y,
     uint16_t& rgb) const
 {
     bool isValid{validPixel(x, y)};
 
     if (isValid)
     {
-        rgb = m_fbp[x + y * (m_finfo.line_length / bytesPerPixel)];
+        rgb = m_fbp[x + y * m_lineLengthPixels];
     }
 
     return isValid;
@@ -243,8 +249,8 @@ CFrameBuffer565:: getPixel(
 
 bool
 CFrameBuffer565:: putImage(
-    int x,
-    int y,
+    uint32_t x,
+    uint32_t y,
     const CImage565& image) const
 {
     if ((x < 0) || ((x + image.getWidth()) >  m_vinfo.xres))
@@ -259,20 +265,22 @@ CFrameBuffer565:: putImage(
 
     size_t rowSize = image.getWidth() * sizeof(uint16_t);
 
-    for (int j = 0 ; j < image.getHeight() ; ++j)
+    for (uint32_t j = 0 ; j < image.getHeight() ; ++j)
     {
-        memcpy(m_fbp + ((j+y) * (m_finfo.line_length/bytesPerPixel)) + x,
+        memcpy(m_fbp + ((j+y) * m_lineLengthPixels) + x,
                image.getRow(j),
                rowSize);
     }
+
+    return true;
 }
 
 //-------------------------------------------------------------------------
 
 bool
 CFrameBuffer565:: putImagePartial(
-    int x,
-    int y,
+    uint32_t x,
+    uint32_t y,
     const CImage565& image) const
 {
     auto xStart = 0;
@@ -317,26 +325,11 @@ CFrameBuffer565:: putImagePartial(
 
     for (auto j = yStart ; j <= yEnd ; ++j)
     {
-        memcpy(m_fbp + ((j+y) * (m_finfo.line_length/bytesPerPixel )) + x,
+        memcpy(m_fbp + ((j+y) * m_lineLengthPixels) + x,
                image.getRow(j) + xStart,
                rowSize);
     }
-}
 
-//-------------------------------------------------------------------------
-
-bool
-CFrameBuffer565:: validPixel(
-    int x,
-    int y) const
-{
-    if ((x < 0) || (y < 0) || (x >= m_vinfo.xres) || (y >= m_vinfo.yres))
-    {
-        return false;
-    }
-    else
-    {
-        return true;
-    }
+    return true;
 }
 

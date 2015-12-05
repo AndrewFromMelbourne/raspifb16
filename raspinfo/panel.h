@@ -40,9 +40,9 @@ class CPanel
 {
 public:
 
-    CPanel(int16_t width,
-           int16_t height,
-           int16_t yPosition)
+    CPanel(uint16_t width,
+           uint16_t height,
+           uint16_t yPosition)
     :
         m_yPosition{yPosition},
         m_image{width, height}
@@ -51,7 +51,7 @@ public:
 
     virtual ~CPanel() = default;
 
-    int16_t getBottom() const { return m_yPosition + m_image.getHeight(); }
+    uint16_t getBottom() const { return m_yPosition + m_image.getHeight(); }
 
     CImage565& getImage() { return m_image; }
     const CImage565& getImage() const { return m_image; }
@@ -64,7 +64,7 @@ protected:
 
 private:
 
-    int16_t m_yPosition;
+    uint16_t m_yPosition;
     CImage565 m_image;
 };
 
