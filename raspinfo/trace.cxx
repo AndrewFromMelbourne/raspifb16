@@ -61,7 +61,6 @@ CTrace(
     CPanel(width, traceHeight + sc_fontHeight + 4, yPosition),
     m_traceHeight{traceHeight},
     m_gridHeight{gridHeight},
-    m_traces{traces},
     m_columns{0},
     m_traceData(),
     m_time(width)

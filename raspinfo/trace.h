@@ -78,7 +78,6 @@ private:
 
     int16_t m_traceHeight;
     int16_t m_gridHeight;
-    int16_t m_traces;
     int16_t m_columns;
 
     std::vector<STraceData> m_traceData;
