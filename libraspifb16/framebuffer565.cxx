@@ -160,14 +160,6 @@ raspifb16::CFrameBuffer565:: hideCursor()
 //-------------------------------------------------------------------------
 
 void
-raspifb16::CFrameBuffer565:: clear() const
-{
-    memset(m_fbp, 0, m_finfo.smem_len);
-}
-
-//-------------------------------------------------------------------------
-
-void
 raspifb16::CFrameBuffer565:: clear(
     uint16_t rgb) const
 {

@@ -68,9 +68,8 @@ public:
 
     bool hideCursor();
 
-    void clear() const;
     void clear(const CRGB565& rgb) const { clear(rgb.get565()); }
-    void clear(uint16_t rgb) const;
+    void clear(uint16_t rgb = 0) const;
 
     bool setPixel(int32_t x, int32_t y, const CRGB565& rgb) const;
     bool setPixel(int32_t x, int32_t y, uint16_t rgb) const;
