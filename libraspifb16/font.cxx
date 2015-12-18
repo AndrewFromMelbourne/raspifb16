@@ -27,10 +27,17 @@
 
 #include "bits.h"
 #include "font.h"
+#include "image565.h"
+#include "rgb565.h"
 
 //-------------------------------------------------------------------------
 
-uint8_t font[256][sc_fontHeight] =
+namespace raspifb16
+{
+
+//-------------------------------------------------------------------------
+
+static uint8_t font[256][sc_fontHeight] =
 {
     { // 0x00
         B00000000B,
@@ -4644,8 +4651,12 @@ uint8_t font[256][sc_fontHeight] =
 
 //-------------------------------------------------------------------------
 
-SFontPosition
-drawChar(
+}; // namespace raspifb16
+
+//-------------------------------------------------------------------------
+
+raspifb16::SFontPosition
+raspifb16::drawChar(
     int16_t x,
     int16_t y,
     uint8_t c,
@@ -4657,8 +4668,8 @@ drawChar(
 
 //-------------------------------------------------------------------------
 
-SFontPosition
-drawChar(
+raspifb16::SFontPosition
+raspifb16::drawChar(
     int16_t x,
     int16_t y,
     uint8_t c,
@@ -4688,8 +4699,8 @@ drawChar(
 
 //-------------------------------------------------------------------------
 
-SFontPosition
-drawString(
+raspifb16::SFontPosition
+raspifb16::drawString(
     int16_t x,
     int16_t y,
     const char* string,
@@ -4722,8 +4733,8 @@ drawString(
 
 //-------------------------------------------------------------------------
 
-SFontPosition
-drawString(
+raspifb16::SFontPosition
+raspifb16::drawString(
     int16_t x,
     int16_t y,
     const std::string& string,

@@ -33,6 +33,7 @@
 #include <cstdint>
 
 #include "framebuffer565.h"
+#include "image565.h"
 
 //-------------------------------------------------------------------------
 
@@ -53,19 +54,27 @@ public:
 
     int16_t getBottom() const { return m_yPosition + m_image.getHeight(); }
 
-    CImage565& getImage() { return m_image; }
-    const CImage565& getImage() const { return m_image; }
+    raspifb16::CImage565& getImage() { return m_image; }
+    const raspifb16::CImage565& getImage() const { return m_image; }
 
-    virtual void show(const CFrameBuffer565& fb, time_t now) = 0;
+    virtual void
+    show(
+        const raspifb16::CFrameBuffer565& fb,
+        time_t now) = 0;
 
 protected:
 
-    void putImage(const CFrameBuffer565& fb) const { fb.putImage(0, m_yPosition, m_image); }
+    void
+    putImage(
+        const raspifb16::CFrameBuffer565& fb) const
+    {
+        fb.putImage(0, m_yPosition, m_image);
+    }
 
 private:
 
     int16_t m_yPosition;
-    CImage565 m_image;
+    raspifb16::CImage565 m_image;
 };
 
 //-------------------------------------------------------------------------

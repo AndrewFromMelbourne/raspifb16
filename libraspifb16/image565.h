@@ -25,39 +25,61 @@
 //
 //-------------------------------------------------------------------------
 
-#ifndef RGB565_H
-#define RGB565_H
+#ifndef IMAGE565_H
+#define IMAGE565_H
 
 //-------------------------------------------------------------------------
 
 #include <cstdint>
+#include <vector>
+
+#include "rgb565.h"
 
 //-------------------------------------------------------------------------
 
-class CRGB565
+namespace raspifb16
+{
+
+//-------------------------------------------------------------------------
+
+class CImage565
 {
 public:
 
-    CRGB565(uint8_t red, uint8_t green, uint8_t blue);
+    CImage565(int16_t width, int16_t height);
 
-    explicit CRGB565(uint16_t rgb);
+    int16_t getWidth() const { return m_width; }
+    int16_t getHeight() const { return m_height; }
 
-    uint8_t getRed() const;
-    uint8_t getGreen() const;
-    uint8_t getBlue() const;
+    void clear(const CRGB565& rgb) { clear(rgb.get565()); }
+    void clear(uint16_t rgb);
 
-    uint16_t get565() const { return m_rgb; }
+    bool setPixel(int16_t x, int16_t y, const CRGB565& rgb) { return setPixel(x, y, rgb.get565()); }
+    bool setPixel(int16_t x, int16_t y, uint16_t rgb);
 
-    void setRGB(uint8_t red, uint8_t green, uint8_t blue);
+    bool getPixel(int16_t x, int16_t y, CRGB565& rgb) const;
+    bool getPixel(int16_t x, int16_t y, uint16_t& rgb) const;
 
-    void set565(uint16_t rgb) { m_rgb = rgb; }
-
-    static CRGB565 blend(uint8_t alpha, const CRGB565& a, const CRGB565& b);
+    const uint16_t* getRow(int16_t y) const;
 
 private:
 
-    uint16_t m_rgb;
+    bool
+    validPixel(
+        int16_t x,
+        int16_t y) const
+    {
+        return ((x >= 0) && (y >= 0) && (x < m_width) && (y < m_height));
+    }
+
+    int16_t m_width;
+    int16_t m_height;
+    std::vector<uint16_t> m_buffer;
 };
+
+//-------------------------------------------------------------------------
+
+}; // namespace raspifb16
 
 //-------------------------------------------------------------------------
 

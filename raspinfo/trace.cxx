@@ -41,9 +41,9 @@
 
 //-------------------------------------------------------------------------
 
-const CRGB565 CTrace::sc_foreground{255, 255, 255};
-const CRGB565 CTrace::sc_background{0, 0, 0};
-const CRGB565 CTrace::sc_gridColour{48, 48, 48};
+const raspifb16::CRGB565 CTrace::sc_foreground{255, 255, 255};
+const raspifb16::CRGB565 CTrace::sc_background{0, 0, 0};
+const raspifb16::CRGB565 CTrace::sc_gridColour{48, 48, 48};
 
 //-------------------------------------------------------------------------
 
@@ -56,9 +56,9 @@ CTrace(
     int16_t traces,
     const std::string& title,
     const std::vector<std::string>& traceNames,
-    const std::vector<CRGB565>& traceColours)
+    const std::vector<raspifb16::CRGB565>& traceColours)
 :
-    CPanel(width, traceHeight + sc_fontHeight + 4, yPosition),
+    CPanel(width, traceHeight + raspifb16::sc_fontHeight + 4, yPosition),
     m_traceHeight{traceHeight},
     m_gridHeight{gridHeight},
     m_columns{0},
@@ -72,7 +72,9 @@ CTrace(
         {
             traceNames[trace],
             traceColours[trace],
-            CRGB565::blend(63, sc_gridColour, traceColours[trace]),
+            raspifb16::CRGB565::blend(63,
+                                      sc_gridColour,
+                                      traceColours[trace]),
         };
         traceData.m_values.resize(width, 0);
 
@@ -85,9 +87,9 @@ CTrace(
 
     uint8_t smallSquare = 0xFE;
 
-    SFontPosition position = 
+    raspifb16::SFontPosition position = 
         drawString(0,
-                   getImage().getHeight() - 2 - sc_fontHeight,
+                   getImage().getHeight() - 2 - raspifb16::sc_fontHeight,
                    title + " (",
                    sc_foreground,
                    getImage());
@@ -101,7 +103,7 @@ CTrace(
         }
         else
         {
-            position.x += sc_fontWidth;
+            position.x += raspifb16::sc_fontWidth;
         }
 
         position = drawString(position.x,

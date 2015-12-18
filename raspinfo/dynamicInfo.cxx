@@ -166,7 +166,7 @@ CDynamicInfo(
     int16_t width,
     int16_t yPosition)
 :
-    CPanel{width, 2 * (sc_fontHeight + 4), yPosition},
+    CPanel{width, 2 * (raspifb16::sc_fontHeight + 4), yPosition},
     m_heading(255, 255, 0),
     m_foreground(255, 255, 255),
     m_background(0, 0, 0)
@@ -178,14 +178,14 @@ CDynamicInfo(
 void
 CDynamicInfo::
 show(
-    const CFrameBuffer565& fb,
+    const raspifb16::CFrameBuffer565& fb,
     time_t now)
 {
     getImage().clear(m_background);
 
     //---------------------------------------------------------------------
 
-    SFontPosition position = { 0, 0 };
+    raspifb16::SFontPosition position = { 0, 0 };
 
     position = drawString(position.x,
                           position.y,
@@ -237,7 +237,7 @@ show(
     //---------------------------------------------------------------------
 
     position.x = 0;
-    position.y += sc_fontHeight + 4;
+    position.y += raspifb16::sc_fontHeight + 4;
 
     position = drawString(position.x,
                           position.y,

@@ -33,10 +33,15 @@
 #include <cstdint>
 #include <string>
 
-#include "framebuffer565.h"
-#include "image565.h"
 #include "panel.h"
 #include "rgb565.h"
+
+//-------------------------------------------------------------------------
+
+namespace raspifb16
+{
+class CFrameBuffer565;
+}
 
 //-------------------------------------------------------------------------
 
@@ -48,13 +53,16 @@ public:
 
     CDynamicInfo(int16_t width, int16_t yPosition);
 
-    virtual void show(const CFrameBuffer565& fb, time_t now) override;
+    virtual void
+    show(
+        const raspifb16::CFrameBuffer565& fb,
+        time_t now) override;
 
 private:
 
-    CRGB565 m_heading;
-    CRGB565 m_foreground;
-    CRGB565 m_background;
+    raspifb16::CRGB565 m_heading;
+    raspifb16::CRGB565 m_foreground;
+    raspifb16::CRGB565 m_background;
 
     static std::string getIpAddress(char& interface);
     static std::string getMemorySplit();

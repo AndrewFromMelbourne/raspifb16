@@ -322,9 +322,9 @@ main(
 
     try
     {
-        CFrameBuffer565 fb(device);
+        raspifb16::CFrameBuffer565 fb(device);
 
-        fb.clear(CRGB565(0, 0, 0));
+        fb.clear(raspifb16::CRGB565(0, 0, 0));
 
         //-----------------------------------------------------------------
 
@@ -357,7 +357,8 @@ main(
 
         panels.push_back(
             std::unique_ptr<CPanel>(
-                new CDynamicInfo(fb.getWidth(), panelTop(panels))));
+                new CDynamicInfo(fb.getWidth(),
+                                 panelTop(panels))));
 
         panels.push_back(
             std::unique_ptr<CPanel>(

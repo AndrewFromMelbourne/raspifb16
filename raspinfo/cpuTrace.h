@@ -35,9 +35,14 @@
 
 #include <sys/time.h>
 
-#include "framebuffer565.h"
-#include "rgb565.h"
 #include "trace.h"
+
+//-------------------------------------------------------------------------
+
+namespace raspifb16
+{
+class CFrameBuffer565;
+}
 
 //-------------------------------------------------------------------------
 
@@ -69,7 +74,10 @@ public:
         int16_t yPosition,
         int16_t gridHeight = 20);
 
-    virtual void show(const CFrameBuffer565& fb, time_t now) override;
+    virtual void
+    show(
+        const raspifb16::CFrameBuffer565& fb,
+        time_t now) override;
 
 private:
 

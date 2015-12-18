@@ -110,7 +110,9 @@ CCpuTrace(
            3,
            "CPU",
            std::vector<std::string>{"user", "nice", "system"},
-           std::vector<CRGB565>{{4,90,141},{116,169,207},{241,238,246}}),
+           std::vector<raspifb16::CRGB565>{{4,90,141},
+                                           {116,169,207},
+                                           {241,238,246}}),
     m_traceHeight{traceHeight}
 {
     getCpuStats(m_currentStats);
@@ -121,7 +123,7 @@ CCpuTrace(
 void
 CCpuTrace::
 show(
-    const CFrameBuffer565& fb,
+    const raspifb16::CFrameBuffer565& fb,
     time_t now)
 {
     m_previousStats = m_currentStats;

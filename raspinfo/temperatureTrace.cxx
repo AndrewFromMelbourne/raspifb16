@@ -82,7 +82,7 @@ CTemperatureTrace(
            1,
            "Temperature",
            std::vector<std::string>{"temperature"},
-           std::vector<CRGB565>{{102,167,225}}),
+           std::vector<raspifb16::CRGB565>{{102,167,225}}),
     m_traceHeight(traceHeight)
 {
 }
@@ -92,7 +92,7 @@ CTemperatureTrace(
 void
 CTemperatureTrace::
 show(
-    const CFrameBuffer565& fb,
+    const raspifb16::CFrameBuffer565& fb,
     time_t now)
 {
     int8_t temperature = (getTemperature() * m_traceHeight) / 100;

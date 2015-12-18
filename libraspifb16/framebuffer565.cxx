@@ -41,11 +41,12 @@
 #include <system_error>
 
 #include "framebuffer565.h"
+#include "image565.h"
 
 //-------------------------------------------------------------------------
 
 
-CFrameBuffer565:: CFrameBuffer565(
+raspifb16::CFrameBuffer565:: CFrameBuffer565(
     const char* device)
 :
     m_fbfd{open(device, O_RDWR)},
@@ -107,7 +108,7 @@ CFrameBuffer565:: CFrameBuffer565(
 
 //-------------------------------------------------------------------------
 
-CFrameBuffer565:: ~CFrameBuffer565()
+raspifb16::CFrameBuffer565:: ~CFrameBuffer565()
 {
     munmap(m_fbp, m_finfo.smem_len);
 
@@ -127,7 +128,7 @@ CFrameBuffer565:: ~CFrameBuffer565()
 //-------------------------------------------------------------------------
 
 bool
-CFrameBuffer565:: hideCursor()
+raspifb16::CFrameBuffer565:: hideCursor()
 {
     std::string name{ttyname(0)};
     bool result = true;
@@ -159,7 +160,7 @@ CFrameBuffer565:: hideCursor()
 //-------------------------------------------------------------------------
 
 void
-CFrameBuffer565:: clear() const
+raspifb16::CFrameBuffer565:: clear() const
 {
     memset(m_fbp, 0, m_finfo.smem_len);
 }
@@ -167,7 +168,7 @@ CFrameBuffer565:: clear() const
 //-------------------------------------------------------------------------
 
 void
-CFrameBuffer565:: clear(
+raspifb16::CFrameBuffer565:: clear(
     uint16_t rgb) const
 {
     std::fill(m_fbp, m_fbp + (m_finfo.smem_len / bytesPerPixel), rgb);
@@ -176,7 +177,7 @@ CFrameBuffer565:: clear(
 //-------------------------------------------------------------------------
 
 bool
-CFrameBuffer565:: setPixel(
+raspifb16::CFrameBuffer565:: setPixel(
     int32_t x,
     int32_t y,
     const CRGB565& rgb) const
@@ -194,7 +195,7 @@ CFrameBuffer565:: setPixel(
 //-------------------------------------------------------------------------
 
 bool
-CFrameBuffer565:: setPixel(
+raspifb16::CFrameBuffer565:: setPixel(
     int32_t x,
     int32_t y,
     uint16_t rgb) const
@@ -212,7 +213,7 @@ CFrameBuffer565:: setPixel(
 //-------------------------------------------------------------------------
 
 bool
-CFrameBuffer565:: getPixel(
+raspifb16::CFrameBuffer565:: getPixel(
     int32_t x,
     int32_t y,
     CRGB565& rgb) const
@@ -230,7 +231,7 @@ CFrameBuffer565:: getPixel(
 //-------------------------------------------------------------------------
 
 bool
-CFrameBuffer565:: getPixel(
+raspifb16::CFrameBuffer565:: getPixel(
     int32_t x,
     int32_t y,
     uint16_t& rgb) const
@@ -248,7 +249,7 @@ CFrameBuffer565:: getPixel(
 //-------------------------------------------------------------------------
 
 bool
-CFrameBuffer565:: putImage(
+raspifb16::CFrameBuffer565:: putImage(
     int32_t x,
     int32_t y,
     const CImage565& image) const
@@ -280,7 +281,7 @@ CFrameBuffer565:: putImage(
 //-------------------------------------------------------------------------
 
 bool
-CFrameBuffer565:: putImagePartial(
+raspifb16::CFrameBuffer565:: putImagePartial(
     int32_t x,
     int32_t y,
     const CImage565& image) const

@@ -36,7 +36,7 @@
 
 using size_type = std::vector<uint16_t>::size_type;
 
-CImage565:: CImage565(
+raspifb16::CImage565:: CImage565(
     int16_t width,
     int16_t height)
 :
@@ -49,7 +49,7 @@ CImage565:: CImage565(
 //-------------------------------------------------------------------------
 
 void
-CImage565:: clear(
+raspifb16::CImage565:: clear(
     uint16_t rgb)
 {
     std::fill(m_buffer.begin(), m_buffer.end(), rgb);
@@ -58,7 +58,7 @@ CImage565:: clear(
 //-------------------------------------------------------------------------
 
 bool
-CImage565:: setPixel(
+raspifb16::CImage565:: setPixel(
     int16_t x,
     int16_t y,
     uint16_t rgb)
@@ -76,7 +76,7 @@ CImage565:: setPixel(
 //-------------------------------------------------------------------------
 
 bool
-CImage565:: getPixel(
+raspifb16::CImage565:: getPixel(
     int16_t x,
     int16_t y,
     CRGB565& rgb) const
@@ -94,7 +94,7 @@ CImage565:: getPixel(
 //-------------------------------------------------------------------------
 
 bool
-CImage565:: getPixel(
+raspifb16::CImage565:: getPixel(
     int16_t x,
     int16_t y,
     uint16_t& rgb) const
@@ -112,7 +112,7 @@ CImage565:: getPixel(
 //-------------------------------------------------------------------------
 
 const uint16_t*
-CImage565:: getRow(
+raspifb16::CImage565:: getRow(
     int16_t y) const
 {
     if (validPixel(0, y))

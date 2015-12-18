@@ -25,63 +25,90 @@
 //
 //-------------------------------------------------------------------------
 
-#ifndef FONT_H
-#define FONT_H
+#include "rgb565.h"
 
 //-------------------------------------------------------------------------
 
-#include <cstdint>
-#include <string>
-
-#include "image565.h"
-
-//-------------------------------------------------------------------------
-
-static const int16_t sc_fontWidth{8};
-static const int16_t sc_fontHeight{16};
-
-//-------------------------------------------------------------------------
-
-struct SFontPosition
+raspifb16::CRGB565:: CRGB565(
+    uint8_t red,
+    uint8_t green,
+    uint8_t blue)
+:
+    m_rgb{0}
 {
-    int16_t x;
-    int16_t y;
-};
+    setRGB(red, green, blue);
+}
 
 //-------------------------------------------------------------------------
 
-SFontPosition
-drawChar(
-    int16_t x,
-    int16_t y,
-    uint8_t c,
-    const CRGB565& rgb,
-    CImage565& image);
-
-SFontPosition
-drawChar(
-    int16_t x,
-    int16_t y,
-    uint8_t c,
-    uint16_t rgb,
-    CImage565& image);
-
-SFontPosition
-drawString(
-    int16_t x,
-    int16_t y,
-    const char* string,
-    const CRGB565& rgb,
-    CImage565& image);
-
-SFontPosition
-drawString(
-    int16_t x,
-    int16_t y,
-    const std::string& string,
-    const CRGB565& rgb,
-    CImage565& image);
+raspifb16::CRGB565:: CRGB565(
+    uint16_t rgb)
+:
+    m_rgb{rgb}
+{
+}
 
 //-------------------------------------------------------------------------
 
-#endif
+uint8_t
+raspifb16::CRGB565:: getRed() const
+{
+    auto r5 = (m_rgb >> 11) & 0x1F;
+
+    return (r5 << 3) | (r5 >> 2);
+}
+
+//-------------------------------------------------------------------------
+
+uint8_t
+raspifb16::CRGB565:: getGreen() const
+{
+    auto g6 = (m_rgb >> 5) & 0x3F;
+
+    return (g6 << 2) | (g6 >> 4);
+}
+
+//-------------------------------------------------------------------------
+
+uint8_t
+raspifb16::CRGB565:: getBlue() const
+{
+    auto b5 = m_rgb & 0x1F;
+
+    return (b5 << 3) | (b5 >> 2);
+}
+
+//-------------------------------------------------------------------------
+
+void
+raspifb16::CRGB565:: setRGB(
+    uint8_t red,
+    uint8_t green,
+    uint8_t blue)
+{
+    m_rgb = ((red >> 3) << 11) | ((green >> 2) << 5) | (blue >> 3);
+}
+
+//-------------------------------------------------------------------------
+
+raspifb16::CRGB565
+raspifb16::CRGB565:: blend(
+    uint8_t alpha,
+    const CRGB565& a,
+    const CRGB565& b)
+{
+    auto red = (((int16_t)(a.getRed()) * alpha)
+             + ((int16_t)(b.getRed()) * (255 - alpha)))
+             / 255;
+
+    auto green = (((int16_t)(a.getGreen()) * alpha)
+               + ((int16_t)(b.getGreen()) * (255 - alpha)))
+               / 255;
+
+    auto blue = (((int16_t)(a.getBlue()) * alpha)
+              + ((int16_t)(b.getBlue()) * (255 - alpha)))
+              / 255;
+
+    return CRGB565(red, green, blue);
+}
+

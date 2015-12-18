@@ -36,17 +36,23 @@
 
 #include <sys/time.h>
 
-#include "framebuffer565.h"
 #include "panel.h"
 #include "rgb565.h"
+
+//-------------------------------------------------------------------------
+
+namespace raspifb16
+{
+class CFrameBuffer565;
+}
 
 //-------------------------------------------------------------------------
 
 struct STraceData
 {
     std::string m_name;
-    CRGB565 m_traceColour;
-    CRGB565 m_gridColour;
+    raspifb16::CRGB565 m_traceColour;
+    raspifb16::CRGB565 m_gridColour;
     std::vector<int8_t> m_values;
 };
 
@@ -66,9 +72,12 @@ public:
         int16_t traces,
         const std::string& title,
         const std::vector<std::string>& traceNames,
-        const std::vector<CRGB565>& traceColours);
+        const std::vector<raspifb16::CRGB565>& traceColours);
 
-    virtual void show(const CFrameBuffer565& fb, time_t now) override = 0;
+    virtual void
+    show(
+        const raspifb16::CFrameBuffer565& fb,
+        time_t now) override = 0;
 
 protected:
 
@@ -83,9 +92,9 @@ private:
     std::vector<STraceData> m_traceData;
     std::vector<int8_t> m_time;
 
-    static const CRGB565 sc_foreground;
-    static const CRGB565 sc_background;
-    static const CRGB565 sc_gridColour;
+    static const raspifb16::CRGB565 sc_foreground;
+    static const raspifb16::CRGB565 sc_background;
+    static const raspifb16::CRGB565 sc_gridColour;
 };
 
 //-------------------------------------------------------------------------

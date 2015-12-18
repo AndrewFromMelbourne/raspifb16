@@ -108,7 +108,9 @@ CMemoryTrace(
            3,
            "Memory",
            std::vector<std::string>{"used", "buffers", "cached"},
-           std::vector<CRGB565>{{0,109,44},{102,194,164},{237,248,251}}),
+           std::vector<raspifb16::CRGB565>{{0,109,44},
+                                           {102,194,164},
+                                           {237,248,251}}),
     m_traceHeight(traceHeight)
 {
 }
@@ -118,7 +120,7 @@ CMemoryTrace(
 void
 CMemoryTrace::
 show(
-    const CFrameBuffer565& fb,
+    const raspifb16::CFrameBuffer565& fb,
     time_t now)
 {
     SMemoryStats memoryStats;
