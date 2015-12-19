@@ -11,7 +11,7 @@ framebuffer.
 # build
 see main readme.
 # install
-From withing the build directory
+From within the build directory
 ## Raspian Wheezy
 	sudo make install
 	sudo cp ../raspinfo/raspinfo.init.d /etc/init.d/raspinfo
