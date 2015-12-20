@@ -45,11 +45,10 @@
 
 //-------------------------------------------------------------------------
 
-
 raspifb16::CFrameBuffer565:: CFrameBuffer565(
-    const char* device)
+    const std::string& device)
 :
-    m_fbfd{open(device, O_RDWR)},
+    m_fbfd{open(device.c_str(), O_RDWR)},
     m_consolefd{-1},
     m_finfo{},
     m_vinfo{},
@@ -60,7 +59,7 @@ raspifb16::CFrameBuffer565:: CFrameBuffer565(
     {
         throw std::system_error{errno,
                                 std::system_category(), 
-                                "cannot open framebuffer device"};
+                                "cannot open framebuffer device " + device};
     }
 
     if (ioctl(m_fbfd, FBIOGET_FSCREENINFO, &(m_finfo)) == -1)
@@ -88,11 +87,11 @@ raspifb16::CFrameBuffer565:: CFrameBuffer565(
     //---------------------------------------------------------------------
 
     void* fbp = mmap(nullptr,
-                m_finfo.smem_len,
-                PROT_READ | PROT_WRITE,
-                MAP_SHARED,
-                m_fbfd,
-                0);
+                     m_finfo.smem_len,
+                     PROT_READ | PROT_WRITE,
+                     MAP_SHARED,
+                     m_fbfd,
+                     0);
 
     if (fbp == MAP_FAILED)
     {
@@ -258,13 +257,13 @@ raspifb16::CFrameBuffer565:: putImage(
         return putImagePartial(x, y, image);
     }
 
-    size_t rowSize = image.getWidth() * sizeof(uint16_t);
-
     for (int32_t j = 0 ; j < image.getHeight() ; ++j)
     {
-        memcpy(m_fbp + ((j+y) * m_lineLengthPixels) + x,
-               image.getRow(j),
-               rowSize);
+        auto start = image.getRow(j);
+
+        std::copy(start,
+                  start + image.getWidth(), 
+                  m_fbp + ((j + y) * m_lineLengthPixels) + x);
     }
 
     return true;
@@ -318,13 +317,13 @@ raspifb16::CFrameBuffer565:: putImagePartial(
         return false;
     }
 
-    auto rowSize = (xEnd - xStart + 1) * sizeof(uint16_t);
-
     for (auto j = yStart ; j <= yEnd ; ++j)
     {
-        memcpy(m_fbp + ((j+y) * m_lineLengthPixels) + x,
-               image.getRow(j) + xStart,
-               rowSize);
+        auto start = image.getRow(j) + xStart;
+
+        std::copy(start,
+                  start + (xEnd - xStart + 1),
+                  m_fbp + ((j+y) * m_lineLengthPixels) + x);
     }
 
     return true;
