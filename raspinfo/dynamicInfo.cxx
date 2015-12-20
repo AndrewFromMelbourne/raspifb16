@@ -53,15 +53,15 @@ CDynamicInfo::
 getIpAddress(
     char& interface)
 {
-    struct ifaddrs *ifaddr = NULL;
-    struct ifaddrs *ifa = NULL;
+    struct ifaddrs *ifaddr = nullptr;
+    struct ifaddrs *ifa = nullptr;
     interface = 'X';
 
     std::string address = "   .   .   .   ";
 
     getifaddrs(&ifaddr);
 
-    for (ifa = ifaddr ; ifa != NULL ; ifa = ifa->ifa_next)
+    for (ifa = ifaddr ; ifa != nullptr ; ifa = ifa->ifa_next)
     {
         if (ifa ->ifa_addr->sa_family == AF_INET)
         {
@@ -78,7 +78,7 @@ getIpAddress(
         }
     }
 
-    if (ifaddr != NULL)
+    if (ifaddr != nullptr)
     {
         freeifaddrs(ifaddr);
     }
