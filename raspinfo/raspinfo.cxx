@@ -173,7 +173,7 @@ main(
 {
     const char* device = defaultDevice;
     char* program = basename(argv[0]);
-    char* pidfile = NULL;
+    char* pidfile = nullptr;
     bool isDaemon =  false;
 
     //---------------------------------------------------------------------
@@ -181,16 +181,16 @@ main(
     static const char* sopts = "dhp:D:";
     static struct option lopts[] = 
     {
-        { "daemon", no_argument, NULL, 'd' },
-        { "help", no_argument, NULL, 'h' },
-        { "pidfile", required_argument, NULL, 'p' },
-        { "device", required_argument, NULL, 'D' },
-        { NULL, no_argument, NULL, 0 }
+        { "daemon", no_argument, nullptr, 'd' },
+        { "help", no_argument, nullptr, 'h' },
+        { "pidfile", required_argument, nullptr, 'p' },
+        { "device", required_argument, nullptr, 'D' },
+        { nullptr, no_argument, nullptr, 0 }
     };
 
     int opt = 0;
 
-    while ((opt = getopt_long(argc, argv, sopts, lopts, NULL)) != -1)
+    while ((opt = getopt_long(argc, argv, sopts, lopts, nullptr)) != -1)
     {
         switch (opt)
         {
@@ -230,16 +230,16 @@ main(
 
     //---------------------------------------------------------------------
 
-    struct pidfh* pfh = NULL;
+    struct pidfh* pfh = nullptr;
 
     if (isDaemon)
     {
-        if (pidfile != NULL)
+        if (pidfile != nullptr)
         {
             pid_t otherpid;
             pfh = pidfile_open(pidfile, 0600, &otherpid);
 
-            if (pfh == NULL)
+            if (pfh == nullptr)
             {
                 std::cerr
                     << program
