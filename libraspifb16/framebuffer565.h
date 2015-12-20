@@ -31,6 +31,7 @@
 //-------------------------------------------------------------------------
 
 #include <cstdint>
+#include <string>
 
 #include <linux/fb.h>
 
@@ -53,7 +54,7 @@ public:
 
     static const size_t bytesPerPixel{2};
 
-    explicit CFrameBuffer565(const char* device = "/dev/fb0");
+    explicit CFrameBuffer565(const std::string& device = "/dev/fb0");
 
     ~CFrameBuffer565();
 
@@ -81,7 +82,11 @@ public:
 
 private:
 
-    bool putImagePartial(int32_t x, int32_t y, const CImage565& image) const;
+    bool
+    putImagePartial(
+        int32_t x,
+        int32_t y,
+        const CImage565& image) const;
 
     bool
     validPixel(
@@ -107,7 +112,7 @@ private:
 
 //-------------------------------------------------------------------------
 
-}; // namespace raspifb16
+} // namespace raspifb16
 
 //-------------------------------------------------------------------------
 
