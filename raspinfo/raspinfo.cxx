@@ -25,22 +25,17 @@
 //
 //-------------------------------------------------------------------------
 
-#include <cstdarg>
-#include <cstddef>
-#include <cstdbool>
+#include <chrono>
 #include <cstdint>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
 #include <iostream>
 #include <memory>
 #include <system_error>
+#include <thread>
 #include <vector>
 
 #include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>
-#include <inttypes.h>
 #include <syslog.h>
 #include <unistd.h>
 
@@ -73,63 +68,53 @@ static const char* defaultDevice = "/dev/fb1";
 void
 messageLog(
     bool isDaemon,
-    const char *name,
+    const std::string& name,
     int priority,
-    const char *format,
-    ...)
+    const std::string& message)
 {
-    va_list args;
-    va_start(args, format);
-
     if (isDaemon)
     {
-        vsyslog(LOG_MAKEPRI(LOG_USER, priority), format, args);
+        syslog(LOG_MAKEPRI(LOG_USER, priority), message.c_str());
     }
     else
     {
-        fprintf(stderr, "%s[%d]:", name, getpid());
+        std::cerr << name << "[" << getpid() << "]:";
 
         switch (priority)
         {
         case LOG_DEBUG:
 
-            fprintf(stderr, "debug");
+            std::cerr << "debug";
             break;
 
         case LOG_INFO:
 
-            fprintf(stderr, "info");
+            std::cerr << "info";
             break;
 
         case LOG_NOTICE:
 
-            fprintf(stderr, "notice");
+            std::cerr << "notice";
             break;
 
         case LOG_WARNING:
 
-            fprintf(stderr, "warning");
+            std::cerr << "warning";
             break;
 
         case LOG_ERR:
 
-            fprintf(stderr, "error");
+            std::cerr << "error";
             break;
 
         default:
 
-            fprintf(stderr, "unknown(%d)", priority);
+            std::cerr << "unknown(" << priority << ")";
             break;
         }
 
-        fprintf(stderr, ":");
-
-        vfprintf(stderr, format, args);
-
-        fprintf(stderr, "\n");
+        std::cerr << ":" << message << "\n";
     }
-
-    va_end(args);
 }
 
 //-------------------------------------------------------------------------
@@ -137,15 +122,10 @@ messageLog(
 void
 perrorLog(
     bool isDaemon,
-    const char *name,
-    const char *s)
+    const std::string& name,
+    const std::string& s)
 {
-    messageLog(isDaemon,
-               name,
-               LOG_ERR,
-               "%s -  %s",
-               s,
-               strerror(errno));
+    messageLog(isDaemon, name, LOG_ERR, s + " - " + strerror(errno));
 }
 
 //-------------------------------------------------------------------------
@@ -153,18 +133,19 @@ perrorLog(
 
 void
 printUsage(
-    FILE *fp,
-    const char *name)
+    std::ostream& os,
+    const std::string& name)
 {
-    fprintf(fp, "\n");
-    fprintf(fp, "Usage: %s <options>\n", name);
-    fprintf(fp, "\n");
-    fprintf(fp, "    --daemon - start in the background as a daemon\n");
-    fprintf(fp, "    --device - framebuffer device to use");
-    fprintf(fp, " (default is %s)\n", defaultDevice);
-    fprintf(fp, "    --help - print usage and exit\n");
-    fprintf(fp, "    --pidfile <pidfile> - create and lock PID file (if being run as a daemon)\n");
-    fprintf(fp, "\n");
+    os << "\n";
+    os << "Usage: " << name << " <options>\n";
+    os << "\n";
+    os << "    --daemon - start in the background as a daemon\n";
+    os << "    --device - framebuffer device to use";
+    os << " (default is " << defaultDevice << ")\n";
+    os << "    --help - print usage and exit\n";
+    os << "    --pidfile <pidfile> - create and lock PID file";
+    os << " (if being run as a daemon)\n";
+    os << "\n";
 }
 
 //-------------------------------------------------------------------------
@@ -221,7 +202,7 @@ main(
 
         case 'h':
 
-            printUsage(stdout, program);
+            printUsage(std::cout, program);
             exit(EXIT_SUCCESS);
 
             break;
@@ -240,7 +221,7 @@ main(
 
         default:
 
-            printUsage(stderr, program);
+            printUsage(std::cerr, program);
             exit(EXIT_FAILURE);
 
             break;
@@ -260,17 +241,19 @@ main(
 
             if (pfh == NULL)
             {
-                fprintf(stderr,
-                        "%s is already running %jd\n",
-                        program,
-                        (intmax_t)otherpid);
+                std::cerr
+                    << program
+                    << " is already running "
+                    << otherpid
+                    << "\n";
+
                 exit(EXIT_FAILURE);
             }
         }
         
         if (daemon(0, 0) == -1)
         {
-            fprintf(stderr, "Cannot daemonize\n");
+            std::cerr << "Cannot daemonize\n";
 
             if (pfh)
             {
@@ -356,44 +339,38 @@ main(
         };
 
         panels.push_back(
-            std::unique_ptr<CPanel>(
-                new CDynamicInfo(fb.getWidth(),
-                                 panelTop(panels))));
+            std::make_unique<CDynamicInfo>(fb.getWidth(),
+                                           panelTop(panels)));
 
         panels.push_back(
-            std::unique_ptr<CPanel>(
-                new CCpuTrace(fb.getWidth(),
-                              traceHeight,
-                              panelTop(panels),
-                              gridHeight)));
+            std::make_unique<CCpuTrace>(fb.getWidth(),
+                                        traceHeight,
+                                        panelTop(panels),
+                                        gridHeight));
 
         panels.push_back(
-            std::unique_ptr<CPanel>(
-                new CMemoryTrace(fb.getWidth(),
-                                 traceHeight,
-                                 panelTop(panels),
-                                 gridHeight)));
+            std::make_unique<CMemoryTrace>(fb.getWidth(),
+                                           traceHeight,
+                                           panelTop(panels),
+                                           gridHeight));
 
         //-----------------------------------------------------------------
 
-        sleep(1);
+        constexpr auto oneSecond(std::chrono::seconds(1));
+
+        std::this_thread::sleep_for(oneSecond);
 
         while (run)
         {
-            struct timeval now;
-            gettimeofday(&now, NULL);
-
-            //-------------------------------------------------------------
+            auto now = std::chrono::system_clock::now();
+            auto seconds = std::chrono::system_clock::to_time_t(now) % 60;
 
             for (auto& panel : panels)
             {
-                panel->show(fb, now.tv_sec);
+                panel->show(fb, seconds);
             }
 
-            //-------------------------------------------------------------
-
-            gettimeofday(&now, NULL);
-            usleep(1000000L - now.tv_usec);
+            std::this_thread::sleep_for(oneSecond);
         }
 
         fb.clear();
