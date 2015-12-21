@@ -25,15 +25,10 @@
 //
 //-------------------------------------------------------------------------
 
-#ifndef __STDC_FORMAT_MACROS
-#define __STDC_FORMAT_MACROS
-#endif
-
-#include <algorithm>
 #include <cstdint>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
+#include <fstream>
+#include <stdexcept>
+#include <system_error>
 
 #include <inttypes.h>
 #include <unistd.h>
@@ -43,53 +38,52 @@
 
 //-------------------------------------------------------------------------
 
-void
-CMemoryTrace::
-getMemoryStats(
-    SMemoryStats& memoryStats)
+CMemoryStats::
+CMemoryStats()
+:
+    m_total{0},
+    m_buffers{0},
+    m_cached{0},
+    m_used{0}
 {
-    FILE *fp = fopen("/proc/meminfo", "r");
+    std::ifstream ifs{"/proc/meminfo", std::ifstream::in};
 
-    if (fp == 0)
+    if (ifs.is_open() == false)
     {
-        perror("unable to open /proc/stat");
-        exit(EXIT_FAILURE);
+        throw std::system_error{errno,
+                                std::system_category(),
+                                "unable to open /proc/meminfo"};
     }
 
-    char buffer[128];
+    uint32_t free{0};
 
-    while (fgets(buffer, sizeof(buffer), fp))
+    while (ifs.eof() == false)
     {
-        char name[64];
+        std::string name;
         uint32_t value;
+        std::string unit;
 
-        if (sscanf(buffer, "%[a-zA-Z]: %" SCNu32 " kB", name, &value) == 2)
+        ifs >> name >> value >> unit;
+
+        if (name == "MemTotal:")
         {
-            if (strcmp(name, "MemTotal") == 0)
-            {
-                memoryStats.total = value;
-            }
-            else if (strcmp(name, "MemFree") == 0)
-            {
-                memoryStats.free = value;
-            }
-            else if (strcmp(name, "Buffers") == 0)
-            {
-                memoryStats.buffers = value;
-            }
-            else if (strcmp(name, "Cached") == 0)
-            {
-                memoryStats.cached = value;
-            }
+            m_total = value;
+        }
+        else if (name == "MemFree:")
+        {
+            free = value;
+        }
+        else if (name == "Buffers:")
+        {
+            m_buffers = value;
+        }
+        else if (name == "Cached:")
+        {
+            m_cached = value;
         }
     }
 
-    fclose(fp);
-
-    memoryStats.used = memoryStats.total
-                     - memoryStats.free
-                     - memoryStats.buffers
-                     - memoryStats.cached;
+    m_used = m_total - free - m_buffers - m_cached;
 }
 
 //-------------------------------------------------------------------------
@@ -123,14 +117,16 @@ show(
     const raspifb16::CFrameBuffer565& fb,
     time_t now)
 {
-    SMemoryStats memoryStats;
-    getMemoryStats(memoryStats);
+    CMemoryStats memoryStats;
 
-    int8_t used = (memoryStats.used * m_traceHeight) / memoryStats.total;
-    int8_t buffers = (memoryStats.buffers * m_traceHeight)
-                   / memoryStats.total;
-    int8_t cached = (memoryStats.cached * m_traceHeight)
-                 / memoryStats.total;
+    int8_t used = (memoryStats.used() * m_traceHeight)
+                / memoryStats.total();
+
+    int8_t buffers = (memoryStats.buffers() * m_traceHeight)
+                   / memoryStats.total();
+
+    int8_t cached = (memoryStats.cached() * m_traceHeight)
+                 / memoryStats.total();
 
     update(std::vector<int8_t>{used, buffers, cached}, now);
 

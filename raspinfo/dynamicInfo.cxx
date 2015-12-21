@@ -92,6 +92,8 @@ std::string
 CDynamicInfo::
 getMemorySplit()
 {
+    std::string result = " / ";
+
     int arm_mem = 0;
     int gpu_mem = 0;
 
@@ -111,14 +113,10 @@ getMemorySplit()
 
     if ((arm_mem != 0) && (gpu_mem != 0))
     {
-        snprintf(buffer, sizeof(buffer), "%d/%d", gpu_mem, arm_mem);
-    }
-    else
-    {
-        snprintf(buffer, sizeof(buffer), " / ");
+        result = std::to_string(gpu_mem) + "/" + std::to_string(arm_mem);
     }
 
-    return buffer;
+    return result;
 }
 
 //-------------------------------------------------------------------------

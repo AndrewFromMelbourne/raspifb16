@@ -27,9 +27,9 @@
 
 #include <chrono>
 #include <cstdint>
+#include <exception>
 #include <iostream>
 #include <memory>
-#include <system_error>
 #include <thread>
 #include <vector>
 
@@ -375,7 +375,7 @@ main(
 
         fb.clear();
     }
-    catch (std::system_error& error)
+    catch (std::exception& error)
     {
         std::cerr << "Error: " << error.what() << "\n";
         exit(EXIT_FAILURE);

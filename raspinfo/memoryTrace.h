@@ -45,13 +45,23 @@ class CFrameBuffer565;
 
 //-------------------------------------------------------------------------
 
-struct SMemoryStats
+class CMemoryStats
 {
-    uint32_t total;
-    uint32_t free;
-    uint32_t buffers;
-    uint32_t cached;
-    uint32_t used;
+public:
+
+    CMemoryStats();
+
+    uint32_t total() const { return m_total; }
+    uint32_t buffers() const { return m_buffers; }
+    uint32_t cached() const { return m_cached; }
+    uint32_t used() const { return m_used; }
+
+private:
+
+    uint32_t m_total;
+    uint32_t m_buffers;
+    uint32_t m_cached;
+    uint32_t m_used;
 };
 
 //-------------------------------------------------------------------------
@@ -75,8 +85,6 @@ public:
 private:
 
     int16_t m_traceHeight;
-
-    static void getMemoryStats(SMemoryStats& memoryStats);
 };
 
 //-------------------------------------------------------------------------

@@ -46,19 +46,34 @@ class CFrameBuffer565;
 
 //-------------------------------------------------------------------------
 
-struct SCpuStats
+class CCpuStats
 {
-    uint32_t user;
-    uint32_t nice;
-    uint32_t system;
-    uint32_t idle;
-    uint32_t iowait;
-    uint32_t irq;
-    uint32_t softirq;
-    uint32_t steal;
-    uint32_t guest;
-    uint32_t guest_nice;
+public:
+
+    void read();
+
+    uint32_t total() const;
+    uint32_t user() const { return m_user; }
+    uint32_t nice() const { return m_nice; }
+    uint32_t system() const { return m_system; }
+
+    CCpuStats& operator-=(const CCpuStats& rhs);
+
+private:
+
+    uint32_t m_user;
+    uint32_t m_nice;
+    uint32_t m_system;
+    uint32_t m_idle;
+    uint32_t m_iowait;
+    uint32_t m_irq;
+    uint32_t m_softirq;
+    uint32_t m_steal;
+    uint32_t m_guest;
+    uint32_t m_guest_nice;
 };
+
+CCpuStats operator-(const CCpuStats& lhs, const CCpuStats& rhs);
 
 //-------------------------------------------------------------------------
 
@@ -83,14 +98,8 @@ private:
 
     int16_t m_traceHeight;
 
-    SCpuStats m_currentStats;
-    SCpuStats m_previousStats;
-
-    static void getCpuStats(SCpuStats& cpuStats);
-
-    static SCpuStats
-    diffCpuStats(const SCpuStats& lhs,
-                 const SCpuStats& rhs);
+    CCpuStats m_currentStats;
+    CCpuStats m_previousStats;
 };
 
 //-------------------------------------------------------------------------

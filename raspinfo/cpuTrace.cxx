@@ -25,15 +25,11 @@
 //
 //-------------------------------------------------------------------------
 
-#ifndef __STDC_FORMAT_MACROS
-#define __STDC_FORMAT_MACROS
-#endif
-
 #include <cstdint>
-#include <cstdio>
-#include <cstring>
+#include <fstream>
+#include <stdexcept>
+#include <system_error>
 
-#include <inttypes.h>
 #include <unistd.h>
 
 #include "font.h"
@@ -42,55 +38,87 @@
 //-------------------------------------------------------------------------
 
 void
-CCpuTrace::
-getCpuStats(
-    SCpuStats& cpuStats)
+CCpuStats::
+read()
 {
-    FILE *fp = fopen("/proc/stat", "r");
+    std::ifstream ifs{"/proc/stat", std::ifstream::in};
 
-    if (fp == 0)
+    if (ifs.is_open() == false)
     {
-        perror("unable to open /proc/stat");
-        exit(EXIT_FAILURE);
+        throw std::system_error{errno,
+                                std::system_category(),
+                                "unable to open /proc/stat"};
     }
 
-    fscanf(fp, "%*s");
-    fscanf(fp, "%" SCNu32, &(cpuStats.user));
-    fscanf(fp, "%" SCNu32, &(cpuStats.nice));
-    fscanf(fp, "%" SCNu32, &(cpuStats.system));
-    fscanf(fp, "%" SCNu32, &(cpuStats.idle));
-    fscanf(fp, "%" SCNu32, &(cpuStats.iowait));
-    fscanf(fp, "%" SCNu32, &(cpuStats.irq));
-    fscanf(fp, "%" SCNu32, &(cpuStats.softirq));
-    fscanf(fp, "%" SCNu32, &(cpuStats.steal));
-    fscanf(fp, "%" SCNu32, &(cpuStats.guest));
-    fscanf(fp, "%" SCNu32, &(cpuStats.guest_nice));
+    std::string id;
+    ifs >> id;
 
-    fclose(fp);
+    if (id != "cpu")
+    {
+        throw std::logic_error{
+            "reading /proc/stat expected \"cpu\", but found " + id};
+    }
+
+    ifs
+        >> m_user
+        >> m_nice
+        >> m_system
+        >> m_idle
+        >> m_iowait
+        >> m_irq
+        >> m_softirq
+        >> m_steal
+        >> m_guest
+        >> m_guest_nice;
 }
 
 //-------------------------------------------------------------------------
 
-SCpuStats
-CCpuTrace::
-diffCpuStats(
-    const SCpuStats& lhs,
-    const SCpuStats& rhs)
+uint32_t
+CCpuStats::
+total() const
 {
-    SCpuStats result;
+    return m_user +
+           m_nice +
+           m_system +
+           m_idle +
+           m_iowait +
+           m_irq +
+           m_softirq +
+           m_steal +
+           m_guest +
+           m_guest_nice;
+}
 
-    result.user = lhs.user - rhs.user;
-    result.nice = lhs.nice - rhs.nice;
-    result.system = lhs.system - rhs.system;
-    result.idle = lhs.idle - rhs.idle;
-    result.iowait = lhs.iowait - rhs.iowait;
-    result.irq = lhs.irq - rhs.irq;
-    result.softirq = lhs.softirq - rhs.softirq;
-    result.steal = lhs.steal - rhs.steal;
-    result.guest = lhs.guest - rhs.guest;
-    result.guest_nice = lhs.guest_nice - rhs.guest_nice;
+//-------------------------------------------------------------------------
 
-    return result;
+CCpuStats&
+CCpuStats::
+operator-=(
+    const CCpuStats& rhs)
+{
+    m_user -= rhs.m_user;
+    m_nice -= rhs.m_nice;
+    m_system -= rhs.m_system;
+    m_idle -= rhs.m_idle;
+    m_iowait -= rhs.m_iowait;
+    m_irq -= rhs.m_irq;
+    m_softirq -= rhs.m_softirq;
+    m_steal -= rhs.m_steal;
+    m_guest -= rhs.m_guest;
+    m_guest_nice -= rhs.m_guest_nice;
+
+    return *this;
+}
+
+//-------------------------------------------------------------------------
+
+CCpuStats
+operator-(
+    const CCpuStats& lhs,
+    const CCpuStats& rhs)
+{
+    return CCpuStats(lhs) -= rhs;
 }
 
 //-------------------------------------------------------------------------
@@ -115,7 +143,7 @@ CCpuTrace(
                                            {241,238,246}}),
     m_traceHeight{traceHeight}
 {
-    getCpuStats(m_currentStats);
+    m_currentStats.read();
 }
 
 //-------------------------------------------------------------------------
@@ -128,24 +156,15 @@ show(
 {
     m_previousStats = m_currentStats;
 
-    getCpuStats(m_currentStats);
+    m_currentStats.read();
 
-    SCpuStats diff = diffCpuStats(m_currentStats, m_previousStats);
+    CCpuStats diff = m_currentStats -  m_previousStats;
 
-    uint32_t totalCpu = diff.user
-                      + diff.nice
-                      + diff.system
-                      + diff.idle
-                      + diff.iowait
-                      + diff.irq
-                      + diff.softirq
-                      + diff.steal
-                      + diff.guest
-                      + diff.guest_nice;
+    uint32_t totalCpu = diff.total();
 
-    int8_t user = (diff.user * m_traceHeight) / totalCpu;
-    int8_t nice = (diff.nice * m_traceHeight) / totalCpu;
-    int8_t system = (diff.system * m_traceHeight) / totalCpu;
+    int8_t user = (diff.user() * m_traceHeight) / totalCpu;
+    int8_t nice = (diff.nice() * m_traceHeight) / totalCpu;
+    int8_t system = (diff.system() * m_traceHeight) / totalCpu;
 
     update(std::vector<int8_t>{user, nice, system}, now);
 
