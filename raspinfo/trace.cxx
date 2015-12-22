@@ -134,10 +134,10 @@ CTrace(
 
 //-------------------------------------------------------------------------
 
- void
- CTrace::
- update(
-     const std::vector<int8_t>& data,
+void
+CTrace::
+update(
+    const std::vector<int8_t>& data,
     time_t now)
 {
     int16_t index{0};
