@@ -25,10 +25,6 @@
 //
 //-------------------------------------------------------------------------
 
-#ifndef __STDC_FORMAT_MACROS
-#define __STDC_FORMAT_MACROS
-#endif
-
 #include <cmath>
 #include <cstdint>
 #include <regex>
