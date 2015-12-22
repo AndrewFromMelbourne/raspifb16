@@ -25,13 +25,15 @@
 //
 //-------------------------------------------------------------------------
 
+#include <cmath>
+#include <cstdint>
+#include <iomanip>
+#include <regex>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+
 #include <ifaddrs.h>
-#include <inttypes.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
 
 #include <arpa/inet.h>
@@ -45,6 +47,24 @@
 
 #include "font.h"
 #include "dynamicInfo.h"
+
+//-------------------------------------------------------------------------
+
+namespace raspinfo
+{
+
+template <typename T>
+std::string
+to_string(
+    const T value,
+    const int precision)
+{
+    std::ostringstream oss;
+    oss << std::fixed << std::setprecision(precision) << value;
+    return oss.str();
+}
+
+}
 
 //-------------------------------------------------------------------------
 
@@ -103,12 +123,40 @@ getMemorySplit()
 
     if (vc_gencmd(buffer, sizeof(buffer), "get_mem arm") == 0)
     {
-        sscanf(buffer, "arm=%dM", &arm_mem);
+        try
+        {
+            std::regex pattern{R"(arm=(\d+)M)"};
+            std::smatch match;
+
+            if (std::regex_search(std::string(buffer), match, pattern) &&
+                (match.size() == 2))
+            {
+                arm_mem = std::stoi(match[1].str());
+            }
+        }
+        catch (std::exception&)
+        {
+            // ignore
+        }
     }
 
     if (vc_gencmd(buffer, sizeof(buffer), "get_mem gpu") == 0)
     {
-        sscanf(buffer, "gpu=%dM", &gpu_mem);
+        try
+        {
+            std::regex pattern{R"(gpu=(\d+)M)"};
+            std::smatch match;
+
+            if (std::regex_search(std::string(buffer), match, pattern) &&
+                (match.size() == 2))
+            {
+                gpu_mem = std::stoi(match[1].str());
+            }
+        }
+        catch (std::exception&)
+        {
+            // ignore
+        }
     }
 
     if ((arm_mem != 0) && (gpu_mem != 0))
@@ -125,7 +173,7 @@ std::string
 CDynamicInfo::
 getTemperature()
 {
-    double temperature = 0.0;
+    std::string temperature = "??.?";
 
     char buffer[128];
 
@@ -133,12 +181,26 @@ getTemperature()
 
     if (vc_gencmd(buffer, sizeof(buffer), "measure_temp") == 0)
     {
-        sscanf(buffer, "temp=%lf'C", &temperature);
+        try
+        {
+            std::regex pattern{R"(temp=(\d+\.\d)'C)"};
+            std::smatch match;
+
+            if (std::regex_search(std::string(buffer), match, pattern) &&
+                (match.size() == 2))
+            {
+                std::string found = match[1].str();
+                double value = round(stod(found));
+                temperature = raspinfo::to_string(value, 0);
+            }
+        }
+        catch (std::exception&)
+        {
+            // ignore
+        }
     }
 
-    snprintf(buffer, sizeof(buffer), "%2.0f", temperature);
-
-    return buffer;
+    return temperature;
 }
 
 //-------------------------------------------------------------------------

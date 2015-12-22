@@ -29,13 +29,12 @@
 #define __STDC_FORMAT_MACROS
 #endif
 
-#include <algorithm>
+#include <cmath>
 #include <cstdint>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
+#include <regex>
+#include <stdexcept>
+#include <string>
 
-#include <inttypes.h>
 #include <unistd.h>
 
 #pragma GCC diagnostic push
@@ -60,10 +59,25 @@ getTemperature()
 
     if (vc_gencmd(buffer, sizeof(buffer), "measure_temp") == 0)
     {
-        sscanf(buffer, "temp=%lf'C", &temperature);
+        try
+        {
+            std::regex pattern{R"(temp=(\d+\.\d)'C)"};
+            std::smatch match;
+
+            if (std::regex_search(std::string(buffer), match, pattern) &&
+                (match.size() == 2))
+            {
+                std::string found = match[1].str();
+                temperature = round(stod(found));
+            }
+        }
+        catch (std::exception&)
+        {
+            // ignore
+        }
     }
 
-    return (int8_t)(temperature + 0.5);
+    return static_cast<int8_t>(temperature);
 }
 
 //-------------------------------------------------------------------------
