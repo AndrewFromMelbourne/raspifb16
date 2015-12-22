@@ -363,11 +363,11 @@ main(
         while (run)
         {
             auto now = std::chrono::system_clock::now();
-            auto seconds = std::chrono::system_clock::to_time_t(now) % 60;
+            auto now_t = std::chrono::system_clock::to_time_t(now);
 
             for (auto& panel : panels)
             {
-                panel->show(fb, seconds);
+                panel->show(fb, now_t);
             }
 
             std::this_thread::sleep_for(oneSecond);
