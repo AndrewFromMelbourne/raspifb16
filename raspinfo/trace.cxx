@@ -156,6 +156,8 @@ CTrace(
                         trace.m_values.begin() + 1,
                         trace.m_values.end());
         }
+
+        std::rotate(m_time.begin(), m_time.begin() + 1, m_time.end());
     }
 
     //-----------------------------------------------------------------
