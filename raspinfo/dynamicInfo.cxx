@@ -27,6 +27,7 @@
 
 #include <cmath>
 #include <cstdint>
+#include <fstream>
 #include <iomanip>
 #include <regex>
 #include <sstream>
@@ -47,24 +48,6 @@
 
 #include "font.h"
 #include "dynamicInfo.h"
-
-//-------------------------------------------------------------------------
-
-namespace raspinfo
-{
-
-template <typename T>
-std::string
-to_string(
-    const T value,
-    const int precision)
-{
-    std::ostringstream oss;
-    oss << std::fixed << std::setprecision(precision) << value;
-    return oss.str();
-}
-
-}
 
 //-------------------------------------------------------------------------
 
@@ -173,34 +156,13 @@ std::string
 CDynamicInfo::
 getTemperature()
 {
-    std::string temperature = "??.?";
+    int millidegrees = 0;
 
-    char buffer[128];
+    std::ifstream ifs{"/sys/class/thermal/thermal_zone0/temp"};
 
-    memset(buffer, 0, sizeof(buffer));
+	ifs >> millidegrees;
 
-    if (vc_gencmd(buffer, sizeof(buffer), "measure_temp") == 0)
-    {
-        try
-        {
-            std::regex pattern{R"(temp=(\d+\.\d)'C)"};
-            std::smatch match;
-
-            if (std::regex_search(std::string(buffer), match, pattern) &&
-                (match.size() == 2))
-            {
-                std::string found = match[1].str();
-                double value = round(stod(found));
-                temperature = raspinfo::to_string(value, 0);
-            }
-        }
-        catch (std::exception&)
-        {
-            // ignore
-        }
-    }
-
-    return temperature;
+    return std::to_string(millidegrees / 1000);
 }
 
 //-------------------------------------------------------------------------
@@ -214,7 +176,7 @@ getTime(
 
     struct tm result;
     struct tm *lt = localtime_r(&now, &result);
-    strftime(buffer, sizeof(buffer), "%T", lt);
+    std::strftime(buffer, sizeof(buffer), "%T", lt);
 
     return buffer;
 }
@@ -229,7 +191,8 @@ CDynamicInfo(
     CPanel{width, 2 * (raspifb16::sc_fontHeight + 4), yPosition},
     m_heading(255, 255, 0),
     m_foreground(255, 255, 255),
-    m_background(0, 0, 0)
+    m_background(0, 0, 0),
+    m_memorySplit(getMemorySplit())
 {
 }
 
@@ -280,11 +243,9 @@ show(
                           m_heading,
                           getImage());
 
-    std::string memorySplit = getMemorySplit();
-
     position = drawString(position.x,
                           position.y,
-                          memorySplit,
+                          m_memorySplit,
                           m_foreground,
                           getImage());
 

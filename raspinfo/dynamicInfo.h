@@ -64,6 +64,8 @@ private:
     raspifb16::CRGB565 m_foreground;
     raspifb16::CRGB565 m_background;
 
+    std::string m_memorySplit;
+
     static std::string getIpAddress(char& interface);
     static std::string getMemorySplit();
     static std::string getTemperature();

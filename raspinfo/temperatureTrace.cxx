@@ -27,6 +27,7 @@
 
 #include <cmath>
 #include <cstdint>
+#include <fstream>
 #include <regex>
 #include <stdexcept>
 #include <string>
@@ -47,33 +48,13 @@ int8_t
 CTemperatureTrace::
 getTemperature()
 {
-    double temperature = 0.0;
+    int millidegrees = 0;
 
-    char buffer[128];
+    std::ifstream ifs{"/sys/class/thermal/thermal_zone0/temp"};
 
-    memset(buffer, 0, sizeof(buffer));
+	ifs >> millidegrees;
 
-    if (vc_gencmd(buffer, sizeof(buffer), "measure_temp") == 0)
-    {
-        try
-        {
-            std::regex pattern{R"(temp=(\d+\.\d)'C)"};
-            std::smatch match;
-
-            if (std::regex_search(std::string(buffer), match, pattern) &&
-                (match.size() == 2))
-            {
-                std::string found = match[1].str();
-                temperature = round(stod(found));
-            }
-        }
-        catch (std::exception&)
-        {
-            // ignore
-        }
-    }
-
-    return static_cast<int8_t>(temperature);
+    return static_cast<int8_t>(millidegrees / 1000);
 }
 
 //-------------------------------------------------------------------------
