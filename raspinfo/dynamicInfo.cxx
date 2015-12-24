@@ -162,7 +162,7 @@ getTemperature()
 
 	ifs >> millidegrees;
 
-    return std::to_string(millidegrees / 1000);
+    return std::to_string((millidegrees + 500) / 1000);
 }
 
 //-------------------------------------------------------------------------

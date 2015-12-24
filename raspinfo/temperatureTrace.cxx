@@ -54,7 +54,7 @@ getTemperature()
 
 	ifs >> millidegrees;
 
-    return static_cast<int8_t>(millidegrees / 1000);
+    return static_cast<int8_t>((millidegrees + 500) / 1000);
 }
 
 //-------------------------------------------------------------------------
