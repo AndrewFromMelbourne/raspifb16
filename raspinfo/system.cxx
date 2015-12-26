@@ -25,48 +25,26 @@
 //
 //-------------------------------------------------------------------------
 
-#ifndef TEMPERATURE_TRACE_H
-#define TEMPERATURE_TRACE_H
-
-//-------------------------------------------------------------------------
-
 #include <cstdint>
-#include <vector>
+#include <fstream>
 
-#include "panel.h"
-#include "trace.h"
+#include "system.h"
 
 //-------------------------------------------------------------------------
 
-namespace raspifb16
+int8_t
+raspinfo::
+getTemperature()
 {
-class CFrameBuffer565;
+    int millidegrees = 0;
+
+    std::ifstream ifs{"/sys/class/thermal/thermal_zone0/temp"};
+
+    if (ifs.is_open())
+    {
+        ifs >> millidegrees;
+    }
+
+    return static_cast<int8_t>((millidegrees + 500) / 1000);
 }
-
-//-------------------------------------------------------------------------
-
-class CTemperatureTrace
-:
-    public CTrace
-{
-public:
-
-    CTemperatureTrace(int16_t width,
-                      int16_t traceHeight,
-                      int16_t yPosition,
-                      int16_t gridHeight = 20);
-
-    virtual void
-    show(
-        const raspifb16::CFrameBuffer565& fb,
-        time_t now) override;
-
-private:
-
-    int16_t m_traceHeight;
-};
-
-//-------------------------------------------------------------------------
-
-#endif
 

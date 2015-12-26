@@ -25,46 +25,25 @@
 //
 //-------------------------------------------------------------------------
 
-#ifndef TEMPERATURE_TRACE_H
-#define TEMPERATURE_TRACE_H
+#ifndef SYSTEM_H
+#define SYSTEM_H
 
 //-------------------------------------------------------------------------
 
 #include <cstdint>
-#include <vector>
-
-#include "panel.h"
-#include "trace.h"
 
 //-------------------------------------------------------------------------
 
-namespace raspifb16
+namespace raspinfo
 {
-class CFrameBuffer565;
-}
 
 //-------------------------------------------------------------------------
 
-class CTemperatureTrace
-:
-    public CTrace
-{
-public:
+int8_t getTemperature();
 
-    CTemperatureTrace(int16_t width,
-                      int16_t traceHeight,
-                      int16_t yPosition,
-                      int16_t gridHeight = 20);
+//-------------------------------------------------------------------------
 
-    virtual void
-    show(
-        const raspifb16::CFrameBuffer565& fb,
-        time_t now) override;
-
-private:
-
-    int16_t m_traceHeight;
-};
+} // raspinfo
 
 //-------------------------------------------------------------------------
 

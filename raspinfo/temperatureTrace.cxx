@@ -27,7 +27,6 @@
 
 #include <cmath>
 #include <cstdint>
-#include <fstream>
 #include <regex>
 #include <stdexcept>
 #include <string>
@@ -40,22 +39,8 @@
 #pragma GCC diagnostic pop
 
 #include "font.h"
+#include "system.h"
 #include "temperatureTrace.h"
-
-//-------------------------------------------------------------------------
-
-int8_t
-CTemperatureTrace::
-getTemperature()
-{
-    int millidegrees = 0;
-
-    std::ifstream ifs{"/sys/class/thermal/thermal_zone0/temp"};
-
-	ifs >> millidegrees;
-
-    return static_cast<int8_t>((millidegrees + 500) / 1000);
-}
 
 //-------------------------------------------------------------------------
 
@@ -86,7 +71,7 @@ show(
     const raspifb16::CFrameBuffer565& fb,
     time_t now)
 {
-    int8_t temperature = (getTemperature() * m_traceHeight) / 100;
+    int8_t temperature = (raspinfo::getTemperature() * m_traceHeight) / 100;
 
     update(std::vector<int8_t>{temperature}, now);
 

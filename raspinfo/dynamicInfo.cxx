@@ -27,7 +27,6 @@
 
 #include <cmath>
 #include <cstdint>
-#include <fstream>
 #include <iomanip>
 #include <regex>
 #include <sstream>
@@ -48,6 +47,7 @@
 
 #include "font.h"
 #include "dynamicInfo.h"
+#include "system.h"
 
 //-------------------------------------------------------------------------
 
@@ -156,13 +156,7 @@ std::string
 CDynamicInfo::
 getTemperature()
 {
-    int millidegrees = 0;
-
-    std::ifstream ifs{"/sys/class/thermal/thermal_zone0/temp"};
-
-	ifs >> millidegrees;
-
-    return std::to_string((millidegrees + 500) / 1000);
+    return std::to_string(raspinfo::getTemperature());
 }
 
 //-------------------------------------------------------------------------
