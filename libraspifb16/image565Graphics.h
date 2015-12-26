@@ -25,16 +25,16 @@
 //
 //-------------------------------------------------------------------------
 
-#ifndef IMAGE565_FONT_H
-#define IMAGE565_FONT_H
+#ifndef IMAGE565_GRAPHICS_H
+#define IMAGE565_GRAPHICS_H
 
 //-------------------------------------------------------------------------
 
 #include <cstdint>
-#include <string>
 
 #include "image565.h"
 #include "point.h"
+#include "rgb565.h"
 
 //-------------------------------------------------------------------------
 
@@ -43,46 +43,102 @@ namespace raspifb16
 
 //-------------------------------------------------------------------------
 
-using CFontPoint = CPoint<int16_t>;
+void
+box(
+    CImage565& image,
+    const CImage565Point& p1,
+    const CImage565Point& p2,
+    uint16_t rgb);
+
+inline void
+box(
+    CImage565& image,
+    const CImage565Point& p1,
+    const CImage565Point& p2,
+    const CRGB565& rgb)
+{
+    box(image, p1, p2, rgb.get565());
+}
 
 //-------------------------------------------------------------------------
 
-class CRGB565;
+void
+boxFilled(
+    CImage565& image,
+    const CImage565Point& p1,
+    const CImage565Point& p2,
+    uint16_t rgb);
+
+inline void
+boxFilled(
+    CImage565& image,
+    const CImage565Point& p1,
+    const CImage565Point& p2,
+    const CRGB565& rgb)
+{
+    boxFilled(image, p1, p2, rgb.get565());
+}
 
 //-------------------------------------------------------------------------
 
-static const int16_t sc_fontWidth{8};
-static const int16_t sc_fontHeight{16};
+void
+line(
+    CImage565& image,
+    const CImage565Point& p1,
+    const CImage565Point& p2,
+    uint16_t rgb);
+
+inline void
+line(
+    CImage565& image,
+    const CImage565Point& p1,
+    const CImage565Point& p2,
+    const CRGB565& rgb)
+{
+    line(image, p1, p2, rgb.get565());
+}
 
 //-------------------------------------------------------------------------
 
-CFontPoint
-drawChar(
-    const CImage565Point& p,
-    uint8_t c,
-    const CRGB565& rgb,
-    CImage565& image);
+void
+horizontalLine(
+    CImage565& image,
+    int16_t x1,
+    int16_t x2,
+    int16_t y,
+    uint16_t rgb);
 
-CFontPoint
-drawChar(
-    const CImage565Point& p,
-    uint8_t c,
-    uint16_t rgb,
-    CImage565& image);
+inline void
+horizontalLine(
+    CImage565& image,
+    int16_t x1,
+    int16_t x2,
+    int16_t y,
+    const CRGB565& rgb)
+{
+    horizontalLine(image, x1, x2, y, rgb.get565());
+}
 
-CFontPoint
-drawString(
-    const CImage565Point& p,
-    const char* string,
-    const CRGB565& rgb,
-    CImage565& image);
+//-------------------------------------------------------------------------
 
-CFontPoint
-drawString(
-    const CImage565Point& p,
-    const std::string& string,
-    const CRGB565& rgb,
-    CImage565& image);
+void
+verticalLine(
+    CImage565& image,
+    int16_t x,
+    int16_t y1,
+    int16_t y2,
+    uint16_t rgb);
+
+inline void
+verticalLine(
+    CImage565& image,
+    int16_t x,
+    int16_t y1,
+    int16_t y2,
+    const CRGB565& rgb)
+{
+    verticalLine(image, x, y1, y2, rgb.get565());
+}
 
 //-------------------------------------------------------------------------
 

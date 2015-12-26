@@ -35,12 +35,17 @@
 
 #include <linux/fb.h>
 
+#include "point.h"
 #include "rgb565.h"
 
 //-------------------------------------------------------------------------
 
 namespace raspifb16
 {
+
+//-------------------------------------------------------------------------
+
+using CFB565Point = CPoint<int32_t>;
 
 //-------------------------------------------------------------------------
 
@@ -72,31 +77,35 @@ public:
     void clear(const CRGB565& rgb) const { clear(rgb.get565()); }
     void clear(uint16_t rgb = 0) const;
 
-    bool setPixel(int32_t x, int32_t y, const CRGB565& rgb) const;
-    bool setPixel(int32_t x, int32_t y, uint16_t rgb) const;
+    bool
+    setPixel(
+        const CFB565Point& p,
+        const CRGB565& rgb) const
+    {
+        return setPixel(p, rgb.get565());
+    }
 
-    bool getPixel(int32_t x, int32_t y, CRGB565& rgb) const;
-    bool getPixel(int32_t x, int32_t y, uint16_t& rgb) const;
+    bool setPixel(const CFB565Point& p, uint16_t rgb) const;
 
-    bool putImage(int32_t x, int32_t y, const CImage565& image) const;
+    bool getPixel(const CFB565Point& p, CRGB565& rgb) const;
+    bool getPixel(const CFB565Point& p, uint16_t& rgb) const;
+
+    bool putImage(const CFB565Point& p, const CImage565& image) const;
 
 private:
 
     bool
     putImagePartial(
-        int32_t x,
-        int32_t y,
+        const CFB565Point& p,
         const CImage565& image) const;
 
     bool
-    validPixel(
-        int32_t x,
-        int32_t y) const
+    validPixel(const CFB565Point& p) const
     {
-        return (x >= 0) &&
-               (y >= 0) &&
-               (x < static_cast<int32_t>(m_vinfo.xres)) &&
-               (y < static_cast<int32_t>(m_vinfo.yres));
+        return (p.x() >= 0) &&
+               (p.y() >= 0) &&
+               (p.x() < static_cast<int32_t>(m_vinfo.xres)) &&
+               (p.y() < static_cast<int32_t>(m_vinfo.yres));
     }
 
     int m_fbfd;

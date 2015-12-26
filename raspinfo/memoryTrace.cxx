@@ -33,7 +33,6 @@
 #include <inttypes.h>
 #include <unistd.h>
 
-#include "font.h"
 #include "memoryTrace.h"
 
 //-------------------------------------------------------------------------

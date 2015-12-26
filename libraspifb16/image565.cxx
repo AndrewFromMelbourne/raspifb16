@@ -59,15 +59,14 @@ raspifb16::CImage565:: clear(
 
 bool
 raspifb16::CImage565:: setPixel(
-    int16_t x,
-    int16_t y,
+    const CImage565Point& p,
     uint16_t rgb)
 {
-    bool isValid{validPixel(x, y)};
+    bool isValid{validPixel(p)};
 
     if (isValid)
     {
-        m_buffer[x + (y * m_width)] = rgb;
+        m_buffer[p.x() + (p.y() * m_width)] = rgb;
     }
 
     return isValid;
@@ -77,15 +76,14 @@ raspifb16::CImage565:: setPixel(
 
 bool
 raspifb16::CImage565:: getPixel(
-    int16_t x,
-    int16_t y,
+    const CImage565Point& p,
     CRGB565& rgb) const
 {
-    bool isValid{validPixel(x, y)};
+    bool isValid{validPixel(p)};
 
     if (isValid)
     {
-        rgb.set565(m_buffer[x + (y * m_width)]);
+        rgb.set565(m_buffer[p.x() + (p.y() * m_width)]);
     }
 
     return isValid;
@@ -95,15 +93,14 @@ raspifb16::CImage565:: getPixel(
 
 bool
 raspifb16::CImage565:: getPixel(
-    int16_t x,
-    int16_t y,
+    const CImage565Point& p,
     uint16_t& rgb) const
 {
-    bool isValid{validPixel(x, y)};
+    bool isValid{validPixel(p)};
 
     if (isValid)
     {
-        rgb = m_buffer[x + (y * m_width)];
+        rgb = m_buffer[p.x() + (p.y() * m_width)];
     }
 
     return isValid;
@@ -115,7 +112,7 @@ const uint16_t*
 raspifb16::CImage565:: getRow(
     int16_t y) const
 {
-    if (validPixel(0, y))
+    if (validPixel(CImage565Point{0, y}))
     {
         return m_buffer.data() + (y * m_width);
     }

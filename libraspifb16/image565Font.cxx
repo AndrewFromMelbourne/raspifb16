@@ -26,8 +26,9 @@
 //-------------------------------------------------------------------------
 
 #include "bits.h"
-#include "font.h"
 #include "image565.h"
+#include "image565Font.h"
+#include "point.h"
 #include "rgb565.h"
 
 //-------------------------------------------------------------------------
@@ -4655,23 +4656,21 @@ static uint8_t font[256][sc_fontHeight] =
 
 //-------------------------------------------------------------------------
 
-raspifb16::SFontPosition
+raspifb16::CFontPoint
 raspifb16::drawChar(
-    int16_t x,
-    int16_t y,
+    const CImage565Point& p,
     uint8_t c,
     const CRGB565& rgb,
     CImage565& image)
 {
-    return drawChar(x, y, c, rgb.get565(), image);
+    return drawChar(p, c, rgb.get565(), image);
 }
 
 //-------------------------------------------------------------------------
 
-raspifb16::SFontPosition
+raspifb16::CFontPoint
 raspifb16::drawChar(
-    int16_t x,
-    int16_t y,
+    const CImage565Point& p,
     uint8_t c,
     uint16_t rgb,
     CImage565& image)
@@ -4686,61 +4685,64 @@ raspifb16::drawChar(
             {
                 if ((byte >> (sc_fontWidth - i - 1)) & 1 )
                 {
-                    image.setPixel(x + i, y + j, rgb);
+                    image.setPixel(
+                        CImage565Point(p.x() + i, p.y() + j),
+                        rgb);
                 }
             }
         }
     }
 
-    x += sc_fontWidth;
-    SFontPosition position = { x, y };
-    return position;
+    return CFontPoint(p.x() + sc_fontWidth, p.y());
 }
 
 //-------------------------------------------------------------------------
 
-raspifb16::SFontPosition
+raspifb16::CFontPoint
 raspifb16::drawString(
-    int16_t x,
-    int16_t y,
+    const CImage565Point& p,
     const char* string,
     const CRGB565& rgb,
     CImage565& image)
 {
+    CFontPoint position{p};
+
     if (string != nullptr)
     {
-        int16_t x_first = x;
+        CFontPoint start{p};
 
         while (*string != '\0')
         {
             if (*string == '\n')
             {
-                x = x_first;
-                y += sc_fontHeight;
+                position.set(
+                    start.x(),
+                    position.y() + sc_fontHeight);
             }
             else
             {
-                drawChar(x, y, *string, rgb, image);
-                x += sc_fontWidth;
+                drawChar(position, *string, rgb, image);
+
+                position.set(
+                    position.x() + sc_fontWidth,
+                    position.y());
             }
             ++string;
         }
     }
 
-    SFontPosition position = { x, y };
     return position;
 }
 
 //-------------------------------------------------------------------------
 
-raspifb16::SFontPosition
+raspifb16::CFontPoint
 raspifb16::drawString(
-    int16_t x,
-    int16_t y,
+    const CImage565Point& p,
     const std::string& string,
     const CRGB565& rgb,
     CImage565& image)
 {
-    return drawString(x, y, string.c_str(), rgb, image);
+    return drawString(p, string.c_str(), rgb, image);
 }
 

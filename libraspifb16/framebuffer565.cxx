@@ -42,6 +42,7 @@
 
 #include "framebuffer565.h"
 #include "image565.h"
+#include "point.h"
 
 //-------------------------------------------------------------------------
 
@@ -169,33 +170,14 @@ raspifb16::CFrameBuffer565:: clear(
 
 bool
 raspifb16::CFrameBuffer565:: setPixel(
-    int32_t x,
-    int32_t y,
-    const CRGB565& rgb) const
-{
-    bool isValid{validPixel(x, y)};
-
-    if (isValid)
-    {
-        m_fbp[x + y * m_lineLengthPixels] = rgb.get565();
-    }
-
-    return isValid;
-}
-
-//-------------------------------------------------------------------------
-
-bool
-raspifb16::CFrameBuffer565:: setPixel(
-    int32_t x,
-    int32_t y,
+    const CFB565Point& p,
     uint16_t rgb) const
 {
-    bool isValid{validPixel(x, y)};
+    bool isValid{validPixel(p)};
 
     if (isValid)
     {
-        m_fbp[x + y * m_lineLengthPixels] = rgb;
+        m_fbp[p.x() + p.y() * m_lineLengthPixels] = rgb;
     }
 
     return isValid;
@@ -205,15 +187,14 @@ raspifb16::CFrameBuffer565:: setPixel(
 
 bool
 raspifb16::CFrameBuffer565:: getPixel(
-    int32_t x,
-    int32_t y,
+    const CFB565Point& p,
     CRGB565& rgb) const
 {
-    bool isValid{validPixel(x, y)};
+    bool isValid{validPixel(p)};
 
     if (isValid)
     {
-        rgb.set565(m_fbp[x + y * m_lineLengthPixels]);
+        rgb.set565(m_fbp[p.x() + p.y() * m_lineLengthPixels]);
     }
 
     return isValid;
@@ -223,15 +204,14 @@ raspifb16::CFrameBuffer565:: getPixel(
 
 bool
 raspifb16::CFrameBuffer565:: getPixel(
-    int32_t x,
-    int32_t y,
+    const CFB565Point& p,
     uint16_t& rgb) const
 {
-    bool isValid{validPixel(x, y)};
+    bool isValid{validPixel(p)};
 
     if (isValid)
     {
-        rgb = m_fbp[x + y * m_lineLengthPixels];
+        rgb = m_fbp[p.x() + p.y() * m_lineLengthPixels];
     }
 
     return isValid;
@@ -241,20 +221,19 @@ raspifb16::CFrameBuffer565:: getPixel(
 
 bool
 raspifb16::CFrameBuffer565:: putImage(
-    int32_t x,
-    int32_t y,
+    const CFB565Point& p,
     const CImage565& image) const
 {
-    if ((x < 0) ||
-        ((x + image.getWidth()) >  static_cast<int32_t>(m_vinfo.xres)))
+    if ((p.x() < 0) ||
+        ((p.x() + image.getWidth()) > static_cast<int32_t>(m_vinfo.xres)))
     {
-        return putImagePartial(x, y, image);
+        return putImagePartial(p, image);
     }
 
-    if ((y < 0) ||
-        ((y + image.getHeight()) > static_cast<int32_t>(m_vinfo.yres)))
+    if ((p.y() < 0) ||
+        ((p.y() + image.getHeight()) > static_cast<int32_t>(m_vinfo.yres)))
     {
-        return putImagePartial(x, y, image);
+        return putImagePartial(p, image);
     }
 
     for (int32_t j = 0 ; j < image.getHeight() ; ++j)
@@ -263,7 +242,7 @@ raspifb16::CFrameBuffer565:: putImage(
 
         std::copy(start,
                   start + image.getWidth(), 
-                  m_fbp + ((j + y) * m_lineLengthPixels) + x);
+                  m_fbp + ((j + p.y()) * m_lineLengthPixels) + p.x());
     }
 
     return true;
@@ -273,13 +252,14 @@ raspifb16::CFrameBuffer565:: putImage(
 
 bool
 raspifb16::CFrameBuffer565:: putImagePartial(
-    int32_t x,
-    int32_t y,
+    const CFB565Point& p,
     const CImage565& image) const
 {
+    auto x = p.x();
     auto xStart = 0;
     auto xEnd = image.getWidth() - 1;
 
+    auto y = p.y();
     auto yStart = 0;
     auto yEnd = image.getHeight() - 1;
 

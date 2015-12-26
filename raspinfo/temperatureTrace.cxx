@@ -38,7 +38,6 @@
 #include <bcm_host.h>
 #pragma GCC diagnostic pop
 
-#include "font.h"
 #include "system.h"
 #include "temperatureTrace.h"
 

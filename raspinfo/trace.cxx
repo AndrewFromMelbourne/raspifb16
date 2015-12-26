@@ -32,7 +32,8 @@
 #include <cstring>
 #include <iostream>
 
-#include "font.h"
+#include "image565Font.h"
+#include "image565Graphics.h"
 #include "panel.h"
 #include "rgb565.h"
 #include "trace.h"
@@ -56,7 +57,7 @@ CTrace(
     const std::vector<std::string>& traceNames,
     const std::vector<raspifb16::CRGB565>& traceColours)
 :
-    CPanel(width, traceHeight + raspifb16::sc_fontHeight + 4, yPosition),
+    CPanel(width, traceHeight + getLegendHeight(), yPosition),
     m_traceHeight{traceHeight},
     m_gridHeight{gridHeight},
     m_columns{0},
@@ -85,12 +86,14 @@ CTrace(
 
     uint8_t smallSquare = 0xFE;
 
-    raspifb16::SFontPosition position = 
-        drawString(0,
-                   getImage().getHeight() - 2 - raspifb16::sc_fontHeight,
-                   title + " (",
-                   sc_foreground,
-                   getImage());
+    raspifb16::CFontPoint position(0, m_traceHeight + 2);
+
+    position =
+        drawString(
+            raspifb16::CFontPoint(0, m_traceHeight + 2),
+            title + " (",
+            sc_foreground,
+            getImage());
 
     bool first = true;
     for (auto& trace : m_traceData)
@@ -101,35 +104,45 @@ CTrace(
         }
         else
         {
-            position.x += raspifb16::sc_fontWidth;
+            position.set(
+                position.x() + raspifb16::sc_fontWidth,
+                position.y());
         }
 
-        position = drawString(position.x,
-                              position.y,
+        position = drawString(position,
                               trace.m_name + ":",
                               sc_foreground,
                               getImage());
 
-        position = drawChar(position.x,
-                            position.y,
+        position = drawChar(position,
                             smallSquare,
                             trace.m_traceColour,
                             getImage());
     }
 
-    position = drawString(position.x,
-                          position.y,
+    position = drawString(position,
                           ")",
                           sc_foreground,
                           getImage());
 
-    for (int32_t j = 0 ; j < traceHeight + 1 ; j+= m_gridHeight)
+    for (auto j = 0 ; j < traceHeight + 1 ; j+= m_gridHeight)
     {
-        for (int32_t i = 0 ; i < getImage().getWidth() ;  ++i)
-        {
-            getImage().setPixel(i, j, sc_gridColour);
-        }
+        horizontalLine(
+            getImage(),
+            0,
+            getImage().getWidth(),
+            j,
+            sc_gridColour);
     }
+}
+
+//-------------------------------------------------------------------------
+
+int16_t
+CTrace::
+getLegendHeight()
+{
+    return raspifb16::sc_fontHeight + 4;
 }
 
 //-------------------------------------------------------------------------
@@ -182,11 +195,13 @@ update(
             {
                 if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
                 {
-                    getImage().setPixel(i, j--, trace.m_gridColour);
+                    getImage().setPixel(raspifb16::CImage565Point{i, j--},
+                                        trace.m_gridColour);
                 }
                 else
                 {
-                    getImage().setPixel(i, j--, trace.m_traceColour);
+                    getImage().setPixel(raspifb16::CImage565Point{i, j--},
+                                        trace.m_traceColour);
                 }
             }
         }
@@ -195,11 +210,13 @@ update(
         {
             if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
             {
-                getImage().setPixel(i, j, sc_gridColour);
+                getImage().setPixel(raspifb16::CImage565Point{i, j},
+                                    sc_gridColour);
             }
             else
             {
-                getImage().setPixel(i, j, sc_background);
+                getImage().setPixel(raspifb16::CImage565Point{i, j},
+                                    sc_background);
             }
         }
     }

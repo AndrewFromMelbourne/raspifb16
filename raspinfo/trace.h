@@ -74,6 +74,8 @@ public:
         const std::vector<std::string>& traceNames,
         const std::vector<raspifb16::CRGB565>& traceColours);
 
+    static int16_t getLegendHeight();
+
     virtual void
     show(
         const raspifb16::CFrameBuffer565& fb,

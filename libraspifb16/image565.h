@@ -34,11 +34,16 @@
 #include <vector>
 
 #include "rgb565.h"
+#include "point.h"
 
 //-------------------------------------------------------------------------
 
 namespace raspifb16
 {
+
+//-------------------------------------------------------------------------
+
+using CImage565Point = CPoint<int16_t>;
 
 //-------------------------------------------------------------------------
 
@@ -54,22 +59,30 @@ public:
     void clear(const CRGB565& rgb) { clear(rgb.get565()); }
     void clear(uint16_t rgb);
 
-    bool setPixel(int16_t x, int16_t y, const CRGB565& rgb) { return setPixel(x, y, rgb.get565()); }
-    bool setPixel(int16_t x, int16_t y, uint16_t rgb);
+    bool
+    setPixel(
+        const CImage565Point& p,
+        const CRGB565& rgb)
+    {
+        return setPixel(p, rgb.get565());
+    }
 
-    bool getPixel(int16_t x, int16_t y, CRGB565& rgb) const;
-    bool getPixel(int16_t x, int16_t y, uint16_t& rgb) const;
+    bool setPixel(const CImage565Point& p, uint16_t rgb);
+
+    bool getPixel(const CImage565Point& p, CRGB565& rgb) const;
+    bool getPixel(const CImage565Point& p, uint16_t& rgb) const;
 
     const uint16_t* getRow(int16_t y) const;
 
 private:
 
     bool
-    validPixel(
-        int16_t x,
-        int16_t y) const
+    validPixel(const CImage565Point& p) const
     {
-        return ((x >= 0) && (y >= 0) && (x < m_width) && (y < m_height));
+        return ((p.x() >= 0) &&
+                (p.y() >= 0) &&
+                (p.x() < m_width) &&
+                (p.y() < m_height));
     }
 
     int16_t m_width;

@@ -30,9 +30,10 @@
 
 #include <unistd.h>
 
-#include "font.h"
 #include "framebuffer565.h"
 #include "image565.h"
+#include "image565Font.h"
+#include "point.h"
 
 //-------------------------------------------------------------------------
 
@@ -45,32 +46,48 @@ main(void)
 {
     try
     {
-        CFrameBuffer565 fb("/dev/fb1");
+        CFrameBuffer565 fb{"/dev/fb1"};
         fb.clear();
 
-        CImage565 image(48, 48);
-        image.clear(CRGB565(255, 0, 0));
+        //-----------------------------------------------------------------
 
-        fb.putImage((fb.getWidth() - image.getWidth()) / 2, 
-                    (fb.getHeight() - image.getHeight()) / 2,
-                    image);
+        CImage565 image{48, 48};
+        image.clear(CRGB565{255, 0, 0});
+
+        CFB565Point imageLocation
+        {
+            (fb.getWidth() - image.getWidth()) / 2, 
+            (fb.getHeight() - image.getHeight()) / 2
+        };
+
+        fb.putImage(imageLocation, image);
+
+        //-----------------------------------------------------------------
 
         CImage565 textImage(168, 16);
         textImage.clear(CRGB565(0, 0, 63));
-        drawString(0,
-                   0,
-                   "This is a test string",
-                   CRGB565(255, 255, 255),
-                   textImage);
-        fb.putImage((fb.getWidth() - textImage.getWidth()) / 2, 
-                    (fb.getHeight() - textImage.getHeight()) / 3,
-                    textImage);
+
+        CFB565Point textLocation
+        {
+            (fb.getWidth() - textImage.getWidth()) / 2, 
+            (fb.getHeight() - textImage.getHeight()) / 3
+        };
+
+        drawString(
+            CFontPoint{0, 0},
+            "This is a test string",
+            CRGB565{255, 255, 255},
+            textImage);
+
+        fb.putImage(textLocation, textImage);
+
+        //-----------------------------------------------------------------
 
         sleep(10);
 
         fb.clear();
     }
-    catch (std::system_error& error)
+    catch (std::exception& error)
     {
         std::cerr << "Error: " << error.what() << "\n";
         exit(EXIT_FAILURE);
