@@ -45,8 +45,8 @@
 #include <bcm_host.h>
 #pragma GCC diagnostic pop
 
-#include "font.h"
 #include "dynamicInfo.h"
+#include "image565Font.h"
 #include "system.h"
 
 //-------------------------------------------------------------------------
@@ -202,10 +202,9 @@ show(
 
     //---------------------------------------------------------------------
 
-    raspifb16::SFontPosition position = { 0, 0 };
+    raspifb16::CFontPoint position = { 0, 0 };
 
-    position = drawString(position.x,
-                          position.y,
+    position = drawString(position,
                           "ip(",
                           m_heading,
                           getImage());
@@ -213,86 +212,73 @@ show(
     char interface = ' ';
     std::string ipaddress = getIpAddress(interface);
 
-    position = drawChar(position.x,
-                        position.y,
+    position = drawChar(position,
                         interface,
                         m_foreground,
                         getImage());
 
-    position = drawString(position.x,
-                          position.y,
+    position = drawString(position,
                           ") ",
                           m_heading,
                           getImage());
 
-    position = drawString(position.x,
-                          position.y,
+    position = drawString(position,
                           ipaddress,
                           m_foreground,
                           getImage());
 
-    position = drawString(position.x,
-                          position.y,
+    position = drawString(position,
                           " memory ",
                           m_heading,
                           getImage());
 
-    position = drawString(position.x,
-                          position.y,
+    position = drawString(position,
                           m_memorySplit,
                           m_foreground,
                           getImage());
 
-    position = drawString(position.x,
-                          position.y,
+    position = drawString(position,
                           " MB",
                           m_foreground,
                           getImage());
 
     //---------------------------------------------------------------------
 
-    position.x = 0;
-    position.y += raspifb16::sc_fontHeight + 4;
+    position.set(0, position.y() + raspifb16::sc_fontHeight + 4);
 
-    position = drawString(position.x,
-                          position.y,
+    position = drawString(position,
                           "time ",
                           m_heading,
                           getImage());
 
     std::string timeString = getTime(now);
 
-    position = drawString(position.x,
-                          position.y,
+    position = drawString(position,
                           timeString,
                           m_foreground,
                           getImage());
 
-    position = drawString(position.x,
-                          position.y,
+    position = drawString(position,
                           " temperature ",
                           m_heading,
                           getImage());
 
     std::string temperatureString = getTemperature();
 
-    position = drawString(position.x,
-                          position.y,
+    position = drawString(position,
                           temperatureString,
                           m_foreground,
                           getImage());
 
     uint8_t degreeSymbol = 0xF8;
 
-    position = drawChar(position.x,
-                        position.y,
+    position = drawChar(position,
                         degreeSymbol,
                         m_foreground,
                         getImage());
 
 
-    position = drawString(position.x,
-                          position.y,
+    position = drawString(position,
                           "C",
                           m_foreground,
                           getImage());
