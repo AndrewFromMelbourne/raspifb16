@@ -80,7 +80,7 @@ line(
     const CImage565Point& p2,
     uint16_t rgb)
 {
-    if (p1.y() == p1.y())
+    if (p1.y() == p2.y())
     {
         horizontalLine(image, p1.x(), p2.x(), p1.y(), rgb);
     }
