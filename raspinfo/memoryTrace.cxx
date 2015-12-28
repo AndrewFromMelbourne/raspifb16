@@ -94,17 +94,18 @@ CMemoryTrace(
     int16_t yPosition,
     int16_t gridHeight)
 :
-    CTrace(width,
-           traceHeight,
-           yPosition,
-           gridHeight,
-           3,
-           "Memory",
-           std::vector<std::string>{"used", "buffers", "cached"},
-           std::vector<raspifb16::CRGB565>{{0,109,44},
-                                           {102,194,164},
-                                           {237,248,251}}),
-    m_traceHeight(traceHeight)
+    CTraceStack(
+        width,
+        traceHeight,
+        100,
+        yPosition,
+        gridHeight,
+        3,
+        "Memory",
+        std::vector<std::string>{"used", "buffers", "cached"},
+        std::vector<raspifb16::CRGB565>{{0,109,44},
+                                        {102,194,164},
+                                        {237,248,251}})
 {
 }
 
@@ -118,17 +119,17 @@ show(
 {
     CMemoryStats memoryStats;
 
-    int8_t used = (memoryStats.used() * m_traceHeight)
-                / memoryStats.total();
-
-    int8_t buffers = (memoryStats.buffers() * m_traceHeight)
-                   / memoryStats.total();
-
-    int8_t cached = (memoryStats.cached() * m_traceHeight)
+    int16_t used = (memoryStats.used() * m_traceScale)
                  / memoryStats.total();
 
-    update(std::vector<int8_t>{used, buffers, cached}, now);
+    int16_t buffers = (memoryStats.buffers() * m_traceScale)
+                    / memoryStats.total();
 
-    putImage(fb);
+    int16_t cached = (memoryStats.cached() * m_traceScale)
+                   / memoryStats.total();
+
+    CTrace::update(std::vector<int16_t>{used, buffers, cached}, now);
+
+    CPanel::putImage(fb);
 }
 

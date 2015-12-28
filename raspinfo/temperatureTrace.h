@@ -34,7 +34,7 @@
 #include <vector>
 
 #include "panel.h"
-#include "trace.h"
+#include "traceGraph.h"
 
 //-------------------------------------------------------------------------
 
@@ -47,12 +47,12 @@ class CFrameBuffer565;
 
 class CTemperatureTrace
 :
-    public CTrace
+    public CTraceGraph
 {
 public:
 
     CTemperatureTrace(int16_t width,
-                      int16_t traceHeight,
+                      int16_t graphHeight,
                       int16_t yPosition,
                       int16_t gridHeight = 20);
 
@@ -60,10 +60,6 @@ public:
     show(
         const raspifb16::CFrameBuffer565& fb,
         time_t now) override;
-
-private:
-
-    int16_t m_traceHeight;
 };
 
 //-------------------------------------------------------------------------

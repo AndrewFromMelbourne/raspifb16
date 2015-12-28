@@ -25,55 +25,47 @@
 //
 //-------------------------------------------------------------------------
 
-#include <cmath>
+#ifndef TRACE_STACK_H
+#define TRACE_STACK_H
+
+//-------------------------------------------------------------------------
+
 #include <cstdint>
-#include <stdexcept>
 #include <string>
 
-#include <unistd.h>
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-#include <bcm_host.h>
-#pragma GCC diagnostic pop
-
-#include "system.h"
-#include "temperatureTrace.h"
+#include "rgb565.h"
+#include "trace.h"
 
 //-------------------------------------------------------------------------
 
-CTemperatureTrace::
-CTemperatureTrace(
-    int16_t width,
-    int16_t traceHeight,
-    int16_t yPosition,
-    int16_t gridHeight)
+class CTraceStack
 :
-    CTraceGraph(
-        width,
-        traceHeight,
-        100,
-        yPosition,
-        gridHeight,
-        1,
-        "Temperature",
-        std::vector<std::string>{"temperature"},
-        std::vector<raspifb16::CRGB565>{{102,167,225}})
+    public CTrace
 {
-}
+public:
+
+    CTraceStack(
+        int16_t width,
+        int16_t traceHeight,
+        int16_t traceScale,
+        int16_t yPosition,
+        int16_t gridHeight,
+        int16_t traces,
+        const std::string& title,
+        const std::vector<std::string>& traceNames,
+        const std::vector<raspifb16::CRGB565>& traceColours);
+
+    virtual void
+    show(
+        const raspifb16::CFrameBuffer565& fb,
+        time_t now) override = 0;
+
+protected:
+
+    virtual void draw() override;
+};
 
 //-------------------------------------------------------------------------
 
-void
-CTemperatureTrace::
-show(
-    const raspifb16::CFrameBuffer565& fb,
-    time_t now)
-{
-    int16_t temperature = raspinfo::getTemperature();
-
-    CTrace::update(std::vector<int16_t>{temperature}, now);
-
-    CPanel::putImage(fb);
-}
+#endif
 

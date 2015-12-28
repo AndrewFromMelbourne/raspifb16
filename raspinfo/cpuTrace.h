@@ -35,7 +35,7 @@
 
 #include <sys/time.h>
 
-#include "trace.h"
+#include "traceStack.h"
 
 //-------------------------------------------------------------------------
 
@@ -50,7 +50,7 @@ class CCpuStats
 {
 public:
 
-    void read();
+    CCpuStats();
 
     uint32_t total() const;
     uint32_t user() const { return m_user; }
@@ -79,7 +79,7 @@ CCpuStats operator-(const CCpuStats& lhs, const CCpuStats& rhs);
 
 class CCpuTrace
 :
-    public CTrace
+    public CTraceStack
 {
 public:
 
@@ -96,9 +96,6 @@ public:
 
 private:
 
-    int16_t m_traceHeight;
-
-    CCpuStats m_currentStats;
     CCpuStats m_previousStats;
 };
 

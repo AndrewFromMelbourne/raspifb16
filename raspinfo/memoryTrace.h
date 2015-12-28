@@ -34,7 +34,7 @@
 #include <vector>
 
 #include "panel.h"
-#include "trace.h"
+#include "traceStack.h"
 
 //-------------------------------------------------------------------------
 
@@ -68,7 +68,7 @@ private:
 
 class CMemoryTrace
 :
-    public CTrace
+    public CTraceStack
 {
 public:
 
@@ -81,10 +81,6 @@ public:
     show(
         const raspifb16::CFrameBuffer565& fb,
         time_t now) override;
-
-private:
-
-    int16_t m_traceHeight;
 };
 
 //-------------------------------------------------------------------------

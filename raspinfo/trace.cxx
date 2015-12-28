@@ -50,6 +50,7 @@ CTrace::
 CTrace(
     int16_t width,
     int16_t traceHeight,
+    int16_t traceScale,
     int16_t yPosition,
     int16_t gridHeight,
     int16_t traces,
@@ -59,8 +60,10 @@ CTrace(
 :
     CPanel(width, traceHeight + getLegendHeight(), yPosition),
     m_traceHeight{traceHeight},
+    m_traceScale{traceScale},
     m_gridHeight{gridHeight},
     m_columns{0},
+    m_autoScale{traceScale == 0},
     m_traceData(),
     m_time(width)
 {
@@ -130,7 +133,7 @@ CTrace(
         horizontalLine(
             getImage(),
             0,
-            getImage().getWidth(),
+            getImage().getWidth() - 1,
             j,
             sc_gridColour);
     }
@@ -150,7 +153,7 @@ getLegendHeight()
 void
 CTrace::
 update(
-    const std::vector<int8_t>& data,
+    const std::vector<int16_t>& data,
     time_t now)
 {
     int16_t index{0};
@@ -161,7 +164,7 @@ update(
     }
     else
     {
-        index = getImage().getWidth() - 1;
+        index = m_columns - 1;
 
         for (auto& trace : m_traceData)
         {
@@ -178,47 +181,33 @@ update(
     auto value = data.begin();
     for (auto& trace : m_traceData)
     {
-        trace.m_values[index] = *value;
+        trace.m_values[index] = *(value++);
     }
 
     m_time[index] = now % 60;
 
     //-----------------------------------------------------------------
 
-    for (int16_t i = 0 ; i < m_columns ; ++i)
+    if (m_autoScale)
     {
-        int16_t j = m_traceHeight - 1;
+        m_traceScale = 0;
 
         for (auto& trace : m_traceData)
         {
-            for (int16_t v = 0 ; v < trace.m_values[i] ; ++v)
-            {
-                if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
-                {
-                    getImage().setPixel(raspifb16::CImage565Point{i, j--},
-                                        trace.m_gridColour);
-                }
-                else
-                {
-                    getImage().setPixel(raspifb16::CImage565Point{i, j--},
-                                        trace.m_traceColour);
-                }
-            }
+            int16_t max = *max_element(trace.m_values.begin(),
+                                       trace.m_values.end());
+
+            m_traceScale = std::max(m_traceScale, max);
         }
 
-        for ( ; j >= 0 ; --j)
+        if (m_traceScale == 0)
         {
-            if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
-            {
-                getImage().setPixel(raspifb16::CImage565Point{i, j},
-                                    sc_gridColour);
-            }
-            else
-            {
-                getImage().setPixel(raspifb16::CImage565Point{i, j},
-                                    sc_background);
-            }
+            m_traceScale = 1;
         }
     }
+
+    //-----------------------------------------------------------------
+
+    draw();
 }
  

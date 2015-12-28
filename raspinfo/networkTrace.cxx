@@ -25,121 +25,109 @@
 //
 //-------------------------------------------------------------------------
 
+#include <algorithm>
 #include <cstdint>
-#include <fstream>
 #include <stdexcept>
+#include <string>
 #include <system_error>
 
+#include <ifaddrs.h>
+#include <netdb.h>
 #include <unistd.h>
 
-#include "cpuTrace.h"
+#include <arpa/inet.h>
+#include <linux/if_link.h>
+#include <sys/socket.h>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#include <bcm_host.h>
+#pragma GCC diagnostic pop
+
+#include "system.h"
+#include "networkTrace.h"
 
 //-------------------------------------------------------------------------
 
-CCpuStats::
-CCpuStats()
+CNetworkStats::
+CNetworkStats()
+:
+    m_tx{0},
+    m_rx{0}
 {
-    std::ifstream ifs{"/proc/stat", std::ifstream::in};
+    struct ifaddrs *ifaddr;
 
-    if (ifs.is_open() == false)
+    if (getifaddrs(&ifaddr) == -1)
     {
-        throw std::system_error{errno,
+        throw std::system_error(errno,
                                 std::system_category(),
-                                "unable to open /proc/stat"};
+                                "getifaddrs");
     }
 
-    std::string id;
-    ifs >> id;
-
-    if (id != "cpu")
+    struct ifaddrs *ifa = ifaddr;
+    for (ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next)
     {
-        throw std::logic_error{
-            "reading /proc/stat expected \"cpu\", but found " + id};
+        if (ifa->ifa_addr != nullptr)
+        {
+            int family = ifa->ifa_addr->sa_family;
+
+            if ((family == AF_PACKET) &&
+                (std::string(ifa->ifa_name) != "lo"))
+            {
+                rtnl_link_stats* stats =
+                    static_cast<rtnl_link_stats*>(ifa->ifa_data);
+
+                m_tx += stats->tx_bytes;
+                m_rx += stats->rx_bytes;
+            }
+        }
     }
 
-    ifs
-        >> m_user
-        >> m_nice
-        >> m_system
-        >> m_idle
-        >> m_iowait
-        >> m_irq
-        >> m_softirq
-        >> m_steal
-        >> m_guest
-        >> m_guest_nice;
+    freeifaddrs(ifaddr);
 }
 
 //-------------------------------------------------------------------------
 
-uint32_t
-CCpuStats::
-total() const
-{
-    return m_user +
-           m_nice +
-           m_system +
-           m_idle +
-           m_iowait +
-           m_irq +
-           m_softirq +
-           m_steal +
-           m_guest +
-           m_guest_nice;
-}
-
-//-------------------------------------------------------------------------
-
-CCpuStats&
-CCpuStats::
+CNetworkStats&
+CNetworkStats::
 operator-=(
-    const CCpuStats& rhs)
+    const CNetworkStats& rhs)
 {
-    m_user -= rhs.m_user;
-    m_nice -= rhs.m_nice;
-    m_system -= rhs.m_system;
-    m_idle -= rhs.m_idle;
-    m_iowait -= rhs.m_iowait;
-    m_irq -= rhs.m_irq;
-    m_softirq -= rhs.m_softirq;
-    m_steal -= rhs.m_steal;
-    m_guest -= rhs.m_guest;
-    m_guest_nice -= rhs.m_guest_nice;
+    m_tx -= rhs.m_tx;
+    m_rx -= rhs.m_rx;
 
     return *this;
 }
 
 //-------------------------------------------------------------------------
 
-CCpuStats
+CNetworkStats
 operator-(
-    const CCpuStats& lhs,
-    const CCpuStats& rhs)
+    const CNetworkStats& lhs,
+    const CNetworkStats& rhs)
 {
-    return CCpuStats(lhs) -= rhs;
+    return CNetworkStats(lhs) -= rhs;
 }
 
 //-------------------------------------------------------------------------
 
-CCpuTrace::
-CCpuTrace(
+CNetworkTrace::
+CNetworkTrace(
     int16_t width,
     int16_t traceHeight,
     int16_t yPosition,
     int16_t gridHeight)
 :
-    CTraceStack(
+    CTraceGraph(
         width,
         traceHeight,
-        100,
+        0,
         yPosition,
         gridHeight,
-        3,
-        "CPU",
-        std::vector<std::string>{"user", "nice", "system"},
-        std::vector<raspifb16::CRGB565>{{4,90,141},
-                                        {116,169,207},
-                                        {241,238,246}}),
+        2,
+        "Network",
+        std::vector<std::string>{"tx", "rx"},
+        std::vector<raspifb16::CRGB565>{{102,167,225}, {102,225,167}}),
     m_previousStats{}
 {
 }
@@ -147,22 +135,19 @@ CCpuTrace(
 //-------------------------------------------------------------------------
 
 void
-CCpuTrace::
+CNetworkTrace::
 show(
     const raspifb16::CFrameBuffer565& fb,
     time_t now)
 {
-    CCpuStats currentStats;
+    CNetworkStats currentStats;
 
-    CCpuStats diff{currentStats - m_previousStats};
+    CNetworkStats diff{currentStats - m_previousStats};
 
-    uint32_t totalCpu = diff.total();
+    int16_t tx = diff.tx();
+    int16_t rx = diff.rx();
 
-    int16_t user = (diff.user() * m_traceScale) / totalCpu;
-    int16_t nice = (diff.nice() * m_traceScale) / totalCpu;
-    int16_t system = (diff.system() * m_traceScale) / totalCpu;
-
-    CTrace::update(std::vector<int16_t>{user, nice, system}, now);
+    CTrace::update(std::vector<int16_t>{tx, rx}, now);
 
     CPanel::putImage(fb);
 

@@ -53,7 +53,7 @@ struct STraceData
     std::string m_name;
     raspifb16::CRGB565 m_traceColour;
     raspifb16::CRGB565 m_gridColour;
-    std::vector<int8_t> m_values;
+    std::vector<int16_t> m_values;
 };
 
 //-------------------------------------------------------------------------
@@ -67,6 +67,7 @@ public:
     CTrace(
         int16_t width,
         int16_t traceHeight,
+        int16_t traceScale,
         int16_t yPosition,
         int16_t gridHeight,
         int16_t traces,
@@ -83,13 +84,15 @@ public:
 
 protected:
 
-    void update(const std::vector<int8_t>& data, time_t now);
-
-private:
+    void update(const std::vector<int16_t>& data, time_t now);
+    virtual void draw() = 0;
 
     int16_t m_traceHeight;
+    int16_t m_traceScale;
     int16_t m_gridHeight;
     int16_t m_columns;
+
+    bool m_autoScale;
 
     std::vector<STraceData> m_traceData;
     std::vector<int8_t> m_time;

@@ -25,55 +25,69 @@
 //
 //-------------------------------------------------------------------------
 
-#include <cmath>
+#ifndef NETWORK_TRACE_H
+#define NETWORK_TRACE_H
+
+//-------------------------------------------------------------------------
+
 #include <cstdint>
-#include <stdexcept>
-#include <string>
+#include <vector>
 
-#include <unistd.h>
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-#include <bcm_host.h>
-#pragma GCC diagnostic pop
-
-#include "system.h"
-#include "temperatureTrace.h"
+#include "panel.h"
+#include "traceGraph.h"
 
 //-------------------------------------------------------------------------
 
-CTemperatureTrace::
-CTemperatureTrace(
-    int16_t width,
-    int16_t traceHeight,
-    int16_t yPosition,
-    int16_t gridHeight)
+namespace raspifb16
+{
+class CFrameBuffer565;
+}
+
+//-------------------------------------------------------------------------
+
+class CNetworkStats
+{
+public:
+
+    CNetworkStats();
+
+    uint32_t tx() const { return m_tx; }
+    uint32_t rx() const { return m_rx; }
+
+    CNetworkStats& operator-=(const CNetworkStats& rhs);
+
+private:
+
+    uint32_t m_tx;
+    uint32_t m_rx;
+};
+
+CNetworkStats operator-(const CNetworkStats& lhs, const CNetworkStats& rhs);
+
+//-------------------------------------------------------------------------
+
+class CNetworkTrace
 :
-    CTraceGraph(
-        width,
-        traceHeight,
-        100,
-        yPosition,
-        gridHeight,
-        1,
-        "Temperature",
-        std::vector<std::string>{"temperature"},
-        std::vector<raspifb16::CRGB565>{{102,167,225}})
+    public CTraceGraph
 {
-}
+public:
+
+    CNetworkTrace(int16_t width,
+                       int16_t graphHeight,
+                       int16_t yPosition,
+                       int16_t gridHeight = 20);
+
+    virtual void
+    show(
+        const raspifb16::CFrameBuffer565& fb,
+        time_t now) override;
+
+private:
+
+    CNetworkStats m_previousStats;
+};
 
 //-------------------------------------------------------------------------
 
-void
-CTemperatureTrace::
-show(
-    const raspifb16::CFrameBuffer565& fb,
-    time_t now)
-{
-    int16_t temperature = raspinfo::getTemperature();
-
-    CTrace::update(std::vector<int16_t>{temperature}, now);
-
-    CPanel::putImage(fb);
-}
+#endif
 
