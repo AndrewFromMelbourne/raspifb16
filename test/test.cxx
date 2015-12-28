@@ -33,6 +33,7 @@
 #include "framebuffer565.h"
 #include "image565.h"
 #include "image565Font.h"
+#include "image565Graphics.h"
 #include "point.h"
 
 //-------------------------------------------------------------------------
@@ -53,6 +54,10 @@ main(void)
 
         CImage565 image{48, 48};
         image.clear(CRGB565{255, 0, 0});
+        line(image,
+             CImage565Point(0,0),
+             CImage565Point(47,47),
+             CRGB565{0, 255, 0});
 
         CFB565Point imageLocation
         {
