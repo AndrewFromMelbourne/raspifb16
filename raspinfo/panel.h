@@ -57,19 +57,8 @@ public:
     raspifb16::CImage565& getImage() { return m_image; }
     const raspifb16::CImage565& getImage() const { return m_image; }
 
-    virtual void
-    show(
-        const raspifb16::CFrameBuffer565& fb,
-        time_t now) = 0;
-
-protected:
-
-    void
-    putImage(
-        const raspifb16::CFrameBuffer565& fb) const
-    {
-        fb.putImage(raspifb16::CFB565Point(0, m_yPosition), m_image);
-    }
+    void show(const raspifb16::CFrameBuffer565& fb) const;
+    virtual void update(time_t now) = 0;
 
 private:
 

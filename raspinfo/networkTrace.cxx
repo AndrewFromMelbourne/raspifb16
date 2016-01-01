@@ -136,8 +136,7 @@ CNetworkTrace(
 
 void
 CNetworkTrace::
-show(
-    const raspifb16::CFrameBuffer565& fb,
+update(
     time_t now)
 {
     CNetworkStats currentStats;
@@ -147,9 +146,7 @@ show(
     int16_t tx = diff.tx();
     int16_t rx = diff.rx();
 
-    CTrace::update(std::vector<int16_t>{tx, rx}, now);
-
-    CPanel::putImage(fb);
+    CTrace::addData(std::vector<int16_t>{tx, rx}, now);
 
     m_previousStats = currentStats;
 }

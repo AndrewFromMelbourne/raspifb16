@@ -55,10 +55,7 @@ public:
         const std::vector<std::string>& traceNames,
         const std::vector<raspifb16::CRGB565>& traceColours);
 
-    virtual void
-    show(
-        const raspifb16::CFrameBuffer565& fb,
-        time_t now) override = 0;
+    virtual void update(time_t now) override = 0;
 
 protected:
 

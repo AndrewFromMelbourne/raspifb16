@@ -152,7 +152,7 @@ getLegendHeight()
 
 void
 CTrace::
-update(
+addData(
     const std::vector<int16_t>& data,
     time_t now)
 {

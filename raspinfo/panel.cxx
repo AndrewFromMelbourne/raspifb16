@@ -2,7 +2,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Andrew Duncan
+// Copyright (c) 2016 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -25,52 +25,15 @@
 //
 //-------------------------------------------------------------------------
 
-#include <cmath>
-#include <cstdint>
-#include <stdexcept>
-#include <string>
-
-#include <unistd.h>
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-#include <bcm_host.h>
-#pragma GCC diagnostic pop
-
-#include "system.h"
-#include "temperatureTrace.h"
-
-//-------------------------------------------------------------------------
-
-CTemperatureTrace::
-CTemperatureTrace(
-    int16_t width,
-    int16_t traceHeight,
-    int16_t yPosition,
-    int16_t gridHeight)
-:
-    CTraceGraph(
-        width,
-        traceHeight,
-        100,
-        yPosition,
-        gridHeight,
-        1,
-        "Temperature",
-        std::vector<std::string>{"temperature"},
-        std::vector<raspifb16::CRGB565>{{102,167,225}})
-{
-}
+#include "panel.h"
 
 //-------------------------------------------------------------------------
 
 void
-CTemperatureTrace::
-update(
-    time_t now)
+CPanel::
+show(
+    const raspifb16::CFrameBuffer565& fb) const
 {
-    int16_t temperature = raspinfo::getTemperature();
-
-    CTrace::addData(std::vector<int16_t>{temperature}, now);
+    fb.putImage(raspifb16::CFB565Point(0, m_yPosition), m_image);
 }
 

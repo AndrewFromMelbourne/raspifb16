@@ -25,7 +25,9 @@
 //
 //-------------------------------------------------------------------------
 
+#include <array>
 #include <chrono>
+#include <csignal>
 #include <cstdint>
 #include <exception>
 #include <iostream>
@@ -57,11 +59,13 @@
 
 //-------------------------------------------------------------------------
 
-volatile bool run = true;
+namespace
+{
+volatile static std::sig_atomic_t run = 1;
+volatile static std::sig_atomic_t display = 1;
 
-//-------------------------------------------------------------------------
-
-static const char* defaultDevice = "/dev/fb1";
+const char* defaultDevice = "/dev/fb1";
+}
 
 //-------------------------------------------------------------------------
 
@@ -159,7 +163,17 @@ signalHandler(
     case SIGINT:
     case SIGTERM:
 
-        run = false;
+        run = 0;
+        break;
+
+    case SIGUSR1:
+
+        display = 0;
+        break;
+
+    case SIGUSR2:
+
+        display = 1;
         break;
     };
 }
@@ -277,28 +291,27 @@ main(
 
     //---------------------------------------------------------------------
 
-    if (signal(SIGINT, signalHandler) == SIG_ERR)
+    std::array<int, 4> signals = { SIGINT, SIGTERM, SIGUSR1, SIGUSR2 };
+
+    for (auto signal : signals)
     {
-        if (pfh)
+        if (std::signal(signal, signalHandler) == SIG_ERR)
         {
-            pidfile_remove(pfh);
+            if (pfh)
+            {
+                pidfile_remove(pfh);
+            }
+
+            std::string message {"installing "};
+            message += strsignal(signal);
+            message += " signal handler";
+
+            perrorLog(isDaemon,
+                      program,
+                      "installing SIGINT signal handler");
+
+            exit(EXIT_FAILURE);
         }
-
-        perrorLog(isDaemon, program, "installing SIGINT signal handler");
-        exit(EXIT_FAILURE);
-    }
-
-    //---------------------------------------------------------------------
-
-    if (signal(SIGTERM, signalHandler) == SIG_ERR)
-    {
-        if (pfh)
-        {
-            pidfile_remove(pfh);
-        }
-
-        perrorLog(isDaemon, program, "installing SIGTERM signal handler");
-        exit(EXIT_FAILURE);
     }
 
     //---------------------------------------------------------------------
@@ -367,7 +380,12 @@ main(
 
             for (auto& panel : panels)
             {
-                panel->show(fb, now_t);
+                panel->update(now_t);
+
+                if (display)
+                {
+                    panel->show(fb);
+                }
             }
 
             std::this_thread::sleep_for(oneSecond);

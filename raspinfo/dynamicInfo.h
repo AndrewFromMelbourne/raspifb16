@@ -53,10 +53,7 @@ public:
 
     CDynamicInfo(int16_t width, int16_t yPosition);
 
-    virtual void
-    show(
-        const raspifb16::CFrameBuffer565& fb,
-        time_t now) override;
+    virtual void update(time_t now) override;
 
 private:
 

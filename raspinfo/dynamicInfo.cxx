@@ -194,8 +194,7 @@ CDynamicInfo(
 
 void
 CDynamicInfo::
-show(
-    const raspifb16::CFrameBuffer565& fb,
+update(
     time_t now)
 {
     getImage().clear(m_background);
@@ -282,9 +281,5 @@ show(
                           "C",
                           m_foreground,
                           getImage());
-
-    //---------------------------------------------------------------------
-    
-    CPanel::putImage(fb);
 }
 

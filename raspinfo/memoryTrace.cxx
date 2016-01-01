@@ -113,8 +113,7 @@ CMemoryTrace(
 
 void
 CMemoryTrace::
-show(
-    const raspifb16::CFrameBuffer565& fb,
+update(
     time_t now)
 {
     CMemoryStats memoryStats;
@@ -128,8 +127,6 @@ show(
     int16_t cached = (memoryStats.cached() * m_traceScale)
                    / memoryStats.total();
 
-    CTrace::update(std::vector<int16_t>{used, buffers, cached}, now);
-
-    CPanel::putImage(fb);
+    CTrace::addData(std::vector<int16_t>{used, buffers, cached}, now);
 }
 

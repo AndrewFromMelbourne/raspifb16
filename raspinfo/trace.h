@@ -77,14 +77,11 @@ public:
 
     static int16_t getLegendHeight();
 
-    virtual void
-    show(
-        const raspifb16::CFrameBuffer565& fb,
-        time_t now) override = 0;
+    virtual void update(time_t now) override = 0;
 
 protected:
 
-    void update(const std::vector<int16_t>& data, time_t now);
+    void addData(const std::vector<int16_t>& data, time_t now);
     virtual void draw() = 0;
 
     int16_t m_traceHeight;

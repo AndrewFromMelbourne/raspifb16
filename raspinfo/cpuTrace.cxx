@@ -148,8 +148,7 @@ CCpuTrace(
 
 void
 CCpuTrace::
-show(
-    const raspifb16::CFrameBuffer565& fb,
+update(
     time_t now)
 {
     CCpuStats currentStats;
@@ -162,9 +161,7 @@ show(
     int16_t nice = (diff.nice() * m_traceScale) / totalCpu;
     int16_t system = (diff.system() * m_traceScale) / totalCpu;
 
-    CTrace::update(std::vector<int16_t>{user, nice, system}, now);
-
-    CPanel::putImage(fb);
+    CTrace::addData(std::vector<int16_t>{user, nice, system}, now);
 
     m_previousStats = currentStats;
 }

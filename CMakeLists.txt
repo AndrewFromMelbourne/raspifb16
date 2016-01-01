@@ -29,6 +29,7 @@ add_executable(raspinfo raspinfo/raspinfo.cxx
 						raspinfo/dynamicInfo.cxx
 						raspinfo/memoryTrace.cxx
 						raspinfo/networkTrace.cxx
+						raspinfo/panel.cxx
 						raspinfo/system.cxx
 						raspinfo/temperatureTrace.cxx
 						raspinfo/trace.cxx
