@@ -210,7 +210,7 @@ main(
         {
         case 'd':
 
-            isDaemon = true;
+            device = optarg;
 
             break;
 
@@ -229,7 +229,7 @@ main(
 
         case 'D':
 
-            device = optarg;
+            isDaemon = true;
 
             break;
 
