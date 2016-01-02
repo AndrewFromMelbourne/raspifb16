@@ -4,10 +4,10 @@ framebuffer.
 # usage
 	raspinfo <options>
 
-	--daemon - start in the background as a daemon
-	--device - framebuffer device to use (default is /dev/fb1)
-	--help - print usage and exit
-	--pidfile <pidfile> - create and lock PID file (if being run as a daemon)
+	--daemon,-D - start in the background as a daemon
+	--device,-d - framebuffer device to use (default is /dev/fb1)
+	--help,-h - print usage and exit
+	--pidfile,-p <pidfile> - create and lock PID file (if being run as a daemon)
 # build
 see main readme.
 # install

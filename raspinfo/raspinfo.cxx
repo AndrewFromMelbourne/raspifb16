@@ -143,11 +143,11 @@ printUsage(
     os << "\n";
     os << "Usage: " << name << " <options>\n";
     os << "\n";
-    os << "    --daemon - start in the background as a daemon\n";
-    os << "    --device - framebuffer device to use";
+    os << "    --daemon,-D - start in the background as a daemon\n";
+    os << "    --device,-d - framebuffer device to use";
     os << " (default is " << defaultDevice << ")\n";
-    os << "    --help - print usage and exit\n";
-    os << "    --pidfile <pidfile> - create and lock PID file";
+    os << "    --help,-h - print usage and exit\n";
+    os << "    --pidfile,-p <pidfile> - create and lock PID file";
     os << " (if being run as a daemon)\n";
     os << "\n";
 }
@@ -192,13 +192,13 @@ main(
 
     //---------------------------------------------------------------------
 
-    static const char* sopts = "dhp:D:";
+    static const char* sopts = "d:hp:D";
     static struct option lopts[] = 
     {
-        { "daemon", no_argument, nullptr, 'd' },
+        { "device", required_argument, nullptr, 'd' },
         { "help", no_argument, nullptr, 'h' },
         { "pidfile", required_argument, nullptr, 'p' },
-        { "device", required_argument, nullptr, 'D' },
+        { "daemon", no_argument, nullptr, 'D' },
         { nullptr, no_argument, nullptr, 0 }
     };
 
