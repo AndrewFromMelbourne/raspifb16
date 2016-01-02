@@ -127,7 +127,7 @@ CNetworkTrace(
         2,
         "Network",
         std::vector<std::string>{"tx", "rx"},
-        std::vector<raspifb16::CRGB565>{{102,167,225}, {102,225,167}}),
+        std::vector<raspifb16::CRGB565>{{102,167,225}, {225,225,102}}),
     m_previousStats{}
 {
 }
