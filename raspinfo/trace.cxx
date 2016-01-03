@@ -130,12 +130,11 @@ Trace(
 
     for (auto j = 0 ; j < traceHeight + 1 ; j+= m_gridHeight)
     {
-        horizontalLine(
-            getImage(),
-            0,
-            getImage().getWidth() - 1,
-            j,
-            sc_gridColour);
+        horizontalLine(getImage(),
+                       0,
+                       getImage().getWidth() - 1,
+                       j,
+                       sc_gridColour);
     }
 }
 
