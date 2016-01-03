@@ -62,7 +62,7 @@ getIpAddress(
 
     std::string address = "   .   .   .   ";
 
-    getifaddrs(&ifaddr);
+    ::getifaddrs(&ifaddr);
 
     for (ifa = ifaddr ; ifa != nullptr ; ifa = ifa->ifa_next)
     {
@@ -73,7 +73,7 @@ getIpAddress(
             if (strcmp(ifa->ifa_name, "lo") != 0)
             {
                 char buffer[INET_ADDRSTRLEN];
-                inet_ntop(AF_INET, addr, buffer, sizeof(buffer));
+                ::inet_ntop(AF_INET, addr, buffer, sizeof(buffer));
                 address = buffer;
                 interface = ifa->ifa_name[0];
                 break;
@@ -83,7 +83,7 @@ getIpAddress(
 
     if (ifaddr != nullptr)
     {
-        freeifaddrs(ifaddr);
+        ::freeifaddrs(ifaddr);
     }
 
     return address;
@@ -102,9 +102,9 @@ getMemorySplit()
 
     char buffer[128];
 
-    memset(buffer, 0, sizeof(buffer));
+    ::memset(buffer, 0, sizeof(buffer));
 
-    if (vc_gencmd(buffer, sizeof(buffer), "get_mem arm") == 0)
+    if (::vc_gencmd(buffer, sizeof(buffer), "get_mem arm") == 0)
     {
         try
         {
@@ -123,7 +123,9 @@ getMemorySplit()
         }
     }
 
-    if (vc_gencmd(buffer, sizeof(buffer), "get_mem gpu") == 0)
+    ::memset(buffer, 0, sizeof(buffer));
+
+    if (::vc_gencmd(buffer, sizeof(buffer), "get_mem gpu") == 0)
     {
         try
         {
@@ -169,7 +171,7 @@ getTime(
     char buffer[128];
 
     struct tm result;
-    struct tm *lt = localtime_r(&now, &result);
+    struct tm *lt = ::localtime_r(&now, &result);
     std::strftime(buffer, sizeof(buffer), "%T", lt);
 
     return buffer;

@@ -57,7 +57,7 @@ NetworkStats()
 {
     struct ifaddrs *ifaddr;
 
-    if (getifaddrs(&ifaddr) == -1)
+    if (::getifaddrs(&ifaddr) == -1)
     {
         throw std::system_error(errno,
                                 std::system_category(),
@@ -83,7 +83,7 @@ NetworkStats()
         }
     }
 
-    freeifaddrs(ifaddr);
+    ::freeifaddrs(ifaddr);
 }
 
 //-------------------------------------------------------------------------

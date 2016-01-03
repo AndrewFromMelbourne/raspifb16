@@ -78,7 +78,7 @@ messageLog(
 {
     if (isDaemon)
     {
-        syslog(LOG_MAKEPRI(LOG_USER, priority), message.c_str());
+        ::syslog(LOG_MAKEPRI(LOG_USER, priority), message.c_str());
     }
     else
     {
@@ -129,7 +129,7 @@ perrorLog(
     const std::string& name,
     const std::string& s)
 {
-    messageLog(isDaemon, name, LOG_ERR, s + " - " + strerror(errno));
+    messageLog(isDaemon, name, LOG_ERR, s + " - " + ::strerror(errno));
 }
 
 //-------------------------------------------------------------------------
@@ -204,7 +204,7 @@ main(
 
     int opt = 0;
 
-    while ((opt = getopt_long(argc, argv, sopts, lopts, nullptr)) != -1)
+    while ((opt = ::getopt_long(argc, argv, sopts, lopts, nullptr)) != -1)
     {
         switch (opt)
         {
@@ -217,7 +217,7 @@ main(
         case 'h':
 
             printUsage(std::cout, program);
-            exit(EXIT_SUCCESS);
+            ::exit(EXIT_SUCCESS);
 
             break;
 
@@ -236,7 +236,7 @@ main(
         default:
 
             printUsage(std::cerr, program);
-            exit(EXIT_FAILURE);
+            ::exit(EXIT_FAILURE);
 
             break;
         }
@@ -251,7 +251,7 @@ main(
         if (pidfile != nullptr)
         {
             pid_t otherpid;
-            pfh = pidfile_open(pidfile, 0600, &otherpid);
+            pfh = ::pidfile_open(pidfile, 0600, &otherpid);
 
             if (pfh == nullptr)
             {
@@ -261,33 +261,33 @@ main(
                     << otherpid
                     << "\n";
 
-                exit(EXIT_FAILURE);
+                ::exit(EXIT_FAILURE);
             }
         }
         
-        if (daemon(0, 0) == -1)
+        if (::daemon(0, 0) == -1)
         {
             std::cerr << "Cannot daemonize\n";
 
             if (pfh)
             {
-                pidfile_remove(pfh);
+                ::pidfile_remove(pfh);
             }
 
-            exit(EXIT_FAILURE);
+            ::exit(EXIT_FAILURE);
         }
 
         if (pfh)
         {
-            pidfile_write(pfh);
+            ::pidfile_write(pfh);
         }
 
-        openlog(program, LOG_PID, LOG_USER);
+        ::openlog(program, LOG_PID, LOG_USER);
     }
 
     //---------------------------------------------------------------------
 
-    bcm_host_init();
+    ::bcm_host_init();
 
     //---------------------------------------------------------------------
 
@@ -299,7 +299,7 @@ main(
         {
             if (pfh)
             {
-                pidfile_remove(pfh);
+                ::pidfile_remove(pfh);
             }
 
             std::string message {"installing "};
@@ -310,7 +310,7 @@ main(
                       program,
                       "installing SIGINT signal handler");
 
-            exit(EXIT_FAILURE);
+            ::exit(EXIT_FAILURE);
         }
     }
 
@@ -405,12 +405,12 @@ main(
 
     if (isDaemon)
     {
-        closelog();
+        ::closelog();
     }
 
     if (pfh)
     {
-        pidfile_remove(pfh);
+        ::pidfile_remove(pfh);
     }
 
     //---------------------------------------------------------------------
