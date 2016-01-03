@@ -9,10 +9,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 #--------------------------------------------------------------------------
 
-add_library(raspifb16 STATIC libraspifb16/image565.cxx
+add_library(raspifb16 STATIC libraspifb16/fileDescriptor.cxx
+							 libraspifb16/framebuffer565.cxx
+							 libraspifb16/image565.cxx
 							 libraspifb16/image565Font.cxx
 							 libraspifb16/image565Graphics.cxx
-							 libraspifb16/framebuffer565.cxx
 							 libraspifb16/rgb565.cxx)
 
 include_directories(${PROJECT_SOURCE_DIR}/libraspifb16)
