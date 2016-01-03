@@ -35,6 +35,7 @@
 
 #include <linux/fb.h>
 
+#include "fileDescriptor.h"
 #include "point.h"
 #include "rgb565.h"
 
@@ -108,8 +109,7 @@ private:
                (p.y() < static_cast<int32_t>(m_vinfo.yres));
     }
 
-    int m_fbfd;
-    int m_consolefd;
+    FileDescriptor m_consolefd;
 
     struct fb_fix_screeninfo m_finfo;
     struct fb_var_screeninfo m_vinfo;

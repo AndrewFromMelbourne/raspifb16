@@ -49,33 +49,30 @@
 raspifb16::FrameBuffer565:: FrameBuffer565(
     const std::string& device)
 :
-    m_fbfd{open(device.c_str(), O_RDWR)},
     m_consolefd{-1},
     m_finfo{},
     m_vinfo{},
     m_lineLengthPixels{0},
     m_fbp{nullptr}
 {
-    if (m_fbfd == -1)
+    FileDescriptor fbfd{::open(device.c_str(), O_RDWR)};
+
+    if (fbfd.fd() == -1)
     {
         throw std::system_error{errno,
                                 std::system_category(), 
                                 "cannot open framebuffer device " + device};
     }
 
-    if (ioctl(m_fbfd, FBIOGET_FSCREENINFO, &(m_finfo)) == -1)
+    if (ioctl(fbfd.fd(), FBIOGET_FSCREENINFO, &(m_finfo)) == -1)
     {
-        close(m_fbfd);
-
         throw std::system_error{errno,
                                 std::system_category(), 
                                 "reading fixed framebuffer information"};
     }
 
-    if (ioctl(m_fbfd, FBIOGET_VSCREENINFO, &(m_vinfo)) == -1)
+    if (ioctl(fbfd.fd(), FBIOGET_VSCREENINFO, &(m_vinfo)) == -1)
     {
-        close(m_fbfd);
-
         throw std::system_error{errno,
                                 std::system_category(), 
                                 "reading variable framebuffer information"};
@@ -87,17 +84,15 @@ raspifb16::FrameBuffer565:: FrameBuffer565(
 
     //---------------------------------------------------------------------
 
-    void* fbp = mmap(nullptr,
-                     m_finfo.smem_len,
-                     PROT_READ | PROT_WRITE,
-                     MAP_SHARED,
-                     m_fbfd,
-                     0);
+    void* fbp = ::mmap(nullptr,
+                       m_finfo.smem_len,
+                       PROT_READ | PROT_WRITE,
+                       MAP_SHARED,
+                       fbfd.fd(),
+                       0);
 
     if (fbp == MAP_FAILED)
     {
-        close(m_fbfd);
-
         throw std::system_error(errno,
                                 std::system_category(), 
                                 "mapping framebuffer device to memory");
@@ -110,18 +105,11 @@ raspifb16::FrameBuffer565:: FrameBuffer565(
 
 raspifb16::FrameBuffer565:: ~FrameBuffer565()
 {
-    munmap(m_fbp, m_finfo.smem_len);
+    ::munmap(m_fbp, m_finfo.smem_len);
 
-    close(m_fbfd);
-
-    if (m_consolefd != -1)
+    if (m_consolefd.fd() != -1)
     {
-        ioctl(m_consolefd, KDSETMODE, KD_TEXT);
-
-        if (m_consolefd != 0)
-        {
-            close(m_consolefd);
-        }
+        ::ioctl(m_consolefd.fd(), KDSETMODE, KD_TEXT);
     }
 }
 
@@ -130,28 +118,31 @@ raspifb16::FrameBuffer565:: ~FrameBuffer565()
 bool
 raspifb16::FrameBuffer565:: hideCursor()
 {
-    std::string name{ttyname(0)};
+    std::string name{::ttyname(0)};
     bool result = true;
 
     if (name.find("/dev/pts") != std::string::npos)
     {
         static const std::string consoleDevice{"/dev/console"};
 
-        m_consolefd = open(consoleDevice.c_str(), O_NONBLOCK);
+        m_consolefd = FileDescriptor{::open(consoleDevice.c_str(),
+                                            O_NONBLOCK)};
 
-        if (m_consolefd == -1)
+        if (m_consolefd.fd() == -1)
         {
             result = false;
         }
     }
     else
     {
-        m_consolefd = 0;
+        auto closeIfNotStdin = [](int fd) -> bool { return fd > 0; };
+
+        m_consolefd = FileDescriptor{0, closeIfNotStdin};
     }
 
-    if (m_consolefd != -1)
+    if (m_consolefd.fd() != -1)
     {
-        ioctl(m_consolefd, KDSETMODE, KD_GRAPHICS);
+        ::ioctl(m_consolefd.fd(), KDSETMODE, KD_GRAPHICS);
     }
 
     return result;
