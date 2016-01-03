@@ -42,14 +42,14 @@
 
 //-------------------------------------------------------------------------
 
-CTemperatureTrace::
-CTemperatureTrace(
+TemperatureTrace::
+TemperatureTrace(
     int16_t width,
     int16_t traceHeight,
     int16_t yPosition,
     int16_t gridHeight)
 :
-    CTraceGraph(
+    TraceGraph(
         width,
         traceHeight,
         100,
@@ -58,19 +58,19 @@ CTemperatureTrace(
         1,
         "Temperature",
         std::vector<std::string>{"temperature"},
-        std::vector<raspifb16::CRGB565>{{102,167,225}})
+        std::vector<raspifb16::RGB565>{{102, 167, 225}})
 {
 }
 
 //-------------------------------------------------------------------------
 
 void
-CTemperatureTrace::
+TemperatureTrace::
 update(
     time_t now)
 {
     int16_t temperature = raspinfo::getTemperature();
 
-    CTrace::addData(std::vector<int16_t>{temperature}, now);
+    Trace::addData(std::vector<int16_t>{temperature}, now);
 }
 

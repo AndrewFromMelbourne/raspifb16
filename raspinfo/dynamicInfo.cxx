@@ -52,7 +52,7 @@
 //-------------------------------------------------------------------------
 
 std::string
-CDynamicInfo::
+DynamicInfo::
 getIpAddress(
     char& interface)
 {
@@ -92,7 +92,7 @@ getIpAddress(
 //-------------------------------------------------------------------------
 
 std::string
-CDynamicInfo::
+DynamicInfo::
 getMemorySplit()
 {
     std::string result = " / ";
@@ -153,7 +153,7 @@ getMemorySplit()
 //-------------------------------------------------------------------------
 
 std::string
-CDynamicInfo::
+DynamicInfo::
 getTemperature()
 {
     return std::to_string(raspinfo::getTemperature());
@@ -162,7 +162,7 @@ getTemperature()
 //-------------------------------------------------------------------------
 
 std::string
-CDynamicInfo::
+DynamicInfo::
 getTime(
     time_t now)
 {
@@ -177,12 +177,12 @@ getTime(
 
 //-------------------------------------------------------------------------
 
-CDynamicInfo::
-CDynamicInfo(
+DynamicInfo::
+DynamicInfo(
     int16_t width,
     int16_t yPosition)
 :
-    CPanel{width, 2 * (raspifb16::sc_fontHeight + 4), yPosition},
+    Panel{width, 2 * (raspifb16::sc_fontHeight + 4), yPosition},
     m_heading(255, 255, 0),
     m_foreground(255, 255, 255),
     m_background(0, 0, 0),
@@ -193,7 +193,7 @@ CDynamicInfo(
 //-------------------------------------------------------------------------
 
 void
-CDynamicInfo::
+DynamicInfo::
 update(
     time_t now)
 {
@@ -201,7 +201,7 @@ update(
 
     //---------------------------------------------------------------------
 
-    raspifb16::CFontPoint position = { 0, 0 };
+    raspifb16::FontPoint position = { 0, 0 };
 
     position = drawString(position,
                           "ip(",

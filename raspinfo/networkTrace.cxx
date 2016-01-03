@@ -49,8 +49,8 @@
 
 //-------------------------------------------------------------------------
 
-CNetworkStats::
-CNetworkStats()
+NetworkStats::
+NetworkStats()
 :
     m_tx{0},
     m_rx{0}
@@ -88,10 +88,10 @@ CNetworkStats()
 
 //-------------------------------------------------------------------------
 
-CNetworkStats&
-CNetworkStats::
+NetworkStats&
+NetworkStats::
 operator-=(
-    const CNetworkStats& rhs)
+    const NetworkStats& rhs)
 {
     m_tx -= rhs.m_tx;
     m_rx -= rhs.m_rx;
@@ -101,24 +101,24 @@ operator-=(
 
 //-------------------------------------------------------------------------
 
-CNetworkStats
+NetworkStats
 operator-(
-    const CNetworkStats& lhs,
-    const CNetworkStats& rhs)
+    const NetworkStats& lhs,
+    const NetworkStats& rhs)
 {
-    return CNetworkStats(lhs) -= rhs;
+    return NetworkStats(lhs) -= rhs;
 }
 
 //-------------------------------------------------------------------------
 
-CNetworkTrace::
-CNetworkTrace(
+NetworkTrace::
+NetworkTrace(
     int16_t width,
     int16_t traceHeight,
     int16_t yPosition,
     int16_t gridHeight)
 :
-    CTraceGraph(
+    TraceGraph(
         width,
         traceHeight,
         0,
@@ -127,7 +127,7 @@ CNetworkTrace(
         2,
         "Network",
         std::vector<std::string>{"tx", "rx"},
-        std::vector<raspifb16::CRGB565>{{102,167,225}, {225,225,102}}),
+        std::vector<raspifb16::RGB565>{{102, 167, 225}, {225, 225, 102}}),
     m_previousStats{}
 {
 }
@@ -135,18 +135,18 @@ CNetworkTrace(
 //-------------------------------------------------------------------------
 
 void
-CNetworkTrace::
+NetworkTrace::
 update(
     time_t now)
 {
-    CNetworkStats currentStats;
+    NetworkStats currentStats;
 
-    CNetworkStats diff{currentStats - m_previousStats};
+    NetworkStats diff{currentStats - m_previousStats};
 
     int16_t tx = diff.tx();
     int16_t rx = diff.rx();
 
-    CTrace::addData(std::vector<int16_t>{tx, rx}, now);
+    Trace::addData(std::vector<int16_t>{tx, rx}, now);
 
     m_previousStats = currentStats;
 }

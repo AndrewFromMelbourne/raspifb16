@@ -40,21 +40,21 @@
 
 namespace raspifb16
 {
-class CFrameBuffer565;
+class FrameBuffer565;
 }
 
 //-------------------------------------------------------------------------
 
-class CNetworkStats
+class NetworkStats
 {
 public:
 
-    CNetworkStats();
+    NetworkStats();
 
     uint32_t tx() const { return m_tx; }
     uint32_t rx() const { return m_rx; }
 
-    CNetworkStats& operator-=(const CNetworkStats& rhs);
+    NetworkStats& operator-=(const NetworkStats& rhs);
 
 private:
 
@@ -62,17 +62,17 @@ private:
     uint32_t m_rx;
 };
 
-CNetworkStats operator-(const CNetworkStats& lhs, const CNetworkStats& rhs);
+NetworkStats operator-(const NetworkStats& lhs, const NetworkStats& rhs);
 
 //-------------------------------------------------------------------------
 
-class CNetworkTrace
+class NetworkTrace
 :
-    public CTraceGraph
+    public TraceGraph
 {
 public:
 
-    CNetworkTrace(int16_t width,
+    NetworkTrace(int16_t width,
                        int16_t graphHeight,
                        int16_t yPosition,
                        int16_t gridHeight = 20);
@@ -81,7 +81,7 @@ public:
 
 private:
 
-    CNetworkStats m_previousStats;
+    NetworkStats m_previousStats;
 };
 
 //-------------------------------------------------------------------------

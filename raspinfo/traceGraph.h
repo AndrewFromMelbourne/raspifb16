@@ -38,13 +38,13 @@
 
 //-------------------------------------------------------------------------
 
-class CTraceGraph
+class TraceGraph
 :
-    public CTrace
+    public Trace
 {
 public:
 
-    CTraceGraph(
+    TraceGraph(
         int16_t width,
         int16_t traceHeight,
         int16_t traceScale,
@@ -53,7 +53,7 @@ public:
         int16_t traces,
         const std::string& title,
         const std::vector<std::string>& traceNames,
-        const std::vector<raspifb16::CRGB565>& traceColours);
+        const std::vector<raspifb16::RGB565>& traceColours);
 
     virtual void update(time_t now) override = 0;
 

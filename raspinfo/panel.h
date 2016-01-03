@@ -37,11 +37,11 @@
 
 //-------------------------------------------------------------------------
 
-class CPanel
+class Panel
 {
 public:
 
-    CPanel(int16_t width,
+    Panel(int16_t width,
            int16_t height,
            int16_t yPosition)
     :
@@ -50,20 +50,20 @@ public:
     { }
 
 
-    virtual ~CPanel() = default;
+    virtual ~Panel() = default;
 
     int16_t getBottom() const { return m_yPosition + m_image.getHeight(); }
 
-    raspifb16::CImage565& getImage() { return m_image; }
-    const raspifb16::CImage565& getImage() const { return m_image; }
+    raspifb16::Image565& getImage() { return m_image; }
+    const raspifb16::Image565& getImage() const { return m_image; }
 
-    void show(const raspifb16::CFrameBuffer565& fb) const;
+    void show(const raspifb16::FrameBuffer565& fb) const;
     virtual void update(time_t now) = 0;
 
 private:
 
     int16_t m_yPosition;
-    raspifb16::CImage565 m_image;
+    raspifb16::Image565 m_image;
 };
 
 //-------------------------------------------------------------------------

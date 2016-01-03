@@ -36,8 +36,8 @@
 
 //-------------------------------------------------------------------------
 
-CCpuStats::
-CCpuStats()
+CpuStats::
+CpuStats()
 {
     std::ifstream ifs{"/proc/stat", std::ifstream::in};
 
@@ -73,7 +73,7 @@ CCpuStats()
 //-------------------------------------------------------------------------
 
 uint32_t
-CCpuStats::
+CpuStats::
 total() const
 {
     return m_user +
@@ -90,10 +90,10 @@ total() const
 
 //-------------------------------------------------------------------------
 
-CCpuStats&
-CCpuStats::
+CpuStats&
+CpuStats::
 operator-=(
-    const CCpuStats& rhs)
+    const CpuStats& rhs)
 {
     m_user -= rhs.m_user;
     m_nice -= rhs.m_nice;
@@ -111,24 +111,24 @@ operator-=(
 
 //-------------------------------------------------------------------------
 
-CCpuStats
+CpuStats
 operator-(
-    const CCpuStats& lhs,
-    const CCpuStats& rhs)
+    const CpuStats& lhs,
+    const CpuStats& rhs)
 {
-    return CCpuStats(lhs) -= rhs;
+    return CpuStats(lhs) -= rhs;
 }
 
 //-------------------------------------------------------------------------
 
-CCpuTrace::
-CCpuTrace(
+CpuTrace::
+CpuTrace(
     int16_t width,
     int16_t traceHeight,
     int16_t yPosition,
     int16_t gridHeight)
 :
-    CTraceStack(
+    TraceStack(
         width,
         traceHeight,
         100,
@@ -137,9 +137,9 @@ CCpuTrace(
         3,
         "CPU",
         std::vector<std::string>{"user", "nice", "system"},
-        std::vector<raspifb16::CRGB565>{{4,90,141},
-                                        {116,169,207},
-                                        {241,238,246}}),
+        std::vector<raspifb16::RGB565>{{4, 90, 141},
+                                       {116, 169, 207},
+                                       {241, 238, 246}}),
     m_previousStats{}
 {
 }
@@ -147,13 +147,13 @@ CCpuTrace(
 //-------------------------------------------------------------------------
 
 void
-CCpuTrace::
+CpuTrace::
 update(
     time_t now)
 {
-    CCpuStats currentStats;
+    CpuStats currentStats;
 
-    CCpuStats diff{currentStats - m_previousStats};
+    CpuStats diff{currentStats - m_previousStats};
 
     uint32_t totalCpu = diff.total();
 
@@ -161,7 +161,7 @@ update(
     int16_t nice = (diff.nice() * m_traceScale) / totalCpu;
     int16_t system = (diff.system() * m_traceScale) / totalCpu;
 
-    CTrace::addData(std::vector<int16_t>{user, nice, system}, now);
+    Trace::addData(std::vector<int16_t>{user, nice, system}, now);
 
     m_previousStats = currentStats;
 }

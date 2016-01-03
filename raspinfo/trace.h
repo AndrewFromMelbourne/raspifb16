@@ -43,28 +43,28 @@
 
 namespace raspifb16
 {
-class CFrameBuffer565;
+class FrameBuffer565;
 }
 
 //-------------------------------------------------------------------------
 
-struct STraceData
+struct TraceData
 {
     std::string m_name;
-    raspifb16::CRGB565 m_traceColour;
-    raspifb16::CRGB565 m_gridColour;
+    raspifb16::RGB565 m_traceColour;
+    raspifb16::RGB565 m_gridColour;
     std::vector<int16_t> m_values;
 };
 
 //-------------------------------------------------------------------------
 
-class CTrace
+class Trace
 :
-    public CPanel
+    public Panel
 {
 public:
 
-    CTrace(
+    Trace(
         int16_t width,
         int16_t traceHeight,
         int16_t traceScale,
@@ -73,7 +73,7 @@ public:
         int16_t traces,
         const std::string& title,
         const std::vector<std::string>& traceNames,
-        const std::vector<raspifb16::CRGB565>& traceColours);
+        const std::vector<raspifb16::RGB565>& traceColours);
 
     static int16_t getLegendHeight();
 
@@ -91,12 +91,12 @@ protected:
 
     bool m_autoScale;
 
-    std::vector<STraceData> m_traceData;
+    std::vector<TraceData> m_traceData;
     std::vector<int8_t> m_time;
 
-    static const raspifb16::CRGB565 sc_foreground;
-    static const raspifb16::CRGB565 sc_background;
-    static const raspifb16::CRGB565 sc_gridColour;
+    static const raspifb16::RGB565 sc_foreground;
+    static const raspifb16::RGB565 sc_background;
+    static const raspifb16::RGB565 sc_gridColour;
 };
 
 //-------------------------------------------------------------------------

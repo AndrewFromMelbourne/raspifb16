@@ -40,26 +40,26 @@
 
 namespace raspifb16
 {
-class CFrameBuffer565;
+class FrameBuffer565;
 }
 
 //-------------------------------------------------------------------------
 
-class CDynamicInfo
+class DynamicInfo
 :
-    public CPanel
+    public Panel
 {
 public:
 
-    CDynamicInfo(int16_t width, int16_t yPosition);
+    DynamicInfo(int16_t width, int16_t yPosition);
 
     virtual void update(time_t now) override;
 
 private:
 
-    raspifb16::CRGB565 m_heading;
-    raspifb16::CRGB565 m_foreground;
-    raspifb16::CRGB565 m_background;
+    raspifb16::RGB565 m_heading;
+    raspifb16::RGB565 m_foreground;
+    raspifb16::RGB565 m_background;
 
     std::string m_memorySplit;
 

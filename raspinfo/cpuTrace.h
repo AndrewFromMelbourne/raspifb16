@@ -41,23 +41,23 @@
 
 namespace raspifb16
 {
-class CFrameBuffer565;
+class FrameBuffer565;
 }
 
 //-------------------------------------------------------------------------
 
-class CCpuStats
+class CpuStats
 {
 public:
 
-    CCpuStats();
+    CpuStats();
 
     uint32_t total() const;
     uint32_t user() const { return m_user; }
     uint32_t nice() const { return m_nice; }
     uint32_t system() const { return m_system; }
 
-    CCpuStats& operator-=(const CCpuStats& rhs);
+    CpuStats& operator-=(const CpuStats& rhs);
 
 private:
 
@@ -73,17 +73,17 @@ private:
     uint32_t m_guest_nice;
 };
 
-CCpuStats operator-(const CCpuStats& lhs, const CCpuStats& rhs);
+CpuStats operator-(const CpuStats& lhs, const CpuStats& rhs);
 
 //-------------------------------------------------------------------------
 
-class CCpuTrace
+class CpuTrace
 :
-    public CTraceStack
+    public TraceStack
 {
 public:
 
-    CCpuTrace(
+    CpuTrace(
         int16_t width,
         int16_t traceHeight,
         int16_t yPosition,
@@ -93,7 +93,7 @@ public:
 
 private:
 
-    CCpuStats m_previousStats;
+    CpuStats m_previousStats;
 };
 
 //-------------------------------------------------------------------------

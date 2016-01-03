@@ -37,9 +37,9 @@
 void
 raspifb16::
 box(
-    CImage565& image,
-    const CImage565Point& p1,
-    const CImage565Point& p2,
+    Image565& image,
+    const Image565Point& p1,
+    const Image565Point& p2,
     uint16_t rgb)
 {
     verticalLine(image, p1.x(), p1.y(), p2.y(), rgb);
@@ -53,9 +53,9 @@ box(
 void
 raspifb16::
 boxFilled(
-    CImage565& image,
-    const CImage565Point& p1,
-    const CImage565Point& p2,
+    Image565& image,
+    const Image565Point& p1,
+    const Image565Point& p2,
     uint16_t rgb)
 {
     int16_t sign_y = (p1.y() <= p2.y()) ? 1 : -1;
@@ -75,9 +75,9 @@ boxFilled(
 void
 raspifb16::
 line(
-    CImage565& image,
-    const CImage565Point& p1,
-    const CImage565Point& p2,
+    Image565& image,
+    const Image565Point& p1,
+    const Image565Point& p2,
     uint16_t rgb)
 {
     if (p1.y() == p2.y())
@@ -121,7 +121,7 @@ line(
                     y += sign_y;
                 }
 
-                image.setPixel(CImage565Point(x, y), rgb);
+                image.setPixel(Image565Point(x, y), rgb);
             }
         }
         else
@@ -144,7 +144,7 @@ line(
                     x += sign_x;
                 }
 
-                image.setPixel(CImage565Point(x, y), rgb);
+                image.setPixel(Image565Point(x, y), rgb);
             }
         }
     }
@@ -155,7 +155,7 @@ line(
 void
 raspifb16::
 horizontalLine(
-    CImage565& image,
+    Image565& image,
     int16_t x1,
     int16_t x2,
     int16_t y,
@@ -164,12 +164,12 @@ horizontalLine(
     int16_t sign_x = (x1 <= x2) ? 1 : -1;
     int16_t x = x1;
 
-    image.setPixel(CImage565Point(x, y), rgb);
+    image.setPixel(Image565Point(x, y), rgb);
 
     while (x != x2)
     {
         x += sign_x;
-        image.setPixel(CImage565Point(x, y), rgb);
+        image.setPixel(Image565Point(x, y), rgb);
     }
 }
 
@@ -178,7 +178,7 @@ horizontalLine(
 void
 raspifb16::
 verticalLine(
-    CImage565& image,
+    Image565& image,
     int16_t x,
     int16_t y1,
     int16_t y2,
@@ -187,12 +187,12 @@ verticalLine(
     int16_t sign_y = (y1 <= y2) ? 1 : -1;
     int16_t y = y1;
 
-    image.setPixel(CImage565Point(x, y), rgb);
+    image.setPixel(Image565Point(x, y), rgb);
 
     while (y != y2)
     {
         y += sign_y;
-        image.setPixel(CImage565Point(x, y), rgb);
+        image.setPixel(Image565Point(x, y), rgb);
     }
 }
 

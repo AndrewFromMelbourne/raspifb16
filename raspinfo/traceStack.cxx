@@ -37,8 +37,8 @@
 
 //-------------------------------------------------------------------------
 
-CTraceStack::
-CTraceStack(
+TraceStack::
+TraceStack(
     int16_t width,
     int16_t traceHeight,
     int16_t traceScale,
@@ -47,9 +47,9 @@ CTraceStack(
     int16_t traces,
     const std::string& title,
     const std::vector<std::string>& traceNames,
-    const std::vector<raspifb16::CRGB565>& traceColours)
+    const std::vector<raspifb16::RGB565>& traceColours)
 :
-    CTrace(
+    Trace(
         width,
         traceHeight,
         traceScale,
@@ -65,7 +65,7 @@ CTraceStack(
 //-------------------------------------------------------------------------
 
 void
-CTraceStack::
+TraceStack::
 draw()
 {
     for (int16_t i = 0 ; i < m_columns ; ++i)
@@ -81,12 +81,12 @@ draw()
             {
                 if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
                 {
-                    getImage().setPixel(raspifb16::CImage565Point{i, j--},
+                    getImage().setPixel(raspifb16::Image565Point{i, j--},
                                         trace.m_gridColour);
                 }
                 else
                 {
-                    getImage().setPixel(raspifb16::CImage565Point{i, j--},
+                    getImage().setPixel(raspifb16::Image565Point{i, j--},
                                         trace.m_traceColour);
                 }
             }
@@ -96,12 +96,12 @@ draw()
         {
             if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
             {
-                getImage().setPixel(raspifb16::CImage565Point{i, j},
+                getImage().setPixel(raspifb16::Image565Point{i, j},
                                     sc_gridColour);
             }
             else
             {
-                getImage().setPixel(raspifb16::CImage565Point{i, j},
+                getImage().setPixel(raspifb16::Image565Point{i, j},
                                     sc_background);
             }
         }

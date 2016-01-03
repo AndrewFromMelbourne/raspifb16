@@ -46,7 +46,7 @@
 
 //-------------------------------------------------------------------------
 
-raspifb16::CFrameBuffer565:: CFrameBuffer565(
+raspifb16::FrameBuffer565:: FrameBuffer565(
     const std::string& device)
 :
     m_fbfd{open(device.c_str(), O_RDWR)},
@@ -108,7 +108,7 @@ raspifb16::CFrameBuffer565:: CFrameBuffer565(
 
 //-------------------------------------------------------------------------
 
-raspifb16::CFrameBuffer565:: ~CFrameBuffer565()
+raspifb16::FrameBuffer565:: ~FrameBuffer565()
 {
     munmap(m_fbp, m_finfo.smem_len);
 
@@ -128,7 +128,7 @@ raspifb16::CFrameBuffer565:: ~CFrameBuffer565()
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::CFrameBuffer565:: hideCursor()
+raspifb16::FrameBuffer565:: hideCursor()
 {
     std::string name{ttyname(0)};
     bool result = true;
@@ -160,7 +160,7 @@ raspifb16::CFrameBuffer565:: hideCursor()
 //-------------------------------------------------------------------------
 
 void
-raspifb16::CFrameBuffer565:: clear(
+raspifb16::FrameBuffer565:: clear(
     uint16_t rgb) const
 {
     std::fill(m_fbp, m_fbp + (m_finfo.smem_len / bytesPerPixel), rgb);
@@ -169,8 +169,8 @@ raspifb16::CFrameBuffer565:: clear(
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::CFrameBuffer565:: setPixel(
-    const CFB565Point& p,
+raspifb16::FrameBuffer565:: setPixel(
+    const FB565Point& p,
     uint16_t rgb) const
 {
     bool isValid{validPixel(p)};
@@ -186,9 +186,9 @@ raspifb16::CFrameBuffer565:: setPixel(
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::CFrameBuffer565:: getPixel(
-    const CFB565Point& p,
-    CRGB565& rgb) const
+raspifb16::FrameBuffer565:: getPixel(
+    const FB565Point& p,
+    RGB565& rgb) const
 {
     bool isValid{validPixel(p)};
 
@@ -203,8 +203,8 @@ raspifb16::CFrameBuffer565:: getPixel(
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::CFrameBuffer565:: getPixel(
-    const CFB565Point& p,
+raspifb16::FrameBuffer565:: getPixel(
+    const FB565Point& p,
     uint16_t& rgb) const
 {
     bool isValid{validPixel(p)};
@@ -220,9 +220,9 @@ raspifb16::CFrameBuffer565:: getPixel(
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::CFrameBuffer565:: putImage(
-    const CFB565Point& p,
-    const CImage565& image) const
+raspifb16::FrameBuffer565:: putImage(
+    const FB565Point& p,
+    const Image565& image) const
 {
     if ((p.x() < 0) ||
         ((p.x() + image.getWidth()) > static_cast<int32_t>(m_vinfo.xres)))
@@ -251,9 +251,9 @@ raspifb16::CFrameBuffer565:: putImage(
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::CFrameBuffer565:: putImagePartial(
-    const CFB565Point& p,
-    const CImage565& image) const
+raspifb16::FrameBuffer565:: putImagePartial(
+    const FB565Point& p,
+    const Image565& image) const
 {
     auto x = p.x();
     auto xStart = 0;

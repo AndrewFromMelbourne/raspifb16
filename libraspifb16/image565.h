@@ -43,41 +43,41 @@ namespace raspifb16
 
 //-------------------------------------------------------------------------
 
-using CImage565Point = CPoint<int16_t>;
+using Image565Point = Point<int16_t>;
 
 //-------------------------------------------------------------------------
 
-class CImage565
+class Image565
 {
 public:
 
-    CImage565(int16_t width, int16_t height);
+    Image565(int16_t width, int16_t height);
 
     int16_t getWidth() const { return m_width; }
     int16_t getHeight() const { return m_height; }
 
-    void clear(const CRGB565& rgb) { clear(rgb.get565()); }
+    void clear(const RGB565& rgb) { clear(rgb.get565()); }
     void clear(uint16_t rgb);
 
     bool
     setPixel(
-        const CImage565Point& p,
-        const CRGB565& rgb)
+        const Image565Point& p,
+        const RGB565& rgb)
     {
         return setPixel(p, rgb.get565());
     }
 
-    bool setPixel(const CImage565Point& p, uint16_t rgb);
+    bool setPixel(const Image565Point& p, uint16_t rgb);
 
-    bool getPixel(const CImage565Point& p, CRGB565& rgb) const;
-    bool getPixel(const CImage565Point& p, uint16_t& rgb) const;
+    bool getPixel(const Image565Point& p, RGB565& rgb) const;
+    bool getPixel(const Image565Point& p, uint16_t& rgb) const;
 
     const uint16_t* getRow(int16_t y) const;
 
 private:
 
     bool
-    validPixel(const CImage565Point& p) const
+    validPixel(const Image565Point& p) const
     {
         return ((p.x() >= 0) &&
                 (p.y() >= 0) &&

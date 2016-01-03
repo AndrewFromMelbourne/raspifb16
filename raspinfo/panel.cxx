@@ -30,10 +30,10 @@
 //-------------------------------------------------------------------------
 
 void
-CPanel::
+Panel::
 show(
-    const raspifb16::CFrameBuffer565& fb) const
+    const raspifb16::FrameBuffer565& fb) const
 {
-    fb.putImage(raspifb16::CFB565Point(0, m_yPosition), m_image);
+    fb.putImage(raspifb16::FB565Point(0, m_yPosition), m_image);
 }
 

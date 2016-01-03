@@ -39,8 +39,8 @@
 
 //-------------------------------------------------------------------------
 
-CTraceGraph::
-CTraceGraph(
+TraceGraph::
+TraceGraph(
     int16_t width,
     int16_t traceHeight,
     int16_t traceScale,
@@ -49,9 +49,9 @@ CTraceGraph(
     int16_t traces,
     const std::string& title,
     const std::vector<std::string>& traceNames,
-    const std::vector<raspifb16::CRGB565>& traceColours)
+    const std::vector<raspifb16::RGB565>& traceColours)
 :
-    CTrace(
+    Trace(
         width,
         traceHeight,
         traceScale,
@@ -67,13 +67,13 @@ CTraceGraph(
 //-------------------------------------------------------------------------
 
 void
-CTraceGraph::
+TraceGraph::
 draw()
 {
     boxFilled(
         getImage(),
-        raspifb16::CImage565Point(0, 0),
-        raspifb16::CImage565Point(getImage().getWidth() - 1, m_traceHeight),
+        raspifb16::Image565Point(0, 0),
+        raspifb16::Image565Point(getImage().getWidth() - 1, m_traceHeight),
         sc_background);
 
     //---------------------------------------------------------------------
@@ -114,8 +114,8 @@ draw()
 
             line(
                 getImage(),
-                raspifb16::CImage565Point(i1, m_traceHeight - y1),
-                raspifb16::CImage565Point(i2, m_traceHeight - y2),
+                raspifb16::Image565Point(i1, m_traceHeight - y1),
+                raspifb16::Image565Point(i2, m_traceHeight - y2),
                 trace.m_traceColour);
         }
     }

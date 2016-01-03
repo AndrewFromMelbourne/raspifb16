@@ -36,11 +36,11 @@ namespace raspifb16
 //-------------------------------------------------------------------------
 
 template<typename T>
-class CPoint
+class Point
 {
 public:
 
-    CPoint(
+    Point(
         T x,
         T y)
     :

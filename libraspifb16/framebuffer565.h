@@ -45,62 +45,62 @@ namespace raspifb16
 
 //-------------------------------------------------------------------------
 
-using CFB565Point = CPoint<int32_t>;
+using FB565Point = Point<int32_t>;
 
 //-------------------------------------------------------------------------
 
-class CImage565;
+class Image565;
 
 //-------------------------------------------------------------------------
 
-class CFrameBuffer565
+class FrameBuffer565
 {
 public:
 
     static const size_t bytesPerPixel{2};
 
-    explicit CFrameBuffer565(const std::string& device = "/dev/fb0");
+    explicit FrameBuffer565(const std::string& device = "/dev/fb0");
 
-    ~CFrameBuffer565();
+    ~FrameBuffer565();
 
-    CFrameBuffer565(const CFrameBuffer565& fb) = delete;
-    CFrameBuffer565& operator=(const CFrameBuffer565& fb) = delete;
+    FrameBuffer565(const FrameBuffer565& fb) = delete;
+    FrameBuffer565& operator=(const FrameBuffer565& fb) = delete;
 
-    CFrameBuffer565(CFrameBuffer565&& fb) = delete;
-    CFrameBuffer565& operator=(CFrameBuffer565&& fb) = delete;
+    FrameBuffer565(FrameBuffer565&& fb) = delete;
+    FrameBuffer565& operator=(FrameBuffer565&& fb) = delete;
 
     int32_t getWidth() const { return m_vinfo.xres; }
     int32_t getHeight() const { return m_vinfo.yres; }
 
     bool hideCursor();
 
-    void clear(const CRGB565& rgb) const { clear(rgb.get565()); }
+    void clear(const RGB565& rgb) const { clear(rgb.get565()); }
     void clear(uint16_t rgb = 0) const;
 
     bool
     setPixel(
-        const CFB565Point& p,
-        const CRGB565& rgb) const
+        const FB565Point& p,
+        const RGB565& rgb) const
     {
         return setPixel(p, rgb.get565());
     }
 
-    bool setPixel(const CFB565Point& p, uint16_t rgb) const;
+    bool setPixel(const FB565Point& p, uint16_t rgb) const;
 
-    bool getPixel(const CFB565Point& p, CRGB565& rgb) const;
-    bool getPixel(const CFB565Point& p, uint16_t& rgb) const;
+    bool getPixel(const FB565Point& p, RGB565& rgb) const;
+    bool getPixel(const FB565Point& p, uint16_t& rgb) const;
 
-    bool putImage(const CFB565Point& p, const CImage565& image) const;
+    bool putImage(const FB565Point& p, const Image565& image) const;
 
 private:
 
     bool
     putImagePartial(
-        const CFB565Point& p,
-        const CImage565& image) const;
+        const FB565Point& p,
+        const Image565& image) const;
 
     bool
-    validPixel(const CFB565Point& p) const
+    validPixel(const FB565Point& p) const
     {
         return (p.x() >= 0) &&
                (p.y() >= 0) &&

@@ -47,19 +47,19 @@ main(void)
 {
     try
     {
-        CFrameBuffer565 fb{"/dev/fb1"};
+        FrameBuffer565 fb{"/dev/fb1"};
         fb.clear();
 
         //-----------------------------------------------------------------
 
-        CImage565 image{48, 48};
-        image.clear(CRGB565{255, 0, 0});
+        Image565 image{48, 48};
+        image.clear(RGB565{255, 0, 0});
         line(image,
-             CImage565Point(0,0),
-             CImage565Point(47,47),
-             CRGB565{0, 255, 0});
+             Image565Point(0,0),
+             Image565Point(47,47),
+             RGB565{0, 255, 0});
 
-        CFB565Point imageLocation
+        FB565Point imageLocation
         {
             (fb.getWidth() - image.getWidth()) / 2, 
             (fb.getHeight() - image.getHeight()) / 2
@@ -69,19 +69,19 @@ main(void)
 
         //-----------------------------------------------------------------
 
-        CImage565 textImage(168, 16);
-        textImage.clear(CRGB565(0, 0, 63));
+        Image565 textImage(168, 16);
+        textImage.clear(RGB565(0, 0, 63));
 
-        CFB565Point textLocation
+        FB565Point textLocation
         {
             (fb.getWidth() - textImage.getWidth()) / 2, 
             (fb.getHeight() - textImage.getHeight()) / 3
         };
 
         drawString(
-            CFontPoint{0, 0},
+            FontPoint{0, 0},
             "This is a test string",
-            CRGB565{255, 255, 255},
+            RGB565{255, 255, 255},
             textImage);
 
         fb.putImage(textLocation, textImage);

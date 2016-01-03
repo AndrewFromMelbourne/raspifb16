@@ -43,11 +43,11 @@ namespace raspifb16
 
 //-------------------------------------------------------------------------
 
-using CFontPoint = CPoint<int16_t>;
+using FontPoint = Point<int16_t>;
 
 //-------------------------------------------------------------------------
 
-class CRGB565;
+class RGB565;
 
 //-------------------------------------------------------------------------
 
@@ -56,33 +56,33 @@ static const int16_t sc_fontHeight{16};
 
 //-------------------------------------------------------------------------
 
-CFontPoint
+FontPoint
 drawChar(
-    const CImage565Point& p,
+    const Image565Point& p,
     uint8_t c,
-    const CRGB565& rgb,
-    CImage565& image);
+    const RGB565& rgb,
+    Image565& image);
 
-CFontPoint
+FontPoint
 drawChar(
-    const CImage565Point& p,
+    const Image565Point& p,
     uint8_t c,
     uint16_t rgb,
-    CImage565& image);
+    Image565& image);
 
-CFontPoint
+FontPoint
 drawString(
-    const CImage565Point& p,
+    const Image565Point& p,
     const char* string,
-    const CRGB565& rgb,
-    CImage565& image);
+    const RGB565& rgb,
+    Image565& image);
 
-CFontPoint
+FontPoint
 drawString(
-    const CImage565Point& p,
+    const Image565Point& p,
     const std::string& string,
-    const CRGB565& rgb,
-    CImage565& image);
+    const RGB565& rgb,
+    Image565& image);
 
 //-------------------------------------------------------------------------
 

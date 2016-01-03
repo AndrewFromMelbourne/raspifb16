@@ -40,16 +40,16 @@
 
 namespace raspifb16
 {
-class CFrameBuffer565;
+class FrameBuffer565;
 }
 
 //-------------------------------------------------------------------------
 
-class CMemoryStats
+class MemoryStats
 {
 public:
 
-    CMemoryStats();
+    MemoryStats();
 
     uint32_t total() const { return m_total; }
     uint32_t buffers() const { return m_buffers; }
@@ -66,13 +66,13 @@ private:
 
 //-------------------------------------------------------------------------
 
-class CMemoryTrace
+class MemoryTrace
 :
-    public CTraceStack
+    public TraceStack
 {
 public:
 
-    CMemoryTrace(int16_t width,
+    MemoryTrace(int16_t width,
                  int16_t traceHeight,
                  int16_t yPosition,
                  int16_t gridHeight = 20);

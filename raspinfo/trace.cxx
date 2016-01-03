@@ -40,14 +40,14 @@
 
 //-------------------------------------------------------------------------
 
-const raspifb16::CRGB565 CTrace::sc_foreground{255, 255, 255};
-const raspifb16::CRGB565 CTrace::sc_background{0, 0, 0};
-const raspifb16::CRGB565 CTrace::sc_gridColour{48, 48, 48};
+const raspifb16::RGB565 Trace::sc_foreground{255, 255, 255};
+const raspifb16::RGB565 Trace::sc_background{0, 0, 0};
+const raspifb16::RGB565 Trace::sc_gridColour{48, 48, 48};
 
 //-------------------------------------------------------------------------
 
-CTrace::
-CTrace(
+Trace::
+Trace(
     int16_t width,
     int16_t traceHeight,
     int16_t traceScale,
@@ -56,9 +56,9 @@ CTrace(
     int16_t traces,
     const std::string& title,
     const std::vector<std::string>& traceNames,
-    const std::vector<raspifb16::CRGB565>& traceColours)
+    const std::vector<raspifb16::RGB565>& traceColours)
 :
-    CPanel(width, traceHeight + getLegendHeight(), yPosition),
+    Panel(width, traceHeight + getLegendHeight(), yPosition),
     m_traceHeight{traceHeight},
     m_traceScale{traceScale},
     m_gridHeight{gridHeight},
@@ -70,13 +70,13 @@ CTrace(
     for (int16_t trace = 0 ; trace < traces ; ++trace)
     {
 
-        STraceData traceData =
+        TraceData traceData =
         {
             traceNames[trace],
             traceColours[trace],
-            raspifb16::CRGB565::blend(63,
-                                      sc_gridColour,
-                                      traceColours[trace]),
+            raspifb16::RGB565::blend(63,
+                                     sc_gridColour,
+                                     traceColours[trace]),
         };
         traceData.m_values.resize(width, 0);
 
@@ -89,11 +89,11 @@ CTrace(
 
     uint8_t smallSquare = 0xFE;
 
-    raspifb16::CFontPoint position(0, m_traceHeight + 2);
+    raspifb16::FontPoint position(0, m_traceHeight + 2);
 
     position =
         drawString(
-            raspifb16::CFontPoint(0, m_traceHeight + 2),
+            raspifb16::FontPoint(0, m_traceHeight + 2),
             title + " (",
             sc_foreground,
             getImage());
@@ -142,7 +142,7 @@ CTrace(
 //-------------------------------------------------------------------------
 
 int16_t
-CTrace::
+Trace::
 getLegendHeight()
 {
     return raspifb16::sc_fontHeight + 4;
@@ -151,7 +151,7 @@ getLegendHeight()
 //-------------------------------------------------------------------------
 
 void
-CTrace::
+Trace::
 addData(
     const std::vector<int16_t>& data,
     time_t now)

@@ -4656,24 +4656,24 @@ static uint8_t font[256][sc_fontHeight] =
 
 //-------------------------------------------------------------------------
 
-raspifb16::CFontPoint
+raspifb16::FontPoint
 raspifb16::drawChar(
-    const CImage565Point& p,
+    const Image565Point& p,
     uint8_t c,
-    const CRGB565& rgb,
-    CImage565& image)
+    const RGB565& rgb,
+    Image565& image)
 {
     return drawChar(p, c, rgb.get565(), image);
 }
 
 //-------------------------------------------------------------------------
 
-raspifb16::CFontPoint
+raspifb16::FontPoint
 raspifb16::drawChar(
-    const CImage565Point& p,
+    const Image565Point& p,
     uint8_t c,
     uint16_t rgb,
-    CImage565& image)
+    Image565& image)
 {
     for (int16_t j = 0 ; j < sc_fontHeight ; ++j)
     {
@@ -4686,30 +4686,30 @@ raspifb16::drawChar(
                 if ((byte >> (sc_fontWidth - i - 1)) & 1 )
                 {
                     image.setPixel(
-                        CImage565Point(p.x() + i, p.y() + j),
+                        Image565Point(p.x() + i, p.y() + j),
                         rgb);
                 }
             }
         }
     }
 
-    return CFontPoint(p.x() + sc_fontWidth, p.y());
+    return FontPoint(p.x() + sc_fontWidth, p.y());
 }
 
 //-------------------------------------------------------------------------
 
-raspifb16::CFontPoint
+raspifb16::FontPoint
 raspifb16::drawString(
-    const CImage565Point& p,
+    const Image565Point& p,
     const char* string,
-    const CRGB565& rgb,
-    CImage565& image)
+    const RGB565& rgb,
+    Image565& image)
 {
-    CFontPoint position{p};
+    FontPoint position{p};
 
     if (string != nullptr)
     {
-        CFontPoint start{p};
+        FontPoint start{p};
 
         while (*string != '\0')
         {
@@ -4736,12 +4736,12 @@ raspifb16::drawString(
 
 //-------------------------------------------------------------------------
 
-raspifb16::CFontPoint
+raspifb16::FontPoint
 raspifb16::drawString(
-    const CImage565Point& p,
+    const Image565Point& p,
     const std::string& string,
-    const CRGB565& rgb,
-    CImage565& image)
+    const RGB565& rgb,
+    Image565& image)
 {
     return drawString(p, string.c_str(), rgb, image);
 }

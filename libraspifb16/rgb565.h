@@ -39,13 +39,13 @@ namespace raspifb16
 
 //-------------------------------------------------------------------------
 
-class CRGB565
+class RGB565
 {
 public:
 
-    CRGB565(uint8_t red, uint8_t green, uint8_t blue);
+    RGB565(uint8_t red, uint8_t green, uint8_t blue);
 
-    explicit CRGB565(uint16_t rgb);
+    explicit RGB565(uint16_t rgb);
 
     uint8_t getRed() const;
     uint8_t getGreen() const;
@@ -57,7 +57,7 @@ public:
 
     void set565(uint16_t rgb) { m_rgb = rgb; }
 
-    static CRGB565 blend(uint8_t alpha, const CRGB565& a, const CRGB565& b);
+    static RGB565 blend(uint8_t alpha, const RGB565& a, const RGB565& b);
 
 private:
 

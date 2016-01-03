@@ -318,9 +318,9 @@ main(
 
     try
     {
-        raspifb16::CFrameBuffer565 fb(device);
+        raspifb16::FrameBuffer565 fb(device);
 
-        fb.clear(raspifb16::CRGB565(0, 0, 0));
+        fb.clear(raspifb16::RGB565{0, 0, 0});
 
         //-----------------------------------------------------------------
 
@@ -335,7 +335,7 @@ main(
 
         int16_t gridHeight = traceHeight / 5;
 
-        using Panels = std::vector<std::unique_ptr<CPanel>>;
+        using Panels = std::vector<std::unique_ptr<Panel>>;
 
         Panels panels;
 
@@ -352,17 +352,17 @@ main(
         };
 
         panels.push_back(
-            std::make_unique<CDynamicInfo>(fb.getWidth(),
+            std::make_unique<DynamicInfo>(fb.getWidth(),
                                            panelTop(panels)));
 
         panels.push_back(
-            std::make_unique<CCpuTrace>(fb.getWidth(),
+            std::make_unique<CpuTrace>(fb.getWidth(),
                                         traceHeight,
                                         panelTop(panels),
                                         gridHeight));
 
         panels.push_back(
-            std::make_unique<CMemoryTrace>(fb.getWidth(),
+            std::make_unique<MemoryTrace>(fb.getWidth(),
                                            traceHeight,
                                            panelTop(panels),
                                            gridHeight));

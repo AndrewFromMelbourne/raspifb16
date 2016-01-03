@@ -37,8 +37,8 @@
 
 //-------------------------------------------------------------------------
 
-CMemoryStats::
-CMemoryStats()
+MemoryStats::
+MemoryStats()
 :
     m_total{0},
     m_buffers{0},
@@ -87,14 +87,14 @@ CMemoryStats()
 
 //-------------------------------------------------------------------------
 
-CMemoryTrace::
-CMemoryTrace(
+MemoryTrace::
+MemoryTrace(
     int16_t width,
     int16_t traceHeight,
     int16_t yPosition,
     int16_t gridHeight)
 :
-    CTraceStack(
+    TraceStack(
         width,
         traceHeight,
         100,
@@ -103,20 +103,20 @@ CMemoryTrace(
         3,
         "Memory",
         std::vector<std::string>{"used", "buffers", "cached"},
-        std::vector<raspifb16::CRGB565>{{0,109,44},
-                                        {102,194,164},
-                                        {237,248,251}})
+        std::vector<raspifb16::RGB565>{{0, 109, 44},
+                                       {102, 194, 164},
+                                       {237, 248, 251}})
 {
 }
 
 //-------------------------------------------------------------------------
 
 void
-CMemoryTrace::
+MemoryTrace::
 update(
     time_t now)
 {
-    CMemoryStats memoryStats;
+    MemoryStats memoryStats;
 
     int16_t used = (memoryStats.used() * m_traceScale)
                  / memoryStats.total();
@@ -127,6 +127,6 @@ update(
     int16_t cached = (memoryStats.cached() * m_traceScale)
                    / memoryStats.total();
 
-    CTrace::addData(std::vector<int16_t>{used, buffers, cached}, now);
+    Trace::addData(std::vector<int16_t>{used, buffers, cached}, now);
 }
 

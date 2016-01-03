@@ -36,7 +36,7 @@
 
 using size_type = std::vector<uint16_t>::size_type;
 
-raspifb16::CImage565:: CImage565(
+raspifb16::Image565:: Image565(
     int16_t width,
     int16_t height)
 :
@@ -49,7 +49,7 @@ raspifb16::CImage565:: CImage565(
 //-------------------------------------------------------------------------
 
 void
-raspifb16::CImage565:: clear(
+raspifb16::Image565:: clear(
     uint16_t rgb)
 {
     std::fill(m_buffer.begin(), m_buffer.end(), rgb);
@@ -58,8 +58,8 @@ raspifb16::CImage565:: clear(
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::CImage565:: setPixel(
-    const CImage565Point& p,
+raspifb16::Image565:: setPixel(
+    const Image565Point& p,
     uint16_t rgb)
 {
     bool isValid{validPixel(p)};
@@ -75,9 +75,9 @@ raspifb16::CImage565:: setPixel(
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::CImage565:: getPixel(
-    const CImage565Point& p,
-    CRGB565& rgb) const
+raspifb16::Image565:: getPixel(
+    const Image565Point& p,
+    RGB565& rgb) const
 {
     bool isValid{validPixel(p)};
 
@@ -92,8 +92,8 @@ raspifb16::CImage565:: getPixel(
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::CImage565:: getPixel(
-    const CImage565Point& p,
+raspifb16::Image565:: getPixel(
+    const Image565Point& p,
     uint16_t& rgb) const
 {
     bool isValid{validPixel(p)};
@@ -109,10 +109,10 @@ raspifb16::CImage565:: getPixel(
 //-------------------------------------------------------------------------
 
 const uint16_t*
-raspifb16::CImage565:: getRow(
+raspifb16::Image565:: getRow(
     int16_t y) const
 {
-    if (validPixel(CImage565Point{0, y}))
+    if (validPixel(Image565Point{0, y}))
     {
         return m_buffer.data() + (y * m_width);
     }
