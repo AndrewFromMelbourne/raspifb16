@@ -41,9 +41,10 @@ class Panel
 {
 public:
 
-    Panel(int16_t width,
-           int16_t height,
-           int16_t yPosition)
+    Panel(
+        int16_t width,
+        int16_t height,
+        int16_t yPosition)
     :
         m_yPosition{yPosition},
         m_image{width, height}
