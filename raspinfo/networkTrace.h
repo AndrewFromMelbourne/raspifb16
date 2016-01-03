@@ -72,10 +72,11 @@ class NetworkTrace
 {
 public:
 
-    NetworkTrace(int16_t width,
-                       int16_t graphHeight,
-                       int16_t yPosition,
-                       int16_t gridHeight = 20);
+    NetworkTrace(
+        int16_t width,
+        int16_t graphHeight,
+        int16_t yPosition,
+        int16_t gridHeight = 20);
 
     virtual void update(time_t now) override;
 

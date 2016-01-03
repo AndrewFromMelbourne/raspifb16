@@ -72,10 +72,11 @@ class MemoryTrace
 {
 public:
 
-    MemoryTrace(int16_t width,
-                 int16_t traceHeight,
-                 int16_t yPosition,
-                 int16_t gridHeight = 20);
+    MemoryTrace(
+        int16_t width,
+        int16_t traceHeight,
+        int16_t yPosition,
+        int16_t gridHeight = 20);
 
     virtual void update(time_t now) override;
 };
