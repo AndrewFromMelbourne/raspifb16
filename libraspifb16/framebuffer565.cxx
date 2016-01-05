@@ -135,9 +135,9 @@ raspifb16::FrameBuffer565:: hideCursor()
     }
     else
     {
-        auto closeIfNotStdin = [](int fd) -> bool { return fd > 0; };
+        auto closeIf = [](int) -> bool { return false; };
 
-        m_consolefd = FileDescriptor{0, closeIfNotStdin};
+        m_consolefd = FileDescriptor{0, closeIf};
     }
 
     if (m_consolefd.fd() != -1)
