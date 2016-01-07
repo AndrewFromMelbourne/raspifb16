@@ -306,10 +306,7 @@ main(
             message += strsignal(signal);
             message += " signal handler";
 
-            perrorLog(isDaemon,
-                      program,
-                      "installing SIGINT signal handler");
-
+            perrorLog(isDaemon, program, message);
             ::exit(EXIT_FAILURE);
         }
     }
