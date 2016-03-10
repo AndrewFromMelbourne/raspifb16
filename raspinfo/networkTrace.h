@@ -78,7 +78,7 @@ public:
         int16_t yPosition,
         int16_t gridHeight = 20);
 
-    virtual void update(time_t now) override;
+    void update(time_t now) override;
 
 private:
 

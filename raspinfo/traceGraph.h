@@ -55,11 +55,11 @@ public:
         const std::vector<std::string>& traceNames,
         const std::vector<raspifb16::RGB565>& traceColours);
 
-    virtual void update(time_t now) override = 0;
+    void update(time_t now) override = 0;
 
 protected:
 
-    virtual void draw() override;
+    void draw() override;
 };
 
 //-------------------------------------------------------------------------

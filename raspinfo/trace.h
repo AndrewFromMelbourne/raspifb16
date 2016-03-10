@@ -77,7 +77,7 @@ public:
 
     static int16_t getLegendHeight();
 
-    virtual void update(time_t now) override = 0;
+    void update(time_t now) override = 0;
 
 protected:
 

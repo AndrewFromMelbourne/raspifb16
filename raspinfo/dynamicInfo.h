@@ -53,7 +53,7 @@ public:
 
     DynamicInfo(int16_t width, int16_t yPosition);
 
-    virtual void update(time_t now) override;
+    void update(time_t now) override;
 
 private:
 
