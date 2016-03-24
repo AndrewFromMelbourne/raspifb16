@@ -58,7 +58,7 @@ class FrameBuffer565
 {
 public:
 
-    static const size_t bytesPerPixel{2};
+    static constexpr size_t bytesPerPixel{2};
 
     explicit FrameBuffer565(const std::string& device = "/dev/fb0");
 

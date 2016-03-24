@@ -291,7 +291,7 @@ main(
 
     //---------------------------------------------------------------------
 
-    std::array<int, 4> signals = { SIGINT, SIGTERM, SIGUSR1, SIGUSR2 };
+    constexpr std::array<int, 4> signals = { SIGINT, SIGTERM, SIGUSR1, SIGUSR2 };
 
     for (auto signal : signals)
     {

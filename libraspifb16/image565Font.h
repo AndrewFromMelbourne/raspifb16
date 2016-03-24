@@ -51,8 +51,8 @@ class RGB565;
 
 //-------------------------------------------------------------------------
 
-static const int16_t sc_fontWidth{8};
-static const int16_t sc_fontHeight{16};
+constexpr int16_t sc_fontWidth{8};
+constexpr int16_t sc_fontHeight{16};
 
 //-------------------------------------------------------------------------
 
