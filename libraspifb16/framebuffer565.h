@@ -32,6 +32,7 @@
 
 #include <cstdint>
 #include <string>
+#include <utility>
 
 #include <linux/fb.h>
 
@@ -60,7 +61,7 @@ public:
 
     static constexpr size_t bytesPerPixel{2};
 
-    explicit FrameBuffer565(const std::string& device = "/dev/fb0");
+    explicit FrameBuffer565(const std::string& device);
 
     ~FrameBuffer565();
 
@@ -79,7 +80,7 @@ public:
     void clear(uint16_t rgb = 0) const;
 
     bool
-    setPixel(
+    setPixelRGB(
         const FB565Point& p,
         const RGB565& rgb) const
     {
@@ -88,8 +89,8 @@ public:
 
     bool setPixel(const FB565Point& p, uint16_t rgb) const;
 
-    bool getPixel(const FB565Point& p, RGB565& rgb) const;
-    bool getPixel(const FB565Point& p, uint16_t& rgb) const;
+    std::pair<bool, RGB565> getPixelRGB(const FB565Point& p) const;
+    std::pair<bool, uint16_t> getPixel(const FB565Point& p) const;
 
     bool putImage(const FB565Point& p, const Image565& image) const;
 

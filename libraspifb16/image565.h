@@ -31,6 +31,7 @@
 //-------------------------------------------------------------------------
 
 #include <cstdint>
+#include <utility>
 #include <vector>
 
 #include "rgb565.h"
@@ -60,7 +61,7 @@ public:
     void clear(uint16_t rgb);
 
     bool
-    setPixel(
+    setPixelRGB(
         const Image565Point& p,
         const RGB565& rgb)
     {
@@ -69,8 +70,8 @@ public:
 
     bool setPixel(const Image565Point& p, uint16_t rgb);
 
-    bool getPixel(const Image565Point& p, RGB565& rgb) const;
-    bool getPixel(const Image565Point& p, uint16_t& rgb) const;
+    std::pair<bool, RGB565> getPixelRGB(const Image565Point& p) const;
+    std::pair<bool, uint16_t> getPixel(const Image565Point& p) const;
 
     const uint16_t* getRow(int16_t y) const;
 

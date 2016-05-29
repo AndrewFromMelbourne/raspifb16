@@ -74,36 +74,36 @@ raspifb16::Image565:: setPixel(
 
 //-------------------------------------------------------------------------
 
-bool
-raspifb16::Image565:: getPixel(
-    const Image565Point& p,
-    RGB565& rgb) const
+std::pair<bool, raspifb16::RGB565>
+raspifb16::Image565:: getPixelRGB(
+    const Image565Point& p) const
 {
     bool isValid{validPixel(p)};
+    RGB565 rgb{0, 0, 0};
 
     if (isValid)
     {
         rgb.set565(m_buffer[p.x() + (p.y() * m_width)]);
     }
 
-    return isValid;
+    return std::make_pair(isValid, rgb);
 }
 
 //-------------------------------------------------------------------------
 
-bool
+std::pair<bool, uint16_t>
 raspifb16::Image565:: getPixel(
-    const Image565Point& p,
-    uint16_t& rgb) const
+    const Image565Point& p) const
 {
     bool isValid{validPixel(p)};
+    uint16_t rgb{0};
 
     if (isValid)
     {
         rgb = m_buffer[p.x() + (p.y() * m_width)];
     }
 
-    return isValid;
+    return std::make_pair(isValid, rgb);
 }
 
 //-------------------------------------------------------------------------

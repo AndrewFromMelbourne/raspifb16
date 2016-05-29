@@ -81,13 +81,15 @@ draw()
             {
                 if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
                 {
-                    getImage().setPixel(raspifb16::Image565Point{i, j--},
-                                        trace.m_gridColour);
+                    getImage().setPixelRGB(
+                        raspifb16::Image565Point{i, j--},
+                        trace.m_gridColour);
                 }
                 else
                 {
-                    getImage().setPixel(raspifb16::Image565Point{i, j--},
-                                        trace.m_traceColour);
+                    getImage().setPixelRGB(
+                        raspifb16::Image565Point{i, j--},
+                        trace.m_traceColour);
                 }
             }
         }
@@ -96,13 +98,15 @@ draw()
         {
             if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
             {
-                getImage().setPixel(raspifb16::Image565Point{i, j},
-                                    sc_gridColour);
+                getImage().setPixelRGB(
+                    raspifb16::Image565Point{i, j},
+                    sc_gridColour);
             }
             else
             {
-                getImage().setPixel(raspifb16::Image565Point{i, j},
-                                    sc_background);
+                getImage().setPixelRGB(
+                    raspifb16::Image565Point{i, j},
+                    sc_background);
             }
         }
     }
