@@ -42,8 +42,20 @@ using namespace raspifb16;
 
 //-------------------------------------------------------------------------
 
+#define TEST(expression, message) \
+    if (!expression) \
+    { \
+        std::cerr \
+            << __FILE__ "(" \
+            << __LINE__ \
+            << ") : " message " : " #expression " : test failed\n"; \
+        exit(EXIT_FAILURE); \
+    } \
+
+//-------------------------------------------------------------------------
+
 int
-main(void)
+main()
 {
     try
     {
@@ -52,12 +64,23 @@ main(void)
 
         //-----------------------------------------------------------------
 
+        RGB565 red{255, 0, 0};
+        RGB565 green{0, 255, 0};
+
+        //-----------------------------------------------------------------
+
         Image565 image{48, 48};
-        image.clear(RGB565{255, 0, 0});
+        image.clear(red);
+
+        auto rgb = image.getPixelRGB(Image565Point(0,0));
+
+        TEST((rgb.first == true), "Image565::getPixelRGB()");
+        TEST((rgb.second == red), "Image565::getPixelRGB()");
+
         line(image,
              Image565Point(0,0),
              Image565Point(47,47),
-             RGB565{0, 255, 0});
+             green);
 
         FB565Point imageLocation
         {
@@ -67,10 +90,18 @@ main(void)
 
         fb.putImage(imageLocation, image);
 
+        rgb = fb.getPixelRGB(imageLocation);
+
+        TEST((rgb.first == true), "FrameBuffer565::getPixelRGB()");
+        TEST((rgb.second == green), "FrameBuffer565::getPixelRGB()");
+
         //-----------------------------------------------------------------
 
+        RGB565 darkBlue{0, 0, 63};
+        RGB565 white{255, 255, 255};
+
         Image565 textImage(168, 16);
-        textImage.clear(RGB565(0, 0, 63));
+        textImage.clear(darkBlue);
 
         FB565Point textLocation
         {
@@ -81,7 +112,7 @@ main(void)
         drawString(
             FontPoint{0, 0},
             "This is a test string",
-            RGB565{255, 255, 255},
+            white,
             textImage);
 
         fb.putImage(textLocation, textImage);
