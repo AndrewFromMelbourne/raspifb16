@@ -64,6 +64,16 @@ private:
     uint16_t m_rgb;
 };
 
+inline bool operator != (const RGB565& lhs, const RGB565& rhs)
+{
+    return lhs.get565() != rhs.get565();
+}
+
+inline bool operator == (const RGB565& lhs, const RGB565& rhs)
+{
+    return !(lhs != rhs);
+}
+
 //-------------------------------------------------------------------------
 
 } // namespace raspifb16
