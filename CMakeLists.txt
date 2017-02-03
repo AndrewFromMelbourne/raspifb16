@@ -37,7 +37,7 @@ add_executable(raspinfo raspinfo/raspinfo.cxx
 						raspinfo/traceGraph.cxx
 						raspinfo/traceStack.cxx)
 
-target_link_libraries(raspinfo ${PROJECT_BINARY_DIR}/lib/libraspifb16.a
+target_link_libraries(raspinfo raspifb16
 							   /opt/vc/lib/libbcm_host.so
 							   -lbsd)
 
@@ -47,5 +47,5 @@ install (TARGETS raspinfo RUNTIME DESTINATION bin)
 #--------------------------------------------------------------------------
 
 add_executable(raspifb16test test/test.cxx)
-target_link_libraries(raspifb16test ${PROJECT_BINARY_DIR}/lib/libraspifb16.a)
+target_link_libraries(raspifb16test raspifb16)
 
