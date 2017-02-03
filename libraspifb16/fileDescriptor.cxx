@@ -50,3 +50,30 @@ raspifb16::FileDescriptor:: ~FileDescriptor()
     }
 }
 
+//-------------------------------------------------------------------------
+
+raspifb16::FileDescriptor::FileDescriptor(
+	raspifb16::FileDescriptor&& rhs)
+:
+    m_fd{rhs.m_fd},
+    m_close_if{std::move(rhs.m_close_if)}
+{
+	rhs.m_fd = -1;
+	rhs.m_close_if = [](int) { return false; };
+}
+
+//-------------------------------------------------------------------------
+
+raspifb16::FileDescriptor&
+raspifb16::FileDescriptor::operator= (
+	raspifb16::FileDescriptor&& rhs)
+{
+    m_fd = rhs.m_fd;
+    m_close_if = std::move(rhs.m_close_if);
+
+	rhs.m_fd = -1;
+	rhs.m_close_if = [](int) { return false; };
+
+	return *this;
+}
+

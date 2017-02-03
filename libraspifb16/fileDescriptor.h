@@ -53,6 +53,12 @@ public:
 
     ~FileDescriptor();
 
+	FileDescriptor(const FileDescriptor&) = delete;
+	FileDescriptor& operator= (const FileDescriptor&) = delete;
+
+	FileDescriptor(FileDescriptor&& rhs);
+	FileDescriptor& operator= (FileDescriptor&& rhs);
+
     int fd() const { return m_fd; }
 
 private:
