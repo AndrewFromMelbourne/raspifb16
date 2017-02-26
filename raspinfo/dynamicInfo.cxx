@@ -110,8 +110,9 @@ getMemorySplit()
         {
             std::regex pattern{R"(arm=(\d+)M)"};
             std::smatch match;
+            std::string vcGenResult(buffer);
 
-            if (std::regex_search(std::string(buffer), match, pattern) &&
+            if (std::regex_search(vcGenResult, match, pattern) &&
                 (match.size() == 2))
             {
                 arm_mem = std::stoi(match[1].str());
@@ -131,8 +132,9 @@ getMemorySplit()
         {
             std::regex pattern{R"(gpu=(\d+)M)"};
             std::smatch match;
+            std::string vcGenResult(buffer);
 
-            if (std::regex_search(std::string(buffer), match, pattern) &&
+            if (std::regex_search(vcGenResult, match, pattern) &&
                 (match.size() == 2))
             {
                 gpu_mem = std::stoi(match[1].str());
