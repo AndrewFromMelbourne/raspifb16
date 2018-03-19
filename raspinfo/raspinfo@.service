@@ -5,6 +5,8 @@ Description=Display Raspberry Pi specific system information directly on the fra
 Type=forking
 PIDFile=/var/run/raspinfo%i.pid
 ExecStart=/usr/local/bin/raspinfo --daemon --device /dev/fb%i --pidfile /var/run/raspinfo%i.pid
+Restart=on-failure
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
