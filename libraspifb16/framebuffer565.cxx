@@ -26,10 +26,6 @@
 //-------------------------------------------------------------------------
 
 #include <fcntl.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 #include <unistd.h>
 #include <linux/fb.h>
 #include <linux/kd.h>
@@ -37,8 +33,10 @@
 #include <sys/mman.h>
 
 #include <algorithm>
+#include <chrono>
 #include <string>
 #include <system_error>
+#include <thread>
 
 #include "framebuffer565.h"
 #include "image565.h"
@@ -105,6 +103,7 @@ raspifb16::FrameBuffer565:: FrameBuffer565(
 
 raspifb16::FrameBuffer565:: ~FrameBuffer565()
 {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     ::munmap(m_fbp, m_finfo.smem_len);
 
     if (m_consolefd.fd() != -1)

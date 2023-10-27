@@ -1,8 +1,10 @@
+#pragma once
+
 //-------------------------------------------------------------------------
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Andrew Duncan
+// Copyright (c) 2022 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -25,41 +27,45 @@
 //
 //-------------------------------------------------------------------------
 
-#pragma once
-
-//-------------------------------------------------------------------------
-
+#include <array>
 #include <cstdint>
-#include <string>
 
-#include "rgb565.h"
-#include "trace.h"
+#include "framebuffer565.h"
+#include "image565.h"
+#include "joystick.h"
+
+#include "images.h"
 
 //-------------------------------------------------------------------------
 
-class TraceGraph
-:
-    public Trace
+class Puzzle
 {
 public:
 
-    TraceGraph(
-        int16_t width,
-        int16_t traceHeight,
-        int16_t traceScale,
-        int16_t yPosition,
-        int16_t gridHeight,
-        int16_t traces,
-        const std::string& title,
-        const std::vector<std::string>& traceNames,
-        const std::vector<raspifb16::RGB565>& traceColours);
+    struct Location
+    {
+        int x;
+        int y;
+    };
 
-    void update(time_t now) override = 0;
+    Puzzle();
 
-protected:
+    void init();
+    void update(raspifb16::Joystick& js);
+    void draw(raspifb16::FrameBuffer565& fb);
 
-    void draw() override;
+private:
+
+    int getInversionCount() const;
+    bool isSolvable() const;
+    bool isSolved() const;
+
+    static constexpr int puzzleWidth = 4;
+    static constexpr int puzzleHeight = 4;
+    static constexpr int boardSize = puzzleWidth * puzzleHeight;
+
+    std::array<uint8_t, boardSize> m_board;
+    std::array<raspifb16::Image565, tileCount> m_tileBuffers;
+    Location m_blankLocation;
 };
-
-//-------------------------------------------------------------------------
 

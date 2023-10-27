@@ -25,25 +25,71 @@
 //
 //-------------------------------------------------------------------------
 
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "image565.h"
 
 //-------------------------------------------------------------------------
 
 using size_type = std::vector<uint16_t>::size_type;
 
+//-------------------------------------------------------------------------
+
+raspifb16::Image565:: Image565()
+:
+    m_width{0},
+    m_height{0},
+    m_frame{0},
+    m_numberOfFrames{0},
+    m_buffer(0)
+{
+}
+
+//-------------------------------------------------------------------------
+
 raspifb16::Image565:: Image565(
     int16_t width,
-    int16_t height)
+    int16_t height,
+    uint8_t numberOfFrames)
 :
     m_width{width},
     m_height{height},
-    m_buffer(width * height)
+    m_frame{0},
+    m_numberOfFrames{numberOfFrames},
+    m_buffer(width * height * numberOfFrames)
 {
+}
+
+//-------------------------------------------------------------------------
+
+raspifb16::Image565:: Image565(
+    int16_t width,
+    int16_t height,
+    const std::vector<uint16_t>& buffer,
+    uint8_t numberOfFrames)
+:
+    m_width{width},
+    m_height{height},
+    m_frame{0},
+    m_numberOfFrames{numberOfFrames},
+    m_buffer(buffer)
+{
+    size_t minBufferSize = width * height * numberOfFrames;
+
+    if (m_buffer.size() < minBufferSize)
+    {
+        m_buffer.resize(minBufferSize);
+    }
+}
+
+//-------------------------------------------------------------------------
+
+void
+raspifb16::Image565:: setFrame(
+    uint8_t frame)
+{
+    if (frame < m_numberOfFrames)
+    {
+        m_frame = frame;
+    }
 }
 
 //-------------------------------------------------------------------------
@@ -66,7 +112,7 @@ raspifb16::Image565:: setPixel(
 
     if (isValid)
     {
-        m_buffer[p.x() + (p.y() * m_width)] = rgb;
+        m_buffer[offset(p)] = rgb;
     }
 
     return isValid;
@@ -83,7 +129,7 @@ raspifb16::Image565:: getPixelRGB(
 
     if (isValid)
     {
-        rgb.set565(m_buffer[p.x() + (p.y() * m_width)]);
+        rgb.set565(m_buffer[offset(p)]);
     }
 
     return std::make_pair(isValid, rgb);
@@ -100,7 +146,7 @@ raspifb16::Image565:: getPixel(
 
     if (isValid)
     {
-        rgb = m_buffer[p.x() + (p.y() * m_width)];
+        rgb = m_buffer[offset(p)];
     }
 
     return std::make_pair(isValid, rgb);
@@ -112,13 +158,24 @@ const uint16_t*
 raspifb16::Image565:: getRow(
     int16_t y) const
 {
-    if (validPixel(Image565Point{0, y}))
+    const Image565Point p{0, y};
+
+    if (validPixel(p))
     {
-        return m_buffer.data() + (y * m_width);
+        return m_buffer.data() + offset(p);
     }
     else
     {
         return nullptr;
     }
+}
+
+//-------------------------------------------------------------------------
+
+size_t
+raspifb16::Image565:: offset(
+    const Image565Point& p) const
+{
+    return p.x() + (p.y() * m_width) + (m_frame * m_width * m_height);
 }
 

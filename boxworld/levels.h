@@ -2,7 +2,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Andrew Duncan
+// Copyright (c) 2022 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -29,37 +29,22 @@
 
 //-------------------------------------------------------------------------
 
-#include <cstdint>
-#include <string>
+#include <array>
 
-#include "rgb565.h"
-#include "trace.h"
+#include "level.h"
 
 //-------------------------------------------------------------------------
 
-class TraceGraph
-:
-    public Trace
+class Levels
 {
 public:
 
-    TraceGraph(
-        int16_t width,
-        int16_t traceHeight,
-        int16_t traceScale,
-        int16_t yPosition,
-        int16_t gridHeight,
-        int16_t traces,
-        const std::string& title,
-        const std::vector<std::string>& traceNames,
-        const std::vector<raspifb16::RGB565>& traceColours);
+    Levels();
 
-    void update(time_t now) override = 0;
+    const Level::LevelType level(int number) const;
 
-protected:
+private:
 
-    void draw() override;
+    const std::array<Level, Level::levelCount> m_levels;
 };
-
-//-------------------------------------------------------------------------
 

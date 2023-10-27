@@ -1,8 +1,11 @@
-cmake_minimum_required(VERSION 2.6)
-project(raspifb16)
+cmake_minimum_required(VERSION 2.9)
+project(raspifb16 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_EXTENSIONS off)
 
 set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++14")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
@@ -14,6 +17,7 @@ add_library(raspifb16 STATIC libraspifb16/fileDescriptor.cxx
 							 libraspifb16/image565.cxx
 							 libraspifb16/image565Font.cxx
 							 libraspifb16/image565Graphics.cxx
+							 libraspifb16/joystick.cxx
 							 libraspifb16/rgb565.cxx)
 
 include_directories(${PROJECT_SOURCE_DIR}/libraspifb16)
@@ -22,6 +26,24 @@ include_directories(/opt/vc/include/interface/vcos/pthreads)
 include_directories(/opt/vc/include/interface/vmcs_host/linux)
 
 set(EXTRA_LIBS ${EXTRA_LIBS} raspifb16)
+
+#--------------------------------------------------------------------------
+
+add_executable(boxworld boxworld/main.cxx
+                        boxworld/images.cxx
+                        boxworld/level.cxx
+                        boxworld/levels.cxx
+                        boxworld/boxworld.cxx)
+
+target_link_libraries(boxworld raspifb16)
+
+#--------------------------------------------------------------------------
+
+add_executable(puzzle-15 puzzle-15/main.cxx
+                         puzzle-15/images.cxx
+                         puzzle-15/puzzle.cxx)
+
+target_link_libraries(puzzle-15 raspifb16)
 
 #--------------------------------------------------------------------------
 
@@ -38,11 +60,16 @@ add_executable(raspinfo raspinfo/raspinfo.cxx
 						raspinfo/traceStack.cxx)
 
 target_link_libraries(raspinfo raspifb16
-							   /opt/vc/lib/libbcm_host.so
+							   -lbcm_host
 							   -lbsd)
 
 set_property(TARGET raspinfo PROPERTY SKIP_BUILD_RPATH TRUE)
 install (TARGETS raspinfo RUNTIME DESTINATION bin)
+
+#--------------------------------------------------------------------------
+
+add_executable(splash splash/splash.cxx)
+target_link_libraries(splash raspifb16)
 
 #--------------------------------------------------------------------------
 

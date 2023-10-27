@@ -2,7 +2,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Andrew Duncan
+// Copyright (c) 2022 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -29,37 +29,22 @@
 
 //-------------------------------------------------------------------------
 
-#include <cstdint>
-#include <string>
-
-#include "rgb565.h"
-#include "trace.h"
+#include <vector>
 
 //-------------------------------------------------------------------------
 
-class TraceGraph
-:
-    public Trace
-{
-public:
-
-    TraceGraph(
-        int16_t width,
-        int16_t traceHeight,
-        int16_t traceScale,
-        int16_t yPosition,
-        int16_t gridHeight,
-        int16_t traces,
-        const std::string& title,
-        const std::vector<std::string>& traceNames,
-        const std::vector<raspifb16::RGB565>& traceColours);
-
-    void update(time_t now) override = 0;
-
-protected:
-
-    void draw() override;
-};
+static constexpr int tileWidth = 15;
+static constexpr int tileHeight = 15;
+static constexpr int tileCount = 15;
 
 //-------------------------------------------------------------------------
+
+extern std::vector<uint16_t> emptyImage;
+extern std::vector<uint16_t> passageImage;
+extern std::vector<uint16_t> boxImage;
+extern std::vector<uint16_t> playerImage;
+extern std::vector<uint16_t> wallImage;
+extern std::vector<uint16_t> passageWithTargetImage;
+extern std::vector<uint16_t> boxOnTargetImage;
+extern std::vector<uint16_t> playerOnTargetImage;
 

@@ -2,7 +2,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Andrew Duncan
+// Copyright (c) 2022 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -29,37 +29,82 @@
 
 //-------------------------------------------------------------------------
 
+#include <linux/joystick.h>
+
 #include <cstdint>
 #include <string>
+#include <vector>
 
-#include "rgb565.h"
-#include "trace.h"
+#include "fileDescriptor.h"
 
 //-------------------------------------------------------------------------
 
-class TraceGraph
-:
-    public Trace
+namespace raspifb16
 {
-public:
 
-    TraceGraph(
-        int16_t width,
-        int16_t traceHeight,
-        int16_t traceScale,
-        int16_t yPosition,
-        int16_t gridHeight,
-        int16_t traces,
-        const std::string& title,
-        const std::vector<std::string>& traceNames,
-        const std::vector<raspifb16::RGB565>& traceColours);
+//-------------------------------------------------------------------------
 
-    void update(time_t now) override = 0;
-
-protected:
-
-    void draw() override;
+struct JoystickAxes
+{
+    int32_t x;
+    int32_t y;
 };
 
 //-------------------------------------------------------------------------
+
+struct ButtonState
+{
+    bool pressed;
+    bool down;
+};
+
+//-------------------------------------------------------------------------
+
+class Joystick
+{
+public:
+
+    enum Buttons
+    {
+        BUTTON_B = 0,
+        BUTTON_A = 1,
+        BUTTON_X = 3,
+        BUTTON_Y = 4,
+        BUTTON_LEFT = 6,
+        BUTTON_RIGHT = 7,
+        BUTTON_SELECT = 10,
+        BUTTON_START = 11
+    };
+
+    explicit Joystick(bool blocking = false);
+    Joystick(const std::string& device, bool blocking = false);
+
+    int numberOfButtons() const;
+    int numberOfAxes() const;
+
+    bool buttonPressed(int button);
+    bool buttonDown(int button) const;
+    JoystickAxes getAxes(int joystickNumber) const;
+
+    void read();
+
+private:
+
+    void init();
+    void process(const struct js_event& event);
+
+    FileDescriptor m_joystickFd;
+
+    bool m_blocking;
+
+    int m_buttonCount;
+    int m_joystickCount;
+
+    std::vector<ButtonState> m_buttons;
+    std::vector<JoystickAxes> m_joysticks;
+};
+
+//-------------------------------------------------------------------------
+
+} // namespace raspifb16
 

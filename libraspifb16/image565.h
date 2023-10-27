@@ -25,11 +25,11 @@
 //
 //-------------------------------------------------------------------------
 
-#ifndef IMAGE565_H
-#define IMAGE565_H
+#pragma once
 
 //-------------------------------------------------------------------------
 
+#include <cstddef>
 #include <cstdint>
 #include <utility>
 #include <vector>
@@ -52,10 +52,27 @@ class Image565
 {
 public:
 
-    Image565(int16_t width, int16_t height);
+    Image565();
+    Image565(int16_t width,
+             int16_t height,
+             uint8_t numberOfFrames = 1);
+
+    Image565(int16_t width,
+             int16_t height,
+             const std::vector<uint16_t>& buffer,
+             uint8_t numberOfFrames = 1);
+
+    Image565(const Image565&) = default;
+    Image565(Image565&&) = default;
+    Image565& operator=(const Image565&) = default;
+    Image565& operator=(Image565&&) = default;
 
     int16_t getWidth() const { return m_width; }
     int16_t getHeight() const { return m_height; }
+
+    uint8_t getFrame() const { return m_frame; }
+    uint8_t getNumberOfFrames() const { return m_numberOfFrames; }
+    void setFrame(uint8_t frame);
 
     void clear(const RGB565& rgb) { clear(rgb.get565()); }
     void clear(uint16_t rgb);
@@ -86,8 +103,14 @@ private:
                 (p.y() < m_height));
     }
 
+    size_t offset(const Image565Point& p) const;
+
     int16_t m_width;
     int16_t m_height;
+
+    uint8_t m_frame;
+    uint8_t m_numberOfFrames;
+
     std::vector<uint16_t> m_buffer;
 };
 
@@ -97,4 +120,3 @@ private:
 
 //-------------------------------------------------------------------------
 
-#endif
