@@ -147,6 +147,7 @@ printUsage(
     os << "    --device,-d - framebuffer device to use";
     os << " (default is " << defaultDevice << ")\n";
     os << "    --help,-h - print usage and exit\n";
+    os << "    --off,-o - do not display at start\n";
     os << "    --pidfile,-p <pidfile> - create and lock PID file";
     os << " (if being run as a daemon)\n";
     os << "\n";
@@ -193,12 +194,13 @@ main(
     //---------------------------------------------------------------------
 
     static const char* sopts = "d:hp:D";
-    static struct option lopts[] = 
+    static struct option lopts[] =
     {
+        { "daemon", no_argument, nullptr, 'D' },
         { "device", required_argument, nullptr, 'd' },
         { "help", no_argument, nullptr, 'h' },
+        { "off", no_argument, nullptr, 'o' },
         { "pidfile", required_argument, nullptr, 'p' },
-        { "daemon", no_argument, nullptr, 'D' },
         { nullptr, no_argument, nullptr, 0 }
     };
 
@@ -218,6 +220,12 @@ main(
 
             printUsage(std::cout, program);
             ::exit(EXIT_SUCCESS);
+
+            break;
+
+        case 'o':
+
+            display = 0;
 
             break;
 
@@ -264,7 +272,7 @@ main(
                 ::exit(EXIT_FAILURE);
             }
         }
-        
+
         if (::daemon(0, 0) == -1)
         {
             std::cerr << "Cannot daemonize\n";
@@ -344,7 +352,7 @@ main(
             }
             else
             {
-                return panels.back()->getBottom() + 1;
+                return panels.back()->getBottom();
             }
         };
 

@@ -84,7 +84,7 @@ main()
 
         FB565Point imageLocation
         {
-            (fb.getWidth() - image.getWidth()) / 2, 
+            (fb.getWidth() - image.getWidth()) / 2,
             (fb.getHeight() - image.getHeight()) / 2
         };
 
@@ -105,7 +105,7 @@ main()
 
         FB565Point textLocation
         {
-            (fb.getWidth() - textImage.getWidth()) / 2, 
+            (fb.getWidth() - textImage.getWidth()) / 2,
             (fb.getHeight() - textImage.getHeight()) / 3
         };
 

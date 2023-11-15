@@ -2,7 +2,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Andrew Duncan
+// Copyright (c) 2022 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -46,6 +46,8 @@ class FileDescriptor
 {
 public:
 
+    FileDescriptor();
+
     explicit FileDescriptor(
         int fd,
         CloseIfFunction close_if = [](int fd) { return fd != -1; });
@@ -61,6 +63,8 @@ public:
     int fd() const { return m_fd; }
 
 private:
+
+    void closeFd();
 
     int m_fd;
     CloseIfFunction m_close_if;

@@ -77,7 +77,7 @@ public:
     };
 
     explicit Joystick(bool blocking = false);
-    Joystick(const std::string& device, bool blocking = false);
+    explicit Joystick(const std::string& device, bool blocking = false);
 
     int numberOfButtons() const;
     int numberOfAxes() const;

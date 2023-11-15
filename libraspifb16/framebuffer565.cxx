@@ -58,21 +58,21 @@ raspifb16::FrameBuffer565:: FrameBuffer565(
     if (fbfd.fd() == -1)
     {
         throw std::system_error{errno,
-                                std::system_category(), 
+                                std::system_category(),
                                 "cannot open framebuffer device " + device};
     }
 
     if (ioctl(fbfd.fd(), FBIOGET_FSCREENINFO, &(m_finfo)) == -1)
     {
         throw std::system_error{errno,
-                                std::system_category(), 
+                                std::system_category(),
                                 "reading fixed framebuffer information"};
     }
 
     if (ioctl(fbfd.fd(), FBIOGET_VSCREENINFO, &(m_vinfo)) == -1)
     {
         throw std::system_error{errno,
-                                std::system_category(), 
+                                std::system_category(),
                                 "reading variable framebuffer information"};
     }
 
@@ -92,7 +92,7 @@ raspifb16::FrameBuffer565:: FrameBuffer565(
     if (fbp == MAP_FAILED)
     {
         throw std::system_error(errno,
-                                std::system_category(), 
+                                std::system_category(),
                                 "mapping framebuffer device to memory");
     }
 
@@ -231,7 +231,7 @@ raspifb16::FrameBuffer565:: putImage(
         auto start = image.getRow(j);
 
         std::copy(start,
-                  start + image.getWidth(), 
+                  start + image.getWidth(),
                   m_fbp + ((j + p.y()) * m_lineLengthPixels) + p.x());
     }
 

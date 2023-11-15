@@ -38,7 +38,7 @@ using namespace raspifb16;
 
 Puzzle::Puzzle()
 :
-    m_board 
+    m_board
     {
         0x01, 0x02, 0x03, 0x04,
         0x05, 0x06, 0x07, 0x08,
@@ -130,13 +130,13 @@ Puzzle::init()
 {
     do
     {
-        for (int i = 0; i < boardSize - 1; ++i) 
+        for (int i = 0; i < boardSize - 1; ++i)
         {
             auto j = i + rand() / (RAND_MAX / (boardSize - i) + 1);
             std::swap(m_board[i], m_board[j]);
         }
 
-        for (int i = 0; i < boardSize - 1; ++i) 
+        for (int i = 0; i < boardSize - 1; ++i)
         {
             if (m_board[i] == 0)
             {

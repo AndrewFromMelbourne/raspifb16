@@ -2,7 +2,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Andrew Duncan
+// Copyright (c) 2022 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -31,6 +31,15 @@
 
 //-------------------------------------------------------------------------
 
+raspifb16::FileDescriptor:: FileDescriptor()
+:
+    m_fd{-1},
+    m_close_if{[](int){ return false; }}
+{
+}
+
+//-------------------------------------------------------------------------
+
 raspifb16::FileDescriptor:: FileDescriptor(
     int fd,
     CloseIfFunction close_if)
@@ -44,10 +53,7 @@ raspifb16::FileDescriptor:: FileDescriptor(
 
 raspifb16::FileDescriptor:: ~FileDescriptor()
 {
-    if (m_close_if(m_fd))
-    {
-        ::close(m_fd);
-    }
+    closeFd();
 }
 
 //-------------------------------------------------------------------------
@@ -68,12 +74,27 @@ raspifb16::FileDescriptor&
 raspifb16::FileDescriptor::operator= (
     raspifb16::FileDescriptor&& rhs)
 {
-    m_fd = rhs.m_fd;
-    m_close_if = std::move(rhs.m_close_if);
+    if (this != &rhs)
+    {
+        closeFd();
 
-    rhs.m_fd = -1;
-    rhs.m_close_if = [](int) { return false; };
+        m_fd = rhs.m_fd;
+        m_close_if = std::move(rhs.m_close_if);
+
+        rhs.m_fd = -1;
+        rhs.m_close_if = [](int) { return false; };
+    }
 
     return *this;
 }
 
+//-------------------------------------------------------------------------
+
+void
+raspifb16::FileDescriptor::closeFd()
+{
+    if (m_close_if(m_fd))
+    {
+        ::close(m_fd);
+    }
+}

@@ -48,6 +48,7 @@ namespace
 {
 volatile static std::sig_atomic_t run = 1;
 const char* defaultDevice = "/dev/fb1";
+const char* defaultJoystick = "/dev/input/js0";
 }
 
 //-------------------------------------------------------------------------
@@ -63,6 +64,8 @@ printUsage(
     os << "    --device,-d - dri device to use";
     os << " (default is " << defaultDevice << ")\n";
     os << "    --help,-h - print usage and exit\n";
+    os << "    --joystick,-j - joystick device to use";
+    os << " (default is " << defaultJoystick << ")\n";
     os << "\n";
 }
 
@@ -73,16 +76,18 @@ main(
     int argc,
     char *argv[])
 {
-    const char* device = defaultDevice;
-    char* program = basename(argv[0]);
+    std::string device = defaultDevice;
+    std::string program = basename(argv[0]);
+    std::string joystick = defaultJoystick;
 
     //---------------------------------------------------------------------
 
-    static const char* sopts = "d:h";
-    static struct option lopts[] = 
+    static const char* sopts = "d:hj:";
+    static struct option lopts[] =
     {
         { "device", required_argument, nullptr, 'd' },
         { "help", no_argument, nullptr, 'h' },
+        { "joystick", required_argument, nullptr, 'j' },
         { nullptr, no_argument, nullptr, 0 }
     };
 
@@ -105,6 +110,12 @@ main(
 
             break;
 
+        case 'j':
+
+            joystick = optarg;
+
+            break;
+
         default:
 
             printUsage(std::cerr, program);
@@ -118,7 +129,7 @@ main(
 
     try
     {
-        Joystick js;
+        Joystick js(joystick);
         FrameBuffer565 fb(device);
         fb.clear(RGB565{0, 0, 0});
 

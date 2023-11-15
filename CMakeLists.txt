@@ -21,9 +21,6 @@ add_library(raspifb16 STATIC libraspifb16/fileDescriptor.cxx
 							 libraspifb16/rgb565.cxx)
 
 include_directories(${PROJECT_SOURCE_DIR}/libraspifb16)
-include_directories(/opt/vc/include )
-include_directories(/opt/vc/include/interface/vcos/pthreads)
-include_directories(/opt/vc/include/interface/vmcs_host/linux)
 
 set(EXTRA_LIBS ${EXTRA_LIBS} raspifb16)
 

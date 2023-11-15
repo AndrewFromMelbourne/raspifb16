@@ -39,14 +39,8 @@
 
 raspifb16::Joystick:: Joystick(bool blocking)
 :
-    m_joystickFd{::open("/dev/input/js0", O_RDONLY | ((blocking) ? 0 : O_NONBLOCK))},
-    m_blocking(blocking),
-    m_buttonCount(0),
-    m_joystickCount(0),
-    m_buttons(),
-    m_joysticks()
+    Joystick("/dev/input/js0", blocking)
 {
-    init();
 }
 
 //-------------------------------------------------------------------------
@@ -71,7 +65,7 @@ raspifb16::Joystick:: init()
     if (m_joystickFd.fd() == -1)
     {
         throw std::system_error{errno,
-                                std::system_category(), 
+                                std::system_category(),
                                 "cannot open joystick device"};
     }
 
@@ -79,7 +73,7 @@ raspifb16::Joystick:: init()
     if (ioctl(m_joystickFd.fd(), JSIOCGAXES, &joystickCount) == -1)
     {
         throw std::system_error{errno,
-                                std::system_category(), 
+                                std::system_category(),
                                 "reading number of axes"};
     }
     m_joystickCount = joystickCount / 2;
@@ -88,7 +82,7 @@ raspifb16::Joystick:: init()
     if (ioctl(m_joystickFd.fd(), JSIOCGBUTTONS, &buttonCount) == -1)
     {
         throw std::system_error{errno,
-                                std::system_category(), 
+                                std::system_category(),
                                 "reading number of buttons"};
     }
     m_buttonCount = buttonCount;

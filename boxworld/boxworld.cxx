@@ -227,7 +227,7 @@ Boxworld::drawText(FrameBuffer565& fb)
     m_topTextImage.clear(m_backgroundRGB);
 
     FontPoint position{ 2, 2 };
-    position = drawString(position, "level: ", m_boldRGB, m_topTextImage); 
+    position = drawString(position, "level: ", m_boldRGB, m_topTextImage);
     position = drawString(position, std::to_string(m_level + 1), m_textRGB, m_topTextImage);
 
     if (m_levelSolved)
@@ -242,27 +242,27 @@ Boxworld::drawText(FrameBuffer565& fb)
     position = FontPoint{ 2, 2 };
     auto& undoRGB = ((m_canUndo) ? m_textRGB : m_disabledRGB);
 
-    position = drawString(position, "(X): ", m_boldRGB, m_bottomTextImage); 
-    position = drawString(position, "undox box move", undoRGB, m_bottomTextImage); 
+    position = drawString(position, "(X): ", m_boldRGB, m_bottomTextImage);
+    position = drawString(position, "undox box move", undoRGB, m_bottomTextImage);
 
     position = FontPoint{ 2, 18 };
 
-    position = drawString(position, "(Y): ", m_boldRGB, m_bottomTextImage); 
-    position = drawString(position, "restart level", m_textRGB, m_bottomTextImage); 
+    position = drawString(position, "(Y): ", m_boldRGB, m_bottomTextImage);
+    position = drawString(position, "restart level", m_textRGB, m_bottomTextImage);
 
     int16_t halfWidth = 2 + (m_bottomTextImage.getWidth() / 2);
 
     position = FontPoint{ halfWidth, 2 };
     auto& nextRGB = ((m_level < (Level::levelCount - 1)) ? m_textRGB : m_disabledRGB);
 
-    position = drawString(position, "(A): ", m_boldRGB, m_bottomTextImage); 
-    position = drawString(position, "next level", nextRGB, m_bottomTextImage); 
+    position = drawString(position, "(A): ", m_boldRGB, m_bottomTextImage);
+    position = drawString(position, "next level", nextRGB, m_bottomTextImage);
 
     position = FontPoint{ halfWidth, 18 };
     auto& previousRGB = ((m_level > 0) ? m_textRGB : m_disabledRGB);
 
-    position = drawString(position, "(B): ", m_boldRGB, m_bottomTextImage); 
-    position = drawString(position, "previous level", previousRGB, m_bottomTextImage); 
+    position = drawString(position, "(B): ", m_boldRGB, m_bottomTextImage);
+    position = drawString(position, "previous level", previousRGB, m_bottomTextImage);
 
     fb.putImage(FB565Point{ xOffset, 440 }, m_bottomTextImage);
 }
