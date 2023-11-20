@@ -36,6 +36,11 @@ target_link_libraries(boxworld raspifb16)
 
 #--------------------------------------------------------------------------
 
+add_executable(fbpipe fbpipe/fbpipe.cxx)
+target_link_libraries(fbpipe raspifb16)
+
+#--------------------------------------------------------------------------
+
 add_executable(puzzle-15 puzzle-15/main.cxx
                          puzzle-15/images.cxx
                          puzzle-15/puzzle.cxx)
