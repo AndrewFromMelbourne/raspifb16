@@ -243,8 +243,8 @@ decodeQoi(
             }
         }
 
-        auto x = i % header.getWidth();
-        auto y = i / header.getWidth();
+        auto x = static_cast<int16_t>(i % header.getWidth());
+        auto y = static_cast<int16_t>(i / header.getWidth());
 
         raspifb16::RGB565 rgb{currentRGBA.r, currentRGBA.g, currentRGBA.b};
         image.setPixelRGB(raspifb16::Image565Point{x, y}, rgb);
