@@ -17,6 +17,7 @@ add_library(raspifb16 STATIC libraspifb16/fileDescriptor.cxx
 							 libraspifb16/image565.cxx
 							 libraspifb16/image565Font.cxx
 							 libraspifb16/image565Graphics.cxx
+							 libraspifb16/image565Qoi.cxx
 							 libraspifb16/joystick.cxx
 							 libraspifb16/rgb565.cxx)
 
