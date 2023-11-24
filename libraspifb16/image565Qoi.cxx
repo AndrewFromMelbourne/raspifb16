@@ -46,6 +46,7 @@ namespace
 //-------------------------------------------------------------------------
 
 constexpr int QOI_HEADER_SIZE{14};
+constexpr int QOI_FOOTER_SIZE{8};
 constexpr uint32_t QOI_MAGIC{('q' << 24) | ('o' << 16) | ('i' << 8) | 'f'};
 
 constexpr uint8_t QOI_OP_RGB{0xFE};
@@ -129,6 +130,21 @@ QoiHeader::QoiHeader(
     if (m_colorSpace > 1)
     {
         throw std::invalid_argument("QOI color space must be either 0 or 1");
+    }
+}
+
+//-------------------------------------------------------------------------
+
+void checkFooter(
+    const std::array<uint8_t, QOI_FOOTER_SIZE>& data)
+{
+    const std::array<uint8_t, QOI_FOOTER_SIZE> expected{
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01
+    };
+
+    if (data != expected)
+    {
+        throw std::invalid_argument("QOI bad footer value");
     }
 }
 
@@ -276,8 +292,12 @@ readQoi(
     ifs.read(reinterpret_cast<char*>(rawHeader.data()), rawHeader.size());
     QoiHeader header(rawHeader);
 
-    std::vector<uint8_t> buffer(length - QOI_HEADER_SIZE);
+    std::vector<uint8_t> buffer(length - QOI_HEADER_SIZE - QOI_FOOTER_SIZE);
     ifs.read(reinterpret_cast<char*>(buffer.data()), buffer.size());
+
+    std::array<uint8_t, QOI_FOOTER_SIZE> rawFooter;
+    ifs.read(reinterpret_cast<char*>(rawFooter.data()), rawFooter.size());
+    checkFooter(rawFooter);
 
     return decodeQoi(header, buffer);
 }
