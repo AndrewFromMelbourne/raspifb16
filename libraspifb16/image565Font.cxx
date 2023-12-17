@@ -4714,17 +4714,12 @@ raspifb16::drawString(
         {
             if (*string == '\n')
             {
-                position.set(
-                    start.x(),
-                    position.y() + sc_fontHeight);
+                position.setY(position.y() + sc_fontHeight);
             }
             else
             {
                 drawChar(position, *string, rgb, image);
-
-                position.set(
-                    position.x() + sc_fontWidth,
-                    position.y());
+                position.setX(position.x() + sc_fontWidth);
             }
             ++string;
         }

@@ -12,6 +12,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 #--------------------------------------------------------------------------
 
+find_package(Freetype)
+
+#--------------------------------------------------------------------------
+
 add_library(raspifb16 STATIC libraspifb16/fileDescriptor.cxx
 							 libraspifb16/framebuffer565.cxx
 							 libraspifb16/image565.cxx
@@ -24,6 +28,17 @@ add_library(raspifb16 STATIC libraspifb16/fileDescriptor.cxx
 include_directories(${PROJECT_SOURCE_DIR}/libraspifb16)
 
 set(EXTRA_LIBS ${EXTRA_LIBS} raspifb16)
+
+#--------------------------------------------------------------------------
+
+if (FREETYPE_FOUND)
+
+add_library(raspifb16ft STATIC libraspifb16ft/image565FreeType.cxx)
+target_include_directories(raspifb16ft PUBLIC ${FREETYPE_INCLUDE_DIRS})
+
+include_directories(${PROJECT_SOURCE_DIR}/libraspifb16ft)
+
+endif()
 
 #--------------------------------------------------------------------------
 
@@ -78,4 +93,15 @@ target_link_libraries(splash raspifb16)
 
 add_executable(raspifb16test test/test.cxx)
 target_link_libraries(raspifb16test raspifb16)
+
+#--------------------------------------------------------------------------
+
+if (FREETYPE_FOUND)
+
+add_executable(testft test/testft.cxx)
+target_link_libraries(testft raspifb16
+                             raspifb16ft
+                             -lfreetype)
+
+endif()
 
