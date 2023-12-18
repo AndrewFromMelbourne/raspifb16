@@ -4660,7 +4660,7 @@ raspifb16::drawChar(
     const Image565Point& p,
     uint8_t c,
     const RGB565& rgb,
-    Image565& image)
+    Interface565& image)
 {
     return drawChar(p, c, rgb.get565(), image);
 }
@@ -4672,15 +4672,15 @@ raspifb16::drawChar(
     const Image565Point& p,
     uint8_t c,
     uint16_t rgb,
-    Image565& image)
+    Interface565& image)
 {
-    for (int16_t j = 0 ; j < sc_fontHeight ; ++j)
+    for (int j = 0 ; j < sc_fontHeight ; ++j)
     {
         uint8_t byte = font[c][j];
 
         if (byte != 0)
         {
-            for (int16_t i = 0 ; i < sc_fontWidth ; ++i)
+            for (int i = 0 ; i < sc_fontWidth ; ++i)
             {
                 if ((byte >> (sc_fontWidth - i - 1)) & 1 )
                 {
@@ -4702,7 +4702,7 @@ raspifb16::drawString(
     const Image565Point& p,
     const char* string,
     const RGB565& rgb,
-    Image565& image)
+    Interface565& image)
 {
     FontPoint position{p};
 
@@ -4735,7 +4735,7 @@ raspifb16::drawString(
     const Image565Point& p,
     const std::string& string,
     const RGB565& rgb,
-    Image565& image)
+    Interface565& image)
 {
     return drawString(p, string.c_str(), rgb, image);
 }

@@ -151,7 +151,7 @@ raspifb16::FrameBuffer565:: hideCursor()
 
 void
 raspifb16::FrameBuffer565:: clear(
-    uint16_t rgb) const
+    uint16_t rgb)
 {
     std::fill(m_fbp, m_fbp + (m_finfo.smem_len / bytesPerPixel), rgb);
 }
@@ -161,7 +161,7 @@ raspifb16::FrameBuffer565:: clear(
 bool
 raspifb16::FrameBuffer565:: setPixel(
     const FB565Point& p,
-    uint16_t rgb) const
+    uint16_t rgb)
 {
     bool isValid{validPixel(p)};
 

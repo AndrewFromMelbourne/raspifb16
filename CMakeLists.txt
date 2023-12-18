@@ -22,6 +22,7 @@ add_library(raspifb16 STATIC libraspifb16/fileDescriptor.cxx
 							 libraspifb16/image565Font.cxx
 							 libraspifb16/image565Graphics.cxx
 							 libraspifb16/image565Qoi.cxx
+							 libraspifb16/interface565.cxx
 							 libraspifb16/joystick.cxx
 							 libraspifb16/rgb565.cxx)
 
@@ -91,8 +92,13 @@ target_link_libraries(splash raspifb16)
 
 #--------------------------------------------------------------------------
 
-add_executable(raspifb16test test/test.cxx)
-target_link_libraries(raspifb16test raspifb16)
+add_executable(test test/test.cxx)
+target_link_libraries(test raspifb16)
+
+#--------------------------------------------------------------------------
+
+add_executable(testColour test/testColour.cxx)
+target_link_libraries(testColour raspifb16)
 
 #--------------------------------------------------------------------------
 

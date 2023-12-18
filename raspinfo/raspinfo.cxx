@@ -64,7 +64,7 @@ namespace
 volatile static std::sig_atomic_t run = 1;
 volatile static std::sig_atomic_t display = 1;
 
-const char* defaultDevice = "/dev/fb1";
+const std::string defaultDevice = "/dev/fb1";
 }
 
 //-------------------------------------------------------------------------
@@ -186,9 +186,9 @@ main(
     int argc,
     char *argv[])
 {
-    const char* device = defaultDevice;
-    char* program = basename(argv[0]);
-    char* pidfile = nullptr;
+    std::string device = defaultDevice;
+    std::string program = basename(argv[0]);
+    std::string pidfile;
     bool isDaemon =  false;
 
     //---------------------------------------------------------------------
@@ -256,10 +256,10 @@ main(
 
     if (isDaemon)
     {
-        if (pidfile != nullptr)
+        if (not pidfile.empty())
         {
             pid_t otherpid;
-            pfh = ::pidfile_open(pidfile, 0600, &otherpid);
+            pfh = ::pidfile_open(pidfile.c_str(), 0600, &otherpid);
 
             if (pfh == nullptr)
             {
@@ -290,7 +290,7 @@ main(
             ::pidfile_write(pfh);
         }
 
-        ::openlog(program, LOG_PID, LOG_USER);
+        ::openlog(program.c_str(), LOG_PID, LOG_USER);
     }
 
     //---------------------------------------------------------------------
@@ -330,8 +330,6 @@ main(
         //-----------------------------------------------------------------
 
         int16_t traceHeight = 100;
-
-        // FIXME - need a better way to work out height of trace windows.
 
         if (fb.getHeight() == 240)
         {

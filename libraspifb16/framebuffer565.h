@@ -36,6 +36,7 @@
 #include <linux/fb.h>
 
 #include "fileDescriptor.h"
+#include "interface565.h"
 #include "point.h"
 #include "rgb565.h"
 
@@ -55,6 +56,8 @@ class Image565;
 //-------------------------------------------------------------------------
 
 class FrameBuffer565
+:
+    public Interface565
 {
 public:
 
@@ -70,26 +73,26 @@ public:
     FrameBuffer565(FrameBuffer565&& fb) = delete;
     FrameBuffer565& operator=(FrameBuffer565&& fb) = delete;
 
-    int32_t getWidth() const { return m_vinfo.xres; }
-    int32_t getHeight() const { return m_vinfo.yres; }
+    int32_t getWidth() const override { return m_vinfo.xres; }
+    int32_t getHeight() const override { return m_vinfo.yres; }
 
     bool hideCursor();
 
-    void clear(const RGB565& rgb) const { clear(rgb.get565()); }
-    void clear(uint16_t rgb = 0) const;
+    void clear(const RGB565& rgb) override { clear(rgb.get565()); }
+    void clear(uint16_t rgb = 0) override;
 
     bool
     setPixelRGB(
         const FB565Point& p,
-        const RGB565& rgb) const
+        const RGB565& rgb) override
     {
         return setPixel(p, rgb.get565());
     }
 
-    bool setPixel(const FB565Point& p, uint16_t rgb) const;
+    bool setPixel(const FB565Point& p, uint16_t rgb) override;
 
-    std::pair<bool, RGB565> getPixelRGB(const FB565Point& p) const;
-    std::pair<bool, uint16_t> getPixel(const FB565Point& p) const;
+    std::pair<bool, RGB565> getPixelRGB(const FB565Point& p) const override;
+    std::pair<bool, uint16_t> getPixel(const FB565Point& p) const override;
 
     bool putImage(const FB565Point& p, const Image565& image) const;
 

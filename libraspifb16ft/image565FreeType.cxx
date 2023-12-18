@@ -119,7 +119,7 @@ Image565FreeType::drawChar(
     const Image565Point& p,
     uint8_t c,
     const RGB565& rgb,
-    Image565& image)
+    Interface565& image)
 {
     return drawString(p, std::string(1, c), rgb, image);
 }
@@ -131,7 +131,7 @@ Image565FreeType::drawChar(
     const Image565Point& p,
     uint8_t c,
     uint16_t rgb,
-    Image565& image)
+    Interface565& image)
 {
     return drawChar(p, c, RGB565(rgb), image);
 }
@@ -143,7 +143,7 @@ Image565FreeType::drawString(
     const Image565Point& p,
     const char* string,
     const RGB565& rgb,
-    Image565& image)
+    Interface565& image)
 {
     if (not string)
     {
@@ -160,7 +160,7 @@ Image565FreeType::drawString(
     const Image565Point& p,
     const std::string& string,
     const RGB565& rgb,
-    Image565& image)
+    Interface565& image)
 {
     FontPoint position{p};
     position.setY(position.y() + (m_face->size->metrics.ascender >> 6));
@@ -229,7 +229,7 @@ Image565FreeType::drawChar(
         int yOffset, 
         const FT_Bitmap& bitmap,
         const RGB565& rgb,
-        Image565& image)
+        Interface565& image)
 {
     for (unsigned j = 0 ; j < bitmap.rows ; ++j)
     {
@@ -239,8 +239,8 @@ Image565FreeType::drawChar(
         {
             if (row[i] > 0)
             {
-                const Image565Point p{static_cast<int16_t>(i + xOffset),
-                                      static_cast<int16_t>(j + yOffset)};
+                const Image565Point p{static_cast<int>(i + xOffset),
+                                      static_cast<int>(j + yOffset)};
                 auto background = image.getPixelRGB(p);
 
                 if (background.first)

@@ -45,8 +45,8 @@ using namespace raspifb16;
 namespace
 {
 volatile static std::sig_atomic_t run = 1;
-const char* defaultDevice = "/dev/fb1";
-const char* defaultJoystick = "/dev/input/js0";
+const std::string defaultDevice = "/dev/fb1";
+const std::string defaultJoystick = "/dev/input/js0";
 }
 
 //-------------------------------------------------------------------------

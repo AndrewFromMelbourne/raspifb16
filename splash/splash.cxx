@@ -44,7 +44,7 @@ using namespace raspifb16;
 
 namespace
 {
-const char* defaultDevice = "/dev/fb1";
+const std::string defaultDevice = "/dev/fb1";
 }
 
 //-------------------------------------------------------------------------

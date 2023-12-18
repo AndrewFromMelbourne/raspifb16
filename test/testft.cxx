@@ -33,7 +33,7 @@
 #include <system_error>
 
 #include "framebuffer565.h"
-#include "image565Font.h"
+#include "image565FreeType.h"
 #include "point.h"
 
 //-------------------------------------------------------------------------
@@ -59,6 +59,7 @@ printUsage(
     os << "\n";
     os << "    --device,-d - dri device to use";
     os << " (default is " << defaultDevice << ")\n";
+    os << "    --font,-f - font file to use\n";
     os << "    --help,-h - print usage and exit\n";
     os << "\n";
 }
@@ -72,13 +73,15 @@ main(
 {
     std::string device = defaultDevice;
     std::string program = basename(argv[0]);
+    std::string font;
 
     //---------------------------------------------------------------------
 
-    static const char* sopts = "d:h";
+    static const char* sopts = "d:f:h";
     static struct option lopts[] =
     {
         { "device", required_argument, nullptr, 'd' },
+        { "font", required_argument, nullptr, 'f' },
         { "help", no_argument, nullptr, 'h' },
         { nullptr, no_argument, nullptr, 0 }
     };
@@ -92,6 +95,12 @@ main(
         case 'd':
 
             device = optarg;
+
+            break;
+
+        case 'f':
+
+            font = optarg;
 
             break;
 
@@ -121,41 +130,18 @@ main(
 
         fb.clear(black);
 
-        const int16_t columns = fb.getWidth() / sc_fontWidth;
-        const int16_t rows = fb.getHeight() / sc_fontHeight;
-
         Image565 image(fb.getWidth(), fb.getHeight());
         image.clear(black);
 
         //-----------------------------------------------------------------
 
-        std::deque<std::string> lines;
-        std::string line;
+        Image565FreeType ft(font, 16);
 
-        while (std::getline(std::cin, line))
-        {
-            lines.push_back(line.substr(0, columns));
+        ft.drawString(Image565Point{0, 0}, "abcdefghijklmnopqrstuvwxyz 0123456789", white, image);
 
-            while (lines.size() > static_cast<unsigned int>(rows))
-            {
-                lines.pop_front();
-            }
+        //-----------------------------------------------------------------
 
-            int16_t y = 0;
-
-            for (const auto& l : lines)
-            {
-                drawString(
-                    FontPoint{0, y},
-                    l,
-                    white,
-                    image);
-
-                y += sc_fontHeight;
-            }
-
-            fb.putImage(FB565Point{0, 0}, image);
-        }
+        fb.putImage(FB565Point{0, 0}, image);
     }
     catch (std::exception& error)
     {

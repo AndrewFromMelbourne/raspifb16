@@ -2,7 +2,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Andrew Duncan
+// Copyright (c) 2023 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -25,67 +25,11 @@
 //
 //-------------------------------------------------------------------------
 
-#pragma once
+#include "interface565.h"
 
 //-------------------------------------------------------------------------
 
-#include <cstdint>
-#include <string>
-
-#include "image565.h"
-#include "point.h"
-
-//-------------------------------------------------------------------------
-
-namespace raspifb16
+raspifb16::Interface565:: ~Interface565()
 {
-
-//-------------------------------------------------------------------------
-
-using FontPoint = Point<int>;
-
-//-------------------------------------------------------------------------
-
-class RGB565;
-
-//-------------------------------------------------------------------------
-
-constexpr int sc_fontWidth{8};
-constexpr int sc_fontHeight{16};
-
-//-------------------------------------------------------------------------
-
-FontPoint
-drawChar(
-    const Image565Point& p,
-    uint8_t c,
-    const RGB565& rgb,
-    Interface565& image);
-
-FontPoint
-drawChar(
-    const Image565Point& p,
-    uint8_t c,
-    uint16_t rgb,
-    Interface565& image);
-
-FontPoint
-drawString(
-    const Image565Point& p,
-    const char* string,
-    const RGB565& rgb,
-    Interface565& image);
-
-FontPoint
-drawString(
-    const Image565Point& p,
-    const std::string& string,
-    const RGB565& rgb,
-    Interface565& image);
-
-//-------------------------------------------------------------------------
-
-} // namespace raspifb16
-
-//-------------------------------------------------------------------------
+}
 

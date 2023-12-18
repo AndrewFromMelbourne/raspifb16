@@ -45,7 +45,7 @@ namespace raspifb16
 
 //-------------------------------------------------------------------------
 
-using FontPoint = Point<int16_t>;
+using FontPoint = Point<int>;
 
 //-------------------------------------------------------------------------
 
@@ -82,28 +82,28 @@ public:
         const Image565Point& p,
         uint8_t c,
         const RGB565& rgb,
-        Image565& image);
+        Interface565& image);
 
     FontPoint
     drawChar(
         const Image565Point& p,
         uint8_t c,
         uint16_t rgb,
-        Image565& image);
+        Interface565& image);
 
     FontPoint
     drawString(
         const Image565Point& p,
         const char* string,
         const RGB565& rgb,
-        Image565& image);
+        Interface565& image);
 
     FontPoint
     drawString(
         const Image565Point& p,
         const std::string& string,
         const RGB565& rgb,
-        Image565& image);
+        Interface565& image);
 
 private:
 
@@ -114,7 +114,7 @@ private:
         int yOffset, 
         const FT_Bitmap& bitmap,
         const RGB565& rgb,
-        Image565& image);
+        Interface565& image);
 
     int m_pixelSize;
 

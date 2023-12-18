@@ -2,7 +2,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Andrew Duncan
+// Copyright (c) 2023 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -30,8 +30,8 @@
 //-------------------------------------------------------------------------
 
 #include <cstdint>
+#include <utility>
 
-#include "image565.h"
 #include "point.h"
 #include "rgb565.h"
 
@@ -42,106 +42,34 @@ namespace raspifb16
 
 //-------------------------------------------------------------------------
 
-void
-box(
-    Interface565& image,
-    const Image565Point& p1,
-    const Image565Point& p2,
-    uint16_t rgb);
-
-inline void
-box(
-    Interface565& image,
-    const Image565Point& p1,
-    const Image565Point& p2,
-    const RGB565& rgb)
-{
-    box(image, p1, p2, rgb.get565());
-}
+using FB565Point = Point<int>;
 
 //-------------------------------------------------------------------------
 
-void
-boxFilled(
-    Interface565& image,
-    const Image565Point& p1,
-    const Image565Point& p2,
-    uint16_t rgb);
-
-inline void
-boxFilled(
-    Interface565& image,
-    const Image565Point& p1,
-    const Image565Point& p2,
-    const RGB565& rgb)
+class Interface565
 {
-    boxFilled(image, p1, p2, rgb.get565());
-}
+public:
 
-//-------------------------------------------------------------------------
+    virtual ~Interface565() = 0;
 
-void
-line(
-    Interface565& image,
-    const Image565Point& p1,
-    const Image565Point& p2,
-    uint16_t rgb);
+    virtual int getWidth() const = 0;
+    virtual int getHeight() const = 0;
 
-inline void
-line(
-    Interface565& image,
-    const Image565Point& p1,
-    const Image565Point& p2,
-    const RGB565& rgb)
-{
-    line(image, p1, p2, rgb.get565());
-}
+    virtual void clear(const RGB565& rgb) = 0;
+    virtual void clear(uint16_t rgb = 0) = 0;
 
-//-------------------------------------------------------------------------
+    virtual bool
+    setPixelRGB(
+        const FB565Point& p,
+        const RGB565& rgb) = 0;
 
-void
-horizontalLine(
-    Interface565& image,
-    int x1,
-    int x2,
-    int y,
-    uint16_t rgb);
+    virtual bool setPixel(const FB565Point& p, uint16_t rgb) = 0;
 
-inline void
-horizontalLine(
-    Interface565& image,
-    int x1,
-    int x2,
-    int y,
-    const RGB565& rgb)
-{
-    horizontalLine(image, x1, x2, y, rgb.get565());
-}
-
-//-------------------------------------------------------------------------
-
-void
-verticalLine(
-    Interface565& image,
-    int x,
-    int y1,
-    int y2,
-    uint16_t rgb);
-
-inline void
-verticalLine(
-    Interface565& image,
-    int x,
-    int y1,
-    int y2,
-    const RGB565& rgb)
-{
-    verticalLine(image, x, y1, y2, rgb.get565());
-}
+    virtual std::pair<bool, RGB565> getPixelRGB(const FB565Point& p) const = 0;
+    virtual std::pair<bool, uint16_t> getPixel(const FB565Point& p) const = 0;
+};
 
 //-------------------------------------------------------------------------
 
 } // namespace raspifb16
-
-//-------------------------------------------------------------------------
 

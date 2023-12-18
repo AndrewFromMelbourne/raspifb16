@@ -46,8 +46,8 @@ raspifb16::Image565:: Image565()
 //-------------------------------------------------------------------------
 
 raspifb16::Image565:: Image565(
-    int16_t width,
-    int16_t height,
+    int width,
+    int height,
     uint8_t numberOfFrames)
 :
     m_width{width},
@@ -61,8 +61,8 @@ raspifb16::Image565:: Image565(
 //-------------------------------------------------------------------------
 
 raspifb16::Image565:: Image565(
-    int16_t width,
-    int16_t height,
+    int width,
+    int height,
     const std::vector<uint16_t>& buffer,
     uint8_t numberOfFrames)
 :
@@ -156,7 +156,7 @@ raspifb16::Image565:: getPixel(
 
 const uint16_t*
 raspifb16::Image565:: getRow(
-    int16_t y) const
+    int y) const
 {
     const Image565Point p{0, y};
 

@@ -35,6 +35,7 @@
 #include <vector>
 
 #include "rgb565.h"
+#include "interface565.h"
 #include "point.h"
 
 //-------------------------------------------------------------------------
@@ -44,21 +45,23 @@ namespace raspifb16
 
 //-------------------------------------------------------------------------
 
-using Image565Point = Point<int16_t>;
+using Image565Point = Point<int>;
 
 //-------------------------------------------------------------------------
 
 class Image565
+:
+    public Interface565
 {
 public:
 
     Image565();
-    Image565(int16_t width,
-             int16_t height,
+    Image565(int width,
+             int height,
              uint8_t numberOfFrames = 1);
 
-    Image565(int16_t width,
-             int16_t height,
+    Image565(int width,
+             int height,
              const std::vector<uint16_t>& buffer,
              uint8_t numberOfFrames = 1);
 
@@ -67,15 +70,15 @@ public:
     Image565& operator=(const Image565&) = default;
     Image565& operator=(Image565&&) = default;
 
-    int16_t getWidth() const { return m_width; }
-    int16_t getHeight() const { return m_height; }
+    int getWidth() const override { return m_width; }
+    int getHeight() const override { return m_height; }
 
     uint8_t getFrame() const { return m_frame; }
     uint8_t getNumberOfFrames() const { return m_numberOfFrames; }
     void setFrame(uint8_t frame);
 
-    void clear(const RGB565& rgb) { clear(rgb.get565()); }
-    void clear(uint16_t rgb);
+    void clear(const RGB565& rgb) override { clear(rgb.get565()); }
+    void clear(uint16_t rgb) override;
 
     bool
     setPixelRGB(
@@ -85,12 +88,12 @@ public:
         return setPixel(p, rgb.get565());
     }
 
-    bool setPixel(const Image565Point& p, uint16_t rgb);
+    bool setPixel(const Image565Point& p, uint16_t rgb) override;
 
-    std::pair<bool, RGB565> getPixelRGB(const Image565Point& p) const;
-    std::pair<bool, uint16_t> getPixel(const Image565Point& p) const;
+    std::pair<bool, RGB565> getPixelRGB(const Image565Point& p) const override;
+    std::pair<bool, uint16_t> getPixel(const Image565Point& p) const override;
 
-    const uint16_t* getRow(int16_t y) const;
+    const uint16_t* getRow(int y) const;
 
 private:
 
@@ -105,8 +108,8 @@ private:
 
     size_t offset(const Image565Point& p) const;
 
-    int16_t m_width;
-    int16_t m_height;
+    int m_width;
+    int m_height;
 
     uint8_t m_frame;
     uint8_t m_numberOfFrames;

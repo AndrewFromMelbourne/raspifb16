@@ -37,7 +37,7 @@
 void
 raspifb16::
 box(
-    Image565& image,
+    Interface565& image,
     const Image565Point& p1,
     const Image565Point& p2,
     uint16_t rgb)
@@ -53,13 +53,13 @@ box(
 void
 raspifb16::
 boxFilled(
-    Image565& image,
+    Interface565& image,
     const Image565Point& p1,
     const Image565Point& p2,
     uint16_t rgb)
 {
-    int16_t sign_y = (p1.y() <= p2.y()) ? 1 : -1;
-    int16_t y = p1.y();
+    int sign_y = (p1.y() <= p2.y()) ? 1 : -1;
+    int y = p1.y();
 
     horizontalLine(image, p1.x(), p2.x(), y, rgb);
 
@@ -75,7 +75,7 @@ boxFilled(
 void
 raspifb16::
 line(
-    Image565& image,
+    Interface565& image,
     const Image565Point& p1,
     const Image565Point& p2,
     uint16_t rgb)
@@ -90,22 +90,22 @@ line(
     }
     else
     {
-        int16_t dx = std::abs(p2.x() - p1.x());
-        int16_t dy = std::abs(p2.y() - p1.y());
+        int dx = std::abs(p2.x() - p1.x());
+        int dy = std::abs(p2.y() - p1.y());
 
-        int16_t sign_x = (p1.x() <= p2.x()) ? 1 : -1;
-        int16_t sign_y = (p1.y() <= p2.y()) ? 1 : -1;
+        int sign_x = (p1.x() <= p2.x()) ? 1 : -1;
+        int sign_y = (p1.y() <= p2.y()) ? 1 : -1;
 
-        int16_t x = p1.x();
-        int16_t y = p1.y();
+        int x = p1.x();
+        int y = p1.y();
 
         image.setPixel(p1, rgb);
 
         if (dx > dy)
         {
-            int16_t d = 2 * dy - dx;
-            int16_t incrE = 2 * dy;
-            int16_t incrNE = 2 * (dy - dx);
+            int d = 2 * dy - dx;
+            int incrE = 2 * dy;
+            int incrNE = 2 * (dy - dx);
 
             while (x != p2.x())
             {
@@ -126,9 +126,9 @@ line(
         }
         else
         {
-            int16_t d = 2 * dx - dy;
-            int16_t incrN = 2 * dx;
-            int16_t incrNE = 2 * (dx - dy);
+            int d = 2 * dx - dy;
+            int incrN = 2 * dx;
+            int incrNE = 2 * (dx - dy);
 
             while (y != p2.y())
             {
@@ -155,14 +155,14 @@ line(
 void
 raspifb16::
 horizontalLine(
-    Image565& image,
-    int16_t x1,
-    int16_t x2,
-    int16_t y,
+    Interface565& image,
+    int x1,
+    int x2,
+    int y,
     uint16_t rgb)
 {
-    int16_t sign_x = (x1 <= x2) ? 1 : -1;
-    int16_t x = x1;
+    int sign_x = (x1 <= x2) ? 1 : -1;
+    int x = x1;
 
     image.setPixel(Image565Point(x, y), rgb);
 
@@ -178,14 +178,14 @@ horizontalLine(
 void
 raspifb16::
 verticalLine(
-    Image565& image,
-    int16_t x,
-    int16_t y1,
-    int16_t y2,
+    Interface565& image,
+    int x,
+    int y1,
+    int y2,
     uint16_t rgb)
 {
-    int16_t sign_y = (y1 <= y2) ? 1 : -1;
-    int16_t y = y1;
+    int sign_y = (y1 <= y2) ? 1 : -1;
+    int y = y1;
 
     image.setPixel(Image565Point(x, y), rgb);
 
