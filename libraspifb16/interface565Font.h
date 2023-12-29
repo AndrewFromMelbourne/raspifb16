@@ -2,7 +2,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Andrew Duncan
+// Copyright (c) 2023 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -29,38 +29,69 @@
 
 //-------------------------------------------------------------------------
 
-#include <cstdint>
 #include <string>
 
-#include "rgb565.h"
-#include "trace.h"
+#include "interface565.h"
+#include "point.h"
 
 //-------------------------------------------------------------------------
 
-class TraceStack
-:
-    public Trace
+namespace raspifb16
+{
+
+//-------------------------------------------------------------------------
+
+class RGB565;
+
+//-------------------------------------------------------------------------
+
+class Interface565Font
 {
 public:
 
-    TraceStack(
-        int width,
-        int traceHeight,
-        int fontHeight,
-        int traceScale,
-        int yPosition,
-        int gridHeight,
-        int traces,
-        const std::string& title,
-        const std::vector<std::string>& traceNames,
-        const std::vector<raspifb16::RGB565>& traceColours);
+    Interface565Font();
+    virtual ~Interface565Font() = 0;
 
-    void update(time_t now, raspifb16::Interface565Font& font) override = 0;
+    Interface565Font(const Interface565Font&) = delete;
+    Interface565Font(Interface565Font&&) = delete;
+    Interface565Font& operator=(const Interface565Font&) = delete;
+    Interface565Font& operator=(Interface565Font&&) = delete;
 
-protected:
+    virtual int getPixelHeight() const = 0;
+    virtual int getPixelWidth() const = 0;
 
-    void draw() override;
+    virtual Interface565Point
+    drawChar(
+        const Interface565Point& p,
+        uint8_t c,
+        const RGB565& rgb,
+        Interface565& image) = 0;
+
+    virtual Interface565Point
+    drawChar(
+        const Interface565Point& p,
+        uint8_t c,
+        uint16_t rgb,
+        Interface565& image) = 0;
+
+    virtual Interface565Point
+    drawString(
+        const Interface565Point& p,
+        const char* string,
+        const RGB565& rgb,
+        Interface565& image) = 0;
+
+    virtual Interface565Point
+    drawString(
+        const Interface565Point& p,
+        const std::string& string,
+        const RGB565& rgb,
+        Interface565& image) = 0;
 };
+
+//-------------------------------------------------------------------------
+
+} // namespace raspifb16
 
 //-------------------------------------------------------------------------
 

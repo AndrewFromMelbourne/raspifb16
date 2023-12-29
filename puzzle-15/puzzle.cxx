@@ -210,7 +210,7 @@ Puzzle::draw(FrameBuffer565& fb)
     {
         for (int i = 0 ; i < puzzleWidth ; ++i)
         {
-           FB565Point p{ xOffset + (i * tileWidth), j * tileHeight };
+           Interface565Point p{ xOffset + (i * tileWidth), j * tileHeight };
            int tile = m_board[i + (j * puzzleWidth)];
            fb.putImage(p, m_tileBuffers[tile]);
         }

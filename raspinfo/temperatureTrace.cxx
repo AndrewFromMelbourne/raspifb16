@@ -44,14 +44,16 @@
 
 TemperatureTrace::
 TemperatureTrace(
-    int16_t width,
-    int16_t traceHeight,
-    int16_t yPosition,
-    int16_t gridHeight)
+    int width,
+    int traceHeight,
+    int fontHeight,
+    int yPosition,
+    int gridHeight)
 :
     TraceGraph(
         width,
         traceHeight,
+        fontHeight,
         100,
         yPosition,
         gridHeight,
@@ -67,10 +69,11 @@ TemperatureTrace(
 void
 TemperatureTrace::
 update(
-    time_t now)
+    time_t now,
+    raspifb16::Interface565Font& font)
 {
-    int16_t temperature = raspinfo::getTemperature();
+    int temperature = raspinfo::getTemperature();
 
-    Trace::addData(std::vector<int16_t>{temperature}, now);
+    Trace::addData(std::vector<int>{temperature}, now);
 }
 

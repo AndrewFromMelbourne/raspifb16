@@ -42,7 +42,7 @@ namespace raspifb16
 
 //-------------------------------------------------------------------------
 
-using FB565Point = Point<int>;
+using Interface565Point = Point<int>;
 
 //-------------------------------------------------------------------------
 
@@ -60,13 +60,13 @@ public:
 
     virtual bool
     setPixelRGB(
-        const FB565Point& p,
+        const Interface565Point& p,
         const RGB565& rgb) = 0;
 
-    virtual bool setPixel(const FB565Point& p, uint16_t rgb) = 0;
+    virtual bool setPixel(const Interface565Point& p, uint16_t rgb) = 0;
 
-    virtual std::pair<bool, RGB565> getPixelRGB(const FB565Point& p) const = 0;
-    virtual std::pair<bool, uint16_t> getPixel(const FB565Point& p) const = 0;
+    virtual std::pair<bool, RGB565> getPixelRGB(const Interface565Point& p) const = 0;
+    virtual std::pair<bool, uint16_t> getPixel(const Interface565Point& p) const = 0;
 };
 
 //-------------------------------------------------------------------------

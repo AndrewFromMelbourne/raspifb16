@@ -54,12 +54,12 @@ MemoryStats()
                                 "unable to open /proc/meminfo"};
     }
 
-    uint32_t free{0};
+    int free{0};
 
     while (ifs.eof() == false)
     {
         std::string name;
-        uint32_t value;
+        int value;
         std::string unit;
 
         ifs >> name >> value >> unit;
@@ -89,14 +89,16 @@ MemoryStats()
 
 MemoryTrace::
 MemoryTrace(
-    int16_t width,
-    int16_t traceHeight,
-    int16_t yPosition,
-    int16_t gridHeight)
+    int width,
+    int traceHeight,
+    int fontHeight,
+    int yPosition,
+    int gridHeight)
 :
     TraceStack(
         width,
         traceHeight,
+        fontHeight,
         100,
         yPosition,
         gridHeight,
@@ -114,19 +116,20 @@ MemoryTrace(
 void
 MemoryTrace::
 update(
-    time_t now)
+    time_t now,
+    raspifb16::Interface565Font& font)
 {
     MemoryStats memoryStats;
 
-    int16_t used = (memoryStats.used() * m_traceScale)
+    int used = (memoryStats.used() * m_traceScale)
                  / memoryStats.total();
 
-    int16_t buffers = (memoryStats.buffers() * m_traceScale)
+    int buffers = (memoryStats.buffers() * m_traceScale)
                     / memoryStats.total();
 
-    int16_t cached = (memoryStats.cached() * m_traceScale)
+    int cached = (memoryStats.cached() * m_traceScale)
                    / memoryStats.total();
 
-    Trace::addData(std::vector<int16_t>{used, buffers, cached}, now);
+    Trace::addData(std::vector<int>{used, buffers, cached}, now);
 }
 

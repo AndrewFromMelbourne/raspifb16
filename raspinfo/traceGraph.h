@@ -44,17 +44,18 @@ class TraceGraph
 public:
 
     TraceGraph(
-        int16_t width,
-        int16_t traceHeight,
-        int16_t traceScale,
-        int16_t yPosition,
-        int16_t gridHeight,
-        int16_t traces,
+        int width,
+        int traceHeight,
+        int fontHeight,
+        int traceScale,
+        int yPosition,
+        int gridHeight,
+        int traces,
         const std::string& title,
         const std::vector<std::string>& traceNames,
         const std::vector<raspifb16::RGB565>& traceColours);
 
-    void update(time_t now) override = 0;
+    void update(time_t now, raspifb16::Interface565Font& font) override = 0;
 
 protected:
 

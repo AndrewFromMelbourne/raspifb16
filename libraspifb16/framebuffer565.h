@@ -47,10 +47,6 @@ namespace raspifb16
 
 //-------------------------------------------------------------------------
 
-using FB565Point = Point<int32_t>;
-
-//-------------------------------------------------------------------------
-
 class Image565;
 
 //-------------------------------------------------------------------------
@@ -83,28 +79,28 @@ public:
 
     bool
     setPixelRGB(
-        const FB565Point& p,
+        const Interface565Point& p,
         const RGB565& rgb) override
     {
         return setPixel(p, rgb.get565());
     }
 
-    bool setPixel(const FB565Point& p, uint16_t rgb) override;
+    bool setPixel(const Interface565Point& p, uint16_t rgb) override;
 
-    std::pair<bool, RGB565> getPixelRGB(const FB565Point& p) const override;
-    std::pair<bool, uint16_t> getPixel(const FB565Point& p) const override;
+    std::pair<bool, RGB565> getPixelRGB(const Interface565Point& p) const override;
+    std::pair<bool, uint16_t> getPixel(const Interface565Point& p) const override;
 
-    bool putImage(const FB565Point& p, const Image565& image) const;
+    bool putImage(const Interface565Point& p, const Image565& image) const;
 
 private:
 
     bool
     putImagePartial(
-        const FB565Point& p,
+        const Interface565Point& p,
         const Image565& image) const;
 
     bool
-    validPixel(const FB565Point& p) const
+    validPixel(const Interface565Point& p) const
     {
         return (p.x() >= 0) &&
                (p.y() >= 0) &&

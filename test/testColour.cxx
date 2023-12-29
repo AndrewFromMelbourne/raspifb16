@@ -159,7 +159,7 @@ main()
 
         //-----------------------------------------------------------------
 
-        FB565Point imageLocation
+        Interface565Point imageLocation
         {
             (fb.getWidth() - image.getWidth()) / 2,
             (fb.getHeight() - image.getHeight()) / 2

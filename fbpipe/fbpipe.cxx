@@ -33,7 +33,8 @@
 #include <system_error>
 
 #include "framebuffer565.h"
-#include "image565Font.h"
+#include "image565.h"
+#include "image565Font8x16.h"
 #include "point.h"
 
 //-------------------------------------------------------------------------
@@ -115,14 +116,15 @@ main(
 
     try
     {
+        Image565Font8x16 font;
         const RGB565 black{0, 0, 0};
         const RGB565 white{255, 255, 255};
         FrameBuffer565 fb(device);
 
         fb.clear(black);
 
-        const int16_t columns = fb.getWidth() / sc_fontWidth;
-        const int16_t rows = fb.getHeight() / sc_fontHeight;
+        const int columns = fb.getWidth() / font.getPixelWidth();
+        const int rows = fb.getHeight() / font.getPixelHeight();
 
         Image565 image(fb.getWidth(), fb.getHeight());
         image.clear(black);
@@ -141,20 +143,20 @@ main(
                 lines.pop_front();
             }
 
-            int16_t y = 0;
+            int y = 0;
 
             for (const auto& l : lines)
             {
-                drawString(
-                    FontPoint{0, y},
+                font.drawString(
+                    Interface565Point{0, y},
                     l,
                     white,
                     image);
 
-                y += sc_fontHeight;
+                y += font.getPixelHeight();
             }
 
-            fb.putImage(FB565Point{0, 0}, image);
+            fb.putImage(Interface565Point{0, 0}, image);
         }
     }
     catch (std::exception& error)

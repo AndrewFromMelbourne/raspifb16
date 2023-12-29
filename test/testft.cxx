@@ -135,13 +135,37 @@ main(
 
         //-----------------------------------------------------------------
 
-        Image565FreeType ft(font, 16);
+        Image565FreeType ft(font, 8);
+        Interface565Point p{0, 0};
 
-        ft.drawString(Image565Point{0, 0}, "abcdefghijklmnopqrstuvwxyz 0123456789", white, image);
+        p = ft.drawString(p, "abcdefghijklmnopqrstuvwxyz ", white, image);
+        p = ft.drawString(p, "0123456789", white, image);
+
+        p.set(0, p.y() + ft.getPixelHeight());
+
+        p = ft.drawString(p, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", white, image);
+
+        p.set(0, p.y() + ft.getPixelHeight());
+
+        p = ft.drawChar(p, '@', white, image);
+
+        p.set(0, p.y() + ft.getPixelHeight());
+
+        for (int j = 0 ; j < 16 ; ++j)
+        {
+            for (int i = 0 ; i < 16 ; ++i)
+            {
+                uint8_t c = static_cast<uint8_t>(i + (j * 16));
+                p.setX(i * ft.getPixelWidth());
+                ft.drawChar(p, c, white, image);
+            }
+
+            p.setY(p.y() + ft.getPixelHeight());
+        }
 
         //-----------------------------------------------------------------
 
-        fb.putImage(FB565Point{0, 0}, image);
+        fb.putImage(Interface565Point{0, 0}, image);
     }
     catch (std::exception& error)
     {

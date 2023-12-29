@@ -51,25 +51,25 @@ public:
 
     CpuStats();
 
-    uint32_t total() const;
-    uint32_t user() const { return m_user; }
-    uint32_t nice() const { return m_nice; }
-    uint32_t system() const { return m_system; }
+    int total() const;
+    int user() const { return m_user; }
+    int nice() const { return m_nice; }
+    int system() const { return m_system; }
 
     CpuStats& operator-=(const CpuStats& rhs);
 
 private:
 
-    uint32_t m_user;
-    uint32_t m_nice;
-    uint32_t m_system;
-    uint32_t m_idle;
-    uint32_t m_iowait;
-    uint32_t m_irq;
-    uint32_t m_softirq;
-    uint32_t m_steal;
-    uint32_t m_guest;
-    uint32_t m_guest_nice;
+    int m_user;
+    int m_nice;
+    int m_system;
+    int m_idle;
+    int m_iowait;
+    int m_irq;
+    int m_softirq;
+    int m_steal;
+    int m_guest;
+    int m_guest_nice;
 };
 
 CpuStats operator-(const CpuStats& lhs, const CpuStats& rhs);
@@ -83,12 +83,13 @@ class CpuTrace
 public:
 
     CpuTrace(
-        int16_t width,
-        int16_t traceHeight,
-        int16_t yPosition,
-        int16_t gridHeight = 20);
+        int width,
+        int traceHeight,
+        int fontHeight,
+        int yPosition,
+        int gridHeight = 20);
 
-    void update(time_t now) override;
+    void update(time_t now, raspifb16::Interface565Font& font) override;
 
 private:
 

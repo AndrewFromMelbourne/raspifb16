@@ -160,7 +160,7 @@ raspifb16::FrameBuffer565:: clear(
 
 bool
 raspifb16::FrameBuffer565:: setPixel(
-    const FB565Point& p,
+    const Interface565Point& p,
     uint16_t rgb)
 {
     bool isValid{validPixel(p)};
@@ -177,7 +177,7 @@ raspifb16::FrameBuffer565:: setPixel(
 
 std::pair<bool, raspifb16::RGB565>
 raspifb16::FrameBuffer565:: getPixelRGB(
-    const FB565Point& p) const
+    const Interface565Point& p) const
 {
     bool isValid{validPixel(p)};
     RGB565 rgb{0, 0, 0};
@@ -194,7 +194,7 @@ raspifb16::FrameBuffer565:: getPixelRGB(
 
 std::pair<bool, uint16_t>
 raspifb16::FrameBuffer565:: getPixel(
-    const FB565Point& p) const
+    const Interface565Point& p) const
 {
     bool isValid{validPixel(p)};
     uint16_t rgb{0};
@@ -211,7 +211,7 @@ raspifb16::FrameBuffer565:: getPixel(
 
 bool
 raspifb16::FrameBuffer565:: putImage(
-    const FB565Point& p,
+    const Interface565Point& p,
     const Image565& image) const
 {
     if ((p.x() < 0) ||
@@ -242,7 +242,7 @@ raspifb16::FrameBuffer565:: putImage(
 
 bool
 raspifb16::FrameBuffer565:: putImagePartial(
-    const FB565Point& p,
+    const Interface565Point& p,
     const Image565& image) const
 {
     auto x = p.x();

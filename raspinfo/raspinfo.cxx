@@ -52,6 +52,8 @@
 #include <bcm_host.h>
 #pragma GCC diagnostic pop
 
+#include "image565Font8x16.h"
+
 #include "cpuTrace.h"
 #include "dynamicInfo.h"
 #include "framebuffer565.h"
@@ -329,20 +331,22 @@ main(
 
         //-----------------------------------------------------------------
 
-        int16_t traceHeight = 100;
+        raspifb16::Image565Font8x16 font;
+
+        int traceHeight = 100;
 
         if (fb.getHeight() == 240)
         {
             traceHeight = 80;
         }
 
-        int16_t gridHeight = traceHeight / 5;
+        int gridHeight = traceHeight / 5;
 
         using Panels = std::vector<std::unique_ptr<Panel>>;
 
         Panels panels;
 
-        auto panelTop = [](const Panels& panels) -> int16_t
+        auto panelTop = [](const Panels& panels) -> int
         {
             if (panels.empty())
             {
@@ -356,19 +360,29 @@ main(
 
         panels.push_back(
             std::make_unique<DynamicInfo>(fb.getWidth(),
-                                           panelTop(panels)));
+                                          font.getPixelHeight(),
+                                          panelTop(panels)));
 
         panels.push_back(
             std::make_unique<CpuTrace>(fb.getWidth(),
                                         traceHeight,
+                                        font.getPixelHeight(),
                                         panelTop(panels),
                                         gridHeight));
 
         panels.push_back(
             std::make_unique<MemoryTrace>(fb.getWidth(),
                                            traceHeight,
+                                           font.getPixelHeight(),
                                            panelTop(panels),
                                            gridHeight));
+
+        //-----------------------------------------------------------------
+
+        for (auto& panel : panels)
+        {
+            panel->init(font);
+        }
 
         //-----------------------------------------------------------------
 
@@ -383,7 +397,7 @@ main(
 
             for (auto& panel : panels)
             {
-                panel->update(now_t);
+                panel->update(now_t, font);
 
                 if (display)
                 {

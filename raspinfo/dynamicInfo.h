@@ -50,9 +50,12 @@ class DynamicInfo
 {
 public:
 
-    DynamicInfo(int16_t width, int16_t yPosition);
+    DynamicInfo(int width, 
+                int fontHeight,
+                int yPosition);
 
-    void update(time_t now) override;
+    void init(raspifb16::Interface565Font& font) override;
+    void update(time_t now, raspifb16::Interface565Font& font) override;
 
 private:
 

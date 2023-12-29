@@ -2,7 +2,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Andrew Duncan
+// Copyright (c) 2022 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -25,8 +25,10 @@
 //
 //-------------------------------------------------------------------------
 
+#include <cstddef>
+
 #include "image565.h"
-#include "image565Font.h"
+#include "image565Font8x16.h"
 #include "point.h"
 #include "rgb565.h"
 
@@ -34,6 +36,11 @@
 
 namespace raspifb16
 {
+
+//-------------------------------------------------------------------------
+
+constexpr int sc_fontWidth{8};
+constexpr int sc_fontHeight{16};
 
 //-------------------------------------------------------------------------
 
@@ -4651,13 +4658,37 @@ constexpr uint8_t font[256][sc_fontHeight] =
 
 //-------------------------------------------------------------------------
 
-} // namespace raspifb16
+Image565Font8x16::Image565Font8x16()
+{
+}
 
 //-------------------------------------------------------------------------
 
-raspifb16::FontPoint
-raspifb16::drawChar(
-    const Image565Point& p,
+Image565Font8x16::~Image565Font8x16()
+{
+}
+
+//-------------------------------------------------------------------------
+
+int
+Image565Font8x16::getPixelHeight() const
+{
+    return sc_fontHeight;
+}
+
+//-------------------------------------------------------------------------
+
+int
+Image565Font8x16::getPixelWidth() const
+{
+    return sc_fontWidth;
+}
+
+//-------------------------------------------------------------------------
+
+Interface565Point
+Image565Font8x16::drawChar(
+    const Interface565Point& p,
     uint8_t c,
     const RGB565& rgb,
     Interface565& image)
@@ -4667,61 +4698,75 @@ raspifb16::drawChar(
 
 //-------------------------------------------------------------------------
 
-raspifb16::FontPoint
-raspifb16::drawChar(
-    const Image565Point& p,
+Interface565Point
+Image565Font8x16::drawChar(
+    const Interface565Point& p,
     uint8_t c,
     uint16_t rgb,
     Interface565& image)
 {
-    for (int j = 0 ; j < sc_fontHeight ; ++j)
+    const auto width = getPixelWidth();
+
+    for (int j = 0 ; j < getPixelHeight() ; ++j)
     {
         uint8_t byte = font[c][j];
 
         if (byte != 0)
         {
-            for (int i = 0 ; i < sc_fontWidth ; ++i)
+            for (int i = 0 ; i < width ; ++i)
             {
-                if ((byte >> (sc_fontWidth - i - 1)) & 1 )
+                if ((byte >> (width - i - 1)) & 1 )
                 {
                     image.setPixel(
-                        Image565Point(p.x() + i, p.y() + j),
+                        Interface565Point(p.x() + i, p.y() + j),
                         rgb);
                 }
             }
         }
     }
 
-    return FontPoint(p.x() + sc_fontWidth, p.y());
+    return Interface565Point(p.x() + width, p.y());
 }
 
 //-------------------------------------------------------------------------
 
-raspifb16::FontPoint
-raspifb16::drawString(
-    const Image565Point& p,
+Interface565Point
+Image565Font8x16::drawString(
+    const Interface565Point& p,
     const char* string,
     const RGB565& rgb,
     Interface565& image)
 {
-    FontPoint position{p};
+    return drawString(p, std::string(string), rgb, image);
+}
 
-    if (string != nullptr)
+//-------------------------------------------------------------------------
+
+Interface565Point
+Image565Font8x16::drawString(
+    const Interface565Point& p,
+    const std::string& string,
+    const RGB565& rgb,
+    Interface565& image)
+{
+    Interface565Point position{p};
+    Interface565Point start{p};
+
+    for (const char c : string)
     {
-        FontPoint start{p};
-
-        while (*string != '\0')
+        if (c == '\n')
         {
-            if (*string == '\n')
-            {
-                position.setY(position.y() + sc_fontHeight);
-            }
-            else
-            {
-                drawChar(position, *string, rgb, image);
-                position.setX(position.x() + sc_fontWidth);
-            }
-            ++string;
+            position.set(
+                start.x(),
+                position.y() + getPixelHeight());
+        }
+        else
+        {
+            drawChar(position, c, rgb, image);
+
+            position.set(
+                position.x() + getPixelWidth(),
+                position.y());
         }
     }
 
@@ -4730,13 +4775,4 @@ raspifb16::drawString(
 
 //-------------------------------------------------------------------------
 
-raspifb16::FontPoint
-raspifb16::drawString(
-    const Image565Point& p,
-    const std::string& string,
-    const RGB565& rgb,
-    Interface565& image)
-{
-    return drawString(p, string.c_str(), rgb, image);
-}
-
+} // namespace raspifb16

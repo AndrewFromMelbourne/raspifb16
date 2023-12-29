@@ -128,7 +128,7 @@ main(
         fb.clear();
 
         auto image = readQoi(qoi);
-        const FB565Point center{
+        const Interface565Point center{
             (fb.getWidth() - image.getWidth()) / 2, 
             (fb.getHeight() - image.getHeight()) / 2};
         fb.putImage(center, image);

@@ -39,12 +39,13 @@
 
 TraceStack::
 TraceStack(
-    int16_t width,
-    int16_t traceHeight,
-    int16_t traceScale,
-    int16_t yPosition,
-    int16_t gridHeight,
-    int16_t traces,
+    int width,
+    int traceHeight,
+    int fontHeight,
+    int traceScale,
+    int yPosition,
+    int gridHeight,
+    int traces,
     const std::string& title,
     const std::vector<std::string>& traceNames,
     const std::vector<raspifb16::RGB565>& traceColours)
@@ -52,6 +53,7 @@ TraceStack(
     Trace(
         width,
         traceHeight,
+        fontHeight,
         traceScale,
         yPosition,
         gridHeight,
@@ -68,16 +70,16 @@ void
 TraceStack::
 draw()
 {
-    for (int16_t i = 0 ; i < m_columns ; ++i)
+    for (int i = 0 ; i < m_columns ; ++i)
     {
-        int16_t j = m_traceHeight - 1;
+        int j = m_traceHeight - 1;
 
         for (auto& trace : m_traceData)
         {
-            int16_t value = (trace.m_values[i] * m_traceHeight)
+            int value = (trace.m_values[i] * m_traceHeight)
                           / m_traceScale;
 
-            for (int16_t v = 0 ; v < value ; ++v)
+            for (int v = 0 ; v < value ; ++v)
             {
                 if (((j % m_gridHeight) == 0) || (m_time[i] == 0))
                 {

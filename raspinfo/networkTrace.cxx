@@ -113,14 +113,16 @@ operator-(
 
 NetworkTrace::
 NetworkTrace(
-    int16_t width,
-    int16_t traceHeight,
-    int16_t yPosition,
-    int16_t gridHeight)
+    int width,
+    int traceHeight,
+    int fontHeight,
+    int yPosition,
+    int gridHeight)
 :
     TraceGraph(
         width,
         traceHeight,
+        fontHeight,
         0,
         yPosition,
         gridHeight,
@@ -137,16 +139,17 @@ NetworkTrace(
 void
 NetworkTrace::
 update(
-    time_t now)
+    time_t now,
+    raspifb16::Interface565Font& font)
 {
     NetworkStats currentStats;
 
     NetworkStats diff{currentStats - m_previousStats};
 
-    int16_t tx = diff.tx();
-    int16_t rx = diff.rx();
+    int tx = diff.tx();
+    int rx = diff.rx();
 
-    Trace::addData(std::vector<int16_t>{tx, rx}, now);
+    Trace::addData(std::vector<int>{tx, rx}, now);
 
     m_previousStats = currentStats;
 }

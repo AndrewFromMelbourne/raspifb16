@@ -31,6 +31,7 @@
 
 #include "framebuffer565.h"
 #include "image565.h"
+#include "interface565Font.h"
 #include "joystick.h"
 
 #include "images.h"
@@ -76,7 +77,8 @@ public:
 
     void init();
     void update(raspifb16::Joystick& js);
-    void draw(raspifb16::FrameBuffer565& fb);
+    void draw(raspifb16::FrameBuffer565& fb,
+              raspifb16::Interface565Font& font);
 
 private:
 
@@ -84,7 +86,8 @@ private:
     void swapPieces(const Location& location1, const Location& location2);
     void isLevelSolved();
     void drawBoard(raspifb16::FrameBuffer565& fb);
-    void drawText(raspifb16::FrameBuffer565& fb);
+    void drawText(raspifb16::FrameBuffer565& fb,
+                  raspifb16::Interface565Font& font);
 
     //---------------------------------------------------------------------
 

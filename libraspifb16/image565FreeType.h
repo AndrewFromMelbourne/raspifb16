@@ -36,6 +36,7 @@
 #include <string>
 
 #include "image565.h"
+#include "interface565Font.h"
 #include "point.h"
 
 //-------------------------------------------------------------------------
@@ -54,11 +55,13 @@ class RGB565;
 //-------------------------------------------------------------------------
 
 class Image565FreeType
+:
+    public Interface565Font
 {
 public:
 
     Image565FreeType(const std::string& fontFile, int pixelSize);
-    ~Image565FreeType();
+    ~Image565FreeType() override;
 
     Image565FreeType(const Image565FreeType&) = delete;
     Image565FreeType(Image565FreeType&&) = delete;
@@ -68,7 +71,8 @@ public:
 	std::string getFontFamilyName() const;
 	std::string getFontStyleName() const;
 
-	int getPixelHeight() const;
+	int getPixelHeight() const override;
+	int getPixelWidth() const override;
 
     int getPixelSize() const
 	{
@@ -82,28 +86,28 @@ public:
         const Image565Point& p,
         uint8_t c,
         const RGB565& rgb,
-        Interface565& image);
+        Interface565& image) override;
 
     FontPoint
     drawChar(
         const Image565Point& p,
         uint8_t c,
         uint16_t rgb,
-        Interface565& image);
+        Interface565& image) override;
 
     FontPoint
     drawString(
         const Image565Point& p,
         const char* string,
         const RGB565& rgb,
-        Interface565& image);
+        Interface565& image) override;
 
     FontPoint
     drawString(
         const Image565Point& p,
         const std::string& string,
         const RGB565& rgb,
-        Interface565& image);
+        Interface565& image) override;
 
 private:
 

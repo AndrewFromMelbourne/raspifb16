@@ -32,7 +32,7 @@
 
 #include "framebuffer565.h"
 #include "image565.h"
-#include "image565Font.h"
+#include "image565Font8x16.h"
 #include "image565Graphics.h"
 #include "point.h"
 
@@ -59,6 +59,7 @@ main()
 {
     try
     {
+        Image565Font8x16 font;
         FrameBuffer565 fb{"/dev/fb1"};
         fb.clear();
 
@@ -82,7 +83,7 @@ main()
              Image565Point(47,47),
              green);
 
-        FB565Point imageLocation
+        Interface565Point imageLocation
         {
             (fb.getWidth() - image.getWidth()) / 2,
             (fb.getHeight() - image.getHeight()) / 2
@@ -103,14 +104,14 @@ main()
         Image565 textImage(168, 16);
         textImage.clear(darkBlue);
 
-        FB565Point textLocation
+        Interface565Point textLocation
         {
             (fb.getWidth() - textImage.getWidth()) / 2,
             (fb.getHeight() - textImage.getHeight()) / 3
         };
 
-        drawString(
-            FontPoint{0, 0},
+        font.drawString(
+            Image565Point{0, 0},
             "This is a test string",
             white,
             textImage);

@@ -35,6 +35,7 @@
 
 #include <sys/time.h>
 
+#include "interface565Font.h"
 #include "panel.h"
 #include "rgb565.h"
 
@@ -52,7 +53,7 @@ struct TraceData
     std::string m_name;
     raspifb16::RGB565 m_traceColour;
     raspifb16::RGB565 m_gridColour;
-    std::vector<int16_t> m_values;
+    std::vector<int> m_values;
 };
 
 //-------------------------------------------------------------------------
@@ -64,29 +65,32 @@ class Trace
 public:
 
     Trace(
-        int16_t width,
-        int16_t traceHeight,
-        int16_t traceScale,
-        int16_t yPosition,
-        int16_t gridHeight,
-        int16_t traces,
+        int width,
+        int traceHeight,
+        int fontHeight,
+        int traceScale,
+        int yPosition,
+        int gridHeight,
+        int traces,
         const std::string& title,
         const std::vector<std::string>& traceNames,
         const std::vector<raspifb16::RGB565>& traceColours);
 
-    static int16_t getLegendHeight();
-
-    void update(time_t now) override = 0;
+    void init(raspifb16::Interface565Font& font) override;
+    void update(time_t now, raspifb16::Interface565Font& font) override = 0;
 
 protected:
 
-    void addData(const std::vector<int16_t>& data, time_t now);
+    void addData(const std::vector<int>& data, time_t now);
     virtual void draw() = 0;
 
-    int16_t m_traceHeight;
-    int16_t m_traceScale;
-    int16_t m_gridHeight;
-    int16_t m_columns;
+    int m_traceHeight;
+    int m_fontHeight;
+    int m_traceScale;
+    int m_gridHeight;
+    int m_columns;
+
+    std::string m_title;
 
     bool m_autoScale;
 

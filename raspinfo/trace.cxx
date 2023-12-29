@@ -32,7 +32,7 @@
 #include <cstring>
 #include <iostream>
 
-#include "image565Font.h"
+#include "image565Font8x16.h"
 #include "image565Graphics.h"
 #include "panel.h"
 #include "rgb565.h"
@@ -46,28 +46,30 @@ const raspifb16::RGB565 Trace::sc_gridColour{48, 48, 48};
 
 //-------------------------------------------------------------------------
 
-Trace::
-Trace(
-    int16_t width,
-    int16_t traceHeight,
-    int16_t traceScale,
-    int16_t yPosition,
-    int16_t gridHeight,
-    int16_t traces,
+Trace::Trace(
+    int width,
+    int traceHeight,
+    int fontHeight,
+    int traceScale,
+    int yPosition,
+    int gridHeight,
+    int traces,
     const std::string& title,
     const std::vector<std::string>& traceNames,
     const std::vector<raspifb16::RGB565>& traceColours)
 :
-    Panel(width, traceHeight + getLegendHeight(), yPosition),
+    Panel(width, traceHeight + fontHeight + 4, yPosition),
     m_traceHeight{traceHeight},
+    m_fontHeight{fontHeight},
     m_traceScale{traceScale},
     m_gridHeight{gridHeight},
     m_columns{0},
+    m_title{title},
     m_autoScale{traceScale == 0},
     m_traceData(),
     m_time(width)
 {
-    for (int16_t trace = 0 ; trace < traces ; ++trace)
+    for (int trace = 0 ; trace < traces ; ++trace)
     {
 
         TraceData traceData =
@@ -82,21 +84,23 @@ Trace(
 
         m_traceData.push_back(traceData);
     }
+}
 
-    //---------------------------------------------------------------------
+//-------------------------------------------------------------------------
 
+void
+Trace::init(
+    raspifb16::Interface565Font& font)
+{
     getImage().clear(sc_background);
 
-    uint8_t smallSquare = 0xFE;
+    raspifb16::Interface565Point position(0, m_traceHeight + 2);
 
-    raspifb16::FontPoint position(0, m_traceHeight + 2);
-
-    position =
-        drawString(
-            raspifb16::FontPoint(0, m_traceHeight + 2),
-            title + " (",
-            sc_foreground,
-            getImage());
+    position = font.drawString(
+                   raspifb16::Interface565Point(0, m_traceHeight + 2),
+                   m_title + " (",
+                   sc_foreground,
+                   getImage());
 
     bool first = true;
     for (auto& trace : m_traceData)
@@ -107,28 +111,33 @@ Trace(
         }
         else
         {
-            position.set(
-                position.x() + raspifb16::sc_fontWidth,
-                position.y());
+            position.setX(position.x() + font.getPixelWidth());
         }
 
-        position = drawString(position,
-                              trace.m_name + ":",
-                              sc_foreground,
-                              getImage());
+        position = font.drawString(position,
+                                   trace.m_name + ":",
+                                   sc_foreground,
+                                   getImage());
 
-        position = drawChar(position,
-                            smallSquare,
-                            trace.m_traceColour,
-                            getImage());
+        // draw small box
+
+        const auto quaterWidth = font.getPixelWidth() / 4;
+        const auto quaterHeight = font.getPixelHeight() / 4;
+
+        raspifb16::Interface565Point p1{position.x() + quaterWidth, position.y() + quaterHeight};
+        raspifb16::Interface565Point p2{position.x() + 3 * quaterWidth, position.y() + 3 * quaterHeight};
+
+        boxFilled(getImage(), p1, p2, trace.m_traceColour);
     }
 
-    position = drawString(position,
-                          ")",
-                          sc_foreground,
-                          getImage());
+    position.setX(position.x() + font.getPixelWidth());
 
-    for (auto j = 0 ; j < traceHeight + 1 ; j+= m_gridHeight)
+    position = font.drawString(position,
+                               ")",
+                               sc_foreground,
+                               getImage());
+
+    for (auto j = 0 ; j < m_traceHeight + 1 ; j+= m_gridHeight)
     {
         horizontalLine(getImage(),
                        0,
@@ -140,22 +149,12 @@ Trace(
 
 //-------------------------------------------------------------------------
 
-int16_t
-Trace::
-getLegendHeight()
-{
-    return raspifb16::sc_fontHeight + 4;
-}
-
-//-------------------------------------------------------------------------
-
 void
-Trace::
-addData(
-    const std::vector<int16_t>& data,
+Trace::addData(
+    const std::vector<int>& data,
     time_t now)
 {
-    int16_t index{0};
+    int index{0};
 
     if (m_columns < getImage().getWidth())
     {
@@ -193,7 +192,7 @@ addData(
 
         for (auto& trace : m_traceData)
         {
-            int16_t max = *max_element(trace.m_values.begin(),
+            int max = *max_element(trace.m_values.begin(),
                                        trace.m_values.end());
 
             m_traceScale = std::max(m_traceScale, max);

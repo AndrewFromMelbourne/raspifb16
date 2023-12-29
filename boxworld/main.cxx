@@ -33,6 +33,7 @@
 #include <thread>
 
 #include "framebuffer565.h"
+#include "image565Font8x16.h"
 #include "joystick.h"
 
 #include "boxworld.h"
@@ -61,7 +62,7 @@ printUsage(
     os << "\n";
     os << "Usage: " << name << " <options>\n";
     os << "\n";
-    os << "    --device,-d - dri device to use";
+    os << "    --device,-d - framebuffer device to use";
     os << " (default is " << defaultDevice << ")\n";
     os << "    --help,-h - print usage and exit\n";
     os << "    --joystick,-j - joystick device to use";
@@ -129,13 +130,14 @@ main(
 
     try
     {
+        Image565Font8x16 font;
         Joystick js(joystick);
         FrameBuffer565 fb(device);
         fb.clear(RGB565{0, 0, 0});
 
         Boxworld boxworld;
         boxworld.init();
-        boxworld.draw(fb);
+        boxworld.draw(fb, font);
 
         //-----------------------------------------------------------------
 
@@ -150,7 +152,7 @@ main(
             else
             {
                 boxworld.update(js);
-                boxworld.draw(fb);
+                boxworld.draw(fb, font);
             }
 
             std::this_thread::sleep_for(250ms);

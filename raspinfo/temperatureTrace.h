@@ -51,12 +51,13 @@ class TemperatureTrace
 public:
 
     TemperatureTrace(
-        int16_t width,
-        int16_t graphHeight,
-        int16_t yPosition,
-        int16_t gridHeight = 20);
+        int width,
+        int graphHeight,
+        int fontHeight,
+        int yPosition,
+        int gridHeight = 20);
 
-    void update(time_t now) override;
+    void update(time_t now, raspifb16::Interface565Font& font) override;
 };
 
 //-------------------------------------------------------------------------

@@ -46,14 +46,13 @@
 #pragma GCC diagnostic pop
 
 #include "dynamicInfo.h"
-#include "image565Font.h"
+#include "image565Font8x16.h"
 #include "system.h"
 
 //-------------------------------------------------------------------------
 
 std::string
-DynamicInfo::
-getIpAddress(
+DynamicInfo::getIpAddress(
     char& interface)
 {
     struct ifaddrs *ifaddr = nullptr;
@@ -92,8 +91,7 @@ getIpAddress(
 //-------------------------------------------------------------------------
 
 std::string
-DynamicInfo::
-getMemorySplit()
+DynamicInfo::getMemorySplit()
 {
     std::string result = " / ";
 
@@ -157,8 +155,7 @@ getMemorySplit()
 //-------------------------------------------------------------------------
 
 std::string
-DynamicInfo::
-getTemperature()
+DynamicInfo::getTemperature()
 {
     return std::to_string(raspinfo::getTemperature());
 }
@@ -166,8 +163,7 @@ getTemperature()
 //-------------------------------------------------------------------------
 
 std::string
-DynamicInfo::
-getTime(
+DynamicInfo::getTime(
     time_t now)
 {
     char buffer[128];
@@ -181,12 +177,12 @@ getTime(
 
 //-------------------------------------------------------------------------
 
-DynamicInfo::
-DynamicInfo(
-    int16_t width,
-    int16_t yPosition)
+DynamicInfo::DynamicInfo(
+    int width,
+    int fontHeight,
+    int yPosition)
 :
-    Panel{width, 2 * (raspifb16::sc_fontHeight + 4), yPosition},
+    Panel{width, fontHeight + 4, yPosition},
     m_heading(255, 255, 0),
     m_foreground(255, 255, 255),
     m_background(0, 0, 0),
@@ -197,17 +193,25 @@ DynamicInfo(
 //-------------------------------------------------------------------------
 
 void
-DynamicInfo::
-update(
-    time_t now)
+DynamicInfo::init(
+    raspifb16::Interface565Font& font)
+{
+}
+
+//-------------------------------------------------------------------------
+
+void
+DynamicInfo::update(
+    time_t now,
+    raspifb16::Interface565Font& font)
 {
     getImage().clear(m_background);
 
     //---------------------------------------------------------------------
 
-    raspifb16::FontPoint position = { 0, 0 };
+    raspifb16::Interface565Point position = { 0, 0 };
 
-    position = drawString(position,
+    position = font.drawString(position,
                           "ip(",
                           m_heading,
                           getImage());
@@ -215,75 +219,75 @@ update(
     char interface = ' ';
     std::string ipaddress = getIpAddress(interface);
 
-    position = drawChar(position,
-                        interface,
-                        m_foreground,
-                        getImage());
+    position = font.drawChar(position,
+                             interface,
+                             m_foreground,
+                             getImage());
 
-    position = drawString(position,
-                          ") ",
-                          m_heading,
-                          getImage());
+    position = font.drawString(position,
+                               ") ",
+                               m_heading,
+                               getImage());
 
-    position = drawString(position,
-                          ipaddress,
-                          m_foreground,
-                          getImage());
+    position = font.drawString(position,
+                               ipaddress,
+                               m_foreground,
+                               getImage());
 
-    position = drawString(position,
-                          " memory ",
-                          m_heading,
-                          getImage());
+    position = font.drawString(position,
+                               " memory ",
+                               m_heading,
+                               getImage());
 
-    position = drawString(position,
-                          m_memorySplit,
-                          m_foreground,
-                          getImage());
+    position = font.drawString(position,
+                               m_memorySplit,
+                               m_foreground,
+                               getImage());
 
-    position = drawString(position,
-                          " MB",
-                          m_foreground,
-                          getImage());
+    position = font.drawString(position,
+                               " MB",
+                               m_foreground,
+                               getImage());
 
     //---------------------------------------------------------------------
 
-    position.set(0, position.y() + raspifb16::sc_fontHeight + 4);
+    position.set(0, position.y() + font.getPixelHeight() + 4);
 
-    position = drawString(position,
-                          "time ",
-                          m_heading,
-                          getImage());
+    position = font.drawString(position,
+                               "time ",
+                               m_heading,
+                               getImage());
 
     std::string timeString = getTime(now);
 
-    position = drawString(position,
-                          timeString,
-                          m_foreground,
-                          getImage());
+    position = font.drawString(position,
+                               timeString,
+                               m_foreground,
+                               getImage());
 
-    position = drawString(position,
-                          " temperature ",
-                          m_heading,
-                          getImage());
+    position = font.drawString(position,
+                               " temperature ",
+                               m_heading,
+                               getImage());
 
     std::string temperatureString = getTemperature();
 
-    position = drawString(position,
-                          temperatureString,
-                          m_foreground,
-                          getImage());
+    position = font.drawString(position,
+                               temperatureString,
+                               m_foreground,
+                               getImage());
 
     uint8_t degreeSymbol = 0xF8;
 
-    position = drawChar(position,
-                        degreeSymbol,
-                        m_foreground,
-                        getImage());
+    position = font.drawChar(position,
+                             degreeSymbol,
+                             m_foreground,
+                             getImage());
 
 
-    position = drawString(position,
-                          "C",
-                          m_foreground,
-                          getImage());
+    position = font.drawString(position,
+                               "C",
+                               m_foreground,
+                               getImage());
 }
 

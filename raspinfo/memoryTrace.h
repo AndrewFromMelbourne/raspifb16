@@ -50,17 +50,17 @@ public:
 
     MemoryStats();
 
-    uint32_t total() const { return m_total; }
-    uint32_t buffers() const { return m_buffers; }
-    uint32_t cached() const { return m_cached; }
-    uint32_t used() const { return m_used; }
+    int total() const { return m_total; }
+    int buffers() const { return m_buffers; }
+    int cached() const { return m_cached; }
+    int used() const { return m_used; }
 
 private:
 
-    uint32_t m_total;
-    uint32_t m_buffers;
-    uint32_t m_cached;
-    uint32_t m_used;
+    int m_total;
+    int m_buffers;
+    int m_cached;
+    int m_used;
 };
 
 //-------------------------------------------------------------------------
@@ -72,12 +72,13 @@ class MemoryTrace
 public:
 
     MemoryTrace(
-        int16_t width,
-        int16_t traceHeight,
-        int16_t yPosition,
-        int16_t gridHeight = 20);
+        int width,
+        int traceHeight,
+        int fontHeight,
+        int yPosition,
+        int gridHeight = 20);
 
-    void update(time_t now) override;
+    void update(time_t now, raspifb16::Interface565Font& font) override;
 };
 
 //-------------------------------------------------------------------------

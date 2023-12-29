@@ -32,6 +32,7 @@
 #include <cstdint>
 
 #include "framebuffer565.h"
+#include "interface565Font.h"
 #include "image565.h"
 
 //-------------------------------------------------------------------------
@@ -41,9 +42,9 @@ class Panel
 public:
 
     Panel(
-        int16_t width,
-        int16_t height,
-        int16_t yPosition)
+        int width,
+        int height,
+        int yPosition)
     :
         m_yPosition{yPosition},
         m_image{width, height}
@@ -52,17 +53,18 @@ public:
 
     virtual ~Panel() = default;
 
-    int16_t getBottom() const { return m_yPosition + m_image.getHeight(); }
+    int getBottom() const { return m_yPosition + m_image.getHeight(); }
 
     raspifb16::Image565& getImage() { return m_image; }
     const raspifb16::Image565& getImage() const { return m_image; }
 
     void show(const raspifb16::FrameBuffer565& fb) const;
-    virtual void update(time_t now) = 0;
+    virtual void init(raspifb16::Interface565Font& font) = 0;
+    virtual void update(time_t now, raspifb16::Interface565Font& font) = 0;
 
 private:
 
-    int16_t m_yPosition;
+    int m_yPosition;
     raspifb16::Image565 m_image;
 };
 

@@ -41,12 +41,13 @@
 
 TraceGraph::
 TraceGraph(
-    int16_t width,
-    int16_t traceHeight,
-    int16_t traceScale,
-    int16_t yPosition,
-    int16_t gridHeight,
-    int16_t traces,
+    int width,
+    int traceHeight,
+    int fontHeight,
+    int traceScale,
+    int yPosition,
+    int gridHeight,
+    int traces,
     const std::string& title,
     const std::vector<std::string>& traceNames,
     const std::vector<raspifb16::RGB565>& traceColours)
@@ -54,6 +55,7 @@ TraceGraph(
     Trace(
         width,
         traceHeight,
+        fontHeight,
         traceScale,
         yPosition,
         gridHeight,
@@ -109,8 +111,8 @@ draw()
         {
             auto i1 = i2 - 1;
 
-            int16_t y1 = (trace.m_values[i1] * m_traceHeight)/m_traceScale;
-            int16_t y2 = (trace.m_values[i2] * m_traceHeight)/m_traceScale;
+            int y1 = (trace.m_values[i1] * m_traceHeight)/m_traceScale;
+            int y2 = (trace.m_values[i2] * m_traceHeight)/m_traceScale;
 
             line(
                 getImage(),

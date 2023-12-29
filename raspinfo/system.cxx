@@ -32,7 +32,7 @@
 
 //-------------------------------------------------------------------------
 
-int16_t
+int
 raspinfo::
 getTemperature()
 {
@@ -45,6 +45,6 @@ getTemperature()
         ifs >> millidegrees;
     }
 
-    return static_cast<int16_t>((millidegrees + 500) / 1000);
+    return (millidegrees + 500) / 1000;
 }
 

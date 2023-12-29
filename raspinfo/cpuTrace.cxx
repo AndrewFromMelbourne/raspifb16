@@ -72,7 +72,7 @@ CpuStats()
 
 //-------------------------------------------------------------------------
 
-uint32_t
+int
 CpuStats::
 total() const
 {
@@ -123,14 +123,16 @@ operator-(
 
 CpuTrace::
 CpuTrace(
-    int16_t width,
-    int16_t traceHeight,
-    int16_t yPosition,
-    int16_t gridHeight)
+    int width,
+    int traceHeight,
+    int fontHeight,
+    int yPosition,
+    int gridHeight)
 :
     TraceStack(
         width,
         traceHeight,
+        fontHeight,
         100,
         yPosition,
         gridHeight,
@@ -149,19 +151,20 @@ CpuTrace(
 void
 CpuTrace::
 update(
-    time_t now)
+    time_t now,
+    raspifb16::Interface565Font& font)
 {
     CpuStats currentStats;
 
     CpuStats diff{currentStats - m_previousStats};
 
-    uint32_t totalCpu = diff.total();
+    int totalCpu = diff.total();
 
-    int16_t user = (diff.user() * m_traceScale) / totalCpu;
-    int16_t nice = (diff.nice() * m_traceScale) / totalCpu;
-    int16_t system = (diff.system() * m_traceScale) / totalCpu;
+    int user = (diff.user() * m_traceScale) / totalCpu;
+    int nice = (diff.nice() * m_traceScale) / totalCpu;
+    int system = (diff.system() * m_traceScale) / totalCpu;
 
-    Trace::addData(std::vector<int16_t>{user, nice, system}, now);
+    Trace::addData(std::vector<int>{user, nice, system}, now);
 
     m_previousStats = currentStats;
 }

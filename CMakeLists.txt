@@ -19,27 +19,22 @@ find_package(Freetype)
 add_library(raspifb16 STATIC libraspifb16/fileDescriptor.cxx
 							 libraspifb16/framebuffer565.cxx
 							 libraspifb16/image565.cxx
-							 libraspifb16/image565Font.cxx
+							 libraspifb16/image565Font8x16.cxx
 							 libraspifb16/image565Graphics.cxx
 							 libraspifb16/image565Qoi.cxx
 							 libraspifb16/interface565.cxx
+							 libraspifb16/interface565Font.cxx
 							 libraspifb16/joystick.cxx
 							 libraspifb16/rgb565.cxx)
+
+if (FREETYPE_FOUND)
+target_include_directories(raspifb16 PUBLIC ${FREETYPE_INCLUDE_DIRS})
+target_sources(raspifb16 PRIVATE libraspifb16/image565FreeType.cxx)
+endif()
 
 include_directories(${PROJECT_SOURCE_DIR}/libraspifb16)
 
 set(EXTRA_LIBS ${EXTRA_LIBS} raspifb16)
-
-#--------------------------------------------------------------------------
-
-if (FREETYPE_FOUND)
-
-add_library(raspifb16ft STATIC libraspifb16ft/image565FreeType.cxx)
-target_include_directories(raspifb16ft PUBLIC ${FREETYPE_INCLUDE_DIRS})
-
-include_directories(${PROJECT_SOURCE_DIR}/libraspifb16ft)
-
-endif()
 
 #--------------------------------------------------------------------------
 
@@ -106,8 +101,7 @@ if (FREETYPE_FOUND)
 
 add_executable(testft test/testft.cxx)
 target_link_libraries(testft raspifb16
-                             raspifb16ft
-                             -lfreetype)
+                             ${FREETYPE_LIBRARIES})
 
 endif()
 

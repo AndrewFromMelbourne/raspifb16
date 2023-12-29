@@ -93,6 +93,14 @@ Image565FreeType::getPixelHeight() const
 
 //-------------------------------------------------------------------------
 
+int
+Image565FreeType::getPixelWidth() const
+{
+    return m_face->size->metrics.max_advance >> 6;
+}
+
+//-------------------------------------------------------------------------
+
 bool
 Image565FreeType::setPixelSize(
     int pixelSize)
@@ -217,6 +225,8 @@ Image565FreeType::drawString(
     {
         position.setX(position.x() + advance);
     }
+
+    position.setY(position.y() - (m_face->size->metrics.ascender >> 6));
 
     return position;
 }

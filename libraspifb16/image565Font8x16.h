@@ -2,7 +2,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Andrew Duncan
+// Copyright (c) 2022 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -32,35 +32,72 @@
 #include <cstdint>
 #include <string>
 
-#include "rgb565.h"
-#include "trace.h"
+#include "interface565.h"
+#include "interface565Font.h"
+#include "point.h"
 
 //-------------------------------------------------------------------------
 
-class TraceStack
+namespace raspifb16
+{
+
+//-------------------------------------------------------------------------
+
+using Interface565Point = Point<int>;
+
+//-------------------------------------------------------------------------
+
+class RGB565;
+
+//-------------------------------------------------------------------------
+
+class Image565Font8x16
 :
-    public Trace
+    public Interface565Font
 {
 public:
 
-    TraceStack(
-        int width,
-        int traceHeight,
-        int fontHeight,
-        int traceScale,
-        int yPosition,
-        int gridHeight,
-        int traces,
-        const std::string& title,
-        const std::vector<std::string>& traceNames,
-        const std::vector<raspifb16::RGB565>& traceColours);
+    Image565Font8x16();
+    ~Image565Font8x16() override;
 
-    void update(time_t now, raspifb16::Interface565Font& font) override = 0;
+    Image565Font8x16(const Image565Font8x16&) = default;
+    Image565Font8x16(Image565Font8x16&&) = default;
+    Image565Font8x16& operator=(const Image565Font8x16&) = default;
+    Image565Font8x16& operator=(Image565Font8x16&&) = default;
 
-protected:
+    int getPixelHeight() const override;
+    int getPixelWidth() const override;
 
-    void draw() override;
+    Interface565Point
+    drawChar(
+        const Interface565Point& p,
+        uint8_t c,
+        const RGB565& rgb,
+        Interface565& image) override;
+
+    Interface565Point
+    drawChar(
+        const Interface565Point& p,
+        uint8_t c,
+        uint16_t rgb,
+        Interface565& image) override;
+
+    Interface565Point
+    drawString(
+        const Interface565Point& p,
+        const char* string,
+        const RGB565& rgb,
+        Interface565& image) override;
+
+    Interface565Point
+    drawString(
+        const Interface565Point& p,
+        const std::string& string,
+        const RGB565& rgb,
+        Interface565& image) override;
 };
 
 //-------------------------------------------------------------------------
+
+} // namespace raspifb16
 
