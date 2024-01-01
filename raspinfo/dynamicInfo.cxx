@@ -182,7 +182,7 @@ DynamicInfo::DynamicInfo(
     int fontHeight,
     int yPosition)
 :
-    Panel{width, fontHeight + 4, yPosition},
+    Panel{width, 2 * fontHeight + 4, yPosition},
     m_heading(255, 255, 0),
     m_foreground(255, 255, 255),
     m_background(0, 0, 0),

@@ -121,11 +121,12 @@ Trace::init(
 
         // draw small box
 
-        const auto quaterWidth = font.getPixelWidth() / 4;
-        const auto quaterHeight = font.getPixelHeight() / 4;
+        const auto width = font.getPixelWidth();
+        const auto height = font.getPixelHeight();
 
-        raspifb16::Interface565Point p1{position.x() + quaterWidth, position.y() + quaterHeight};
-        raspifb16::Interface565Point p2{position.x() + 3 * quaterWidth, position.y() + 3 * quaterHeight};
+        raspifb16::Interface565Point p1{position.x(), position.y() + height / 4};
+        raspifb16::Interface565Point p2{position.x() + width / 2,
+                                        position.y() + (3 * height) / 4};
 
         boxFilled(getImage(), p1, p2, trace.m_traceColour);
     }

@@ -4745,8 +4745,32 @@ Image565Font8x16::drawString(
 Interface565Point
 Image565Font8x16::drawString(
     const Interface565Point& p,
+    const char* string,
+    uint16_t rgb,
+    Interface565& image)
+{
+    return drawString(p, std::string(string), rgb, image);
+}
+
+//-------------------------------------------------------------------------
+
+Interface565Point
+Image565Font8x16::drawString(
+    const Interface565Point& p,
     const std::string& string,
     const RGB565& rgb,
+    Interface565& image)
+{
+    return drawString(p, string, rgb.get565(), image);
+}
+
+//-------------------------------------------------------------------------
+
+Interface565Point
+Image565Font8x16::drawString(
+    const Interface565Point& p,
+    const std::string& string,
+    uint16_t rgb,
     Interface565& image)
 {
     Interface565Point position{p};

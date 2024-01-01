@@ -166,6 +166,18 @@ Image565FreeType::drawString(
 FontPoint
 Image565FreeType::drawString(
     const Image565Point& p,
+    const char* string,
+    uint16_t rgb,
+    Interface565& image)
+{
+    return drawString(p, string, RGB565(rgb), image);
+}
+
+//-------------------------------------------------------------------------
+
+FontPoint
+Image565FreeType::drawString(
+    const Image565Point& p,
     const std::string& string,
     const RGB565& rgb,
     Interface565& image)
@@ -231,6 +243,17 @@ Image565FreeType::drawString(
     return position;
 }
 
+//-------------------------------------------------------------------------
+
+FontPoint
+Image565FreeType::drawString(
+    const Image565Point& p,
+    const std::string& string,
+    uint16_t rgb,
+    Interface565& image)
+{
+    return drawString(p, string, RGB565(rgb), image);
+}
 //-------------------------------------------------------------------------
 
 void

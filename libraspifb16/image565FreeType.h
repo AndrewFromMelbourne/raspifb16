@@ -105,8 +105,22 @@ public:
     FontPoint
     drawString(
         const Image565Point& p,
+        const char* string,
+        uint16_t rgb,
+        Interface565& image) override;
+
+    FontPoint
+    drawString(
+        const Image565Point& p,
         const std::string& string,
         const RGB565& rgb,
+        Interface565& image) override;
+
+    FontPoint
+    drawString(
+        const Image565Point& p,
+        const std::string& string,
+        uint16_t rgb,
         Interface565& image) override;
 
 private:
