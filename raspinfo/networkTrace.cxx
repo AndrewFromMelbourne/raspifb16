@@ -55,7 +55,7 @@ NetworkStats()
     m_tx{0},
     m_rx{0}
 {
-    struct ifaddrs *ifaddr;
+    struct ifaddrs* ifaddr;
 
     if (::getifaddrs(&ifaddr) == -1)
     {
@@ -64,8 +64,7 @@ NetworkStats()
                                 "getifaddrs");
     }
 
-    struct ifaddrs *ifa = ifaddr;
-    for (ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next)
+    for (struct ifaddrs* ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next)
     {
         if (ifa->ifa_addr != nullptr)
         {

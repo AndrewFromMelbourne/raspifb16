@@ -150,14 +150,20 @@ raspifb16::Joystick:: read()
     {
         if ((bytes = ::read(m_joystickFd.fd(), &event, sizeof(event))) != -1)
         {
-            process(event);
+            if (bytes == sizeof(event))
+            {
+                process(event);
+            }
         }
     }
     else
     {
         while ((bytes = ::read(m_joystickFd.fd(), &event, sizeof(event))) != -1)
         {
-            process(event);
+            if (bytes == sizeof(event))
+            {
+                process(event);
+            }
         }
     }
 }
