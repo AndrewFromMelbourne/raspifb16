@@ -79,7 +79,7 @@ Puzzle::getInversionCount() const
     {
         for (int j = i + 1 ; j < boardSize ; ++j)
         {
-            if (m_board[i] && m_board[j] && (m_board[i] > m_board[j]))
+            if (m_board[i] and m_board[j] and (m_board[i] > m_board[j]))
             {
                 ++inversions;
             }
@@ -146,7 +146,7 @@ Puzzle::init()
             }
         }
     }
-    while (not isSolvable() && not isSolved());
+    while (not isSolvable() and not isSolved());
 }
 
 //-------------------------------------------------------------------------
@@ -184,9 +184,9 @@ Puzzle::update(Joystick& js)
 
         Location newLocation = {.x = m_blankLocation.x + dx, .y = m_blankLocation.y + dy};
 
-        if ((newLocation.x >= 0) &&
-            (newLocation.x < puzzleWidth) &&
-            (newLocation.y >= 0) &&
+        if ((newLocation.x >= 0) and
+            (newLocation.x < puzzleWidth) and
+            (newLocation.y >= 0) and
             (newLocation.y < puzzleHeight))
         {
             const auto indexNew = newLocation.x + (newLocation.y * puzzleWidth);

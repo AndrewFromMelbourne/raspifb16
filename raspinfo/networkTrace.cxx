@@ -70,7 +70,7 @@ NetworkStats()
         {
             int family = ifa->ifa_addr->sa_family;
 
-            if ((family == AF_PACKET) &&
+            if ((family == AF_PACKET) and
                 (std::string(ifa->ifa_name) != "lo"))
             {
                 rtnl_link_stats* stats =

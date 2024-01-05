@@ -102,10 +102,10 @@ private:
     bool
     validPixel(const Interface565Point& p) const
     {
-        return (p.x() >= 0) &&
-               (p.y() >= 0) &&
-               (p.x() < static_cast<int32_t>(m_vinfo.xres)) &&
-               (p.y() < static_cast<int32_t>(m_vinfo.yres));
+        return (p.x() >= 0) and
+               (p.y() >= 0) and
+               (p.x() < static_cast<int>(m_vinfo.xres)) and
+               (p.y() < static_cast<int>(m_vinfo.yres));
     }
 
     FileDescriptor m_consolefd;

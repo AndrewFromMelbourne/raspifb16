@@ -110,7 +110,7 @@ DynamicInfo::getMemorySplit()
             std::smatch match;
             std::string vcGenResult(buffer);
 
-            if (std::regex_search(vcGenResult, match, pattern) &&
+            if (std::regex_search(vcGenResult, match, pattern) and
                 (match.size() == 2))
             {
                 arm_mem = std::stoi(match[1].str());
@@ -132,7 +132,7 @@ DynamicInfo::getMemorySplit()
             std::smatch match;
             std::string vcGenResult(buffer);
 
-            if (std::regex_search(vcGenResult, match, pattern) &&
+            if (std::regex_search(vcGenResult, match, pattern) and
                 (match.size() == 2))
             {
                 gpu_mem = std::stoi(match[1].str());
@@ -144,7 +144,7 @@ DynamicInfo::getMemorySplit()
         }
     }
 
-    if ((arm_mem != 0) && (gpu_mem != 0))
+    if ((arm_mem != 0) and (gpu_mem != 0))
     {
         result = std::to_string(gpu_mem) + "/" + std::to_string(arm_mem);
     }

@@ -214,13 +214,13 @@ raspifb16::FrameBuffer565:: putImage(
     const Interface565Point& p,
     const Image565& image) const
 {
-    if ((p.x() < 0) ||
+    if ((p.x() < 0) or
         ((p.x() + image.getWidth()) > static_cast<int32_t>(m_vinfo.xres)))
     {
         return putImagePartial(p, image);
     }
 
-    if ((p.y() < 0) ||
+    if ((p.y() < 0) or
         ((p.y() + image.getHeight()) > static_cast<int32_t>(m_vinfo.yres)))
     {
         return putImagePartial(p, image);

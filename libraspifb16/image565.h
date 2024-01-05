@@ -100,9 +100,9 @@ private:
     bool
     validPixel(const Image565Point& p) const
     {
-        return ((p.x() >= 0) &&
-                (p.y() >= 0) &&
-                (p.x() < m_width) &&
+        return ((p.x() >= 0) and
+                (p.y() >= 0) and
+                (p.x() < m_width) and
                 (p.y() < m_height));
     }
 
