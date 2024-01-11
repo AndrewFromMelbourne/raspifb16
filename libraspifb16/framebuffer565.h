@@ -87,8 +87,8 @@ public:
 
     bool setPixel(const Interface565Point& p, uint16_t rgb) override;
 
-    std::pair<bool, RGB565> getPixelRGB(const Interface565Point& p) const override;
-    std::pair<bool, uint16_t> getPixel(const Interface565Point& p) const override;
+    std::optional<RGB565> getPixelRGB(const Interface565Point& p) const override;
+    std::optional<uint16_t> getPixel(const Interface565Point& p) const override;
 
     bool putImage(const Interface565Point& p, const Image565& image) const;
 

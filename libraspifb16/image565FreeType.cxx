@@ -276,12 +276,12 @@ Image565FreeType::drawChar(
                                       static_cast<int>(j + yOffset)};
                 auto background = image.getPixelRGB(p);
 
-                if (background.first)
+                if (background)
                 {
                     image.setPixelRGB(p,
                                       RGB565::blend(row[i],
                                                     rgb,
-                                                    background.second));
+                                                    *background));
                 }
             }
         }

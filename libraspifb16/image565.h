@@ -31,7 +31,6 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <utility>
 #include <vector>
 
 #include "rgb565.h"
@@ -90,8 +89,8 @@ public:
 
     bool setPixel(const Image565Point& p, uint16_t rgb) override;
 
-    std::pair<bool, RGB565> getPixelRGB(const Image565Point& p) const override;
-    std::pair<bool, uint16_t> getPixel(const Image565Point& p) const override;
+    std::optional<RGB565> getPixelRGB(const Image565Point& p) const override;
+    std::optional<uint16_t> getPixel(const Image565Point& p) const override;
 
     const uint16_t* getRow(int y) const;
 

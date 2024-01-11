@@ -75,8 +75,8 @@ main()
 
         auto rgb = image.getPixelRGB(Image565Point(0,0));
 
-        TEST((rgb.first == true), "Image565::getPixelRGB()");
-        TEST((rgb.second == red), "Image565::getPixelRGB()");
+        TEST((rgb), "Image565::getPixelRGB()");
+        TEST((*rgb == red), "Image565::getPixelRGB()");
 
         line(image,
              Image565Point(0,0),
@@ -93,8 +93,8 @@ main()
 
         rgb = fb.getPixelRGB(imageLocation);
 
-        TEST((rgb.first == true), "FrameBuffer565::getPixelRGB()");
-        TEST((rgb.second == green), "FrameBuffer565::getPixelRGB()");
+        TEST((rgb), "FrameBuffer565::getPixelRGB()");
+        TEST((*rgb == green), "FrameBuffer565::getPixelRGB()");
 
         //-----------------------------------------------------------------
 
