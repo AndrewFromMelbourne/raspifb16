@@ -124,12 +124,12 @@ std::optional<raspifb16::RGB565>
 raspifb16::Image565:: getPixelRGB(
     const Image565Point& p) const
 {
-    if (validPixel(p))
+    if (not validPixel(p))
     {
-        return RGB565(m_buffer[offset(p)]);
+        return {};
     }
 
-    return {};
+    return RGB565(m_buffer[offset(p)]);
 }
 
 //-------------------------------------------------------------------------
@@ -138,12 +138,12 @@ std::optional<uint16_t>
 raspifb16::Image565:: getPixel(
     const Image565Point& p) const
 {
-    if (validPixel(p))
+    if (not validPixel(p))
     {
-        return m_buffer[offset(p)];
+        return {};
     }
 
-    return {};
+    return m_buffer[offset(p)];
 }
 
 //-------------------------------------------------------------------------

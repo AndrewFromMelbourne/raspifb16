@@ -179,12 +179,12 @@ std::optional<raspifb16::RGB565>
 raspifb16::FrameBuffer565:: getPixelRGB(
     const Interface565Point& p) const
 {
-    if (validPixel(p))
+    if (not validPixel(p))
     {
-        return RGB565(m_fbp[p.x() + p.y() * m_lineLengthPixels]);
+        return {};
     }
 
-    return {};
+    return RGB565(m_fbp[p.x() + p.y() * m_lineLengthPixels]);
 }
 
 //-------------------------------------------------------------------------
@@ -193,12 +193,12 @@ std::optional<uint16_t>
 raspifb16::FrameBuffer565:: getPixel(
     const Interface565Point& p) const
 {
-    if (validPixel(p))
+    if (not validPixel(p))
     {
-        return m_fbp[p.x() + p.y() * m_lineLengthPixels];
+        return {};
     }
 
-    return {};
+    return m_fbp[p.x() + p.y() * m_lineLengthPixels];
 }
 
 //-------------------------------------------------------------------------
