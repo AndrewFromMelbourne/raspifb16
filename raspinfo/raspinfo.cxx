@@ -301,9 +301,8 @@ main(
 
     //---------------------------------------------------------------------
 
-    constexpr std::array<int, 4> signals = { SIGINT, SIGTERM, SIGUSR1, SIGUSR2 };
 
-    for (auto signal : signals)
+    for (auto signal : { SIGINT, SIGTERM, SIGUSR1, SIGUSR2 })
     {
         if (std::signal(signal, signalHandler) == SIG_ERR)
         {

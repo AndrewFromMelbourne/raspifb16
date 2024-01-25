@@ -129,7 +129,7 @@ private:
     void
     drawChar(
         int xOffset,
-        int yOffset, 
+        int yOffset,
         const FT_Bitmap& bitmap,
         const RGB565& rgb,
         Interface565& image);

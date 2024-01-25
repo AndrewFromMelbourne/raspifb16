@@ -50,7 +50,7 @@ class DynamicInfo
 {
 public:
 
-    DynamicInfo(int width, 
+    DynamicInfo(int width,
                 int fontHeight,
                 int yPosition);
 

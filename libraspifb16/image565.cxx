@@ -33,18 +33,6 @@ using size_type = std::vector<uint16_t>::size_type;
 
 //-------------------------------------------------------------------------
 
-raspifb16::Image565:: Image565()
-:
-    m_width{0},
-    m_height{0},
-    m_frame{0},
-    m_numberOfFrames{0},
-    m_buffer(0)
-{
-}
-
-//-------------------------------------------------------------------------
-
 raspifb16::Image565:: Image565(
     int width,
     int height,

@@ -46,7 +46,7 @@ class FileDescriptor
 {
 public:
 
-    FileDescriptor();
+    FileDescriptor() = default;
 
     explicit FileDescriptor(
         int fd,
@@ -66,8 +66,8 @@ private:
 
     void closeFd();
 
-    int m_fd;
-    CloseIfFunction m_close_if;
+    int m_fd{};
+    CloseIfFunction m_close_if = [](int fd) { return fd != -1; };
 };
 
 //-------------------------------------------------------------------------

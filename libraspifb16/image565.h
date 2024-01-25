@@ -31,6 +31,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <optional>
 #include <vector>
 
 #include "rgb565.h"
@@ -54,7 +55,8 @@ class Image565
 {
 public:
 
-    Image565();
+    Image565() = default;
+
     Image565(int width,
              int height,
              uint8_t numberOfFrames = 1);
@@ -63,6 +65,8 @@ public:
              int height,
              const std::vector<uint16_t>& buffer,
              uint8_t numberOfFrames = 1);
+
+    ~Image565() override = default;
 
     Image565(const Image565&) = default;
     Image565(Image565&&) = default;
@@ -107,13 +111,13 @@ private:
 
     size_t offset(const Image565Point& p) const;
 
-    int m_width;
-    int m_height;
+    int m_width{};
+    int m_height{};
 
-    uint8_t m_frame;
-    uint8_t m_numberOfFrames;
+    uint8_t m_frame{};
+    uint8_t m_numberOfFrames{};
 
-    std::vector<uint16_t> m_buffer;
+    std::vector<uint16_t> m_buffer{};
 };
 
 //-------------------------------------------------------------------------

@@ -203,10 +203,10 @@ Image565FreeType::drawString(
             {
                 FT_Vector delta;
 
-                FT_Get_Kerning(m_face, 
-                               previous, 
-                               glyph_index, 
-                               ft_kerning_default, 
+                FT_Get_Kerning(m_face,
+                               previous,
+                               glyph_index,
+                               ft_kerning_default,
                                &delta);
 
                 position.setX(position.x() + (delta.x >> 6));
@@ -216,12 +216,11 @@ Image565FreeType::drawString(
             {
                 auto slot = m_face->glyph;
 
-                drawChar(position.x() + slot->bitmap_left, 
+                drawChar(position.x() + slot->bitmap_left,
                         position.y() - slot->bitmap_top,
                         slot->bitmap,
                         rgb,
                         image);
-                       
 
                 position.setX(position.x() + (slot->advance.x >> 6));
                 previous = glyph_index;
@@ -259,7 +258,7 @@ Image565FreeType::drawString(
 void
 Image565FreeType::drawChar(
         int xOffset,
-        int yOffset, 
+        int yOffset,
         const FT_Bitmap& bitmap,
         const RGB565& rgb,
         Interface565& image)

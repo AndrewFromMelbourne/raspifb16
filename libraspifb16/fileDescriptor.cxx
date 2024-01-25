@@ -31,15 +31,6 @@
 
 //-------------------------------------------------------------------------
 
-raspifb16::FileDescriptor:: FileDescriptor()
-:
-    m_fd{-1},
-    m_close_if{[](int){ return false; }}
-{
-}
-
-//-------------------------------------------------------------------------
-
 raspifb16::FileDescriptor:: FileDescriptor(
     int fd,
     CloseIfFunction close_if)

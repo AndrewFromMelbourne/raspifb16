@@ -57,8 +57,8 @@ class Image565Font8x16
 {
 public:
 
-    Image565Font8x16();
-    ~Image565Font8x16() override;
+    Image565Font8x16() = default;
+    ~Image565Font8x16() override = default;
 
     Image565Font8x16(const Image565Font8x16&) = default;
     Image565Font8x16(Image565Font8x16&&) = default;
