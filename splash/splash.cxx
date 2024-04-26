@@ -120,6 +120,12 @@ main(
         }
     }
 
+    if (qoi.empty())
+    {
+        printUsage(std::cerr, program);
+        ::exit(EXIT_FAILURE);
+    }
+
     try
     {
         constexpr bool block{true};
