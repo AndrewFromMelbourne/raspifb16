@@ -51,7 +51,7 @@ public:
     Puzzle();
 
     void init();
-    void update(raspifb16::Joystick& js);
+    bool update(raspifb16::Joystick& js);
     void draw(raspifb16::FrameBuffer565& fb);
 
 private:

@@ -151,12 +151,13 @@ Puzzle::init()
 
 //-------------------------------------------------------------------------
 
-void
+bool
 Puzzle::update(Joystick& js)
 {
     if (js.buttonPressed(Joystick::BUTTON_A))
     {
         init();
+        return true;
     }
     else
     {
@@ -196,9 +197,12 @@ Puzzle::update(Joystick& js)
                 std::swap(m_board[indexNew], m_board[indexBlank]);
 
                 m_blankLocation = newLocation;
+                return true;
             }
         }
     }
+
+    return false;
 }
 
 //-------------------------------------------------------------------------

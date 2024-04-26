@@ -148,8 +148,10 @@ main(
             }
             else
             {
-                puzzle.update(js);
-                puzzle.draw(fb);
+                if (puzzle.update(js))
+                {
+                    puzzle.draw(fb);
+                }
             }
         }
 
