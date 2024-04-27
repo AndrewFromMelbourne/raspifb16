@@ -1,4 +1,3 @@
-
 //-------------------------------------------------------------------------
 //
 // The MIT License (MIT)
@@ -146,12 +145,9 @@ main(
             {
                 run = 0;
             }
-            else
+            else if (puzzle.update(js))
             {
-                if (puzzle.update(js))
-                {
-                    puzzle.draw(fb);
-                }
+                puzzle.draw(fb);
             }
         }
 
