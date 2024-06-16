@@ -55,19 +55,23 @@ std::string
 DynamicInfo::getIpAddress(
     char& interface)
 {
-    struct ifaddrs *ifaddr = nullptr;
-    struct ifaddrs *ifa = nullptr;
-    interface = 'X';
 
-    std::string address = "   .   .   .   ";
+    interface = 'X';
+    std::string address{"   .   .   .   "};
+    ifaddrs *ifaddr{};
 
     ::getifaddrs(&ifaddr);
 
-    for (ifa = ifaddr ; ifa != nullptr ; ifa = ifa->ifa_next)
+    if (not ifaddr)
+    {
+        return address;
+    }
+
+    for (ifaddrs *ifa = ifaddr ; ifa != nullptr ; ifa = ifa->ifa_next)
     {
         if (ifa ->ifa_addr->sa_family == AF_INET)
         {
-            void *addr = &((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
+            void *addr = &((sockaddr_in *)ifa->ifa_addr)->sin_addr;
 
             if (strcmp(ifa->ifa_name, "lo") != 0)
             {
@@ -80,10 +84,7 @@ DynamicInfo::getIpAddress(
         }
     }
 
-    if (ifaddr != nullptr)
-    {
-        ::freeifaddrs(ifaddr);
-    }
+    ::freeifaddrs(ifaddr);
 
     return address;
 }
@@ -93,10 +94,10 @@ DynamicInfo::getIpAddress(
 std::string
 DynamicInfo::getMemorySplit()
 {
-    std::string result = " / ";
+    std::string result{" / "};
 
-    int arm_mem = 0;
-    int gpu_mem = 0;
+    int arm_mem{};
+    int gpu_mem{};
 
     char buffer[128];
 
@@ -144,7 +145,7 @@ DynamicInfo::getMemorySplit()
         }
     }
 
-    if ((arm_mem != 0) and (gpu_mem != 0))
+    if (arm_mem and gpu_mem)
     {
         result = std::to_string(gpu_mem) + "/" + std::to_string(arm_mem);
     }
@@ -168,8 +169,8 @@ DynamicInfo::getTime(
 {
     char buffer[128];
 
-    struct tm result;
-    struct tm *lt = ::localtime_r(&now, &result);
+    tm result;
+    tm *lt = ::localtime_r(&now, &result);
     std::strftime(buffer, sizeof(buffer), "%T", lt);
 
     return buffer;

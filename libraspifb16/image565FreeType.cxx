@@ -189,7 +189,7 @@ Image565FreeType::drawString(
     auto use_kerning = FT_HAS_KERNING(m_face);
     FT_UInt previous = 0;
 
-    for (auto c : string)
+    for (const auto c : string)
     {
         if (c == '\n')
         {
@@ -197,7 +197,7 @@ Image565FreeType::drawString(
         }
         else
         {
-            auto glyph_index = FT_Get_Char_Index(m_face, c);
+            const auto glyph_index = FT_Get_Char_Index(m_face, c);
 
             if (use_kerning and previous and glyph_index)
             {
@@ -214,7 +214,7 @@ Image565FreeType::drawString(
 
             if (FT_Load_Glyph(m_face, glyph_index, FT_LOAD_RENDER) == 0)
             {
-                auto slot = m_face->glyph;
+                const auto slot = m_face->glyph;
 
                 drawChar(position.x() + slot->bitmap_left,
                         position.y() - slot->bitmap_top,
@@ -230,7 +230,7 @@ Image565FreeType::drawString(
 
     //-----------------------------------------------------------------
 
-    auto advance = slot->bitmap.width - (slot->advance.x >> 6);
+    const auto advance = slot->bitmap.width - (slot->advance.x >> 6);
 
     if (advance > 0)
     {
@@ -269,7 +269,7 @@ Image565FreeType::drawChar(
 
         for (unsigned i = 0 ; i < bitmap.width ; ++i)
         {
-            if (row[i] > 0)
+            if (row[i])
             {
                 const Image565Point p{static_cast<int>(i + xOffset),
                                       static_cast<int>(j + yOffset)};

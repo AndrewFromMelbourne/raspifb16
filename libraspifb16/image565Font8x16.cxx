@@ -4695,15 +4695,15 @@ Image565Font8x16::drawChar(
 {
     const auto width = getPixelWidth();
 
-    for (int j = 0 ; j < getPixelHeight() ; ++j)
+    for (auto j = 0 ; j < getPixelHeight() ; ++j)
     {
-        uint8_t byte = font[c][j];
+        const auto byte = font[c][j];
 
         if (byte != 0)
         {
-            for (int i = 0 ; i < width ; ++i)
+            for (auto i = 0 ; i < width ; ++i)
             {
-                if ((byte >> (width - i - 1)) & 1 )
+                if ((byte >> (width - i - 1)) & 1)
                 {
                     image.setPixel(
                         Interface565Point(p.x() + i, p.y() + j),
@@ -4764,7 +4764,7 @@ Image565Font8x16::drawString(
     Interface565Point position{p};
     Interface565Point start{p};
 
-    for (const char c : string)
+    for (const auto c : string)
     {
         if (c == '\n')
         {

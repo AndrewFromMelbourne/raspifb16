@@ -41,7 +41,7 @@ CpuStats()
 {
     std::ifstream ifs{"/proc/stat", std::ifstream::in};
 
-    if (ifs.is_open() == false)
+    if (not ifs.is_open())
     {
         throw std::system_error{errno,
                                 std::system_category(),

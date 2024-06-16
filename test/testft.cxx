@@ -44,7 +44,7 @@ using namespace raspifb16;
 
 namespace
 {
-const std::string defaultDevice = "/dev/fb1";
+const std::string defaultDevice{"/dev/fb1"};
 }
 
 //-------------------------------------------------------------------------
@@ -78,7 +78,7 @@ main(
     //---------------------------------------------------------------------
 
     static const char* sopts = "d:f:h";
-    static struct option lopts[] =
+    static option lopts[] =
     {
         { "device", required_argument, nullptr, 'd' },
         { "font", required_argument, nullptr, 'f' },
@@ -86,7 +86,7 @@ main(
         { nullptr, no_argument, nullptr, 0 }
     };
 
-    int opt = 0;
+    int opt{};
 
     while ((opt = ::getopt_long(argc, argv, sopts, lopts, nullptr)) != -1)
     {
@@ -126,7 +126,7 @@ main(
     {
         const RGB565 black{0, 0, 0};
         const RGB565 white{255, 255, 255};
-        FrameBuffer565 fb(device);
+        FrameBuffer565 fb{device};
 
         fb.clear(black);
 
@@ -135,7 +135,7 @@ main(
 
         //-----------------------------------------------------------------
 
-        Image565FreeType ft(font, 8);
+        Image565FreeType ft{font, 8};
         Interface565Point p{0, 0};
 
         p = ft.drawString(p, "abcdefghijklmnopqrstuvwxyz ", white, image);
@@ -153,9 +153,9 @@ main(
 
         for (int j = 0 ; j < 16 ; ++j)
         {
-            for (int i = 0 ; i < 16 ; ++i)
+            for (auto i = 0 ; i < 16 ; ++i)
             {
-                uint8_t c = static_cast<uint8_t>(i + (j * 16));
+                auto c = static_cast<uint8_t>(i + (j * 16));
                 p.setX(i * ft.getPixelWidth());
                 ft.drawChar(p, c, white, image);
             }

@@ -45,7 +45,7 @@ using namespace raspifb16;
 
 namespace
 {
-const std::string defaultDevice = "/dev/fb1";
+const std::string defaultDevice{"/dev/fb1"};
 }
 
 //-------------------------------------------------------------------------
@@ -77,14 +77,14 @@ main(
     //---------------------------------------------------------------------
 
     static const char* sopts = "d:h";
-    static struct option lopts[] =
+    static option lopts[] =
     {
         { "device", required_argument, nullptr, 'd' },
         { "help", no_argument, nullptr, 'h' },
         { nullptr, no_argument, nullptr, 0 }
     };
 
-    int opt = 0;
+    int opt{};
 
     while ((opt = ::getopt_long(argc, argv, sopts, lopts, nullptr)) != -1)
     {
@@ -119,14 +119,14 @@ main(
         Image565Font8x16 font;
         const RGB565 black{0, 0, 0};
         const RGB565 white{255, 255, 255};
-        FrameBuffer565 fb(device);
+        FrameBuffer565 fb{device};
 
         fb.clear(black);
 
         const int columns = fb.getWidth() / font.getPixelWidth();
         const int rows = fb.getHeight() / font.getPixelHeight();
 
-        Image565 image(fb.getWidth(), fb.getHeight());
+        Image565 image{fb.getWidth(), fb.getHeight()};
         image.clear(black);
 
         //-----------------------------------------------------------------

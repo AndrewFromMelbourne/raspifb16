@@ -97,17 +97,16 @@ raspifb16::RGB565:: blend(
     const RGB565& a,
     const RGB565& b)
 {
-    auto red = (((int)(a.getRed()) * alpha)
-             + ((int)(b.getRed()) * (255 - alpha)))
-             / 255;
+    auto blendChannel = [](uint8_t alpha, int a, int b) -> int
+    {
+        return ((a * alpha) + (b * (255 - alpha))) / 255;
+    };
 
-    auto green = (((int)(a.getGreen()) * alpha)
-               + ((int)(b.getGreen()) * (255 - alpha)))
-               / 255;
+    //---------------------------------------------------------------------
 
-    auto blue = (((int)(a.getBlue()) * alpha)
-              + ((int)(b.getBlue()) * (255 - alpha)))
-              / 255;
+    const auto red = blendChannel(alpha, a.getRed(), b.getRed());
+    const auto green = blendChannel(alpha, a.getGreen(), b.getGreen());
+    const auto blue = blendChannel(alpha, a.getBlue(), b.getBlue());
 
     return RGB565(red, green, blue);
 }

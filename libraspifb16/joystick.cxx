@@ -37,6 +37,23 @@
 
 //-------------------------------------------------------------------------
 
+namespace
+{
+
+bool
+readJoystickEvent(
+    raspifb16::FileDescriptor& joystickFd,
+    js_event& event)
+{
+    const auto bytes{::read(joystickFd.fd(), &event, sizeof(event))};
+    return (bytes != -1) and (bytes == sizeof(event));
+}
+
+}
+
+//-------------------------------------------------------------------------
+
+
 raspifb16::Joystick:: Joystick(bool blocking)
 :
     Joystick("/dev/input/js0", blocking)
@@ -69,7 +86,7 @@ raspifb16::Joystick:: init()
                                 "cannot open joystick device"};
     }
 
-    char joystickCount = 0;
+    char joystickCount{};
     if (ioctl(m_joystickFd.fd(), JSIOCGAXES, &joystickCount) == -1)
     {
         throw std::system_error{errno,
@@ -78,7 +95,7 @@ raspifb16::Joystick:: init()
     }
     m_joystickCount = joystickCount / 2;
 
-    char buttonCount = 0;
+    char buttonCount{};
     if (ioctl(m_joystickFd.fd(), JSIOCGBUTTONS, &buttonCount) == -1)
     {
         throw std::system_error{errno,
@@ -112,7 +129,12 @@ raspifb16::Joystick:: numberOfAxes() const
 bool
 raspifb16::Joystick:: buttonPressed(int button)
 {
-    bool pressed = m_buttons.at(button).pressed;
+    if (button >= numberOfButtons())
+    {
+        return false;
+    }
+
+    const auto pressed = m_buttons.at(button).pressed;
 
     if (pressed)
     {
@@ -127,6 +149,11 @@ raspifb16::Joystick:: buttonPressed(int button)
 bool
 raspifb16::Joystick:: buttonDown(int button) const
 {
+    if (button >= numberOfButtons())
+    {
+        return false;
+    }
+
     return m_buttons.at(button).down;
 }
 
@@ -143,27 +170,20 @@ raspifb16::Joystick:: getAxes(int joystickNumber) const
 void
 raspifb16::Joystick:: read()
 {
-    struct js_event event;
-    ssize_t bytes = 0;
+    js_event event{};
 
     if (m_blocking)
     {
-        if ((bytes = ::read(m_joystickFd.fd(), &event, sizeof(event))) != -1)
+        if (readJoystickEvent(m_joystickFd, event))
         {
-            if (bytes == sizeof(event))
-            {
-                process(event);
-            }
+            process(event);
         }
     }
     else
     {
-        while ((bytes = ::read(m_joystickFd.fd(), &event, sizeof(event))) != -1)
+        while (readJoystickEvent(m_joystickFd, event))
         {
-            if (bytes == sizeof(event))
-            {
-                process(event);
-            }
+            process(event);
         }
     }
 }
@@ -171,7 +191,7 @@ raspifb16::Joystick:: read()
 //-------------------------------------------------------------------------
 
 void
- raspifb16::Joystick:: process(const struct js_event& event)
+ raspifb16::Joystick:: process(const js_event& event)
 {
     switch (event.type)
     {
@@ -190,7 +210,7 @@ void
 
         case JS_EVENT_AXIS:
         {
-            size_t axis = event.number / 2;
+            const auto axis = event.number / 2;
 
             if (axis < 3)
             {

@@ -58,8 +58,8 @@ boxFilled(
     const Image565Point& p2,
     uint16_t rgb)
 {
-    int sign_y = (p1.y() <= p2.y()) ? 1 : -1;
-    int y = p1.y();
+    const auto sign_y = (p1.y() <= p2.y()) ? 1 : -1;
+    auto y = p1.y();
 
     horizontalLine(image, p1.x(), p2.x(), y, rgb);
 
@@ -90,22 +90,22 @@ line(
     }
     else
     {
-        int dx = std::abs(p2.x() - p1.x());
-        int dy = std::abs(p2.y() - p1.y());
+        const auto dx = std::abs(p2.x() - p1.x());
+        const auto dy = std::abs(p2.y() - p1.y());
 
-        int sign_x = (p1.x() <= p2.x()) ? 1 : -1;
-        int sign_y = (p1.y() <= p2.y()) ? 1 : -1;
+        const auto sign_x = (p1.x() <= p2.x()) ? 1 : -1;
+        const auto sign_y = (p1.y() <= p2.y()) ? 1 : -1;
 
-        int x = p1.x();
-        int y = p1.y();
+        auto x = p1.x();
+        auto y = p1.y();
 
         image.setPixel(p1, rgb);
 
         if (dx > dy)
         {
-            int d = 2 * dy - dx;
-            int incrE = 2 * dy;
-            int incrNE = 2 * (dy - dx);
+            auto d = 2 * dy - dx;
+            const auto incrE = 2 * dy;
+            const auto incrNE = 2 * (dy - dx);
 
             while (x != p2.x())
             {
@@ -126,9 +126,9 @@ line(
         }
         else
         {
-            int d = 2 * dx - dy;
-            int incrN = 2 * dx;
-            int incrNE = 2 * (dx - dy);
+            auto d = 2 * dx - dy;
+            const auto incrN = 2 * dx;
+            const auto incrNE = 2 * (dx - dy);
 
             while (y != p2.y())
             {
@@ -161,8 +161,8 @@ horizontalLine(
     int y,
     uint16_t rgb)
 {
-    int sign_x = (x1 <= x2) ? 1 : -1;
-    int x = x1;
+    const auto sign_x = (x1 <= x2) ? 1 : -1;
+    auto x = x1;
 
     image.setPixel(Image565Point(x, y), rgb);
 
@@ -184,8 +184,8 @@ verticalLine(
     int y2,
     uint16_t rgb)
 {
-    int sign_y = (y1 <= y2) ? 1 : -1;
-    int y = y1;
+    const auto sign_y = (y1 <= y2) ? 1 : -1;
+    auto y = y1;
 
     image.setPixel(Image565Point(x, y), rgb);
 

@@ -47,7 +47,7 @@ MemoryStats()
 {
     std::ifstream ifs{"/proc/meminfo", std::ifstream::in};
 
-    if (ifs.is_open() == false)
+    if (not ifs.is_open())
     {
         throw std::system_error{errno,
                                 std::system_category(),
@@ -119,16 +119,18 @@ update(
     time_t now,
     raspifb16::Interface565Font& font)
 {
+    auto scale = [](int value, int total, int scale) -> int
+    {
+        return (value * scale) / total;
+    };
+
+    //---------------------------------------------------------------------
+
     MemoryStats memoryStats;
 
-    int used = (memoryStats.used() * m_traceScale)
-                 / memoryStats.total();
-
-    int buffers = (memoryStats.buffers() * m_traceScale)
-                    / memoryStats.total();
-
-    int cached = (memoryStats.cached() * m_traceScale)
-                   / memoryStats.total();
+    auto used = scale(memoryStats.used(), memoryStats.total(), m_traceScale);
+    auto buffers = scale(memoryStats.buffers(), memoryStats.total(), m_traceScale);
+    auto cached = scale(memoryStats.cached(), memoryStats.total(), m_traceScale);
 
     Trace::addData(std::vector<int>{used, buffers, cached}, now);
 }

@@ -116,51 +116,37 @@ Boxworld::update(Joystick& js)
     {
         auto value = js.getAxes(0);
 
-        int dx = 0;
-        int dy = 0;
-
-        if (value.y < 0)
+        if (not value.x and not value.y)
         {
-            dy = -1;
-        }
-        else if (value.y > 0)
-        {
-            dy = 1;
-        }
-        else if (value.x < 0)
-        {
-            dx = -1;
-        }
-        else if (value.x > 0)
-        {
-            dx = 1;
+            return;
         }
 
-        if ((dx != 0) or (dy != 0))
-        {
-            Location next{ .x = m_player.x + dx, .y = m_player.y + dy };
-            auto piece1 = m_board[next.y][next.x] & ~targetMask;
+        auto dx = (value.x) ? (value.x / std::abs(value.x)) : 0;
+        auto dy = (value.y) ? (value.y / std::abs(value.y)) : 0;
 
-            if (piece1 == PASSAGE)
+        Location next{ .x = m_player.x + dx, .y = m_player.y + dy };
+        auto piece1 = m_board[next.y][next.x] & ~targetMask;
+
+
+        if (piece1 == PASSAGE)
+        {
+            swapPieces(m_player, next);
+            m_player = next;
+        }
+        else if (piece1 == BOX)
+        {
+            Location afterBox{ .x = next.x + dx, .y = next.y + dy };
+            auto piece2 = m_board[afterBox.y][afterBox.x] & ~targetMask;
+
+            if (piece2 == PASSAGE)
             {
+                m_boardPrevious =  m_board;
+                swapPieces(next, afterBox);
                 swapPieces(m_player, next);
                 m_player = next;
-            }
-            else if (piece1 == BOX)
-            {
-                Location afterBox{ .x = next.x + dx, .y = next.y + dy };
-                auto piece2 = m_board[afterBox.y][afterBox.x] & ~targetMask;
 
-                if (piece2 == PASSAGE)
-                {
-                    m_boardPrevious =  m_board;
-                    swapPieces(next, afterBox);
-                    swapPieces(m_player, next);
-                    m_player = next;
-
-                    isLevelSolved();
-                    m_canUndo = not m_levelSolved;
-                }
+                isLevelSolved();
+                m_canUndo = not m_levelSolved;
             }
         }
     }

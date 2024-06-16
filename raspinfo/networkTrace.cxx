@@ -55,7 +55,7 @@ NetworkStats()
     m_tx{0},
     m_rx{0}
 {
-    struct ifaddrs* ifaddr;
+    ifaddrs* ifaddr;
 
     if (::getifaddrs(&ifaddr) == -1)
     {
@@ -64,7 +64,7 @@ NetworkStats()
                                 "getifaddrs");
     }
 
-    for (struct ifaddrs* ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next)
+    for (ifaddrs* ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next)
     {
         if (ifa->ifa_addr != nullptr)
         {
@@ -142,11 +142,11 @@ update(
     raspifb16::Interface565Font& font)
 {
     NetworkStats currentStats;
-
     NetworkStats diff{currentStats - m_previousStats};
 
-    int tx = diff.tx();
-    int rx = diff.rx();
+    constexpr int zero{0};
+    const int tx = std::max(zero, diff.tx());
+    const int rx = std::max(zero, diff.rx());
 
     Trace::addData(std::vector<int>{tx, rx}, now);
 

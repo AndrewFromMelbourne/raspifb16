@@ -63,10 +63,10 @@
 
 namespace
 {
-volatile static std::sig_atomic_t run = 1;
-volatile static std::sig_atomic_t display = 1;
+volatile static std::sig_atomic_t run{1};
+volatile static std::sig_atomic_t display{1};
 
-const std::string defaultDevice = "/dev/fb1";
+const std::string defaultDevice{"/dev/fb1"};
 }
 
 //-------------------------------------------------------------------------
@@ -188,15 +188,15 @@ main(
     int argc,
     char *argv[])
 {
-    std::string device = defaultDevice;
-    std::string program = basename(argv[0]);
-    std::string pidfile;
-    bool isDaemon =  false;
+    std::string device{defaultDevice};
+    std::string program{basename(argv[0])};
+    std::string pidfile{};
+    bool isDaemon{false};
 
     //---------------------------------------------------------------------
 
     static const char* sopts = "d:hp:D";
-    static struct option lopts[] =
+    static option lopts[] =
     {
         { "daemon", no_argument, nullptr, 'D' },
         { "device", required_argument, nullptr, 'd' },
@@ -206,7 +206,7 @@ main(
         { nullptr, no_argument, nullptr, 0 }
     };
 
-    int opt = 0;
+    int opt{0};
 
     while ((opt = ::getopt_long(argc, argv, sopts, lopts, nullptr)) != -1)
     {
@@ -254,7 +254,7 @@ main(
 
     //---------------------------------------------------------------------
 
-    struct pidfh* pfh = nullptr;
+    pidfh* pfh{};
 
     if (isDaemon)
     {
@@ -263,7 +263,7 @@ main(
             pid_t otherpid;
             pfh = ::pidfile_open(pidfile.c_str(), 0600, &otherpid);
 
-            if (pfh == nullptr)
+            if (not pfh)
             {
                 std::cerr
                     << program
@@ -324,7 +324,7 @@ main(
 
     try
     {
-        raspifb16::FrameBuffer565 fb(device);
+        raspifb16::FrameBuffer565 fb{device};
 
         fb.clear(raspifb16::RGB565{0, 0, 0});
 
@@ -332,14 +332,8 @@ main(
 
         raspifb16::Image565Font8x16 font;
 
-        int traceHeight = 100;
-
-        if (fb.getHeight() == 240)
-        {
-            traceHeight = 80;
-        }
-
-        int gridHeight = traceHeight / 5;
+        const int traceHeight = (fb.getHeight() == 240) ? 80 : 100;
+        const int gridHeight = traceHeight / 5;
 
         using Panels = std::vector<std::unique_ptr<Panel>>;
 
