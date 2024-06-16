@@ -73,11 +73,11 @@ Puzzle::Puzzle()
 int
 Puzzle::getInversionCount() const
 {
-    int inversions = 0;
+    int inversions{};
 
-    for (int i = 0 ; i < boardSize - 1 ; ++i)
+    for (auto i = 0 ; i < boardSize - 1 ; ++i)
     {
-        for (int j = i + 1 ; j < boardSize ; ++j)
+        for (auto j = i + 1 ; j < boardSize ; ++j)
         {
             if (m_board[i] and m_board[j] and (m_board[i] > m_board[j]))
             {
@@ -112,7 +112,7 @@ Puzzle::isSolved() const
 {
     bool solved = true;
 
-    for (int i = 0 ; i < boardSize - 1 ; ++i)
+    for (auto i = 0 ; i < boardSize - 1 ; ++i)
     {
         if (m_board[i] != (i + 1))
         {
@@ -130,13 +130,13 @@ Puzzle::init()
 {
     do
     {
-        for (int i = 0 ; i < boardSize - 1 ; ++i)
+        for (auto i = 0 ; i < boardSize - 1 ; ++i)
         {
             auto j = i + rand() / (RAND_MAX / (boardSize - i) + 1);
             std::swap(m_board[i], m_board[j]);
         }
 
-        for (int i = 0 ; i < boardSize ; ++i)
+        for (auto i = 0 ; i < boardSize ; ++i)
         {
             if (m_board[i] == 0)
             {
@@ -159,47 +159,30 @@ Puzzle::update(Joystick& js)
         init();
         return true;
     }
-    else
+
+    auto value = js.getAxes(0);
+
+    if (not value.x and not value.y)
     {
-        auto value = js.getAxes(0);
+        return false;
+    }
 
-        int dx = 0;
-        int dy = 0;
+    auto dx = (value.x) ? (value.x / std::abs(value.x)) : 0;
+    auto dy = (value.y) ? (value.y / std::abs(value.y)) : 0;
 
-        if (value.y < 0)
-        {
-            dy = 1;
-        }
-        else if (value.y > 0)
-        {
-            dy = -1;
-        }
-        else if (value.x < 0)
-        {
-            dx = 1;
-        }
-        else if (value.x > 0)
-        {
-            dx = -1;
-        }
+    Location newLocation = {.x = m_blankLocation.x + dx, .y = m_blankLocation.y + dy};
 
-        if ((dx != 0) or (dy != 0))
-        {
-            Location newLocation = {.x = m_blankLocation.x + dx, .y = m_blankLocation.y + dy};
+    if ((newLocation.x >= 0) and
+        (newLocation.x < puzzleWidth) and
+        (newLocation.y >= 0) and
+        (newLocation.y < puzzleHeight))
+    {
+        const auto indexNew = newLocation.x + (newLocation.y * puzzleWidth);
+        const auto indexBlank = m_blankLocation.x + (m_blankLocation.y * puzzleWidth);
+        std::swap(m_board[indexNew], m_board[indexBlank]);
 
-            if ((newLocation.x >= 0) and
-                (newLocation.x < puzzleWidth) and
-                (newLocation.y >= 0) and
-                (newLocation.y < puzzleHeight))
-            {
-                const auto indexNew = newLocation.x + (newLocation.y * puzzleWidth);
-                const auto indexBlank = m_blankLocation.x + (m_blankLocation.y * puzzleWidth);
-                std::swap(m_board[indexNew], m_board[indexBlank]);
-
-                m_blankLocation = newLocation;
-                return true;
-            }
-        }
+        m_blankLocation = newLocation;
+        return true;
     }
 
     return false;

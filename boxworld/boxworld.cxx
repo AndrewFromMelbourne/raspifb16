@@ -57,7 +57,7 @@ Boxworld::Boxworld()
             { tileWidth, tileHeight, playerOnTargetImage, 2 }
         } }),
     m_topTextImage{ 240, 20 },
-    m_bottomTextImage{ 240, 40 },
+    m_bottomTextImage{ 320, 40 },
     m_textRGB(255, 255, 255),
     m_boldRGB(255, 255, 0),
     m_disabledRGB(170, 170, 170),
@@ -238,6 +238,11 @@ Boxworld::drawText(
 
     //---------------------------------------------------------------------
 
+    if (fb.getHeight() < 260)
+    {
+        return;
+    }
+
     position = Interface565Point{ 2, 2 };
     auto& undoRGB = ((m_canUndo) ? m_textRGB : m_disabledRGB);
 
@@ -291,7 +296,7 @@ Boxworld::drawText(
                                previousRGB,
                                m_bottomTextImage);
 
-    fb.putImage(Interface565Point{xOffset, 440}, m_bottomTextImage);
+    fb.putImage(Interface565Point{0, 220}, m_bottomTextImage);
 }
 
 //-------------------------------------------------------------------------
