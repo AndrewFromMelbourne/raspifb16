@@ -58,6 +58,7 @@
 #include "dynamicInfo.h"
 #include "framebuffer565.h"
 #include "memoryTrace.h"
+#include "networkTrace.h"
 
 //-------------------------------------------------------------------------
 
@@ -358,17 +359,27 @@ main(
 
         panels.push_back(
             std::make_unique<CpuTrace>(fb.getWidth(),
-                                        traceHeight,
-                                        font.getPixelHeight(),
-                                        panelTop(panels),
-                                        gridHeight));
+                                       traceHeight,
+                                       font.getPixelHeight(),
+                                       panelTop(panels),
+                                       gridHeight));
 
         panels.push_back(
             std::make_unique<MemoryTrace>(fb.getWidth(),
-                                           traceHeight,
-                                           font.getPixelHeight(),
-                                           panelTop(panels),
-                                           gridHeight));
+                                          traceHeight,
+                                          font.getPixelHeight(),
+                                          panelTop(panels),
+                                          gridHeight));
+
+        if (fb.getHeight() >= 400)
+        {
+            panels.push_back(
+                std::make_unique<NetworkTrace>(fb.getWidth(),
+                                               traceHeight,
+                                               font.getPixelHeight(),
+                                               panelTop(panels),
+                                               gridHeight));
+        }
 
         //-----------------------------------------------------------------
 
