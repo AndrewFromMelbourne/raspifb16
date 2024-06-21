@@ -54,31 +54,31 @@ MemoryStats()
                                 "unable to open /proc/meminfo"};
     }
 
-    int free{0};
+    uint64_t free{0};
 
     while (ifs.eof() == false)
     {
         std::string name;
-        int value;
+        std::string value;
         std::string unit;
 
         ifs >> name >> value >> unit;
 
         if (name == "MemTotal:")
         {
-            m_total = value;
+            m_total = std::stoull(value);
         }
         else if (name == "MemFree:")
         {
-            free = value;
+            free = std::stoull(value);
         }
         else if (name == "Buffers:")
         {
-            m_buffers = value;
+            m_buffers = std::stoull(value);
         }
         else if (name == "Cached:")
         {
-            m_cached = value;
+            m_cached = std::stoull(value);
         }
     }
 

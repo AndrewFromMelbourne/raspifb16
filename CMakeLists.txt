@@ -72,7 +72,6 @@ add_executable(raspinfo raspinfo/raspinfo.cxx
 						raspinfo/traceStack.cxx)
 
 target_link_libraries(raspinfo raspifb16
-							   -lbcm_host
 							   -lbsd)
 
 set_property(TARGET raspinfo PROPERTY SKIP_BUILD_RPATH TRUE)

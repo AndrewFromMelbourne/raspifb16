@@ -27,25 +27,24 @@
 
 #include <cmath>
 #include <cstdint>
+#include <cstring>
 #include <iomanip>
 #include <regex>
 #include <sstream>
 #include <stdexcept>
 #include <string>
 
+#include <fcntl.h>
 #include <ifaddrs.h>
 #include <unistd.h>
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <sys/ioctl.h>
 #include <sys/types.h>
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-#include <bcm_host.h>
-#pragma GCC diagnostic pop
-
 #include "dynamicInfo.h"
+#include "fileDescriptor.h"
 #include "image565Font8x16.h"
 #include "system.h"
 
@@ -73,7 +72,7 @@ DynamicInfo::getIpAddress(
         {
             void *addr = &((sockaddr_in *)ifa->ifa_addr)->sin_addr;
 
-            if (strcmp(ifa->ifa_name, "lo") != 0)
+            if (std::string(ifa->ifa_name) != std::string("lo"))
             {
                 char buffer[INET_ADDRSTRLEN];
                 ::inet_ntop(AF_INET, addr, buffer, sizeof(buffer));
@@ -92,6 +91,42 @@ DynamicInfo::getIpAddress(
 //-------------------------------------------------------------------------
 
 std::string
+DynamicInfo::vcGenCmd(const std::string& command)
+{
+     raspifb16::FileDescriptor fd{::open("/dev/vcio", 0)};
+
+    if (fd.fd() == -1)
+    {
+        return {};
+    }
+
+    static constexpr auto PROPERTY_SIZE{519};
+
+    uint32_t property[PROPERTY_SIZE] =
+    {
+        0x00000000,
+        0x00000000,
+        0x00030080,
+        0x00000400,
+        0x00000000,
+        0x00000000,
+    };
+
+    memcpy(property + 6, command.data(), command.length() + 1);
+
+    property[0] = PROPERTY_SIZE * sizeof(property[0]);
+
+    if (::ioctl(fd.fd(), _IOWR(100, 0, char *), property) == -1)
+    {
+        return {};
+    }
+
+    return reinterpret_cast<char *>(property + 6);
+}
+
+//-------------------------------------------------------------------------
+
+std::string
 DynamicInfo::getMemorySplit()
 {
     std::string result{" / "};
@@ -99,17 +134,15 @@ DynamicInfo::getMemorySplit()
     int arm_mem{};
     int gpu_mem{};
 
-    char buffer[128];
+    const auto& arm{vcGenCmd("get_mem arm")};
 
-    ::memset(buffer, 0, sizeof(buffer));
-
-    if (::vc_gencmd(buffer, sizeof(buffer), "get_mem arm") == 0)
+    if (not arm.empty())
     {
         try
         {
             std::regex pattern{R"(arm=(\d+)M)"};
             std::smatch match;
-            std::string vcGenResult(buffer);
+            std::string vcGenResult(arm);
 
             if (std::regex_search(vcGenResult, match, pattern) and
                 (match.size() == 2))
@@ -123,15 +156,15 @@ DynamicInfo::getMemorySplit()
         }
     }
 
-    ::memset(buffer, 0, sizeof(buffer));
+    const auto& gpu{vcGenCmd("get_mem gpu")};
 
-    if (::vc_gencmd(buffer, sizeof(buffer), "get_mem gpu") == 0)
+    if (not gpu.empty())
     {
         try
         {
             std::regex pattern{R"(gpu=(\d+)M)"};
             std::smatch match;
-            std::string vcGenResult(buffer);
+            std::string vcGenResult(gpu);
 
             if (std::regex_search(vcGenResult, match, pattern) and
                 (match.size() == 2))

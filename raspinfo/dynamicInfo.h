@@ -65,6 +65,8 @@ private:
 
     std::string m_memorySplit;
 
+    static std::string vcGenCmd(const std::string& command);
+
     static std::string getIpAddress(char& interface);
     static std::string getMemorySplit();
     static std::string getTemperature();

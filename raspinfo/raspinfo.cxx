@@ -29,6 +29,7 @@
 #include <chrono>
 #include <csignal>
 #include <cstdint>
+#include <cstring>
 #include <exception>
 #include <iostream>
 #include <memory>
@@ -46,11 +47,6 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-#include <bcm_host.h>
-#pragma GCC diagnostic pop
 
 #include "image565Font8x16.h"
 
@@ -295,10 +291,6 @@ main(
 
         ::openlog(program.c_str(), LOG_PID, LOG_USER);
     }
-
-    //---------------------------------------------------------------------
-
-    ::bcm_host_init();
 
     //---------------------------------------------------------------------
 
