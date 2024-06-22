@@ -100,14 +100,15 @@ DynamicInfo::vcGenCmd(const std::string& command)
         return {};
     }
 
-    static constexpr auto PROPERTY_SIZE{519};
+    static constexpr auto RESPONSE_LENGTH{1024};
+    static constexpr auto PROPERTY_SIZE{(RESPONSE_LENGTH / 4) + 7};
 
     uint32_t property[PROPERTY_SIZE] =
     {
         0x00000000,
         0x00000000,
         0x00030080,
-        0x00000400,
+        RESPONSE_LENGTH,
         0x00000000,
         0x00000000,
     };
