@@ -2,7 +2,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2023 Andrew Duncan
+// Copyright (c) 2024 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -28,7 +28,7 @@
 #include <getopt.h>
 #include <libgen.h>
 
-#include <deque>
+#include <cstdlib>
 #include <iostream>
 #include <system_error>
 
@@ -57,6 +57,7 @@ printUsage(
     os << "\n";
     os << "Usage: " << name << " <options>\n";
     os << "\n";
+    os << "    --character,-c - character to print\n";
     os << "    --device,-d - framebuffer device to use";
     os << " (default is " << defaultDevice << ")\n";
     os << "    --font,-f - font file to use\n";
@@ -74,12 +75,14 @@ main(
     std::string device = defaultDevice;
     std::string program = basename(argv[0]);
     std::string font;
+    uint32_t c = 'A';
 
     //---------------------------------------------------------------------
 
-    static const char* sopts = "d:f:h";
+    static const char* sopts = "c:d:f:h";
     static option lopts[] =
     {
+        { "character", required_argument, nullptr, 'c' },
         { "device", required_argument, nullptr, 'd' },
         { "font", required_argument, nullptr, 'f' },
         { "help", no_argument, nullptr, 'h' },
@@ -92,6 +95,11 @@ main(
     {
         switch (opt)
         {
+        case 'c':
+
+            c = ::strtol(optarg, nullptr, 0);
+
+            break;
         case 'd':
 
             device = optarg;
@@ -138,30 +146,7 @@ main(
         Image565FreeType ft{font, 32};
         Interface565Point p{0, 0};
 
-        p = ft.drawString(p, "abcdefghijklmnopqrstuvwxyz ", white, image);
-        p = ft.drawString(p, "0123456789", white, image);
-
-        p.set(0, p.y() + ft.getPixelHeight());
-
-        p = ft.drawString(p, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", white, image);
-
-        p.set(0, p.y() + ft.getPixelHeight());
-
-        p = ft.drawChar(p, '@', white, image);
-
-        p.set(0, p.y() + ft.getPixelHeight());
-
-        for (int j = 0 ; j < 16 ; ++j)
-        {
-            for (auto i = 0 ; i < 16 ; ++i)
-            {
-                auto c = static_cast<uint8_t>(i + (j * 16));
-                p.setX(i * ft.getPixelWidth());
-                ft.drawChar(p, c, white, image);
-            }
-
-            p.setY(p.y() + ft.getPixelHeight());
-        }
+        p = ft.drawWideChar(p, c, white, image);
 
         //-----------------------------------------------------------------
 

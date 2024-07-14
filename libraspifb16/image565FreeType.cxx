@@ -42,9 +42,7 @@ Image565FreeType::Image565FreeType(
     const std::string& fontFile,
     int pixelSize)
 :
-    m_pixelSize{0},
-    m_face{},
-    m_library{}
+    Image565FreeType()
 {
     if (FT_Init_FreeType(&m_library) != 0)
     {
@@ -147,6 +145,36 @@ Image565FreeType::drawChar(
 //-------------------------------------------------------------------------
 
 FontPoint
+Image565FreeType::drawWideChar(
+    const Image565Point& p,
+    uint32_t c,
+    const RGB565& rgb,
+    Interface565& image)
+{
+    FontPoint position{p};
+    position.setY(position.y() + (m_face->size->metrics.ascender >> 6));
+    const auto glyph_index{FT_Get_Char_Index(m_face, c)};
+
+    if (FT_Load_Glyph(m_face, glyph_index, FT_LOAD_RENDER) == 0)
+    {
+        const auto slot{m_face->glyph};
+
+        drawChar(position.x() + slot->bitmap_left,
+                position.y() - slot->bitmap_top,
+                slot->bitmap,
+                rgb,
+                image);
+
+        position.setX(position.x() + (slot->advance.x >> 6));
+    }
+
+    position.setY(position.y() - (m_face->size->metrics.ascender >> 6));
+    return position;
+}
+
+//-------------------------------------------------------------------------
+
+FontPoint
 Image565FreeType::drawString(
     const Image565Point& p,
     const char* string,
@@ -185,19 +213,19 @@ Image565FreeType::drawString(
     FontPoint position{p};
     position.setY(position.y() + (m_face->size->metrics.ascender >> 6));
 
-    auto slot = m_face->glyph;
-    auto use_kerning = FT_HAS_KERNING(m_face);
-    FT_UInt previous = 0;
+    auto slot{m_face->glyph};
+    auto use_kerning{FT_HAS_KERNING(m_face)};
+    FT_UInt previous{0};
 
     for (const auto c : string)
     {
         if (c == '\n')
         {
-            position.setY(position.y() + getPixelHeight());
+            position.set(p.x(), position.y() + getPixelHeight());
         }
         else
         {
-            const auto glyph_index = FT_Get_Char_Index(m_face, c);
+            const auto glyph_index{FT_Get_Char_Index(m_face, c)};
 
             if (use_kerning and previous and glyph_index)
             {
@@ -214,7 +242,7 @@ Image565FreeType::drawString(
 
             if (FT_Load_Glyph(m_face, glyph_index, FT_LOAD_RENDER) == 0)
             {
-                const auto slot = m_face->glyph;
+                const auto slot{m_face->glyph};
 
                 drawChar(position.x() + slot->bitmap_left,
                         position.y() - slot->bitmap_top,
@@ -230,7 +258,7 @@ Image565FreeType::drawString(
 
     //-----------------------------------------------------------------
 
-    const auto advance = slot->bitmap.width - (slot->advance.x >> 6);
+    const auto advance{slot->bitmap.width - (slot->advance.x >> 6)};
 
     if (advance > 0)
     {
@@ -265,7 +293,7 @@ Image565FreeType::drawChar(
 {
     for (unsigned j = 0 ; j < bitmap.rows ; ++j)
     {
-        uint8_t* row = bitmap.buffer + (j * bitmap.pitch);
+        uint8_t* row{bitmap.buffer + (j * bitmap.pitch)};
 
         for (unsigned i = 0 ; i < bitmap.width ; ++i)
         {
@@ -273,7 +301,7 @@ Image565FreeType::drawChar(
             {
                 const Image565Point p{static_cast<int>(i + xOffset),
                                       static_cast<int>(j + yOffset)};
-                auto background = image.getPixelRGB(p);
+                auto background{image.getPixelRGB(p)};
 
                 if (background)
                 {

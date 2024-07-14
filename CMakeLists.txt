@@ -100,5 +100,9 @@ add_executable(testft test/testft.cxx)
 target_link_libraries(testft raspifb16
                              ${FREETYPE_LIBRARIES})
 
+add_executable(testft2 test/testft2.cxx)
+target_link_libraries(testft2 raspifb16
+                             ${FREETYPE_LIBRARIES})
+
 endif()
 

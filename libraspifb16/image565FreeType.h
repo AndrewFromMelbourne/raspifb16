@@ -60,6 +60,7 @@ class Image565FreeType
 {
 public:
 
+    Image565FreeType() = default;
     Image565FreeType(const std::string& fontFile, int pixelSize);
     ~Image565FreeType() override;
 
@@ -94,6 +95,13 @@ public:
         uint8_t c,
         uint16_t rgb,
         Interface565& image) override;
+
+    FontPoint
+    drawWideChar(
+        const Image565Point& p,
+        uint32_t c,
+        const RGB565& rgb,
+        Interface565& image);
 
     FontPoint
     drawString(
@@ -134,10 +142,10 @@ private:
         const RGB565& rgb,
         Interface565& image);
 
-    int m_pixelSize;
+    int m_pixelSize{};
 
-    FT_Face m_face;
-    FT_Library m_library;
+    FT_Face m_face{};
+    FT_Library m_library{};
 };
 
 //-------------------------------------------------------------------------
