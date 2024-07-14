@@ -56,8 +56,8 @@ Boxworld::Boxworld()
             { tileWidth, tileHeight, boxOnTargetImage },
             { tileWidth, tileHeight, playerOnTargetImage, 2 }
         } }),
-    m_topTextImage{ 240, 12 },
-    m_bottomTextImage{ 320, 22 },
+    m_topTextImage{ 240, 8 },
+    m_bottomTextImage{ 320, 16 },
     m_textRGB(255, 255, 255),
     m_boldRGB(255, 255, 0),
     m_disabledRGB(170, 170, 170),
@@ -169,7 +169,7 @@ void
 Boxworld::drawBoard(FrameBuffer565& fb)
 {
     constexpr int xOffset = 40;
-    constexpr int yOffset = 12;
+    constexpr int yOffset = 8;
     static uint8_t frame = 0;
 
     for (int j = 0 ; j < Level::levelHeight ; ++j)
@@ -216,7 +216,7 @@ Boxworld::drawText(
 
     m_topTextImage.clear(m_backgroundRGB);
 
-    Interface565Point position{ 2, 2 };
+    Interface565Point position{ 2, 0 };
     position = font.drawString(position,
                                "level: ",
                                m_boldRGB,
@@ -238,7 +238,7 @@ Boxworld::drawText(
 
     //---------------------------------------------------------------------
 
-    position = Interface565Point{ 2, 2 };
+    position = Interface565Point{ 2, 0 };
     auto& undoRGB = ((m_canUndo) ? m_textRGB : m_disabledRGB);
 
     position = font.drawString(position,
@@ -250,7 +250,7 @@ Boxworld::drawText(
                                undoRGB,
                                m_bottomTextImage);
 
-    position = Interface565Point{ 2, 10 };
+    position = Interface565Point{ 2, 8 };
 
     position = font.drawString(position,
                                "(Y): ",
@@ -277,7 +277,7 @@ Boxworld::drawText(
                                nextRGB,
                                m_bottomTextImage);
 
-    position = Interface565Point{ halfWidth, 10 };
+    position = Interface565Point{ halfWidth, 8 };
     auto& previousRGB = ((m_level > 0)
                       ? m_textRGB
                       : m_disabledRGB);
