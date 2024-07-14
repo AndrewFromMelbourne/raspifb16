@@ -17,6 +17,7 @@ find_package(Freetype)
 add_library(raspifb16 STATIC libraspifb16/fileDescriptor.cxx
 							 libraspifb16/framebuffer565.cxx
 							 libraspifb16/image565.cxx
+							 libraspifb16/image565Font8x8.cxx
 							 libraspifb16/image565Font8x16.cxx
 							 libraspifb16/image565Graphics.cxx
 							 libraspifb16/image565Qoi.cxx

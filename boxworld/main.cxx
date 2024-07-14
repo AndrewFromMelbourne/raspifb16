@@ -33,7 +33,7 @@
 #include <thread>
 
 #include "framebuffer565.h"
-#include "image565Font8x16.h"
+#include "image565Font8x8.h"
 #include "joystick.h"
 
 #include "boxworld.h"
@@ -130,7 +130,7 @@ main(
 
     try
     {
-        Image565Font8x16 font;
+        Image565Font8x8 font;
         Joystick js{joystick};
         FrameBuffer565 fb{device};
         fb.clear(RGB565{0, 0, 0});
