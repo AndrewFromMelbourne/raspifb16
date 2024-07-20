@@ -12,8 +12,27 @@ You will need to install libbsd-dev
 # libfb16
 The library itself.
 
-# test
-A very simple test program that displays text on /dev/fd1
+# tests
+## test
+A very simple test program that displays text and simple graphics
+
+## testColour
+Displays a hues at different brightness and saturation.
+
+## testft and testft2
+Tests programs for truetype fonts (Requires Freetype2).
+
+# boxworld
+A version of Boxworld or Sokoban (Requires a joystick).
+
+# fbpipe
+Display text from standard input.
+
+# puzzle-15
+A sliding puzzle (Requires a joystick).
+
+# splash
+A QOI image viewer.
 
 # raspinfo
 A program to display Raspberry Pi specific system information directly on

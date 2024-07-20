@@ -156,7 +156,7 @@ Boxworld::update(Joystick& js)
 
 void
 Boxworld::draw(
-    FrameBuffer565& fb,
+    Interface565& fb,
     Interface565Font& font)
 {
     drawBoard(fb);
@@ -166,7 +166,7 @@ Boxworld::draw(
 //-------------------------------------------------------------------------
 
 void
-Boxworld::drawBoard(FrameBuffer565& fb)
+Boxworld::drawBoard(Interface565& fb)
 {
     constexpr int xOffset = 40;
     constexpr int yOffset = 8;
@@ -207,7 +207,7 @@ Boxworld::drawBoard(FrameBuffer565& fb)
 
 void
 Boxworld::drawText(
-    FrameBuffer565& fb,
+    Interface565& fb,
     Interface565Font& font)
 {
     constexpr int xOffset = 40;

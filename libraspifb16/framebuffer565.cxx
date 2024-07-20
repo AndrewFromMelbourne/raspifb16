@@ -44,7 +44,7 @@
 
 //-------------------------------------------------------------------------
 
-raspifb16::FrameBuffer565:: FrameBuffer565(
+raspifb16::FrameBuffer565::FrameBuffer565(
     const std::string& device)
 :
     m_consolefd{-1},
@@ -101,7 +101,7 @@ raspifb16::FrameBuffer565:: FrameBuffer565(
 
 //-------------------------------------------------------------------------
 
-raspifb16::FrameBuffer565:: ~FrameBuffer565()
+raspifb16::FrameBuffer565::~FrameBuffer565()
 {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     ::munmap(m_fbp, m_finfo.smem_len);
@@ -115,7 +115,7 @@ raspifb16::FrameBuffer565:: ~FrameBuffer565()
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::FrameBuffer565:: hideCursor()
+raspifb16::FrameBuffer565::hideCursor()
 {
     std::string name{::ttyname(0)};
     bool result = true;
@@ -149,147 +149,10 @@ raspifb16::FrameBuffer565:: hideCursor()
 
 //-------------------------------------------------------------------------
 
-void
-raspifb16::FrameBuffer565:: clear(
-    uint16_t rgb)
-{
-    std::fill(m_fbp, m_fbp + (m_finfo.smem_len / bytesPerPixel), rgb);
-}
-
-//-------------------------------------------------------------------------
-
-bool
-raspifb16::FrameBuffer565:: setPixel(
-    const Interface565Point& p,
-    uint16_t rgb)
-{
-    bool isValid{validPixel(p)};
-
-    if (isValid)
-    {
-        m_fbp[p.x() + p.y() * m_lineLengthPixels] = rgb;
-    }
-
-    return isValid;
-}
-
-//-------------------------------------------------------------------------
-
-std::optional<raspifb16::RGB565>
-raspifb16::FrameBuffer565:: getPixelRGB(
+size_t
+raspifb16::FrameBuffer565::offset(
     const Interface565Point& p) const
 {
-    if (not validPixel(p))
-    {
-        return {};
-    }
-
-    return RGB565(m_fbp[p.x() + p.y() * m_lineLengthPixels]);
-}
-
-//-------------------------------------------------------------------------
-
-std::optional<uint16_t>
-raspifb16::FrameBuffer565:: getPixel(
-    const Interface565Point& p) const
-{
-    if (not validPixel(p))
-    {
-        return {};
-    }
-
-    return m_fbp[p.x() + p.y() * m_lineLengthPixels];
-}
-
-//-------------------------------------------------------------------------
-
-bool
-raspifb16::FrameBuffer565:: putImage(
-    const Interface565Point& p,
-    const Image565& image) const
-{
-    if ((p.x() < 0) or
-        ((p.x() + image.getWidth()) > static_cast<int32_t>(m_vinfo.xres)))
-    {
-        return putImagePartial(p, image);
-    }
-
-    if ((p.y() < 0) or
-        ((p.y() + image.getHeight()) > static_cast<int32_t>(m_vinfo.yres)))
-    {
-        return putImagePartial(p, image);
-    }
-
-    for (int32_t j = 0 ; j < image.getHeight() ; ++j)
-    {
-        auto start = image.getRow(j);
-
-        std::copy(start,
-                  start + image.getWidth(),
-                  m_fbp + ((j + p.y()) * m_lineLengthPixels) + p.x());
-    }
-
-    return true;
-}
-
-//-------------------------------------------------------------------------
-
-bool
-raspifb16::FrameBuffer565:: putImagePartial(
-    const Interface565Point& p,
-    const Image565& image) const
-{
-    auto x = p.x();
-    auto xStart = 0;
-    auto xEnd = image.getWidth() - 1;
-
-    auto y = p.y();
-    auto yStart = 0;
-    auto yEnd = image.getHeight() - 1;
-
-    if (x < 0)
-    {
-        xStart = -x;
-        x = 0;
-    }
-
-    if ((x - xStart + image.getWidth()) >
-        static_cast<int32_t>(m_vinfo.xres))
-    {
-        xEnd = m_vinfo.xres - 1 - (x - xStart);
-    }
-
-    if (y < 0)
-    {
-        yStart = -y;
-        y = 0;
-    }
-
-    if ((y - yStart + image.getHeight()) >
-        static_cast<int32_t>(m_vinfo.yres))
-    {
-        yEnd = m_vinfo.yres - 1 - (y - yStart);
-    }
-
-    if ((xEnd - xStart) <= 0)
-    {
-        return false;
-    }
-
-    if ((yEnd - yStart) <= 0)
-    {
-        return false;
-    }
-
-    for (auto j = yStart ; j <= yEnd ; ++j)
-    {
-        auto start = image.getRow(j) + xStart;
-
-        std::copy(start,
-                  start + (xEnd - xStart + 1),
-                  m_fbp + ((j - yStart) * m_lineLengthPixels) + x);
-    }
-
-    return true;
+    return p.x() + p.y() * m_lineLengthPixels;
 }
 

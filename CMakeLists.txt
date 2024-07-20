@@ -11,6 +11,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 #--------------------------------------------------------------------------
 
 find_package(Freetype)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(DRM QUIET libdrm)
 
 #--------------------------------------------------------------------------
 
@@ -22,13 +24,21 @@ add_library(raspifb16 STATIC libraspifb16/fileDescriptor.cxx
 							 libraspifb16/image565Graphics.cxx
 							 libraspifb16/image565Qoi.cxx
 							 libraspifb16/interface565.cxx
+							 libraspifb16/interface565Factory.cxx
 							 libraspifb16/interface565Font.cxx
 							 libraspifb16/joystick.cxx
 							 libraspifb16/rgb565.cxx)
 
 if (FREETYPE_FOUND)
 target_include_directories(raspifb16 PUBLIC ${FREETYPE_INCLUDE_DIRS})
-target_sources(raspifb16 PRIVATE libraspifb16/image565FreeType.cxx)
+target_sources(raspifb16 PRIVATE libraspifb16/image565FreeType.cxx
+                                 libraspifb16/dumbbuffer565.cxx)
+endif()
+
+if (DRM_FOUND)
+target_compile_definitions(raspifb16 PRIVATE LIBDRM_INSTALLED)
+target_include_directories(raspifb16 PUBLIC ${DRM_INCLUDE_DIRS})
+target_sources(raspifb16 PRIVATE libraspifb16/drmMode.cxx)
 endif()
 
 include_directories(${PROJECT_SOURCE_DIR}/libraspifb16)
@@ -43,12 +53,14 @@ add_executable(boxworld boxworld/main.cxx
                         boxworld/levels.cxx
                         boxworld/boxworld.cxx)
 
-target_link_libraries(boxworld raspifb16)
+target_link_libraries(boxworld raspifb16
+							   ${DRM_LIBRARIES})
 
 #--------------------------------------------------------------------------
 
 add_executable(fbpipe fbpipe/fbpipe.cxx)
-target_link_libraries(fbpipe raspifb16)
+target_link_libraries(fbpipe raspifb16
+                             ${DRM_LIBRARIES})
 
 #--------------------------------------------------------------------------
 
@@ -56,7 +68,8 @@ add_executable(puzzle-15 puzzle-15/main.cxx
                          puzzle-15/images.cxx
                          puzzle-15/puzzle.cxx)
 
-target_link_libraries(puzzle-15 raspifb16)
+target_link_libraries(puzzle-15 raspifb16
+                                ${DRM_LIBRARIES})
 
 #--------------------------------------------------------------------------
 
@@ -73,7 +86,9 @@ add_executable(raspinfo raspinfo/raspinfo.cxx
 						raspinfo/traceStack.cxx)
 
 target_link_libraries(raspinfo raspifb16
-							   -lbsd)
+							   -lbsd
+                               ${FREETYPE_LIBRARIES}
+							   ${DRM_LIBRARIES})
 
 set_property(TARGET raspinfo PROPERTY SKIP_BUILD_RPATH TRUE)
 install (TARGETS raspinfo RUNTIME DESTINATION bin)
@@ -81,17 +96,20 @@ install (TARGETS raspinfo RUNTIME DESTINATION bin)
 #--------------------------------------------------------------------------
 
 add_executable(splash splash/splash.cxx)
-target_link_libraries(splash raspifb16)
+target_link_libraries(splash raspifb16
+                             ${DRM_LIBRARIES})
 
 #--------------------------------------------------------------------------
 
 add_executable(test test/test.cxx)
-target_link_libraries(test raspifb16)
+target_link_libraries(test raspifb16
+                           ${DRM_LIBRARIES})
 
 #--------------------------------------------------------------------------
 
 add_executable(testColour test/testColour.cxx)
-target_link_libraries(testColour raspifb16)
+target_link_libraries(testColour raspifb16
+                                 ${DRM_LIBRARIES})
 
 #--------------------------------------------------------------------------
 
@@ -99,11 +117,13 @@ if (FREETYPE_FOUND)
 
 add_executable(testft test/testft.cxx)
 target_link_libraries(testft raspifb16
-                             ${FREETYPE_LIBRARIES})
+                             ${FREETYPE_LIBRARIES}
+							 ${DRM_LIBRARIES})
 
 add_executable(testft2 test/testft2.cxx)
 target_link_libraries(testft2 raspifb16
-                             ${FREETYPE_LIBRARIES})
+                             ${FREETYPE_LIBRARIES}
+							 ${DRM_LIBRARIES})
 
 endif()
 

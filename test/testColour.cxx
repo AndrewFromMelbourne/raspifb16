@@ -25,18 +25,23 @@
 //
 //-------------------------------------------------------------------------
 
+#include <getopt.h>
+#include <libgen.h>
+
+#include <chrono>
+#include <functional>
 #include <iostream>
 #include <system_error>
+#include <thread>
 
-#include <unistd.h>
-
-#include "framebuffer565.h"
 #include "image565.h"
 #include "image565Graphics.h"
+#include "interface565Factory.h"
 #include "point.h"
 
 //-------------------------------------------------------------------------
 
+using namespace std::chrono_literals;
 using namespace raspifb16;
 
 //-------------------------------------------------------------------------
@@ -61,7 +66,7 @@ void fadeFromBlack(Image565& image, int x, int y, const RGB565& rgb)
 
     for (int i = 0 ; i < 32 ; ++i)
     {
-        image.setPixelRGB(Image565Point(x, y + i),
+        image.setPixelRGB(Interface565Point(x, y + i),
                           RGB565::blend(alpha32(i), rgb, black));
     }
 }
@@ -74,7 +79,7 @@ void fadeToWhite(Image565& image, int x, int y, const RGB565& rgb)
 
     for (int i = 0 ; i < 32 ; ++i)
     {
-        image.setPixelRGB(Image565Point(x, y + i),
+        image.setPixelRGB(Interface565Point(x, y + i),
                           RGB565::blend(alpha32(i), white, rgb));
     }
 }
@@ -141,13 +146,84 @@ void hues(
 
 //-------------------------------------------------------------------------
 
-int
-main()
+void
+printUsage(
+    std::ostream& os,
+    const std::string& name)
 {
+    os << "\n";
+    os << "Usage: " << name << " <options>\n";
+    os << "\n";
+    os << "    --device,-d - device to use\n";
+    os << "    --help,-h - print usage and exit\n";
+    os << "    --kmsdrm,-k - use KMS/DRM dumb buffer\n";
+    os << "\n";
+}
+
+//-------------------------------------------------------------------------
+
+int
+main(
+    int argc,
+    char *argv[])
+{
+    std::string device{};
+    std::string program{basename(argv[0])};
+    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
+
+    //---------------------------------------------------------------------
+
+    static const char* sopts = "d:hk";
+    static option lopts[] =
+    {
+        { "device", required_argument, nullptr, 'd' },
+        { "font", required_argument, nullptr, 'f' },
+        { "help", no_argument, nullptr, 'h' },
+        { "kmsdrm", no_argument, nullptr, 'k' },
+        { nullptr, no_argument, nullptr, 0 }
+    };
+
+    int opt{};
+
+    while ((opt = ::getopt_long(argc, argv, sopts, lopts, nullptr)) != -1)
+    {
+        switch (opt)
+        {
+        case 'd':
+
+            device = optarg;
+
+            break;
+
+        case 'h':
+
+            printUsage(std::cout, program);
+            ::exit(EXIT_SUCCESS);
+
+            break;
+
+        case 'k':
+
+            interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
+
+            break;
+
+        default:
+
+            printUsage(std::cerr, program);
+            ::exit(EXIT_FAILURE);
+
+            break;
+        }
+    }
+
+    //---------------------------------------------------------------------
+
     try
     {
-        FrameBuffer565 fb{"/dev/fb1"};
-        fb.clear();
+        auto fb{raspifb16::createInterface565(interfaceType, device)};
+
+        fb->clear();
 
         //-----------------------------------------------------------------
 
@@ -161,17 +237,17 @@ main()
 
         Interface565Point imageLocation
         {
-            (fb.getWidth() - image.getWidth()) / 2,
-            (fb.getHeight() - image.getHeight()) / 2
+            (fb->getWidth() - image.getWidth()) / 2,
+            (fb->getHeight() - image.getHeight()) / 2
         };
 
-        fb.putImage(imageLocation, image);
+        fb->putImage(imageLocation, image);
 
         //-----------------------------------------------------------------
 
-        sleep(10);
+        std::this_thread::sleep_for(10s);
 
-        fb.clear();
+        fb->clear();
     }
     catch (std::exception& error)
     {

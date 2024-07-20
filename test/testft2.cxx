@@ -28,24 +28,20 @@
 #include <getopt.h>
 #include <libgen.h>
 
+#include <chrono>
 #include <cstdlib>
 #include <iostream>
 #include <system_error>
+#include <thread>
 
-#include "framebuffer565.h"
 #include "image565FreeType.h"
+#include "interface565Factory.h"
 #include "point.h"
 
 //-------------------------------------------------------------------------
 
 using namespace raspifb16;
-
-//-------------------------------------------------------------------------
-
-namespace
-{
-const std::string defaultDevice{"/dev/fb1"};
-}
+using namespace std::chrono_literals;
 
 //-------------------------------------------------------------------------
 
@@ -58,8 +54,7 @@ printUsage(
     os << "Usage: " << name << " <options>\n";
     os << "\n";
     os << "    --character,-c - character to print\n";
-    os << "    --device,-d - framebuffer device to use";
-    os << " (default is " << defaultDevice << ")\n";
+    os << "    --device,-d - device to use\n";
     os << "    --font,-f - font file to use\n";
     os << "    --help,-h - print usage and exit\n";
     os << "\n";
@@ -72,14 +67,15 @@ main(
     int argc,
     char *argv[])
 {
-    std::string device = defaultDevice;
-    std::string program = basename(argv[0]);
-    std::string font;
-    uint32_t c = 'A';
+    std::string device{};
+    std::string program{basename(argv[0])};
+    std::string font{};
+    uint32_t c{'A'};
+    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------
 
-    static const char* sopts = "c:d:f:h";
+    static const char* sopts = "c:d:f:hk";
     static option lopts[] =
     {
         { "character", required_argument, nullptr, 'c' },
@@ -119,6 +115,12 @@ main(
 
             break;
 
+        case 'k':
+
+            interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
+
+            break;
+
         default:
 
             printUsage(std::cerr, program);
@@ -134,11 +136,11 @@ main(
     {
         const RGB565 black{0, 0, 0};
         const RGB565 white{255, 255, 255};
-        FrameBuffer565 fb{device};
+        auto fb{raspifb16::createInterface565(interfaceType, device)};
 
-        fb.clear(black);
+        fb->clear(black);
 
-        Image565 image(fb.getWidth(), fb.getHeight());
+        Image565 image(fb->getWidth(), fb->getHeight());
         image.clear(black);
 
         //-----------------------------------------------------------------
@@ -150,7 +152,10 @@ main(
 
         //-----------------------------------------------------------------
 
-        fb.putImage(Interface565Point{0, 0}, image);
+        fb->putImage(Interface565Point{0, 0}, image);
+        std::this_thread::sleep_for(10s);
+        fb->clear();
+
     }
     catch (std::exception& error)
     {

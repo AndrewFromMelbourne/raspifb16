@@ -2,7 +2,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Andrew Duncan
+// Copyright (c) 2024 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -29,50 +29,34 @@
 
 //-------------------------------------------------------------------------
 
-#include <cstdint>
-#include <vector>
+#include <memory>
+#include <string>
 
-#include "panel.h"
-#include "traceStack.h"
+#include "interface565.h"
 
 //-------------------------------------------------------------------------
 
-class MemoryStats
+namespace raspifb16
 {
-public:
 
-    MemoryStats();
+//-------------------------------------------------------------------------
 
-    int total() const { return m_total; }
-    int buffers() const { return m_buffers; }
-    int cached() const { return m_cached; }
-    int used() const { return m_used; }
-
-private:
-
-    int m_total;
-    int m_buffers;
-    int m_cached;
-    int m_used;
+enum class InterfaceType565
+{
+    FRAME_BUFFER_565,
+    KMSDRM_DUMB_BUFFER_565,
 };
 
 //-------------------------------------------------------------------------
 
-class MemoryTrace
-:
-    public TraceStack
-{
-public:
+std::unique_ptr<Interface565>
+createInterface565(
+    InterfaceType565 type,
+    const std::string& device);
 
-    MemoryTrace(
-        int width,
-        int traceHeight,
-        int fontHeight,
-        int yPosition,
-        int gridHeight = 20);
+//-------------------------------------------------------------------------
 
-    void update(time_t now, raspifb16::Interface565Font& font) override;
-};
+} // namespace raspifb16
 
 //-------------------------------------------------------------------------
 

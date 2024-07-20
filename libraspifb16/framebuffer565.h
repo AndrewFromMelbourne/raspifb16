@@ -75,39 +75,12 @@ public:
 
     bool hideCursor();
 
-    void clear(const RGB565& rgb) override { clear(rgb.get565()); }
-    void clear(uint16_t rgb = 0) override;
-
-    bool
-    setPixelRGB(
-        const Interface565Point& p,
-        const RGB565& rgb) override
-    {
-        return setPixel(p, rgb.get565());
-    }
-
-    bool setPixel(const Interface565Point& p, uint16_t rgb) override;
-
-    std::optional<RGB565> getPixelRGB(const Interface565Point& p) const override;
-    std::optional<uint16_t> getPixel(const Interface565Point& p) const override;
-
-    bool putImage(const Interface565Point& p, const Image565& image) const;
+    uint16_t* getBuffer() override { return m_fbp; };
+    const uint16_t* getBuffer() const override { return m_fbp; };
+    int getLineLengthPixels() const override { return m_lineLengthPixels; };
+    size_t offset(const Interface565Point& p) const override;
 
 private:
-
-    bool
-    putImagePartial(
-        const Interface565Point& p,
-        const Image565& image) const;
-
-    bool
-    validPixel(const Interface565Point& p) const
-    {
-        return (p.x() >= 0) and
-               (p.y() >= 0) and
-               (p.x() < static_cast<int>(m_vinfo.xres)) and
-               (p.y() < static_cast<int>(m_vinfo.yres));
-    }
 
     FileDescriptor m_consolefd;
 

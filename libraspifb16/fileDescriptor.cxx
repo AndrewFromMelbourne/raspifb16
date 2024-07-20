@@ -31,7 +31,7 @@
 
 //-------------------------------------------------------------------------
 
-raspifb16::FileDescriptor:: FileDescriptor(
+raspifb16::FileDescriptor::FileDescriptor(
     int fd,
     CloseIfFunction close_if)
 :
@@ -42,7 +42,7 @@ raspifb16::FileDescriptor:: FileDescriptor(
 
 //-------------------------------------------------------------------------
 
-raspifb16::FileDescriptor:: ~FileDescriptor()
+raspifb16::FileDescriptor::~FileDescriptor()
 {
     closeFd();
 }

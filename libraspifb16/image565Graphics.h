@@ -45,15 +45,15 @@ namespace raspifb16
 void
 box(
     Interface565& image,
-    const Image565Point& p1,
-    const Image565Point& p2,
+    const Interface565Point& p1,
+    const Interface565Point& p2,
     uint16_t rgb);
 
 inline void
 box(
     Interface565& image,
-    const Image565Point& p1,
-    const Image565Point& p2,
+    const Interface565Point& p1,
+    const Interface565Point& p2,
     const RGB565& rgb)
 {
     box(image, p1, p2, rgb.get565());
@@ -64,15 +64,15 @@ box(
 void
 boxFilled(
     Interface565& image,
-    const Image565Point& p1,
-    const Image565Point& p2,
+    const Interface565Point& p1,
+    const Interface565Point& p2,
     uint16_t rgb);
 
 inline void
 boxFilled(
     Interface565& image,
-    const Image565Point& p1,
-    const Image565Point& p2,
+    const Interface565Point& p1,
+    const Interface565Point& p2,
     const RGB565& rgb)
 {
     boxFilled(image, p1, p2, rgb.get565());
@@ -83,15 +83,15 @@ boxFilled(
 void
 line(
     Interface565& image,
-    const Image565Point& p1,
-    const Image565Point& p2,
+    const Interface565Point& p1,
+    const Interface565Point& p2,
     uint16_t rgb);
 
 inline void
 line(
     Interface565& image,
-    const Image565Point& p1,
-    const Image565Point& p2,
+    const Interface565Point& p1,
+    const Interface565Point& p2,
     const RGB565& rgb)
 {
     line(image, p1, p2, rgb.get565());

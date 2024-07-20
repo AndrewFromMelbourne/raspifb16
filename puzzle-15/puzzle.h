@@ -30,8 +30,8 @@
 #include <array>
 #include <cstdint>
 
-#include "framebuffer565.h"
 #include "image565.h"
+#include "interface565.h"
 #include "joystick.h"
 
 #include "images.h"
@@ -52,7 +52,7 @@ public:
 
     void init();
     bool update(raspifb16::Joystick& js);
-    void draw(raspifb16::FrameBuffer565& fb);
+    void draw(raspifb16::Interface565& fb);
 
 private:
 

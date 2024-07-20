@@ -49,10 +49,11 @@
 #include <sys/types.h>
 
 #include "image565Font8x16.h"
+#include "image565FreeType.h"
 
 #include "cpuTrace.h"
 #include "dynamicInfo.h"
-#include "framebuffer565.h"
+#include "interface565Factory.h"
 #include "memoryTrace.h"
 #include "networkTrace.h"
 
@@ -62,8 +63,6 @@ namespace
 {
 volatile static std::sig_atomic_t run{1};
 volatile static std::sig_atomic_t display{1};
-
-const std::string defaultDevice{"/dev/fb1"};
 }
 
 //-------------------------------------------------------------------------
@@ -143,9 +142,10 @@ printUsage(
     os << "Usage: " << name << " <options>\n";
     os << "\n";
     os << "    --daemon,-D - start in the background as a daemon\n";
-    os << "    --device,-d - framebuffer device to use";
-    os << " (default is " << defaultDevice << ")\n";
+    os << "    --device,-d - device to use\n";
+    os << "    --font,-f - font file to use\n";
     os << "    --help,-h - print usage and exit\n";
+    os << "    --kmsdrm,-k - use KMS/DRM dumb buffer\n";
     os << "    --off,-o - do not display at start\n";
     os << "    --pidfile,-p <pidfile> - create and lock PID file";
     os << " (if being run as a daemon)\n";
@@ -185,19 +185,23 @@ main(
     int argc,
     char *argv[])
 {
-    std::string device{defaultDevice};
+    std::string device{};
     std::string program{basename(argv[0])};
     std::string pidfile{};
     bool isDaemon{false};
+    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
+    std::string font{};
 
     //---------------------------------------------------------------------
 
-    static const char* sopts = "d:hp:D";
+    static const char* sopts = "d:f:hp:kD";
     static option lopts[] =
     {
         { "daemon", no_argument, nullptr, 'D' },
         { "device", required_argument, nullptr, 'd' },
+        { "font", required_argument, nullptr, 'f' },
         { "help", no_argument, nullptr, 'h' },
+        { "kmsdrm", no_argument, nullptr, 'k' },
         { "off", no_argument, nullptr, 'o' },
         { "pidfile", required_argument, nullptr, 'p' },
         { nullptr, no_argument, nullptr, 0 }
@@ -215,10 +219,22 @@ main(
 
             break;
 
+        case 'f':
+
+            font = optarg;
+
+            break;
+
         case 'h':
 
             printUsage(std::cout, program);
             ::exit(EXIT_SUCCESS);
+
+            break;
+
+        case 'k':
+
+            interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
 
             break;
 
@@ -317,15 +333,29 @@ main(
 
     try
     {
-        raspifb16::FrameBuffer565 fb{device};
+        auto fb{raspifb16::createInterface565(interfaceType, device)};
 
-        fb.clear(raspifb16::RGB565{0, 0, 0});
+        fb->clear(raspifb16::RGB565{0, 0, 0});
 
         //-----------------------------------------------------------------
 
-        raspifb16::Image565Font8x16 font;
+        std::unique_ptr<raspifb16::Interface565Font> ft{std::make_unique<raspifb16::Image565Font8x16>()};
 
-        const int traceHeight = (fb.getHeight() == 240) ? 80 : 100;
+        if (not font.empty())
+        {
+            try
+            {
+                ft = std::make_unique<raspifb16::Image565FreeType>(font, 16);
+            }
+            catch (std::exception& error)
+            {
+                std::cerr << "Warning: " << error.what() << "\n";
+            }
+        }
+
+        //-----------------------------------------------------------------
+
+        const int traceHeight = (fb->getHeight() == 240) ? 80 : 100;
         const int gridHeight = traceHeight / 5;
 
         using Panels = std::vector<std::unique_ptr<Panel>>;
@@ -345,30 +375,30 @@ main(
         };
 
         panels.push_back(
-            std::make_unique<DynamicInfo>(fb.getWidth(),
-                                          font.getPixelHeight(),
+            std::make_unique<DynamicInfo>(fb->getWidth(),
+                                          ft->getPixelHeight(),
                                           panelTop(panels)));
 
         panels.push_back(
-            std::make_unique<CpuTrace>(fb.getWidth(),
+            std::make_unique<CpuTrace>(fb->getWidth(),
                                        traceHeight,
-                                       font.getPixelHeight(),
+                                       ft->getPixelHeight(),
                                        panelTop(panels),
                                        gridHeight));
 
         panels.push_back(
-            std::make_unique<MemoryTrace>(fb.getWidth(),
+            std::make_unique<MemoryTrace>(fb->getWidth(),
                                           traceHeight,
-                                          font.getPixelHeight(),
+                                          ft->getPixelHeight(),
                                           panelTop(panels),
                                           gridHeight));
 
-        if (fb.getHeight() >= 400)
+        if (fb->getHeight() >= 400)
         {
             panels.push_back(
-                std::make_unique<NetworkTrace>(fb.getWidth(),
+                std::make_unique<NetworkTrace>(fb->getWidth(),
                                                traceHeight,
-                                               font.getPixelHeight(),
+                                               ft->getPixelHeight(),
                                                panelTop(panels),
                                                gridHeight));
         }
@@ -377,7 +407,7 @@ main(
 
         for (auto& panel : panels)
         {
-            panel->init(font);
+            panel->init(*ft);
         }
 
         //-----------------------------------------------------------------
@@ -393,18 +423,18 @@ main(
 
             for (auto& panel : panels)
             {
-                panel->update(now_t, font);
+                panel->update(now_t, *ft);
 
                 if (display)
                 {
-                    panel->show(fb);
+                    panel->show(*fb);
                 }
             }
 
             std::this_thread::sleep_for(oneSecond);
         }
 
-        fb.clear();
+        fb->clear();
     }
     catch (std::exception& error)
     {

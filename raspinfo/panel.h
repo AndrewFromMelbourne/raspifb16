@@ -31,7 +31,7 @@
 
 #include <cstdint>
 
-#include "framebuffer565.h"
+#include "interface565.h"
 #include "interface565Font.h"
 #include "image565.h"
 
@@ -58,7 +58,7 @@ public:
     raspifb16::Image565& getImage() { return m_image; }
     const raspifb16::Image565& getImage() const { return m_image; }
 
-    void show(const raspifb16::FrameBuffer565& fb) const;
+    void show(raspifb16::Interface565& fb) const;
     virtual void init(raspifb16::Interface565Font& font) = 0;
     virtual void update(time_t now, raspifb16::Interface565Font& font) = 0;
 

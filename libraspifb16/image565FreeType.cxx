@@ -120,9 +120,9 @@ Image565FreeType::setPixelSize(
 
 //-------------------------------------------------------------------------
 
-FontPoint
+Interface565Point
 Image565FreeType::drawChar(
-    const Image565Point& p,
+    const Interface565Point& p,
     uint8_t c,
     const RGB565& rgb,
     Interface565& image)
@@ -132,9 +132,9 @@ Image565FreeType::drawChar(
 
 //-------------------------------------------------------------------------
 
-FontPoint
+Interface565Point
 Image565FreeType::drawChar(
-    const Image565Point& p,
+    const Interface565Point& p,
     uint8_t c,
     uint16_t rgb,
     Interface565& image)
@@ -144,14 +144,14 @@ Image565FreeType::drawChar(
 
 //-------------------------------------------------------------------------
 
-FontPoint
+Interface565Point
 Image565FreeType::drawWideChar(
-    const Image565Point& p,
+    const Interface565Point& p,
     uint32_t c,
     const RGB565& rgb,
     Interface565& image)
 {
-    FontPoint position{p};
+    Interface565Point position{p};
     position.setY(position.y() + (m_face->size->metrics.ascender >> 6));
     const auto glyph_index{FT_Get_Char_Index(m_face, c)};
 
@@ -174,16 +174,16 @@ Image565FreeType::drawWideChar(
 
 //-------------------------------------------------------------------------
 
-FontPoint
+Interface565Point
 Image565FreeType::drawString(
-    const Image565Point& p,
+    const Interface565Point& p,
     const char* string,
     const RGB565& rgb,
     Interface565& image)
 {
     if (not string)
     {
-        return FontPoint{p};
+        return Interface565Point{p};
     }
 
     return drawString(p, std::string(string), rgb, image);
@@ -191,9 +191,9 @@ Image565FreeType::drawString(
 
 //-------------------------------------------------------------------------
 
-FontPoint
+Interface565Point
 Image565FreeType::drawString(
-    const Image565Point& p,
+    const Interface565Point& p,
     const char* string,
     uint16_t rgb,
     Interface565& image)
@@ -203,14 +203,14 @@ Image565FreeType::drawString(
 
 //-------------------------------------------------------------------------
 
-FontPoint
+Interface565Point
 Image565FreeType::drawString(
-    const Image565Point& p,
+    const Interface565Point& p,
     const std::string& string,
     const RGB565& rgb,
     Interface565& image)
 {
-    FontPoint position{p};
+    Interface565Point position{p};
     position.setY(position.y() + (m_face->size->metrics.ascender >> 6));
 
     auto slot{m_face->glyph};
@@ -272,9 +272,9 @@ Image565FreeType::drawString(
 
 //-------------------------------------------------------------------------
 
-FontPoint
+Interface565Point
 Image565FreeType::drawString(
-    const Image565Point& p,
+    const Interface565Point& p,
     const std::string& string,
     uint16_t rgb,
     Interface565& image)
@@ -299,7 +299,7 @@ Image565FreeType::drawChar(
         {
             if (row[i])
             {
-                const Image565Point p{static_cast<int>(i + xOffset),
+                const Interface565Point p{static_cast<int>(i + xOffset),
                                       static_cast<int>(j + yOffset)};
                 auto background{image.getPixelRGB(p)};
 

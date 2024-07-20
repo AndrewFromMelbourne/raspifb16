@@ -46,10 +46,6 @@ namespace raspifb16
 
 //-------------------------------------------------------------------------
 
-using FontPoint = Point<int>;
-
-//-------------------------------------------------------------------------
-
 class RGB565;
 
 //-------------------------------------------------------------------------
@@ -82,51 +78,51 @@ public:
 
 	bool setPixelSize(int pixelSize);
 
-    FontPoint
+    Interface565Point
     drawChar(
-        const Image565Point& p,
+        const Interface565Point& p,
         uint8_t c,
         const RGB565& rgb,
         Interface565& image) override;
 
-    FontPoint
+    Interface565Point
     drawChar(
-        const Image565Point& p,
+        const Interface565Point& p,
         uint8_t c,
         uint16_t rgb,
         Interface565& image) override;
 
-    FontPoint
+    Interface565Point
     drawWideChar(
-        const Image565Point& p,
+        const Interface565Point& p,
         uint32_t c,
         const RGB565& rgb,
         Interface565& image);
 
-    FontPoint
+    Interface565Point
     drawString(
-        const Image565Point& p,
+        const Interface565Point& p,
         const char* string,
         const RGB565& rgb,
         Interface565& image) override;
 
-    FontPoint
+    Interface565Point
     drawString(
-        const Image565Point& p,
+        const Interface565Point& p,
         const char* string,
         uint16_t rgb,
         Interface565& image) override;
 
-    FontPoint
+    Interface565Point
     drawString(
-        const Image565Point& p,
+        const Interface565Point& p,
         const std::string& string,
         const RGB565& rgb,
         Interface565& image) override;
 
-    FontPoint
+    Interface565Point
     drawString(
-        const Image565Point& p,
+        const Interface565Point& p,
         const std::string& string,
         uint16_t rgb,
         Interface565& image) override;

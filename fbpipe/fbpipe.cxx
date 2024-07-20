@@ -32,21 +32,14 @@
 #include <iostream>
 #include <system_error>
 
-#include "framebuffer565.h"
 #include "image565.h"
 #include "image565Font8x16.h"
+#include "interface565Factory.h"
 #include "point.h"
 
 //-------------------------------------------------------------------------
 
 using namespace raspifb16;
-
-//-------------------------------------------------------------------------
-
-namespace
-{
-const std::string defaultDevice{"/dev/fb1"};
-}
 
 //-------------------------------------------------------------------------
 
@@ -58,9 +51,9 @@ printUsage(
     os << "\n";
     os << "Usage: " << name << " <options>\n";
     os << "\n";
-    os << "    --device,-d - dri device to use";
-    os << " (default is " << defaultDevice << ")\n";
+    os << "    --device,-d - device to use\n";
     os << "    --help,-h - print usage and exit\n";
+    os << "    --kmsdrm,-k - use KMS/DRM dumb buffer\n";
     os << "\n";
 }
 
@@ -71,16 +64,18 @@ main(
     int argc,
     char *argv[])
 {
-    std::string device = defaultDevice;
-    std::string program = basename(argv[0]);
+    std::string device{};
+    std::string program{basename(argv[0])};
+    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------
 
-    static const char* sopts = "d:h";
+    static const char* sopts = "d:hk";
     static option lopts[] =
     {
         { "device", required_argument, nullptr, 'd' },
         { "help", no_argument, nullptr, 'h' },
+        { "kmsdrm", no_argument, nullptr, 'k' },
         { nullptr, no_argument, nullptr, 0 }
     };
 
@@ -103,6 +98,12 @@ main(
 
             break;
 
+        case 'k':
+
+            interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
+
+            break;
+
         default:
 
             printUsage(std::cerr, program);
@@ -119,14 +120,14 @@ main(
         Image565Font8x16 font;
         const RGB565 black{0, 0, 0};
         const RGB565 white{255, 255, 255};
-        FrameBuffer565 fb{device};
+        auto fb{raspifb16::createInterface565(interfaceType, device)};
 
-        fb.clear(black);
+        fb->clear(black);
 
-        const int columns = fb.getWidth() / font.getPixelWidth();
-        const int rows = fb.getHeight() / font.getPixelHeight();
+        const int columns = fb->getWidth() / font.getPixelWidth();
+        const int rows = fb->getHeight() / font.getPixelHeight();
 
-        Image565 image{fb.getWidth(), fb.getHeight()};
+        Image565 image{fb->getWidth(), fb->getHeight()};
         image.clear(black);
 
         //-----------------------------------------------------------------
@@ -156,7 +157,7 @@ main(
                 y += font.getPixelHeight();
             }
 
-            fb.putImage(Interface565Point{0, 0}, image);
+            fb->putImage(Interface565Point{0, 0}, image);
         }
     }
     catch (std::exception& error)

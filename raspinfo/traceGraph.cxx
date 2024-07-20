@@ -74,8 +74,8 @@ draw()
 {
     boxFilled(
         getImage(),
-        raspifb16::Image565Point(0, 0),
-        raspifb16::Image565Point(getImage().getWidth() - 1, m_traceHeight),
+        raspifb16::Interface565Point(0, 0),
+        raspifb16::Interface565Point(getImage().getWidth() - 1, m_traceHeight),
         sc_background);
 
     //---------------------------------------------------------------------
@@ -116,8 +116,8 @@ draw()
 
             line(
                 getImage(),
-                raspifb16::Image565Point(i1, m_traceHeight - y1),
-                raspifb16::Image565Point(i2, m_traceHeight - y2),
+                raspifb16::Interface565Point(i1, m_traceHeight - y1),
+                raspifb16::Interface565Point(i2, m_traceHeight - y2),
                 trace.m_traceColour);
         }
     }

@@ -25,11 +25,172 @@
 //
 //-------------------------------------------------------------------------
 
+#include "image565.h"
 #include "interface565.h"
 
 //-------------------------------------------------------------------------
 
-raspifb16::Interface565:: ~Interface565()
+raspifb16::Interface565::Interface565()
 {
 }
 
+//-------------------------------------------------------------------------
+
+raspifb16::Interface565::~Interface565()
+{
+}
+
+//-------------------------------------------------------------------------
+
+void
+raspifb16::Interface565::clear(uint16_t rgb)
+{
+    auto buffer{getBufferStart()};
+    const auto length{getLineLengthPixels() * getHeight()};
+
+    std::fill(buffer, buffer + length, rgb);
+}
+
+//-------------------------------------------------------------------------
+
+bool
+raspifb16::Interface565::setPixel(
+    const Interface565Point& p,
+    uint16_t rgb)
+{
+    bool isValid{validPixel(p)};
+
+    if (isValid)
+    {
+        *(getBuffer() + offset(p)) = rgb;
+    }
+
+    return isValid;
+}
+
+//-------------------------------------------------------------------------
+
+std::optional<raspifb16::RGB565>
+raspifb16::Interface565::getPixelRGB(
+    const Interface565Point& p) const
+{
+    if (not validPixel(p))
+    {
+        return {};
+    }
+
+    return RGB565(*(getBuffer() + offset(p)));
+}
+
+//-------------------------------------------------------------------------
+
+std::optional<uint16_t>
+raspifb16::Interface565::getPixel(
+    const Interface565Point& p) const
+{
+    if (not validPixel(p))
+    {
+        return {};
+    }
+
+    return *(getBuffer() + offset(p));
+}
+
+
+//-------------------------------------------------------------------------
+
+bool
+raspifb16::Interface565::putImage(
+    const Interface565Point& p,
+    const Image565& image)
+{
+    if ((p.x() < 0) or
+        ((p.x() + image.getWidth()) > getWidth()))
+    {
+        return putImagePartial(p, image);
+    }
+
+    if ((p.y() < 0) or
+        ((p.y() + image.getHeight()) > getHeight()))
+    {
+        return putImagePartial(p, image);
+    }
+
+    for (int32_t j = 0 ; j < image.getHeight() ; ++j)
+    {
+        auto start = image.getRow(j);
+
+        std::copy(start,
+                  start + image.getWidth(),
+                  getBufferStart() + ((j + p.y()) * getLineLengthPixels()) + p.x());
+    }
+
+    return true;
+}
+
+//-------------------------------------------------------------------------
+
+bool
+raspifb16::Interface565::putImagePartial(
+    const Interface565Point& p,
+    const Image565& image)
+{
+    auto x = p.x();
+    auto xStart = 0;
+    auto xEnd = image.getWidth() - 1;
+
+    auto y = p.y();
+    auto yStart = 0;
+    auto yEnd = image.getHeight() - 1;
+
+    if (x < 0)
+    {
+        xStart = -x;
+        x = 0;
+    }
+
+    if ((x - xStart + image.getWidth()) > getWidth())
+    {
+        xEnd = getWidth() - 1 - (x - xStart);
+    }
+
+    if (y < 0)
+    {
+        yStart = -y;
+        y = 0;
+    }
+
+    if ((y - yStart + image.getHeight()) > getHeight())
+    {
+        yEnd = getHeight() - 1 - (y - yStart);
+    }
+
+    if ((xEnd - xStart) <= 0)
+    {
+        return false;
+    }
+
+    if ((yEnd - yStart) <= 0)
+    {
+        return false;
+    }
+
+    for (auto j = yStart ; j <= yEnd ; ++j)
+    {
+        auto start = image.getRow(j) + xStart;
+
+        std::copy(start,
+                  start + (xEnd - xStart + 1),
+                  getBufferStart() + ((j - yStart) * getLineLengthPixels()) + x);
+    }
+
+    return true;
+}
+
+//-------------------------------------------------------------------------
+
+uint16_t*
+raspifb16::Interface565::getBufferStart()
+{
+    return getBuffer() + offset(Interface565Point{0, 0});
+}

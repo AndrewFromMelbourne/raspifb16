@@ -191,7 +191,7 @@ Puzzle::update(Joystick& js)
 //-------------------------------------------------------------------------
 
 void
-Puzzle::draw(FrameBuffer565& fb)
+Puzzle::draw(Interface565& fb)
 {
     constexpr int xOffset{ 40 };
 

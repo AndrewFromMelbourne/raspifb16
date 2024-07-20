@@ -45,10 +45,6 @@ namespace raspifb16
 
 //-------------------------------------------------------------------------
 
-using Image565Point = Point<int>;
-
-//-------------------------------------------------------------------------
-
 class Image565
 :
     public Interface565
@@ -69,9 +65,9 @@ public:
     ~Image565() override = default;
 
     Image565(const Image565&) = default;
-    Image565(Image565&&) = default;
+    Image565(Image565&&) = delete;
     Image565& operator=(const Image565&) = default;
-    Image565& operator=(Image565&&) = default;
+    Image565& operator=(Image565&&) = delete;
 
     int getWidth() const override { return m_width; }
     int getHeight() const override { return m_height; }
@@ -80,36 +76,14 @@ public:
     uint8_t getNumberOfFrames() const { return m_numberOfFrames; }
     void setFrame(uint8_t frame);
 
-    void clear(const RGB565& rgb) override { clear(rgb.get565()); }
-    void clear(uint16_t rgb) override;
-
-    bool
-    setPixelRGB(
-        const Image565Point& p,
-        const RGB565& rgb)
-    {
-        return setPixel(p, rgb.get565());
-    }
-
-    bool setPixel(const Image565Point& p, uint16_t rgb) override;
-
-    std::optional<RGB565> getPixelRGB(const Image565Point& p) const override;
-    std::optional<uint16_t> getPixel(const Image565Point& p) const override;
-
     const uint16_t* getRow(int y) const;
 
+    uint16_t* getBuffer() override { return m_buffer.data(); };
+    const uint16_t* getBuffer() const override { return m_buffer.data(); };
+    int getLineLengthPixels() const override { return m_width; };
+    size_t offset(const Interface565Point& p) const override;
+
 private:
-
-    bool
-    validPixel(const Image565Point& p) const
-    {
-        return ((p.x() >= 0) and
-                (p.y() >= 0) and
-                (p.x() < m_width) and
-                (p.y() < m_height));
-    }
-
-    size_t offset(const Image565Point& p) const;
 
     int m_width{};
     int m_height{};

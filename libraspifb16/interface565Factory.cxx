@@ -2,7 +2,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Andrew Duncan
+// Copyright (c) 2024 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -25,54 +25,64 @@
 //
 //-------------------------------------------------------------------------
 
-#pragma once
+#include <system_error>
+
+#include "interface565Factory.h"
+
+#ifdef LIBDRM_INSTALLED
+#include "dumbbuffer565.h"
+#endif
+
+#include "framebuffer565.h"
 
 //-------------------------------------------------------------------------
 
-#include <cstdint>
-#include <vector>
-
-#include "panel.h"
-#include "traceStack.h"
-
-//-------------------------------------------------------------------------
-
-class MemoryStats
+namespace
 {
-public:
-
-    MemoryStats();
-
-    int total() const { return m_total; }
-    int buffers() const { return m_buffers; }
-    int cached() const { return m_cached; }
-    int used() const { return m_used; }
-
-private:
-
-    int m_total;
-    int m_buffers;
-    int m_cached;
-    int m_used;
-};
+const std::string defaultFrameBufferDevice{"/dev/fb1"};
+}
 
 //-------------------------------------------------------------------------
 
-class MemoryTrace
-:
-    public TraceStack
+namespace raspifb16
 {
-public:
-
-    MemoryTrace(
-        int width,
-        int traceHeight,
-        int fontHeight,
-        int yPosition,
-        int gridHeight = 20);
-
-    void update(time_t now, raspifb16::Interface565Font& font) override;
-};
 
 //-------------------------------------------------------------------------
 
+std::unique_ptr<Interface565>
+createInterface565(
+    InterfaceType565 type,
+    const std::string& device)
+{
+    std::string interfaceDevice = device;
+
+    switch (type)
+    {
+    case InterfaceType565::FRAME_BUFFER_565:
+
+        if (interfaceDevice.empty())
+        {
+            interfaceDevice = defaultFrameBufferDevice;
+        }
+
+        return std::make_unique<FrameBuffer565>(interfaceDevice);
+
+        break;
+
+    case InterfaceType565::KMSDRM_DUMB_BUFFER_565:
+
+#ifdef LIBDRM_INSTALLED
+        return std::make_unique<DumbBuffer565>(interfaceDevice);
+#else
+        throw std::invalid_argument("There is no KMSDRM library installed");
+#endif
+
+        break;
+    };
+
+    return nullptr;
+}
+
+//-------------------------------------------------------------------------
+
+} // namespace raspifb16

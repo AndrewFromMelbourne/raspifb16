@@ -84,13 +84,13 @@ draw()
                 if (((j % m_gridHeight) == 0) or (m_time[i] == 0))
                 {
                     getImage().setPixelRGB(
-                        raspifb16::Image565Point{i, j--},
+                        raspifb16::Interface565Point{i, j--},
                         trace.m_gridColour);
                 }
                 else
                 {
                     getImage().setPixelRGB(
-                        raspifb16::Image565Point{i, j--},
+                        raspifb16::Interface565Point{i, j--},
                         trace.m_traceColour);
                 }
             }
@@ -101,13 +101,13 @@ draw()
             if (((j % m_gridHeight) == 0) or (m_time[i] == 0))
             {
                 getImage().setPixelRGB(
-                    raspifb16::Image565Point{i, j},
+                    raspifb16::Interface565Point{i, j},
                     sc_gridColour);
             }
             else
             {
                 getImage().setPixelRGB(
-                    raspifb16::Image565Point{i, j},
+                    raspifb16::Interface565Point{i, j},
                     sc_background);
             }
         }

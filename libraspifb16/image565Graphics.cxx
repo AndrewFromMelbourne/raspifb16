@@ -38,8 +38,8 @@ void
 raspifb16::
 box(
     Interface565& image,
-    const Image565Point& p1,
-    const Image565Point& p2,
+    const Interface565Point& p1,
+    const Interface565Point& p2,
     uint16_t rgb)
 {
     verticalLine(image, p1.x(), p1.y(), p2.y(), rgb);
@@ -54,8 +54,8 @@ void
 raspifb16::
 boxFilled(
     Interface565& image,
-    const Image565Point& p1,
-    const Image565Point& p2,
+    const Interface565Point& p1,
+    const Interface565Point& p2,
     uint16_t rgb)
 {
     const auto sign_y = (p1.y() <= p2.y()) ? 1 : -1;
@@ -76,8 +76,8 @@ void
 raspifb16::
 line(
     Interface565& image,
-    const Image565Point& p1,
-    const Image565Point& p2,
+    const Interface565Point& p1,
+    const Interface565Point& p2,
     uint16_t rgb)
 {
     if (p1.y() == p2.y())
@@ -121,7 +121,7 @@ line(
                     y += sign_y;
                 }
 
-                image.setPixel(Image565Point(x, y), rgb);
+                image.setPixel(Interface565Point(x, y), rgb);
             }
         }
         else
@@ -144,7 +144,7 @@ line(
                     x += sign_x;
                 }
 
-                image.setPixel(Image565Point(x, y), rgb);
+                image.setPixel(Interface565Point(x, y), rgb);
             }
         }
     }
@@ -164,12 +164,12 @@ horizontalLine(
     const auto sign_x = (x1 <= x2) ? 1 : -1;
     auto x = x1;
 
-    image.setPixel(Image565Point(x, y), rgb);
+    image.setPixel(Interface565Point(x, y), rgb);
 
     while (x != x2)
     {
         x += sign_x;
-        image.setPixel(Image565Point(x, y), rgb);
+        image.setPixel(Interface565Point(x, y), rgb);
     }
 }
 
@@ -187,12 +187,12 @@ verticalLine(
     const auto sign_y = (y1 <= y2) ? 1 : -1;
     auto y = y1;
 
-    image.setPixel(Image565Point(x, y), rgb);
+    image.setPixel(Interface565Point(x, y), rgb);
 
     while (y != y2)
     {
         y += sign_y;
-        image.setPixel(Image565Point(x, y), rgb);
+        image.setPixel(Interface565Point(x, y), rgb);
     }
 }
 

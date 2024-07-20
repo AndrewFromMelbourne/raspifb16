@@ -29,7 +29,7 @@
 
 //-------------------------------------------------------------------------
 
-raspifb16::RGB565:: RGB565(
+raspifb16::RGB565::RGB565(
     uint8_t red,
     uint8_t green,
     uint8_t blue)
@@ -41,7 +41,7 @@ raspifb16::RGB565:: RGB565(
 
 //-------------------------------------------------------------------------
 
-raspifb16::RGB565:: RGB565(
+raspifb16::RGB565::RGB565(
     uint16_t rgb)
 :
     m_rgb{rgb}
@@ -51,7 +51,7 @@ raspifb16::RGB565:: RGB565(
 //-------------------------------------------------------------------------
 
 uint8_t
-raspifb16::RGB565:: getRed() const
+raspifb16::RGB565::getRed() const
 {
     auto r5 = (m_rgb >> 11) & 0x1F;
 
@@ -61,7 +61,7 @@ raspifb16::RGB565:: getRed() const
 //-------------------------------------------------------------------------
 
 uint8_t
-raspifb16::RGB565:: getGreen() const
+raspifb16::RGB565::getGreen() const
 {
     auto g6 = (m_rgb >> 5) & 0x3F;
 
@@ -71,7 +71,7 @@ raspifb16::RGB565:: getGreen() const
 //-------------------------------------------------------------------------
 
 uint8_t
-raspifb16::RGB565:: getBlue() const
+raspifb16::RGB565::getBlue() const
 {
     auto b5 = m_rgb & 0x1F;
 
@@ -81,7 +81,7 @@ raspifb16::RGB565:: getBlue() const
 //-------------------------------------------------------------------------
 
 void
-raspifb16::RGB565:: setRGB(
+raspifb16::RGB565::setRGB(
     uint8_t red,
     uint8_t green,
     uint8_t blue)
@@ -92,7 +92,7 @@ raspifb16::RGB565:: setRGB(
 //-------------------------------------------------------------------------
 
 raspifb16::RGB565
-raspifb16::RGB565:: blend(
+raspifb16::RGB565::blend(
     uint8_t alpha,
     const RGB565& a,
     const RGB565& b)

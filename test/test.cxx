@@ -25,20 +25,24 @@
 //
 //-------------------------------------------------------------------------
 
+#include <getopt.h>
+#include <libgen.h>
+
+#include <chrono>
 #include <iostream>
 #include <system_error>
+#include <thread>
 
-#include <unistd.h>
-
-#include "framebuffer565.h"
 #include "image565.h"
 #include "image565Font8x16.h"
 #include "image565Graphics.h"
+#include "interface565Factory.h"
 #include "point.h"
 
 //-------------------------------------------------------------------------
 
 using namespace raspifb16;
+using namespace std::chrono_literals;
 
 //-------------------------------------------------------------------------
 
@@ -54,14 +58,84 @@ using namespace raspifb16;
 
 //-------------------------------------------------------------------------
 
-int
-main()
+void
+printUsage(
+    std::ostream& os,
+    const std::string& name)
 {
+    os << "\n";
+    os << "Usage: " << name << " <options>\n";
+    os << "\n";
+    os << "    --device,-d - device to use\n";
+    os << "    --help,-h - print usage and exit\n";
+    os << "    --kmsdrm,-k - use KMS/DRM dumb buffer\n";
+    os << "\n";
+}
+
+//-------------------------------------------------------------------------
+
+int
+main(
+    int argc,
+    char *argv[])
+{
+    std::string device{};
+    std::string program{basename(argv[0])};
+    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};\
+
+    //---------------------------------------------------------------------
+
+    static const char* sopts = "d:hk";
+    static option lopts[] =
+    {
+        { "device", required_argument, nullptr, 'd' },
+        { "font", required_argument, nullptr, 'f' },
+        { "help", no_argument, nullptr, 'h' },
+        { "kmsdrm", no_argument, nullptr, 'k' },
+        { nullptr, no_argument, nullptr, 0 }
+    };
+
+    int opt{};
+
+    while ((opt = ::getopt_long(argc, argv, sopts, lopts, nullptr)) != -1)
+    {
+        switch (opt)
+        {
+        case 'd':
+
+            device = optarg;
+
+            break;
+
+        case 'h':
+
+            printUsage(std::cout, program);
+            ::exit(EXIT_SUCCESS);
+
+            break;
+
+        case 'k':
+
+            interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
+
+            break;
+
+        default:
+
+            printUsage(std::cerr, program);
+            ::exit(EXIT_FAILURE);
+
+            break;
+        }
+    }
+
+    //---------------------------------------------------------------------
+
     try
     {
         Image565Font8x16 font;
-        FrameBuffer565 fb{"/dev/fb1"};
-        fb.clear();
+        auto fb{raspifb16::createInterface565(interfaceType, device)};
+        fb->clear();
 
         //-----------------------------------------------------------------
 
@@ -73,25 +147,25 @@ main()
         Image565 image{48, 48};
         image.clear(red);
 
-        auto rgb = image.getPixelRGB(Image565Point(0,0));
+        auto rgb = image.getPixelRGB(Interface565Point(0,0));
 
         TEST((rgb), "Image565::getPixelRGB()");
         TEST((*rgb == red), "Image565::getPixelRGB()");
 
         line(image,
-             Image565Point(0,0),
-             Image565Point(47,47),
+             Interface565Point(0,0),
+             Interface565Point(47,47),
              green);
 
         Interface565Point imageLocation
         {
-            (fb.getWidth() - image.getWidth()) / 2,
-            (fb.getHeight() - image.getHeight()) / 2
+            (fb->getWidth() - image.getWidth()) / 2,
+            (fb->getHeight() - image.getHeight()) / 2
         };
 
-        fb.putImage(imageLocation, image);
+        fb->putImage(imageLocation, image);
 
-        rgb = fb.getPixelRGB(imageLocation);
+        rgb = fb->getPixelRGB(imageLocation);
 
         TEST((rgb), "FrameBuffer565::getPixelRGB()");
         TEST((*rgb == green), "FrameBuffer565::getPixelRGB()");
@@ -106,23 +180,23 @@ main()
 
         Interface565Point textLocation
         {
-            (fb.getWidth() - textImage.getWidth()) / 2,
-            (fb.getHeight() - textImage.getHeight()) / 3
+            (fb->getWidth() - textImage.getWidth()) / 2,
+            (fb->getHeight() - textImage.getHeight()) / 3
         };
 
         font.drawString(
-            Image565Point{0, 0},
+            Interface565Point{0, 0},
             "This is a test string",
             white,
             textImage);
 
-        fb.putImage(textLocation, textImage);
+        fb->putImage(textLocation, textImage);
 
         //-----------------------------------------------------------------
 
-        sleep(10);
+        std::this_thread::sleep_for(10s);
 
-        fb.clear();
+        fb->clear();
     }
     catch (std::exception& error)
     {

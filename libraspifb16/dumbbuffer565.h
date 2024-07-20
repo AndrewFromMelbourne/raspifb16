@@ -2,7 +2,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2023 Andrew Duncan
+// Copyright (c) 2024 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -30,9 +30,12 @@
 //-------------------------------------------------------------------------
 
 #include <cstdint>
-#include <optional>
+#include <string>
 
+#include "drmMode.h"
 #include "point.h"
+#include "fileDescriptor.h"
+#include "interface565.h"
 #include "rgb565.h"
 
 //-------------------------------------------------------------------------
@@ -42,69 +45,54 @@ namespace raspifb16
 
 //-------------------------------------------------------------------------
 
-using Interface565Point = Point<int>;
+using Interface565Point = Point<int32_t>;
+
+//-------------------------------------------------------------------------
+
 class Image565;
 
 //-------------------------------------------------------------------------
 
-class Interface565
+class DumbBuffer565
+:
+    public Interface565
 {
 public:
 
-    static constexpr auto BytesPerPixel{2};
+    static constexpr size_t bytesPerPixel{2};
 
-    Interface565();
-    virtual ~Interface565() = 0;
+    explicit DumbBuffer565(const std::string& device = "");
 
-    Interface565(const Interface565&) = default;
-    Interface565(Interface565&&) = delete;
+    ~DumbBuffer565() override;
 
-    Interface565& operator=(const Interface565&) = default;
-    Interface565& operator=(Interface565&&) = delete;
+    DumbBuffer565(const DumbBuffer565& fb) = delete;
+    DumbBuffer565& operator=(const DumbBuffer565& fb) = delete;
 
-    virtual int getWidth() const = 0;
-    virtual int getHeight() const = 0;
+    DumbBuffer565(DumbBuffer565&& fb) = delete;
+    DumbBuffer565& operator=(DumbBuffer565&& fb) = delete;
 
-    void clear(const RGB565& rgb) { clear(rgb.get565()); }
-    void clear(uint16_t rgb = 0);
+    int getWidth() const override { return m_width; }
+    int getHeight() const override { return m_height; }
 
-    bool
-    setPixelRGB(
-        const Interface565Point& p,
-        const RGB565& rgb)
-    {
-        return setPixel(p, rgb.get565());
-    }
-
-    bool setPixel(const Interface565Point& p, uint16_t rgb);
-
-    std::optional<RGB565> getPixelRGB(const Interface565Point& p) const;
-    std::optional<uint16_t> getPixel(const Interface565Point& p) const;
-
-    bool putImage(const Interface565Point&, const Image565&);
-
-    bool
-    validPixel(const Interface565Point& p) const
-    {
-        return (p.x() >= 0) and
-               (p.y() >= 0) and
-               (p.x() < getWidth()) and
-               (p.y() < getHeight());
-    }
-
-    virtual uint16_t* getBuffer() = 0;
-    virtual const uint16_t* getBuffer() const = 0;
-    virtual int getLineLengthPixels() const = 0;
-    virtual size_t offset(const Interface565Point& p) const = 0;
+    uint16_t* getBuffer() override { return m_fbp; };
+    const uint16_t* getBuffer() const override { return m_fbp; };
+    int getLineLengthPixels() const override { return m_lineLengthPixels; };
+    size_t offset(const Interface565Point& p) const override;
 
 private:
 
-    bool
-    putImagePartial(
-        const Interface565Point& p,
-        const Image565& image);
+    int m_width;
+    int m_height;
+    int m_length;
+    int m_lineLengthPixels;
 
-    uint16_t* getBufferStart();
+    FileDescriptor m_fd;
+    uint16_t* m_fbp;
+    uint32_t m_fbId;
+    uint32_t m_fbHandle;
+
+    uint32_t m_connectorId;
+    drm::drmModeCrtc_ptr m_originalCrtc;
 };
 
 //-------------------------------------------------------------------------

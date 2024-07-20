@@ -33,7 +33,7 @@ using size_type = std::vector<uint16_t>::size_type;
 
 //-------------------------------------------------------------------------
 
-raspifb16::Image565:: Image565(
+raspifb16::Image565::Image565(
     int width,
     int height,
     uint8_t numberOfFrames)
@@ -48,7 +48,7 @@ raspifb16::Image565:: Image565(
 
 //-------------------------------------------------------------------------
 
-raspifb16::Image565:: Image565(
+raspifb16::Image565::Image565(
     int width,
     int height,
     const std::vector<uint16_t>& buffer,
@@ -71,7 +71,7 @@ raspifb16::Image565:: Image565(
 //-------------------------------------------------------------------------
 
 void
-raspifb16::Image565:: setFrame(
+raspifb16::Image565::setFrame(
     uint8_t frame)
 {
     if (frame < m_numberOfFrames)
@@ -82,65 +82,11 @@ raspifb16::Image565:: setFrame(
 
 //-------------------------------------------------------------------------
 
-void
-raspifb16::Image565:: clear(
-    uint16_t rgb)
-{
-    std::fill(m_buffer.begin(), m_buffer.end(), rgb);
-}
-
-//-------------------------------------------------------------------------
-
-bool
-raspifb16::Image565:: setPixel(
-    const Image565Point& p,
-    uint16_t rgb)
-{
-    bool isValid{validPixel(p)};
-
-    if (isValid)
-    {
-        m_buffer[offset(p)] = rgb;
-    }
-
-    return isValid;
-}
-
-//-------------------------------------------------------------------------
-
-std::optional<raspifb16::RGB565>
-raspifb16::Image565:: getPixelRGB(
-    const Image565Point& p) const
-{
-    if (not validPixel(p))
-    {
-        return {};
-    }
-
-    return RGB565(m_buffer[offset(p)]);
-}
-
-//-------------------------------------------------------------------------
-
-std::optional<uint16_t>
-raspifb16::Image565:: getPixel(
-    const Image565Point& p) const
-{
-    if (not validPixel(p))
-    {
-        return {};
-    }
-
-    return m_buffer[offset(p)];
-}
-
-//-------------------------------------------------------------------------
-
 const uint16_t*
-raspifb16::Image565:: getRow(
+raspifb16::Image565::getRow(
     int y) const
 {
-    const Image565Point p{0, y};
+    const Interface565Point p{0, y};
 
     if (validPixel(p))
     {
@@ -155,8 +101,8 @@ raspifb16::Image565:: getRow(
 //-------------------------------------------------------------------------
 
 size_t
-raspifb16::Image565:: offset(
-    const Image565Point& p) const
+raspifb16::Image565::offset(
+    const Interface565Point& p) const
 {
     return p.x() + (p.y() * m_width) + (m_frame * m_width * m_height);
 }

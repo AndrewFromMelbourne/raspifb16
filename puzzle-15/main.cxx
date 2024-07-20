@@ -31,7 +31,7 @@
 #include <csignal>
 #include <iostream>
 
-#include "framebuffer565.h"
+#include "interface565Factory.h"
 #include "joystick.h"
 #include "puzzle.h"
 
@@ -44,7 +44,6 @@ using namespace raspifb16;
 namespace
 {
 volatile static std::sig_atomic_t run{1};
-const std::string defaultDevice{"/dev/fb1"};
 const std::string defaultJoystick{"/dev/input/js0"};
 }
 
@@ -58,11 +57,11 @@ printUsage(
     os << "\n";
     os << "Usage: " << name << " <options>\n";
     os << "\n";
-    os << "    --device,-d - dri device to use";
-    os << " (default is " << defaultDevice << ")\n";
+    os << "    --device,-d - device to use\n";
     os << "    --help,-h - print usage and exit\n";
     os << "    --joystick,-j - joystick device to use";
     os << " (default is " << defaultJoystick << ")\n";
+    os << "    --kmsdrm,-k - use KMS/DRM dumb buffer\n";
     os << "\n";
 }
 
@@ -73,18 +72,20 @@ main(
     int argc,
     char *argv[])
 {
-    std::string device{defaultDevice};
+    std::string device{};
     std::string program{::basename(argv[0])};
     std::string joystick{defaultJoystick};
+    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------
 
-    static const char* sopts = "d:hj:";
+    static const char* sopts = "d:hj:k";
     static option lopts[] =
     {
         { "device", required_argument, nullptr, 'd' },
         { "help", no_argument, nullptr, 'h' },
         { "joystick", required_argument, nullptr, 'j' },
+        { "kmsdrm", no_argument, nullptr, 'k' },
         { nullptr, no_argument, nullptr, 0 }
     };
 
@@ -113,6 +114,12 @@ main(
 
             break;
 
+        case 'k':
+
+            interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
+
+            break;
+
         default:
 
             printUsage(std::cerr, program);
@@ -128,12 +135,12 @@ main(
     {
         constexpr bool block{true};
         Joystick js(joystick, block);
-        FrameBuffer565 fb(device);
-        fb.clear(RGB565{0, 0, 0});
+        auto fb{raspifb16::createInterface565(interfaceType, device)};
+        fb->clear(RGB565{0, 0, 0});
 
         Puzzle puzzle;
         puzzle.init();
-        puzzle.draw(fb);
+        puzzle.draw(*fb);
 
         //-----------------------------------------------------------------
 
@@ -147,11 +154,11 @@ main(
             }
             else if (puzzle.update(js))
             {
-                puzzle.draw(fb);
+                puzzle.draw(*fb);
             }
         }
 
-        fb.clear();
+        fb->clear();
     }
     catch (std::exception& error)
     {

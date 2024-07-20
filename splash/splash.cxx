@@ -31,9 +31,9 @@
 #include <libgen.h>
 #include <unistd.h>
 
-#include "framebuffer565.h"
 #include "image565.h"
 #include "image565Qoi.h"
+#include "interface565Factory.h"
 #include "joystick.h"
 
 //-------------------------------------------------------------------------
@@ -57,9 +57,9 @@ printUsage(
     os << "\n";
     os << "Usage: " << name << " <options>\n";
     os << "\n";
-    os << "    --device,-d - dri device to use";
-    os << " (default is " << defaultDevice << ")\n";
+    os << "    --device,-d - device to use\n";
     os << "    --help,-h - print usage and exit\n";
+    os << "    --kmsdrm,-k - use KMS/DRM dumb buffer\n";
     os << "    --qoi,-q - qoi file to display\n";
     os << "\n";
 }
@@ -71,17 +71,19 @@ main(
     int argc,
     char *argv[])
 {
-    std::string device = defaultDevice;
-    std::string program = basename(argv[0]);
-    std::string qoi;
+    std::string device{};
+    std::string program{basename(argv[0])};
+    std::string qoi{};
+    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------
 
-    static const char* sopts = "d:hq:";
+    static const char* sopts = "d:hkq:";
     static option lopts[] =
     {
         { "device", required_argument, nullptr, 'd' },
         { "help", no_argument, nullptr, 'h' },
+        { "kmsdrm", no_argument, nullptr, 'k' },
         { "qoi", required_argument, nullptr, 'q' },
         { nullptr, no_argument, nullptr, 0 }
     };
@@ -102,6 +104,12 @@ main(
 
             printUsage(std::cout, program);
             ::exit(EXIT_SUCCESS);
+
+            break;
+
+        case 'k':
+
+            interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
 
             break;
 
@@ -130,21 +138,22 @@ main(
     {
         constexpr bool block{true};
         Joystick js{block};
-        FrameBuffer565 fb{device};
-        fb.clear();
+        auto fb{raspifb16::createInterface565(interfaceType, device)};
+
+        fb->clear();
 
         auto image = readQoi(qoi);
         const Interface565Point center{
-            (fb.getWidth() - image.getWidth()) / 2,
-            (fb.getHeight() - image.getHeight()) / 2};
-        fb.putImage(center, image);
+            (fb->getWidth() - image.getWidth()) / 2,
+            (fb->getHeight() - image.getHeight()) / 2};
+        fb->putImage(center, image);
 
         do {
             js.read();
         }
         while (not js.buttonPressed(Joystick::BUTTON_START));
 
-        fb.clear();
+        fb->clear();
     }
     catch (std::exception& error)
     {

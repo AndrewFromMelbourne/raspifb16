@@ -54,7 +54,7 @@ readJoystickEvent(
 //-------------------------------------------------------------------------
 
 
-raspifb16::Joystick:: Joystick(bool blocking)
+raspifb16::Joystick::Joystick(bool blocking)
 :
     Joystick("/dev/input/js0", blocking)
 {
@@ -62,7 +62,7 @@ raspifb16::Joystick:: Joystick(bool blocking)
 
 //-------------------------------------------------------------------------
 
-raspifb16::Joystick:: Joystick(const std::string& device, bool blocking)
+raspifb16::Joystick::Joystick(const std::string& device, bool blocking)
 :
     m_joystickFd{::open(device.c_str(), O_RDONLY | ((blocking) ? 0 : O_NONBLOCK))},
     m_blocking(blocking),
@@ -77,7 +77,7 @@ raspifb16::Joystick:: Joystick(const std::string& device, bool blocking)
 //-------------------------------------------------------------------------
 
 void
-raspifb16::Joystick:: init()
+raspifb16::Joystick::init()
 {
     if (m_joystickFd.fd() == -1)
     {
@@ -111,7 +111,7 @@ raspifb16::Joystick:: init()
 //-------------------------------------------------------------------------
 
 int
-raspifb16::Joystick:: numberOfButtons() const
+raspifb16::Joystick::numberOfButtons() const
 {
     return m_buttonCount;
 }
@@ -119,7 +119,7 @@ raspifb16::Joystick:: numberOfButtons() const
 //-------------------------------------------------------------------------
 
 int
-raspifb16::Joystick:: numberOfAxes() const
+raspifb16::Joystick::numberOfAxes() const
 {
     return m_joystickCount;
 }
@@ -127,7 +127,7 @@ raspifb16::Joystick:: numberOfAxes() const
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::Joystick:: buttonPressed(int button)
+raspifb16::Joystick::buttonPressed(int button)
 {
     if (button >= numberOfButtons())
     {
@@ -147,7 +147,7 @@ raspifb16::Joystick:: buttonPressed(int button)
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::Joystick:: buttonDown(int button) const
+raspifb16::Joystick::buttonDown(int button) const
 {
     if (button >= numberOfButtons())
     {
@@ -160,7 +160,7 @@ raspifb16::Joystick:: buttonDown(int button) const
 //-------------------------------------------------------------------------
 
 raspifb16::JoystickAxes
-raspifb16::Joystick:: getAxes(int joystickNumber) const
+raspifb16::Joystick::getAxes(int joystickNumber) const
 {
     return m_joysticks.at(joystickNumber);
 }
@@ -168,7 +168,7 @@ raspifb16::Joystick:: getAxes(int joystickNumber) const
 //-------------------------------------------------------------------------
 
 void
-raspifb16::Joystick:: read()
+raspifb16::Joystick::read()
 {
     js_event event{};
 
@@ -191,7 +191,7 @@ raspifb16::Joystick:: read()
 //-------------------------------------------------------------------------
 
 void
- raspifb16::Joystick:: process(const js_event& event)
+ raspifb16::Joystick::process(const js_event& event)
 {
     switch (event.type)
     {
