@@ -78,6 +78,14 @@ raspifb16::FrameBuffer565::FrameBuffer565(
 
     //---------------------------------------------------------------------
 
+    if (m_vinfo.bits_per_pixel != 16)
+    {
+        throw std::invalid_argument{"expected 16 bits per pixel, found " +
+                                    std::to_string(m_vinfo.bits_per_pixel)};
+    }
+
+    //---------------------------------------------------------------------
+
     m_lineLengthPixels = m_finfo.line_length / bytesPerPixel;
 
     //---------------------------------------------------------------------
