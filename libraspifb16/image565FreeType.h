@@ -65,18 +65,18 @@ public:
     Image565FreeType& operator=(const Image565FreeType&) = delete;
     Image565FreeType& operator=(Image565FreeType&&) = delete;
 
-	std::string getFontFamilyName() const;
-	std::string getFontStyleName() const;
+    std::string getFontFamilyName() const;
+    std::string getFontStyleName() const;
 
-	int getPixelHeight() const override;
-	int getPixelWidth() const override;
+    int getPixelHeight() const override;
+    int getPixelWidth() const override;
 
     int getPixelSize() const
-	{
-	    return m_pixelSize;
-	}
+    {
+        return m_pixelSize;
+    }
 
-	bool setPixelSize(int pixelSize);
+    bool setPixelSize(int pixelSize);
 
     Interface565Point
     drawChar(
