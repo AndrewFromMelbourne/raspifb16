@@ -160,6 +160,7 @@ main(
             {
                 boxworld.update(js);
                 boxworld.draw(*fb, font);
+                fb->update();
             }
 
             std::this_thread::sleep_for(250ms);

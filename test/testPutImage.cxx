@@ -2,7 +2,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2023 Andrew Duncan
+// Copyright (c) 2024 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -25,27 +25,22 @@
 //
 //-------------------------------------------------------------------------
 
-#include <iostream>
-
 #include <getopt.h>
 #include <libgen.h>
-#include <unistd.h>
+
+#include <chrono>
+#include <iostream>
+#include <system_error>
+#include <thread>
 
 #include "image565.h"
-#include "image565Qoi.h"
 #include "interface565Factory.h"
-#include "joystick.h"
+#include "point.h"
 
 //-------------------------------------------------------------------------
 
 using namespace raspifb16;
-
-//-------------------------------------------------------------------------
-
-namespace
-{
-const std::string defaultDevice{"/dev/fb1"};
-}
+using namespace std::chrono_literals;
 
 //-------------------------------------------------------------------------
 
@@ -60,7 +55,6 @@ printUsage(
     os << "    --device,-d - device to use\n";
     os << "    --help,-h - print usage and exit\n";
     os << "    --kmsdrm,-k - use KMS/DRM dumb buffer\n";
-    os << "    --qoi,-q - qoi file to display\n";
     os << "\n";
 }
 
@@ -73,18 +67,16 @@ main(
 {
     std::string device{};
     std::string program{basename(argv[0])};
-    std::string qoi{};
     auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------
 
-    static const char* sopts = "d:hkq:";
+    static const char* sopts = "d:hk";
     static option lopts[] =
     {
         { "device", required_argument, nullptr, 'd' },
         { "help", no_argument, nullptr, 'h' },
         { "kmsdrm", no_argument, nullptr, 'k' },
-        { "qoi", required_argument, nullptr, 'q' },
         { nullptr, no_argument, nullptr, 0 }
     };
 
@@ -113,12 +105,6 @@ main(
 
             break;
 
-        case 'q':
-
-            qoi = optarg;
-
-            break;
-
         default:
 
             printUsage(std::cerr, program);
@@ -128,31 +114,42 @@ main(
         }
     }
 
-    if (qoi.empty())
-    {
-        printUsage(std::cerr, program);
-        ::exit(EXIT_FAILURE);
-    }
+    //---------------------------------------------------------------------
 
     try
     {
-        constexpr bool block{true};
-        Joystick js{block};
         auto fb{raspifb16::createInterface565(interfaceType, device)};
-
         fb->clear();
 
-        auto image = readQoi(qoi);
-        const Interface565Point center{
-            (fb->getWidth() - image.getWidth()) / 2,
-            (fb->getHeight() - image.getHeight()) / 2};
-        fb->putImage(center, image);
+        //-----------------------------------------------------------------
+
+        RGB565 red{255, 0, 0};
+
+        //-----------------------------------------------------------------
+
+        constexpr int iwidth{48};
+        constexpr int ihwidth{iwidth/2};
+        const auto fwidth{fb->getWidth()};
+        const auto fheight{fb->getHeight()};
+
+        Image565 image{iwidth, iwidth};
+        image.clear(red);
+
+        for (auto y : { -ihwidth, (fheight / 2) - ihwidth, fheight - ihwidth })
+        {
+            for (auto x : { -ihwidth, (fwidth / 2) - ihwidth, fwidth - ihwidth })
+            {
+                fb->putImage(Interface565Point{x, y}, image);
+            }
+        }
+
+        //-----------------------------------------------------------------
+
         fb->update();
 
-        do {
-            js.read();
-        }
-        while (not js.buttonPressed(Joystick::BUTTON_START));
+        //-----------------------------------------------------------------
+
+        std::this_thread::sleep_for(10s);
 
         fb->clear();
     }
@@ -164,4 +161,3 @@ main(
 
     return 0;
 }
-

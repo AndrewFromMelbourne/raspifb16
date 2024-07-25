@@ -81,7 +81,7 @@ main(
 {
     std::string device{};
     std::string program{basename(argv[0])};
-    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};\
+    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------
 
@@ -89,7 +89,6 @@ main(
     static option lopts[] =
     {
         { "device", required_argument, nullptr, 'd' },
-        { "font", required_argument, nullptr, 'f' },
         { "help", no_argument, nullptr, 'h' },
         { "kmsdrm", no_argument, nullptr, 'k' },
         { nullptr, no_argument, nullptr, 0 }
@@ -191,6 +190,7 @@ main(
             textImage);
 
         fb->putImage(textLocation, textImage);
+        fb->update();
 
         //-----------------------------------------------------------------
 

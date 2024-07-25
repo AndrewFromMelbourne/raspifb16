@@ -176,6 +176,8 @@ raspifb16::DumbBuffer565::DumbBuffer565(
     m_fbId{0},
     m_fbHandle{0},
     m_connectorId{0},
+    m_crtcId{0},
+    m_mode{},
     m_originalCrtc(nullptr, [](drmModeCrtc*){})
 {
     std::string card{device};
@@ -193,6 +195,10 @@ raspifb16::DumbBuffer565::DumbBuffer565(
     }
 
     m_fd = FileDescriptor{::open(card.c_str(), O_RDWR)};
+
+    //---------------------------------------------------------------------
+
+    drmSetMaster(m_fd.fd());
 
     //---------------------------------------------------------------------
 
@@ -224,15 +230,15 @@ raspifb16::DumbBuffer565::DumbBuffer565(
 
     //---------------------------------------------------------------------
 
-    auto mode{resource.m_mode};
+    m_mode = resource.m_mode;
 
-    m_width = mode.hdisplay;
-    m_height = mode.vdisplay;
+    m_width = m_mode.hdisplay;
+    m_height = m_mode.vdisplay;
 
     drm_mode_create_dumb dmcb =
     {
-        .height = mode.vdisplay,
-        .width = mode.hdisplay,
+        .height = m_mode.vdisplay,
+        .width = m_mode.hdisplay,
         .bpp = 16,
         .flags = 0,
         .handle = 0,
@@ -259,8 +265,8 @@ raspifb16::DumbBuffer565::DumbBuffer565(
 
     if (drmModeAddFB2(
             m_fd.fd(),
-            mode.hdisplay,
-            mode.vdisplay,
+            m_mode.hdisplay,
+            m_mode.vdisplay,
             DRM_FORMAT_RGB565,
             handles,
             strides,
@@ -301,9 +307,10 @@ raspifb16::DumbBuffer565::DumbBuffer565(
     //---------------------------------------------------------------------
 
     m_connectorId = resource.m_connectorId;
+    m_crtcId = resource.m_crtcId;
     m_originalCrtc = drm::drmModeGetCrtc(m_fd, resource.m_crtcId);
 
-    if (drmModeSetCrtc(m_fd.fd(), resource.m_crtcId, m_fbId, 0, 0, &m_connectorId, 1, &mode) < 0)
+    if (drmModeSetCrtc(m_fd.fd(), m_crtcId, m_fbId, 0, 0, &m_connectorId, 1, &m_mode) < 0)
     {
         throw std::system_error(errno,
                                 std::system_category(),
@@ -333,6 +340,11 @@ raspifb16::DumbBuffer565::~DumbBuffer565()
                    &m_connectorId,
                    1,
                    &(m_originalCrtc->mode));
+
+    if (drmIsMaster(m_fd.fd()))
+    {
+        drmDropMaster(m_fd.fd());
+    }
 }
 
 //-------------------------------------------------------------------------
@@ -342,5 +354,13 @@ raspifb16::DumbBuffer565::offset(
     const Interface565Point& p) const
 {
     return p.x() + p.y() * m_lineLengthPixels;
+}
+
+//-------------------------------------------------------------------------
+
+void
+raspifb16::DumbBuffer565::update()
+{
+    drmModeSetCrtc(m_fd.fd(), m_crtcId, m_fbId, 0, 0, &m_connectorId, 1, &m_mode);
 }
 

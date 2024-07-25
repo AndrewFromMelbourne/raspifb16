@@ -158,6 +158,7 @@ main(
             }
 
             fb->putImage(Interface565Point{0, 0}, image);
+            fb->update();
         }
     }
     catch (std::exception& error)

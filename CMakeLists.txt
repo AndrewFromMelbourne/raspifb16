@@ -113,6 +113,12 @@ target_link_libraries(testColour raspifb16
 
 #--------------------------------------------------------------------------
 
+add_executable(testPutImage test/testPutImage.cxx)
+target_link_libraries(testPutImage raspifb16
+                                   ${DRM_LIBRARIES})
+
+#--------------------------------------------------------------------------
+
 if (FREETYPE_FOUND)
 
 add_executable(testft test/testft.cxx)

@@ -76,7 +76,7 @@ messageLog(
 {
     if (isDaemon)
     {
-        ::syslog(LOG_MAKEPRI(LOG_USER, priority), message.c_str());
+        ::syslog(LOG_MAKEPRI(LOG_USER, priority), "%s", message.c_str());
     }
     else
     {
@@ -428,6 +428,7 @@ main(
                 if (display)
                 {
                     panel->show(*fb);
+                    fb->update();
                 }
             }
 

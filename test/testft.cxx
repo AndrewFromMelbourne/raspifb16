@@ -70,7 +70,7 @@ main(
     std::string device{};
     std::string program{basename(argv[0])};
     std::string font{};
-    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};\
+    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------
 
@@ -170,6 +170,7 @@ main(
         //-----------------------------------------------------------------
 
         fb->putImage(Interface565Point{0, 0}, image);
+        fb->update();
         std::this_thread::sleep_for(10s);
         fb->clear();
 

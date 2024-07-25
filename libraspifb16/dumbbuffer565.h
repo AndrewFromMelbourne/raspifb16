@@ -79,6 +79,8 @@ public:
     int getLineLengthPixels() const override { return m_lineLengthPixels; };
     size_t offset(const Interface565Point& p) const override;
 
+    void update() override;
+
 private:
 
     int m_width;
@@ -92,6 +94,8 @@ private:
     uint32_t m_fbHandle;
 
     uint32_t m_connectorId;
+    uint32_t m_crtcId;
+    drmModeModeInfo m_mode;
     drm::drmModeCrtc_ptr m_originalCrtc;
 };
 

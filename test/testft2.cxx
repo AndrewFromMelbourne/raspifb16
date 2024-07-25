@@ -153,6 +153,7 @@ main(
         //-----------------------------------------------------------------
 
         fb->putImage(Interface565Point{0, 0}, image);
+        fb->update();
         std::this_thread::sleep_for(10s);
         fb->clear();
 

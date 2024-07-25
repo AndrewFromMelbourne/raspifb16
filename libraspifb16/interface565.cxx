@@ -181,7 +181,7 @@ raspifb16::Interface565::putImagePartial(
 
         std::copy(start,
                   start + (xEnd - xStart + 1),
-                  getBufferStart() + ((j - yStart) * getLineLengthPixels()) + x);
+                  getBufferStart() + ((j - yStart + y) * getLineLengthPixels()) + x);
     }
 
     return true;

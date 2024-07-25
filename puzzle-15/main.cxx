@@ -155,6 +155,7 @@ main(
             else if (puzzle.update(js))
             {
                 puzzle.draw(*fb);
+                fb->update();
             }
         }
 

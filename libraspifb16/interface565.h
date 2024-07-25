@@ -97,6 +97,8 @@ public:
     virtual int getLineLengthPixels() const = 0;
     virtual size_t offset(const Interface565Point& p) const = 0;
 
+    virtual void update() {}
+
 private:
 
     bool
