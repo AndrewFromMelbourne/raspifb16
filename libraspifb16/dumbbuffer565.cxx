@@ -110,14 +110,31 @@ findDrmResourcesForConnector(
 //-------------------------------------------------------------------------
 
 FoundDrmResource
-findDrmResources(
-    raspifb16::FileDescriptor& fd)
+findDrmResourcesForConnector(
+    raspifb16::FileDescriptor& fd,
+    uint32_t connectorId)
 {
+    return findDrmResourcesForConnector(fd, connectorId, drm::drmModeGetResources(fd));
+}
+
+
+//-------------------------------------------------------------------------
+
+FoundDrmResource
+findDrmResources(
+    raspifb16::FileDescriptor& fd,
+    uint32_t connectorId)
+{
+    if (connectorId)
+    {
+        return findDrmResourcesForConnector(fd, connectorId, drm::drmModeGetResources(fd));
+    }
+
     auto resources = drm::drmModeGetResources(fd);
 
     for (int i = 0 ; i < resources->count_connectors ; ++i)
     {
-        const auto connectorId = resources->connectors[i];
+        connectorId = resources->connectors[i];
         const auto resource{findDrmResourcesForConnector(fd, connectorId, resources)};
 
         if (resource.m_found)
@@ -145,13 +162,47 @@ findDrmDevice()
     {
         auto device = devices.getDevice(i);
 
-        if (device->available_nodes & (1 << DRM_NODE_PRIMARY))
+        if ((device->available_nodes & (1 << DRM_NODE_PRIMARY)) and
+            drm::drmDeviceHasDumbBuffer(device->nodes[DRM_NODE_PRIMARY]))
         {
-            if (drm::drmDeviceHasDumbBuffer(device->nodes[DRM_NODE_PRIMARY]))
-            {
-                return device->nodes[DRM_NODE_PRIMARY];
-            }
+            return device->nodes[DRM_NODE_PRIMARY];
+        }
+    }
 
+    return "";
+}
+
+//-------------------------------------------------------------------------
+
+std::string
+findDrmDeviceWithConnector(
+    uint32_t connectorId)
+{
+    drm::DrmDevices devices;
+
+    if (devices.getDeviceCount() < 0)
+    {
+        return "";
+    }
+
+    for (auto i = 0 ; i < devices.getDeviceCount() ; ++i)
+    {
+        auto device = devices.getDevice(i);
+
+        if ((device->available_nodes & (1 << DRM_NODE_PRIMARY)) and
+            drm::drmDeviceHasDumbBuffer(device->nodes[DRM_NODE_PRIMARY]))
+        {
+            auto card{device->nodes[DRM_NODE_PRIMARY]};
+            auto fd = raspifb16::FileDescriptor{::open(card, O_RDWR)};
+            auto resources = drm::drmModeGetResources(fd);
+
+            for (int i = 0 ; i < resources->count_connectors ; ++i)
+            {
+                if (connectorId == resources->connectors[i])
+                {
+                    return card;
+                }
+            }
         }
     }
 
@@ -165,7 +216,8 @@ findDrmDevice()
 //=========================================================================
 
 raspifb16::DumbBuffer565::DumbBuffer565(
-    const std::string& device)
+    const std::string& device,
+    uint32_t connectorId)
 :
     m_width{0},
     m_height{0},
@@ -175,7 +227,7 @@ raspifb16::DumbBuffer565::DumbBuffer565(
     m_fbp{nullptr},
     m_fbId{0},
     m_fbHandle{0},
-    m_connectorId{0},
+    m_connectorId{connectorId},
     m_crtcId{0},
     m_mode{},
     m_originalCrtc(nullptr, [](drmModeCrtc*){})
@@ -184,14 +236,32 @@ raspifb16::DumbBuffer565::DumbBuffer565(
 
     if (card.empty())
     {
-        card = findDrmDevice();
+        if (connectorId)
+        {
+            card = findDrmDeviceWithConnector(connectorId);
+        }
+        else
+        {
+            card = findDrmDevice();
+        }
     }
 
     if (card.empty())
     {
-        throw std::system_error{errno,
-                                std::system_category(),
-                                "cannot find a dri device "};
+        if (connectorId)
+        {
+            throw std::system_error{errno,
+                                    std::system_category(),
+                                    "cannot find dri device for connnector " +
+                                    std::to_string(connectorId)};
+
+        }
+        else
+        {
+            throw std::system_error{errno,
+                                    std::system_category(),
+                                    "cannot find a dri device"};
+        }
     }
 
     m_fd = FileDescriptor{::open(card.c_str(), O_RDWR)};
@@ -221,7 +291,7 @@ raspifb16::DumbBuffer565::DumbBuffer565(
 
     //---------------------------------------------------------------------
 
-    const auto resource{findDrmResources(m_fd)};
+    const auto resource{findDrmResources(m_fd, connectorId)};
 
     if (not resource.m_found)
     {

@@ -25,6 +25,8 @@
 //
 //-------------------------------------------------------------------------
 
+#include <cstdlib>
+#include <string>
 #include <system_error>
 
 #include "interface565Factory.h"
@@ -72,7 +74,25 @@ createInterface565(
     case InterfaceType565::KMSDRM_DUMB_BUFFER_565:
 
 #ifdef LIBDRM_INSTALLED
-        return std::make_unique<DumbBuffer565>(interfaceDevice);
+    {
+        uint32_t connectorId{0};
+
+        const auto connectorString = std::getenv("RASPIFB16_DRM_CONNECTOR");
+
+        if (connectorString)
+        {
+            try
+            {
+                connectorId = std::stol(connectorString);
+            }
+            catch(...)
+            {
+                // do nothing
+            }
+        }
+
+        return std::make_unique<DumbBuffer565>(interfaceDevice, connectorId);
+    }
 #else
         throw std::invalid_argument("There is no KMSDRM library installed");
 #endif

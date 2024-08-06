@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.9)
+cmake_minimum_required(VERSION 3.10)
 project(raspifb16 LANGUAGES CXX)
 
 set(CMAKE_BUILD_TYPE Release)
@@ -131,5 +131,15 @@ target_link_libraries(testft2 raspifb16
                              ${FREETYPE_LIBRARIES}
 							 ${DRM_LIBRARIES})
 
+endif()
+
+#--------------------------------------------------------------------------
+
+if (DRM_FOUND)
+add_executable(modes modes/modes.cxx)
+
+target_include_directories(modes PUBLIC ${DRM_INCLUDE_DIRS})
+target_link_libraries(modes raspifb16
+                            ${DRM_LIBRARIES})
 endif()
 

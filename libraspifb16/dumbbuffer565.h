@@ -61,7 +61,9 @@ public:
 
     static constexpr size_t bytesPerPixel{2};
 
-    explicit DumbBuffer565(const std::string& device = "");
+    explicit DumbBuffer565(
+        const std::string& device = "",
+        uint32_t connectorId = 0);
 
     ~DumbBuffer565() override;
 
