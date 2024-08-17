@@ -130,7 +130,7 @@ DynamicInfo::vcGenCmd(const std::string& command)
 std::string
 DynamicInfo::getMemorySplit()
 {
-    std::string result{" / "};
+    std::string result{};
 
     int arm_mem{};
     int gpu_mem{};
@@ -269,20 +269,23 @@ DynamicInfo::update(
                                m_foreground,
                                getImage());
 
-    position = font.drawString(position,
-                               " memory ",
-                               m_heading,
-                               getImage());
+    if (not m_memorySplit.empty())
+    {
+        position = font.drawString(position,
+                                " memory ",
+                                m_heading,
+                                getImage());
 
-    position = font.drawString(position,
-                               m_memorySplit,
-                               m_foreground,
-                               getImage());
+        position = font.drawString(position,
+                                m_memorySplit,
+                                m_foreground,
+                                getImage());
 
-    position = font.drawString(position,
-                               " MB",
-                               m_foreground,
-                               getImage());
+        position = font.drawString(position,
+                                " MB",
+                                m_foreground,
+                                getImage());
+    }
 
     //---------------------------------------------------------------------
 
