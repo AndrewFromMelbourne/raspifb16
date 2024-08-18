@@ -129,9 +129,8 @@ Trace::init(
                                         position.y() + (3 * height) / 4};
 
         boxFilled(getImage(), p1, p2, trace.m_traceColour);
+        position.setX(position.x() + font.getPixelWidth());
     }
-
-    position.setX(position.x() + font.getPixelWidth());
 
     position = font.drawString(position,
                                ")",

@@ -57,13 +57,6 @@ private:
     raspifb16::RGB565 m_background;
 
     std::string m_memorySplit;
-
-    static std::string vcGenCmd(const std::string& command);
-
-    static std::string getIpAddress(char& interface);
-    static std::string getMemorySplit();
-    static std::string getTemperature();
-    static std::string getTime(time_t now);
 };
 
 //-------------------------------------------------------------------------

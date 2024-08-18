@@ -48,10 +48,15 @@
 #include "image565Font8x16.h"
 #include "system.h"
 
+//=========================================================================
+
+namespace
+{
+
 //-------------------------------------------------------------------------
 
 std::string
-DynamicInfo::getIpAddress(
+getIpAddress(
     char& interface)
 {
 
@@ -91,7 +96,7 @@ DynamicInfo::getIpAddress(
 //-------------------------------------------------------------------------
 
 std::string
-DynamicInfo::vcGenCmd(const std::string& command)
+vcGenCmd(const std::string& command)
 {
      raspifb16::FileDescriptor fd{::open("/dev/vcio", 0)};
 
@@ -128,7 +133,7 @@ DynamicInfo::vcGenCmd(const std::string& command)
 //-------------------------------------------------------------------------
 
 std::string
-DynamicInfo::getMemorySplit()
+getMemorySplit()
 {
     std::string result{};
 
@@ -190,7 +195,7 @@ DynamicInfo::getMemorySplit()
 //-------------------------------------------------------------------------
 
 std::string
-DynamicInfo::getTemperature()
+getTemperature()
 {
     return std::to_string(raspinfo::getTemperature());
 }
@@ -198,7 +203,7 @@ DynamicInfo::getTemperature()
 //-------------------------------------------------------------------------
 
 std::string
-DynamicInfo::getTime(
+getTime(
     time_t now)
 {
     char buffer[128];
@@ -211,6 +216,10 @@ DynamicInfo::getTime(
 }
 
 //-------------------------------------------------------------------------
+
+} // namespace
+
+//=========================================================================
 
 DynamicInfo::DynamicInfo(
     int width,
