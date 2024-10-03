@@ -8,9 +8,12 @@ set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
+
 #--------------------------------------------------------------------------
 
 find_package(Freetype)
+find_package(Libiw)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(DRM QUIET libdrm)
 
@@ -120,7 +123,6 @@ target_link_libraries(testPutImage raspifb16
 #--------------------------------------------------------------------------
 
 if (FREETYPE_FOUND)
-
 add_executable(testft test/testft.cxx)
 target_link_libraries(testft raspifb16
                              ${FREETYPE_LIBRARIES}
@@ -128,9 +130,8 @@ target_link_libraries(testft raspifb16
 
 add_executable(testft2 test/testft2.cxx)
 target_link_libraries(testft2 raspifb16
-                             ${FREETYPE_LIBRARIES}
-							 ${DRM_LIBRARIES})
-
+                              ${FREETYPE_LIBRARIES}
+							  ${DRM_LIBRARIES})
 endif()
 
 #--------------------------------------------------------------------------
@@ -143,3 +144,14 @@ target_link_libraries(modes raspifb16
                             ${DRM_LIBRARIES})
 endif()
 
+#--------------------------------------------------------------------------
+
+if (LIBIW_FOUND)
+add_executable(wifiscan wifiscan/scanEntry.cxx
+                        wifiscan/wifiscan.cxx)
+
+target_link_libraries(wifiscan raspifb16
+                               ${FREETYPE_LIBRARIES}
+							   ${DRM_LIBRARIES}
+                               ${LIBIW_LIBRARIES})
+endif()
