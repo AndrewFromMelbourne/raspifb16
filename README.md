@@ -38,6 +38,9 @@ A QOI image viewer.
 A program to display Raspberry Pi specific system information directly on
 the framebuffer.
 
+# wifiscan
+A wifi access point scanner.
+
 # build
 
 	cd raspifb16
