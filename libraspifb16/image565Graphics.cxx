@@ -196,3 +196,135 @@ verticalLine(
     }
 }
 
+//=========================================================================
+
+namespace raspifb16
+{
+
+//-------------------------------------------------------------------------
+
+void
+circleLines(
+    Interface565& image,
+	int x,
+	int y,
+	int i,
+	int j,
+    uint16_t rgb)
+{
+	horizontalLine(image, x + i, x - i, y + j, rgb);
+	horizontalLine(image, x + i, x - i, y - j, rgb);
+}
+
+//-------------------------------------------------------------------------
+
+void
+circlePoints(
+    Interface565& image,
+	int x,
+	int y,
+	int i,
+	int j,
+    uint16_t rgb)
+{
+	image.setPixel(Interface565Point(x + i, y + j), rgb);
+	image.setPixel(Interface565Point(x - i, y + j), rgb);
+	image.setPixel(Interface565Point(x + i, y - j), rgb);
+	image.setPixel(Interface565Point(x - i, y - j), rgb);
+
+	if (i != j)
+	{
+		image.setPixel(Interface565Point(x + j, y + i), rgb);
+		image.setPixel(Interface565Point(x + j, y - i), rgb);
+		image.setPixel(Interface565Point(x - j, y + i), rgb);
+		image.setPixel(Interface565Point(x - j, y - i), rgb);
+	}
+}
+
+//-------------------------------------------------------------------------
+
+} // namespace raspifb16
+
+//=========================================================================
+
+void
+raspifb16::
+circle(
+    Interface565& image,
+    const Interface565Point& p,
+	int r,
+    uint16_t rgb)
+{
+	int j = r;
+	int d = 1 - r;
+	int deltaE = 3;
+	int deltaSE = -2 * r + 5;
+
+	for (int i = 0 ;  i <= j ; ++i)
+	{
+		circlePoints(image, p.x(), p.y(), i, j, rgb);
+
+		deltaE += 2;
+		if (d < 0)
+		{
+			d += deltaE;
+			deltaSE += 2;
+		}
+		else
+		{
+			d += deltaSE;
+			deltaSE += 4;
+			--j;
+		}
+	}
+}
+
+//-------------------------------------------------------------------------
+
+void
+raspifb16::
+circleFilled(
+    Interface565& image,
+    const Interface565Point& p,
+	int r,
+    uint16_t rgb)
+{
+	int j = r;
+	int d = 1 - r;
+
+	for (int i = 0 ; i <= j ; ++i)
+	{
+		if (d < 0)
+		{
+			d += (2 * i) + 3;
+		}
+		else
+		{
+			circleLines(image, p.x(), p.y(), i - 1, j, rgb);
+
+			d += (2 * (i - j)) + 5;
+			--j;
+		}
+	}
+
+    int i = j;
+
+	while (j > 0)
+	{
+		circleLines(image, p.x(), p.y(), i, j, rgb);
+
+		if (d < 0)
+		{
+			d += (2 * (i - j)) + 5;
+			++i;
+		}
+		else
+		{
+			d += 3 - (2 * j);
+		}
+        --j;
+	}
+
+	circleLines(image, p.x(), p.y(), r - 1, 0, rgb);
+}
+

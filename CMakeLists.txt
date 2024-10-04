@@ -110,6 +110,12 @@ target_link_libraries(test raspifb16
 
 #--------------------------------------------------------------------------
 
+add_executable(testCircle test/testCircle.cxx)
+target_link_libraries(testCircle raspifb16
+                                 ${DRM_LIBRARIES})
+
+#--------------------------------------------------------------------------
+
 add_executable(testColour test/testColour.cxx)
 target_link_libraries(testColour raspifb16
                                  ${DRM_LIBRARIES})

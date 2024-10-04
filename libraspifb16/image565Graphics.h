@@ -141,6 +141,44 @@ verticalLine(
 
 //-------------------------------------------------------------------------
 
+void
+circle(
+    Interface565& image,
+    const Interface565Point& p,
+	int r,
+    uint16_t rgb);
+
+inline void
+circle(
+    Interface565& image,
+    const Interface565Point& p,
+	int r,
+    const RGB565& rgb)
+{
+    circle(image, p, r, rgb.get565());
+}
+
+//-------------------------------------------------------------------------
+
+void
+circleFilled(
+    Interface565& image,
+    const Interface565Point& p,
+	int r,
+    uint16_t rgb);
+
+inline void
+circleFilled(
+    Interface565& image,
+    const Interface565Point& p,
+	int r,
+    const RGB565& rgb)
+{
+    circleFilled(image, p, r, rgb.get565());
+}
+
+//-------------------------------------------------------------------------
+
 } // namespace raspifb16
 
 //-------------------------------------------------------------------------
