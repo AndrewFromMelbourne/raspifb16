@@ -37,20 +37,20 @@ class ScanEntry
 {
 public:
 
-	ScanEntry();
+    ScanEntry();
 
-	void setMac48(const std::string& mac48);
-	void setEssid(const std::string& essid);
-	void setFrequency(double frequency);
-	void setChannel(int channel);
-	void setSignalQuality(double signalQuality);
-	void setSignalLevel(double signalLevel);
+    void setMac48(const std::string& mac48);
+    void setEssid(const std::string& essid);
+    void setFrequency(double frequency);
+    void setChannel(int channel);
+    void setSignalQuality(double signalQuality);
+    void setSignalLevel(double signalLevel);
 
-	std::string asString() const;
+    std::string asString() const;
 
-	void clear();
+    void clear();
 
-	bool operator>(const ScanEntry& rhs) const;
+    bool operator>(const ScanEntry& rhs) const;
 
 private:
 

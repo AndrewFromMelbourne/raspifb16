@@ -47,54 +47,54 @@ ScanEntry:: ScanEntry()
 
 void
 ScanEntry:: setMac48(
-	const std::string& mac48)
+    const std::string& mac48)
 {
-	m_mac48 = mac48;
+    m_mac48 = mac48;
 }
 
 //-------------------------------------------------------------------------
 
 void
 ScanEntry:: setEssid(
-	const std::string& essid)
+    const std::string& essid)
 {
-	m_essid = essid;
+    m_essid = essid;
 }
 
 //-------------------------------------------------------------------------
 
 void
 ScanEntry:: setFrequency(
-	double frequency)
+    double frequency)
 {
-	m_frequency = frequency;
+    m_frequency = frequency;
 }
 
 //-------------------------------------------------------------------------
 
 void
 ScanEntry:: setChannel(
-	int channel)
+    int channel)
 {
-	m_channel = channel;
+    m_channel = channel;
 }
 
 //-------------------------------------------------------------------------
 
 void
 ScanEntry:: setSignalQuality(
-	double signalQuality)
+    double signalQuality)
 {
-	m_signalQuality = signalQuality;
+    m_signalQuality = signalQuality;
 }
 
 //-------------------------------------------------------------------------
 
 void
 ScanEntry:: setSignalLevel(
-	double signalLevel)
+    double signalLevel)
 {
-	m_signalLevel = signalLevel;
+    m_signalLevel = signalLevel;
 }
 
 //-------------------------------------------------------------------------
@@ -102,16 +102,16 @@ ScanEntry:: setSignalLevel(
 std::string
 ScanEntry:: asString() const
 {
-	char buffer[100];
+    char buffer[100];
 
-	sprintf(buffer,
-			"%3.0f%% ch%03d %s %s",
-			m_signalQuality,
-			m_channel,
-			m_mac48.c_str(),
-	        m_essid.c_str());
+    sprintf(buffer,
+            "%3.0f%% ch%03d %s %s",
+            m_signalQuality,
+            m_channel,
+            m_mac48.c_str(),
+            m_essid.c_str());
 
-	return buffer;
+    return buffer;
 }
 
 //-------------------------------------------------------------------------
@@ -131,8 +131,8 @@ ScanEntry:: clear()
 
 bool
 ScanEntry:: operator>(
-	const ScanEntry& rhs) const
+    const ScanEntry& rhs) const
 {
-	return m_signalLevel > rhs.m_signalLevel;
+    return m_signalLevel > rhs.m_signalLevel;
 }
 
