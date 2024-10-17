@@ -26,6 +26,7 @@
 //-------------------------------------------------------------------------
 
 #include <algorithm>
+#include <random>
 
 #include "images.h"
 #include "puzzle.h"
@@ -128,11 +129,15 @@ Puzzle::isSolved() const
 void
 Puzzle::init()
 {
+    std::random_device randomDevice;
+    std::mt19937 generator(randomDevice());
+
     do
     {
         for (auto i = 0 ; i < boardSize - 1 ; ++i)
         {
-            auto j = i + rand() / (RAND_MAX / (boardSize - i) + 1);
+            std::uniform_int_distribution<> distribution(i, boardSize - 1);
+            auto j = distribution(generator);
             std::swap(m_board[i], m_board[j]);
         }
 
@@ -170,7 +175,7 @@ Puzzle::update(Joystick& js)
     auto dx = (value.x) ? (value.x / std::abs(value.x)) : 0;
     auto dy = (value.y) ? (value.y / std::abs(value.y)) : 0;
 
-    Location newLocation = {.x = m_blankLocation.x + dx, .y = m_blankLocation.y + dy};
+    Location newLocation = {.x = m_blankLocation.x - dx, .y = m_blankLocation.y - dy};
 
     if ((newLocation.x >= 0) and
         (newLocation.x < puzzleWidth) and
@@ -193,13 +198,17 @@ Puzzle::update(Joystick& js)
 void
 Puzzle::draw(Interface565& fb)
 {
-    constexpr int xOffset{ 40 };
+    constexpr int width = puzzleWidth * tileWidth;
+    constexpr int height = puzzleHeight * tileHeight;
+    const int xOffset = (fb.getWidth() - width) / 2;
+    const int yOffset = (fb.getHeight() - height) / 2;
 
     for (int j = 0 ; j < puzzleHeight ; ++j)
     {
         for (int i = 0 ; i < puzzleWidth ; ++i)
         {
-           Interface565Point p{ xOffset + (i * tileWidth), j * tileHeight };
+           Interface565Point p{ xOffset + (i * tileWidth),
+                                yOffset + (j * tileHeight) };
            int tile = m_board[i + (j * puzzleWidth)];
            fb.putImage(p, m_tileBuffers[tile]);
         }
