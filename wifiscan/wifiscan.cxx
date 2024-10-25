@@ -91,6 +91,7 @@ printUsage(
     os << "\n";
     os << "Usage: " << name << " <options>\n";
     os << "\n";
+    os << "    --active,-a - use active scan\n";
     os << "    --device,-d - device to use\n";
     os << "    --help,-h - print usage and exit\n";
     os << "    --kmsdrm,-k - use KMS/DRM dumb buffer\n";
@@ -107,12 +108,14 @@ main(
     std::string device{};
     std::string program{basename(argv[0])};
     auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
+    int iwScanType{IW_SCAN_TYPE_PASSIVE};
 
     //---------------------------------------------------------------------
 
-    static const char* sopts = "d:hk";
+    static const char* sopts = "ad:hk";
     static option lopts[] =
     {
+        { "active", no_argument, nullptr, 'a' },
         { "device", required_argument, nullptr, 'd' },
         { "help", no_argument, nullptr, 'h' },
         { "kmsdrm", no_argument, nullptr, 'k' },
@@ -125,6 +128,12 @@ main(
     {
         switch (opt)
         {
+        case 'a':
+
+            iwScanType = IW_SCAN_TYPE_ACTIVE;
+
+            break;
+
         case 'd':
 
             device = optarg;
@@ -210,10 +219,14 @@ main(
             memset(&request, 0, sizeof(request));
             memset(&scanRequest, 0, sizeof(scanRequest));
 
-            scanRequest.scan_type = IW_SCAN_TYPE_PASSIVE;
+            scanRequest.scan_type = iwScanType;
 
             request.u.data.length = sizeof(scanRequest);
             request.u.data.pointer = (caddr_t)&scanRequest;
+            request.u.data.flags = IW_SCAN_ALL_ESSID |
+                                   IW_SCAN_ALL_FREQ |
+                                   IW_SCAN_ALL_MODE |
+                                   IW_SCAN_ALL_RATE;
 
             strncpy(request.ifr_ifrn.ifrn_name, interfaceName, IFNAMSIZ);
 
