@@ -94,6 +94,7 @@ printUsage(
     os << "    --active,-a - use active scan\n";
     os << "    --device,-d - device to use\n";
     os << "    --help,-h - print usage and exit\n";
+    os << "    --interface,-i - WiFi interface to use\n";
     os << "    --kmsdrm,-k - use KMS/DRM dumb buffer\n";
     os << "\n";
 }
@@ -109,15 +110,17 @@ main(
     std::string program{basename(argv[0])};
     auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
     int iwScanType{IW_SCAN_TYPE_PASSIVE};
+    std::string interfaceName{"wlan0"};
 
     //---------------------------------------------------------------------
 
-    static const char* sopts = "ad:hk";
+    static const char* sopts = "ad:hi:k";
     static option lopts[] =
     {
         { "active", no_argument, nullptr, 'a' },
         { "device", required_argument, nullptr, 'd' },
         { "help", no_argument, nullptr, 'h' },
+        { "interface", required_argument, nullptr, 'i' },
         { "kmsdrm", no_argument, nullptr, 'k' },
         { nullptr, no_argument, nullptr, 0 }
     };
@@ -144,6 +147,12 @@ main(
 
             printUsage(std::cout, program);
             ::exit(EXIT_SUCCESS);
+
+            break;
+
+        case 'i':
+
+            interfaceName = optarg;
 
             break;
 
@@ -181,8 +190,6 @@ main(
 
     try
     {
-        const char* interfaceName{"wlan0"};
-
         auto sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 
         if (sockfd == -1)
@@ -193,7 +200,7 @@ main(
 
         iw_range range;
 
-        if ((iw_get_range_info(sockfd, interfaceName, &range) < 0) or
+        if ((iw_get_range_info(sockfd, interfaceName.c_str(), &range) < 0) or
             (range.we_version_compiled < 14))
         {
             std::cerr << interfaceName <<  " doesn't support scanning\n";
@@ -228,7 +235,7 @@ main(
                                    IW_SCAN_ALL_MODE |
                                    IW_SCAN_ALL_RATE;
 
-            strncpy(request.ifr_ifrn.ifrn_name, interfaceName, IFNAMSIZ);
+            strncpy(request.ifr_ifrn.ifrn_name, interfaceName.c_str(), IFNAMSIZ);
 
             if (ioctl(sockfd, SIOCSIWSCAN, &request) == -1)
             {
