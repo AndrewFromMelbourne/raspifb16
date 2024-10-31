@@ -146,9 +146,7 @@ main(
         //-----------------------------------------------------------------
 
         Image565FreeType ft{font, 32};
-        Interface565Point p{0, 0};
-
-        p = ft.drawWideChar(p, c, white, image);
+        const Interface565Point p = ft.drawWideChar(p, c, white, image);
 
         //-----------------------------------------------------------------
 

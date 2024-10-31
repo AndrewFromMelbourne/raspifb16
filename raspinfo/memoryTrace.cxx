@@ -126,11 +126,17 @@ update(
 
     //---------------------------------------------------------------------
 
-    MemoryStats memoryStats;
+    const MemoryStats memoryStats;
 
-    auto used = scale(memoryStats.used(), memoryStats.total(), m_traceScale);
-    auto buffers = scale(memoryStats.buffers(), memoryStats.total(), m_traceScale);
-    auto cached = scale(memoryStats.cached(), memoryStats.total(), m_traceScale);
+    const auto used = scale(memoryStats.used(),
+                            memoryStats.total(),
+                            m_traceScale);
+    const auto buffers = scale(memoryStats.buffers(),
+                               memoryStats.total(),
+                               m_traceScale);
+    const auto cached = scale(memoryStats.cached(),
+                              memoryStats.total(),
+                              m_traceScale);
 
     Trace::addData(std::vector<int>{used, buffers, cached}, now);
 }

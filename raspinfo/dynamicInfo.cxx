@@ -55,20 +55,25 @@ namespace
 
 //-------------------------------------------------------------------------
 
-std::string
-getIpAddress(
-    char& interface)
+struct IpAddress
 {
+    std::string address;
+    char interface;
+};
 
-    interface = 'X';
-    std::string address{"   .   .   .   "};
+//-------------------------------------------------------------------------
+
+IpAddress
+getIpAddress()
+{
+    IpAddress result{ .address = "   .   .   .   ", .interface = 'X'};
     ifaddrs *ifaddr{};
 
     ::getifaddrs(&ifaddr);
 
     if (not ifaddr)
     {
-        return address;
+        return result;
     }
 
     for (ifaddrs *ifa = ifaddr ; ifa != nullptr ; ifa = ifa->ifa_next)
@@ -81,8 +86,8 @@ getIpAddress(
             {
                 char buffer[INET_ADDRSTRLEN];
                 ::inet_ntop(AF_INET, addr, buffer, sizeof(buffer));
-                address = buffer;
-                interface = ifa->ifa_name[0];
+                result.address = buffer;
+                result.interface = ifa->ifa_name[0];
                 break;
             }
         }
@@ -90,7 +95,7 @@ getIpAddress(
 
     ::freeifaddrs(ifaddr);
 
-    return address;
+    return result;
 }
 
 //-------------------------------------------------------------------------
@@ -209,7 +214,7 @@ getTime(
     char buffer[128];
 
     tm result;
-    tm *lt = ::localtime_r(&now, &result);
+    const tm *lt = ::localtime_r(&now, &result);
     std::strftime(buffer, sizeof(buffer), "%T", lt);
 
     return buffer;
@@ -260,11 +265,10 @@ DynamicInfo::update(
                           m_heading,
                           getImage());
 
-    char interface = ' ';
-    std::string ipaddress = getIpAddress(interface);
+    const auto ipaddress = getIpAddress();
 
     position = font.drawChar(position,
-                             interface,
+                             ipaddress.interface,
                              m_foreground,
                              getImage());
 
@@ -274,7 +278,7 @@ DynamicInfo::update(
                                getImage());
 
     position = font.drawString(position,
-                               ipaddress,
+                               ipaddress.address,
                                m_foreground,
                                getImage());
 
@@ -317,14 +321,14 @@ DynamicInfo::update(
                                m_heading,
                                getImage());
 
-    std::string temperatureString = getTemperature();
+    const std::string temperatureString = getTemperature();
 
     position = font.drawString(position,
                                temperatureString,
                                m_foreground,
                                getImage());
 
-    uint8_t degreeSymbol = 0xF8;
+    const uint8_t degreeSymbol = 0xF8;
 
     position = font.drawChar(position,
                              degreeSymbol,

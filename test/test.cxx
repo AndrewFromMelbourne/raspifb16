@@ -138,8 +138,8 @@ main(
 
         //-----------------------------------------------------------------
 
-        RGB565 red{255, 0, 0};
-        RGB565 green{0, 255, 0};
+        const RGB565 red{255, 0, 0};
+        const RGB565 green{0, 255, 0};
 
         //-----------------------------------------------------------------
 
@@ -156,7 +156,7 @@ main(
              Interface565Point(47,47),
              green);
 
-        Interface565Point imageLocation
+        const Interface565Point imageLocation
         {
             (fb->getWidth() - image.getWidth()) / 2,
             (fb->getHeight() - image.getHeight()) / 2
@@ -171,13 +171,13 @@ main(
 
         //-----------------------------------------------------------------
 
-        RGB565 darkBlue{0, 0, 63};
-        RGB565 white{255, 255, 255};
+        const RGB565 darkBlue{0, 0, 63};
+        const RGB565 white{255, 255, 255};
 
         Image565 textImage(168, 16);
         textImage.clear(darkBlue);
 
-        Interface565Point textLocation
+        const Interface565Point textLocation
         {
             (fb->getWidth() - textImage.getWidth()) / 2,
             (fb->getHeight() - textImage.getHeight()) / 3
@@ -206,3 +206,4 @@ main(
 
     return 0;
 }
+

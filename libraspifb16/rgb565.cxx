@@ -53,7 +53,7 @@ raspifb16::RGB565::RGB565(
 uint8_t
 raspifb16::RGB565::getRed() const
 {
-    auto r5 = (m_rgb >> 11) & 0x1F;
+    const auto r5 = (m_rgb >> 11) & 0x1F;
 
     return (r5 << 3) | (r5 >> 2);
 }
@@ -63,7 +63,7 @@ raspifb16::RGB565::getRed() const
 uint8_t
 raspifb16::RGB565::getGreen() const
 {
-    auto g6 = (m_rgb >> 5) & 0x3F;
+    const auto g6 = (m_rgb >> 5) & 0x3F;
 
     return (g6 << 2) | (g6 >> 4);
 }
@@ -73,7 +73,7 @@ raspifb16::RGB565::getGreen() const
 uint8_t
 raspifb16::RGB565::getBlue() const
 {
-    auto b5 = m_rgb & 0x1F;
+    const auto b5 = m_rgb & 0x1F;
 
     return (b5 << 3) | (b5 >> 2);
 }

@@ -319,8 +319,8 @@ main(
                     }
                     case SIOCGIWFREQ:
                     {
-                        double frequency = iw_freq2float(&(iwe.u.freq));
-                        int channel = iw_freq_to_channel(frequency, &range);
+                        const double frequency = iw_freq2float(&(iwe.u.freq));
+                        const int channel = iw_freq_to_channel(frequency, &range);
 
                         if (frequency > 1.0)
                         {
@@ -336,7 +336,7 @@ main(
                     }
                     case SIOCGIWESSID:
                     {
-                        char essid[IW_ESSID_MAX_SIZE+10];
+                        char essid[IW_ESSID_MAX_SIZE + 10];
                         memset(essid, '\0', sizeof(essid));
 
                         if((iwe.u.essid.pointer) and (iwe.u.essid.length))
@@ -387,8 +387,8 @@ main(
                             signalLevel = dbLevel;
                         }
 
-                        double signalQuality = (iwe.u.qual.qual * 100.0)
-                                             / range.max_qual.qual;
+                        const double signalQuality = (iwe.u.qual.qual * 100.0)
+                                                   / range.max_qual.qual;
 
                         cell.setSignalQuality(signalQuality);
                         cell.setSignalLevel(signalLevel);
@@ -407,7 +407,7 @@ main(
 
                 image.clear(RGB565{0, 0, 0});
                 Interface565Point position{0, 0};
-                RGB565 white{255, 255, 255};
+                const RGB565 white{255, 255, 255};
 
                 for (const auto& entry : cells)
                 {

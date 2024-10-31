@@ -121,11 +121,11 @@ Boxworld::update(Joystick& js)
             return;
         }
 
-        auto dx = (value.x) ? (value.x / std::abs(value.x)) : 0;
-        auto dy = (value.y) ? (value.y / std::abs(value.y)) : 0;
+        const auto dx = (value.x) ? (value.x / std::abs(value.x)) : 0;
+        const auto dy = (value.y) ? (value.y / std::abs(value.y)) : 0;
 
-        Location next{ .x = m_player.x + dx, .y = m_player.y + dy };
-        auto piece1 = m_board[next.y][next.x] & ~targetMask;
+        const Location next{ .x = m_player.x + dx, .y = m_player.y + dy };
+        const auto piece1 = m_board[next.y][next.x] & ~targetMask;
 
 
         if (piece1 == PASSAGE)
@@ -135,8 +135,8 @@ Boxworld::update(Joystick& js)
         }
         else if (piece1 == BOX)
         {
-            Location afterBox{ .x = next.x + dx, .y = next.y + dy };
-            auto piece2 = m_board[afterBox.y][afterBox.x] & ~targetMask;
+            const Location afterBox{ .x = next.x + dx, .y = next.y + dy };
+            const auto piece2 = m_board[afterBox.y][afterBox.x] & ~targetMask;
 
             if (piece2 == PASSAGE)
             {
@@ -176,7 +176,7 @@ Boxworld::drawBoard(Interface565& fb)
     {
         for (int i = 0 ; i < Level::levelWidth ; ++i)
         {
-            auto piece = m_board[j][i];
+            const auto piece = m_board[j][i];
             auto& tile = m_tileBuffers[piece];
 
             if (tile.getNumberOfFrames() > 1)
@@ -261,7 +261,7 @@ Boxworld::drawText(
                                m_textRGB,
                                m_bottomTextImage);
 
-    int halfWidth = 2 + (m_bottomTextImage.getWidth() / 2);
+    const int halfWidth = 2 + (m_bottomTextImage.getWidth() / 2);
 
     position = Interface565Point{ halfWidth, 2 };
     auto& nextRGB = ((m_level < (Level::levelCount - 1))
@@ -320,8 +320,8 @@ Boxworld::findPlayer()
 void
 Boxworld::swapPieces(const Location& location1, const Location& location2)
 {
-    auto piece1 = m_board[location1.y][location1.x] & ~targetMask;
-    auto piece2 = m_board[location2.y][location2.x] & ~targetMask;
+    const auto piece1 = m_board[location1.y][location1.x] & ~targetMask;
+    const auto piece2 = m_board[location2.y][location2.x] & ~targetMask;
 
     m_board[location1.y][location1.x] = (m_board[location1.y][location1.x] & targetMask) | piece2;
     m_board[location2.y][location2.x] = (m_board[location2.y][location2.x] & targetMask) | piece1;

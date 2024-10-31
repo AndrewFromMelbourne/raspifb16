@@ -109,10 +109,10 @@ draw()
     {
         for (auto i2 = 1 ; i2 < m_columns ; ++i2)
         {
-            auto i1 = i2 - 1;
+            const auto i1 = i2 - 1;
 
-            int y1 = (trace.m_values[i1] * m_traceHeight)/m_traceScale;
-            int y2 = (trace.m_values[i2] * m_traceHeight)/m_traceScale;
+            const int y1 = (trace.m_values[i1] * m_traceHeight)/m_traceScale;
+            const int y2 = (trace.m_values[i2] * m_traceHeight)/m_traceScale;
 
             line(
                 getImage(),

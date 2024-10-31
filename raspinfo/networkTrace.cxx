@@ -136,8 +136,8 @@ update(
     time_t now,
     raspifb16::Interface565Font& font)
 {
-    NetworkStats currentStats;
-    NetworkStats diff{currentStats - m_previousStats};
+    const NetworkStats currentStats;
+    const NetworkStats diff{currentStats - m_previousStats};
 
     constexpr int zero{0};
     const int tx = std::max(zero, diff.tx());

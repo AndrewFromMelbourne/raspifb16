@@ -124,9 +124,10 @@ Trace::init(
         const auto width = font.getPixelWidth();
         const auto height = font.getPixelHeight();
 
-        raspifb16::Interface565Point p1{position.x(), position.y() + height / 4};
-        raspifb16::Interface565Point p2{position.x() + width / 2,
-                                        position.y() + (3 * height) / 4};
+        const raspifb16::Interface565Point p1{position.x(),
+                                              position.y() + height / 4};
+        const raspifb16::Interface565Point p2{position.x() + width / 2,
+                                              position.y() + (3 * height) / 4};
 
         boxFilled(getImage(), p1, p2, trace.m_traceColour);
         position.setX(position.x() + font.getPixelWidth());
@@ -192,8 +193,8 @@ Trace::addData(
 
         for (auto& trace : m_traceData)
         {
-            int max = *max_element(trace.m_values.begin(),
-                                       trace.m_values.end());
+            const int max = *max_element(trace.m_values.begin(),
+                                         trace.m_values.end());
 
             m_traceScale = std::max(m_traceScale, max);
         }

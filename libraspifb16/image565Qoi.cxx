@@ -290,7 +290,7 @@ readQoi(
 
     std::array<uint8_t, QOI_HEADER_SIZE> rawHeader;
     ifs.read(reinterpret_cast<char*>(rawHeader.data()), rawHeader.size());
-    QoiHeader header(rawHeader);
+    const QoiHeader header(rawHeader);
 
     std::vector<uint8_t> buffer(length - QOI_HEADER_SIZE - QOI_FOOTER_SIZE);
     ifs.read(reinterpret_cast<char*>(buffer.data()), buffer.size());

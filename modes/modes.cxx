@@ -45,29 +45,29 @@ findConnectedConnectors(
         return;
     }
 
-    auto resources = drm::drmModeGetResources(fd);
+    const auto resources = drm::drmModeGetResources(fd);
 
     for (auto i = 0 ; i < resources->count_connectors ; ++i)
     {
-        auto connectorId = resources->connectors[i];
-        auto connector = drm::drmModeGetConnector(fd, connectorId);
+        const auto connectorId = resources->connectors[i];
+        const auto connector = drm::drmModeGetConnector(fd, connectorId);
         const bool connected = (connector->connection == DRM_MODE_CONNECTED);
 
         if (connected and (connector->count_modes > 0))
         {
             for (auto j = 0 ; j < connector->count_encoders ; ++j)
             {
-                auto encoderId = connector->encoders[j];
-                auto encoder = drm::drmModeGetEncoder(fd, encoderId);
+                const auto encoderId = connector->encoders[j];
+                const auto encoder = drm::drmModeGetEncoder(fd, encoderId);
 
                 for (auto k = 0 ; k < resources->count_crtcs ; ++k)
                 {
-                    uint32_t currentCrtc = 1 << k;
+                    const uint32_t currentCrtc = 1 << k;
 
                     if (encoder->possible_crtcs & currentCrtc)
                     {
-                        auto crtcId = resources->crtcs[k];
-                        auto crtc = drm::drmModeGetCrtc(fd, crtcId);
+                        const auto crtcId = resources->crtcs[k];
+                        const auto crtc = drm::drmModeGetCrtc(fd, crtcId);
                         if ((crtc->mode.hdisplay > 0) and (crtc->mode.vdisplay > 0))
                         {
                             std::cout

@@ -4762,7 +4762,7 @@ Image565Font8x16::drawString(
     Interface565& image)
 {
     Interface565Point position{p};
-    Interface565Point start{p};
+    const Interface565Point start{p};
 
     for (const auto c : string)
     {

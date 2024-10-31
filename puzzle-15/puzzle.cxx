@@ -137,7 +137,7 @@ Puzzle::init()
         for (auto i = 0 ; i < boardSize - 1 ; ++i)
         {
             std::uniform_int_distribution<> distribution(i, boardSize - 1);
-            auto j = distribution(generator);
+            const auto j = distribution(generator);
             std::swap(m_board[i], m_board[j]);
         }
 
@@ -165,17 +165,18 @@ Puzzle::update(Joystick& js)
         return true;
     }
 
-    auto value = js.getAxes(0);
+    const auto value = js.getAxes(0);
 
     if (not value.x and not value.y)
     {
         return false;
     }
 
-    auto dx = (value.x) ? (value.x / std::abs(value.x)) : 0;
-    auto dy = (value.y) ? (value.y / std::abs(value.y)) : 0;
+    const auto dx = (value.x) ? (value.x / std::abs(value.x)) : 0;
+    const auto dy = (value.y) ? (value.y / std::abs(value.y)) : 0;
 
-    Location newLocation = {.x = m_blankLocation.x - dx, .y = m_blankLocation.y - dy};
+    const Location newLocation = {.x = m_blankLocation.x - dx,
+                                  .y = m_blankLocation.y - dy};
 
     if ((newLocation.x >= 0) and
         (newLocation.x < puzzleWidth) and
@@ -207,9 +208,9 @@ Puzzle::draw(Interface565& fb)
     {
         for (int i = 0 ; i < puzzleWidth ; ++i)
         {
-           Interface565Point p{ xOffset + (i * tileWidth),
-                                yOffset + (j * tileHeight) };
-           int tile = m_board[i + (j * puzzleWidth)];
+           const Interface565Point p{ xOffset + (i * tileWidth),
+                                      yOffset + (j * tileHeight) };
+           const int tile = m_board[i + (j * puzzleWidth)];
            fb.putImage(p, m_tileBuffers[tile]);
         }
     }

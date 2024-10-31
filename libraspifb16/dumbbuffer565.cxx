@@ -72,15 +72,15 @@ findDrmResourcesForConnector(
     uint32_t connectorId,
     const drm::drmModeRes_ptr& resources)
 {
-    auto connector{drm::drmModeGetConnector(fd, connectorId)};
+    const auto connector{drm::drmModeGetConnector(fd, connectorId)};
     const bool connected{connector->connection == DRM_MODE_CONNECTED};
 
     if (connected and (connector->count_modes > 0))
     {
         for (auto j = 0 ; j < connector->count_encoders ; ++j)
         {
-            auto encoderId = connector->encoders[j];
-            auto encoder = drm::drmModeGetEncoder(fd, encoderId);
+            const auto encoderId = connector->encoders[j];
+            const auto encoder = drm::drmModeGetEncoder(fd, encoderId);
 
             for (auto k = 0 ; k < resources->count_crtcs ; ++k)
             {
@@ -130,7 +130,7 @@ findDrmResources(
         return findDrmResourcesForConnector(fd, connectorId, drm::drmModeGetResources(fd));
     }
 
-    auto resources = drm::drmModeGetResources(fd);
+    const auto resources = drm::drmModeGetResources(fd);
 
     for (int i = 0 ; i < resources->count_connectors ; ++i)
     {
@@ -160,7 +160,7 @@ findDrmDevice()
 
     for (auto i = 0 ; i < devices.getDeviceCount() ; ++i)
     {
-        auto device = devices.getDevice(i);
+        const auto device = devices.getDevice(i);
 
         if ((device->available_nodes & (1 << DRM_NODE_PRIMARY)) and
             drm::drmDeviceHasDumbBuffer(device->nodes[DRM_NODE_PRIMARY]))
@@ -187,14 +187,14 @@ findDrmDeviceWithConnector(
 
     for (auto i = 0 ; i < devices.getDeviceCount() ; ++i)
     {
-        auto device = devices.getDevice(i);
+        const auto device = devices.getDevice(i);
 
         if ((device->available_nodes & (1 << DRM_NODE_PRIMARY)) and
             drm::drmDeviceHasDumbBuffer(device->nodes[DRM_NODE_PRIMARY]))
         {
-            auto card{device->nodes[DRM_NODE_PRIMARY]};
+            const auto card{device->nodes[DRM_NODE_PRIMARY]};
             auto fd = raspifb16::FileDescriptor{::open(card, O_RDWR)};
-            auto resources = drm::drmModeGetResources(fd);
+            const auto resources = drm::drmModeGetResources(fd);
 
             for (int i = 0 ; i < resources->count_connectors ; ++i)
             {

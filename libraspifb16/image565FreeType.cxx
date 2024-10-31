@@ -213,8 +213,8 @@ Image565FreeType::drawString(
     Interface565Point position{p};
     position.setY(position.y() + (m_face->size->metrics.ascender >> 6));
 
-    auto slot{m_face->glyph};
-    auto use_kerning{FT_HAS_KERNING(m_face)};
+    const auto slot{m_face->glyph};
+    const auto use_kerning{FT_HAS_KERNING(m_face)};
     FT_UInt previous{0};
 
     for (const auto c : string)

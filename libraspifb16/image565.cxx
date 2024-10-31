@@ -60,7 +60,7 @@ raspifb16::Image565::Image565(
     m_numberOfFrames{numberOfFrames},
     m_buffer(buffer)
 {
-    size_t minBufferSize = width * height * numberOfFrames;
+    const size_t minBufferSize = width * height * numberOfFrames;
 
     if (m_buffer.size() < minBufferSize)
     {

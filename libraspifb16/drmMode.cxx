@@ -179,7 +179,7 @@ drm::drmGetPropertyValue(
     uint32_t objectType,
     const std::string& name)
 {
-    auto properties{drmModeObjectGetProperties(fd, objectId, objectType)};
+    const auto properties{drmModeObjectGetProperties(fd, objectId, objectType)};
 
     for (auto i = 0; i < properties->count_props; ++i)
     {

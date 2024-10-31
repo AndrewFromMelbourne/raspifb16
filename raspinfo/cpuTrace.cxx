@@ -154,15 +154,14 @@ update(
     time_t now,
     raspifb16::Interface565Font& font)
 {
-    CpuStats currentStats;
+    const CpuStats currentStats;
+    const CpuStats diff{currentStats - m_previousStats};
 
-    CpuStats diff{currentStats - m_previousStats};
+    const int totalCpu = diff.total();
 
-    int totalCpu = diff.total();
-
-    int user = (diff.user() * m_traceScale) / totalCpu;
-    int nice = (diff.nice() * m_traceScale) / totalCpu;
-    int system = (diff.system() * m_traceScale) / totalCpu;
+    const int user = (diff.user() * m_traceScale) / totalCpu;
+    const int nice = (diff.nice() * m_traceScale) / totalCpu;
+    const int system = (diff.system() * m_traceScale) / totalCpu;
 
     Trace::addData(std::vector<int>{user, nice, system}, now);
 
