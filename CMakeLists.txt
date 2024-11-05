@@ -21,17 +21,17 @@ pkg_check_modules(DRM QUIET libdrm)
 #--------------------------------------------------------------------------
 
 add_library(raspifb16 STATIC libraspifb16/fileDescriptor.cxx
-							 libraspifb16/framebuffer565.cxx
-							 libraspifb16/image565.cxx
-							 libraspifb16/image565Font8x8.cxx
-							 libraspifb16/image565Font8x16.cxx
-							 libraspifb16/image565Graphics.cxx
-							 libraspifb16/image565Qoi.cxx
-							 libraspifb16/interface565.cxx
-							 libraspifb16/interface565Factory.cxx
-							 libraspifb16/interface565Font.cxx
-							 libraspifb16/joystick.cxx
-							 libraspifb16/rgb565.cxx)
+                             libraspifb16/framebuffer565.cxx
+                             libraspifb16/image565.cxx
+                             libraspifb16/image565Font8x8.cxx
+                             libraspifb16/image565Font8x16.cxx
+                             libraspifb16/image565Graphics.cxx
+                             libraspifb16/image565Qoi.cxx
+                             libraspifb16/interface565.cxx
+                             libraspifb16/interface565Factory.cxx
+                             libraspifb16/interface565Font.cxx
+                             libraspifb16/joystick.cxx
+                             libraspifb16/rgb565.cxx)
 
 if (FREETYPE_FOUND)
 target_include_directories(raspifb16 PUBLIC ${FREETYPE_INCLUDE_DIRS})
@@ -58,7 +58,7 @@ add_executable(boxworld boxworld/main.cxx
                         boxworld/boxworld.cxx)
 
 target_link_libraries(boxworld raspifb16
-							   ${DRM_LIBRARIES})
+                               ${DRM_LIBRARIES})
 
 #--------------------------------------------------------------------------
 
@@ -78,21 +78,21 @@ target_link_libraries(puzzle-15 raspifb16
 #--------------------------------------------------------------------------
 
 add_executable(raspinfo raspinfo/raspinfo.cxx
-						raspinfo/cpuTrace.cxx
-						raspinfo/dynamicInfo.cxx
-						raspinfo/memoryTrace.cxx
-						raspinfo/networkTrace.cxx
-						raspinfo/panel.cxx
-						raspinfo/system.cxx
-						raspinfo/temperatureTrace.cxx
-						raspinfo/trace.cxx
-						raspinfo/traceGraph.cxx
-						raspinfo/traceStack.cxx)
+                        raspinfo/cpuTrace.cxx
+                        raspinfo/dynamicInfo.cxx
+                        raspinfo/memoryTrace.cxx
+                        raspinfo/networkTrace.cxx
+                        raspinfo/panel.cxx
+                        raspinfo/system.cxx
+                        raspinfo/temperatureTrace.cxx
+                        raspinfo/trace.cxx
+                        raspinfo/traceGraph.cxx
+                        raspinfo/traceStack.cxx)
 
 target_link_libraries(raspinfo raspifb16
-							   -lbsd
+                               -lbsd
                                ${FREETYPE_LIBRARIES}
-							   ${DRM_LIBRARIES})
+                               ${DRM_LIBRARIES})
 
 set_property(TARGET raspinfo PROPERTY SKIP_BUILD_RPATH TRUE)
 install (TARGETS raspinfo RUNTIME DESTINATION bin)
@@ -133,12 +133,12 @@ if (FREETYPE_FOUND)
 add_executable(testft test/testft.cxx)
 target_link_libraries(testft raspifb16
                              ${FREETYPE_LIBRARIES}
-							 ${DRM_LIBRARIES})
+                             ${DRM_LIBRARIES})
 
 add_executable(testft2 test/testft2.cxx)
 target_link_libraries(testft2 raspifb16
                               ${FREETYPE_LIBRARIES}
-							  ${DRM_LIBRARIES})
+                              ${DRM_LIBRARIES})
 endif()
 
 #--------------------------------------------------------------------------
@@ -159,6 +159,6 @@ add_executable(wifiscan wifiscan/scanEntry.cxx
 
 target_link_libraries(wifiscan raspifb16
                                ${FREETYPE_LIBRARIES}
-							   ${DRM_LIBRARIES}
+                               ${DRM_LIBRARIES}
                                ${LIBIW_LIBRARIES})
 endif()
