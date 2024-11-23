@@ -16,11 +16,17 @@ The library itself.
 ## test
 A very simple test program that displays text and simple graphics
 
+## testCircle
+Test circle drawing functions
+
 ## testColour
 Displays a hues at different brightness and saturation.
 
 ## testft and testft2
 Tests programs for truetype fonts (Requires Freetype2).
+
+## testPutimage
+Test putImage function overlapping screen edge.
 
 # boxworld
 A version of Boxworld or Sokoban (Requires a joystick).
