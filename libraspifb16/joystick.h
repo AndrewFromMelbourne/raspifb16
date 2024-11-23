@@ -46,8 +46,8 @@ namespace raspifb16
 
 struct JoystickAxes
 {
-    int32_t x;
-    int32_t y;
+    int x;
+    int y;
 };
 
 //-------------------------------------------------------------------------
@@ -66,14 +66,19 @@ public:
 
     enum Buttons
     {
-        BUTTON_B = 0,
+        BUTTON_X = 0,
         BUTTON_A = 1,
-        BUTTON_X = 3,
-        BUTTON_Y = 4,
-        BUTTON_LEFT = 6,
-        BUTTON_RIGHT = 7,
-        BUTTON_SELECT = 10,
-        BUTTON_START = 11
+        BUTTON_B = 2,
+        BUTTON_Y = 3,
+        BUTTON_LEFT_SHOULDER = 4,
+        BUTTON_RIGHT_SHOULDER = 5,
+        BUTTON_DPAD_UP = 6,
+        BUTTON_DPAD_DOWN = 7,
+        BUTTON_SELECT = 8,
+        BUTTON_START = 9,
+        BUTTON_DPAD_LEFT = 10,
+        BUTTON_DPAD_RIGHT = 11,
+        BUTTON_COUNT = 12,
     };
 
     explicit Joystick(bool blocking = false);
@@ -86,12 +91,16 @@ public:
     bool buttonDown(int button) const;
     JoystickAxes getAxes(int joystickNumber) const;
 
+    int rawButton(int button) const;
+
     void read();
 
 private:
 
     void init();
+    bool isValidButton(int button) const;
     void process(const struct js_event& event);
+    void readConfig();
 
     FileDescriptor m_joystickFd;
 
@@ -102,6 +111,7 @@ private:
 
     std::vector<ButtonState> m_buttons;
     std::vector<JoystickAxes> m_joysticks;
+    std::vector<Buttons> m_buttonNumbers;
 };
 
 //-------------------------------------------------------------------------

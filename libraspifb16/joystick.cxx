@@ -31,27 +31,44 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#include <iostream>
+
+#include <cstdlib>
+#include <fstream>
+#include <map>
+#include <optional>
+#include <regex>
 #include <system_error>
 
 #include "joystick.h"
 
-//-------------------------------------------------------------------------
+//=========================================================================
 
 namespace
 {
 
-bool
-readJoystickEvent(
-    raspifb16::FileDescriptor& joystickFd,
-    js_event& event)
-{
-    const auto bytes{::read(joystickFd.fd(), &event, sizeof(event))};
-    return (bytes != -1) and (bytes == sizeof(event));
-}
+//-------------------------------------------------------------------------
 
+std::optional<js_event>
+readJoystickEvent(
+    raspifb16::FileDescriptor& joystickFd)
+{
+    js_event event{};
+    const auto bytes{::read(joystickFd.fd(), &event, sizeof(event))};
+
+    if ((bytes == -1) or (bytes != sizeof(event)))
+    {
+        return {};
+    }
+
+    return event;
 }
 
 //-------------------------------------------------------------------------
+
+}
+
+//=========================================================================
 
 
 raspifb16::Joystick::Joystick(bool blocking)
@@ -69,9 +86,64 @@ raspifb16::Joystick::Joystick(const std::string& device, bool blocking)
     m_buttonCount(0),
     m_joystickCount(0),
     m_buttons(),
-    m_joysticks()
+    m_joysticks(),
+    m_buttonNumbers{
+        BUTTON_X,
+        BUTTON_A,
+        BUTTON_B,
+        BUTTON_Y,
+        BUTTON_LEFT_SHOULDER,
+        BUTTON_RIGHT_SHOULDER,
+        BUTTON_DPAD_UP,
+        BUTTON_DPAD_DOWN,
+        BUTTON_SELECT,
+        BUTTON_START,
+        BUTTON_DPAD_LEFT,
+        BUTTON_DPAD_RIGHT,
+    }
 {
     init();
+}
+
+//-------------------------------------------------------------------------
+
+bool
+raspifb16::Joystick::buttonDown(int button) const
+{
+    if (not isValidButton(button))
+    {
+        return false;
+    }
+
+    return m_buttons.at(button).down;
+}
+
+//-------------------------------------------------------------------------
+
+bool
+raspifb16::Joystick::buttonPressed(int button)
+{
+    if (not isValidButton(button))
+    {
+        return false;
+    }
+
+    const auto pressed = m_buttons.at(button).pressed;
+
+    if (pressed)
+    {
+        m_buttons[button].pressed = false;
+    }
+
+    return pressed;
+}
+
+//-------------------------------------------------------------------------
+
+raspifb16::JoystickAxes
+raspifb16::Joystick::getAxes(int joystickNumber) const
+{
+    return m_joysticks.at(joystickNumber);
 }
 
 //-------------------------------------------------------------------------
@@ -86,7 +158,7 @@ raspifb16::Joystick::init()
                                 "cannot open joystick device"};
     }
 
-    char joystickCount{};
+    char joystickCount = 0;
     if (ioctl(m_joystickFd.fd(), JSIOCGAXES, &joystickCount) == -1)
     {
         throw std::system_error{errno,
@@ -95,7 +167,7 @@ raspifb16::Joystick::init()
     }
     m_joystickCount = joystickCount / 2;
 
-    char buttonCount{};
+    char buttonCount = 0;
     if (ioctl(m_joystickFd.fd(), JSIOCGBUTTONS, &buttonCount) == -1)
     {
         throw std::system_error{errno,
@@ -106,6 +178,16 @@ raspifb16::Joystick::init()
 
     m_buttons.resize(m_buttonCount, ButtonState{ false, false });
     m_joysticks.resize(m_joystickCount, JoystickAxes{ 0, 0 });
+
+    readConfig();
+}
+
+//-------------------------------------------------------------------------
+
+bool
+raspifb16::Joystick::isValidButton(int button) const
+{
+    return (button >= 0) and (button < numberOfButtons());
 }
 
 //-------------------------------------------------------------------------
@@ -126,91 +208,30 @@ raspifb16::Joystick::numberOfAxes() const
 
 //-------------------------------------------------------------------------
 
-bool
-raspifb16::Joystick::buttonPressed(int button)
-{
-    if (button >= numberOfButtons())
-    {
-        return false;
-    }
-
-    const auto pressed = m_buttons.at(button).pressed;
-
-    if (pressed)
-    {
-        m_buttons[button].pressed = false;
-    }
-
-    return pressed;
-}
-
-//-------------------------------------------------------------------------
-
-bool
-raspifb16::Joystick::buttonDown(int button) const
-{
-    if (button >= numberOfButtons())
-    {
-        return false;
-    }
-
-    return m_buttons.at(button).down;
-}
-
-//-------------------------------------------------------------------------
-
-raspifb16::JoystickAxes
-raspifb16::Joystick::getAxes(int joystickNumber) const
-{
-    return m_joysticks.at(joystickNumber);
-}
-
-//-------------------------------------------------------------------------
-
 void
-raspifb16::Joystick::read()
-{
-    js_event event{};
-
-    if (m_blocking)
-    {
-        if (readJoystickEvent(m_joystickFd, event))
-        {
-            process(event);
-        }
-    }
-    else
-    {
-        while (readJoystickEvent(m_joystickFd, event))
-        {
-            process(event);
-        }
-    }
-}
-
-//-------------------------------------------------------------------------
-
-void
- raspifb16::Joystick::process(const js_event& event)
+raspifb16::Joystick::process(const js_event& event)
 {
     switch (event.type)
     {
         case JS_EVENT_BUTTON:
+        {
+            auto number = m_buttonNumbers[event.number];
 
             if (event.value)
             {
-                m_buttons.at(event.number) = ButtonState{ true, true };
+                m_buttons.at(number) = ButtonState{ .pressed = true,
+                                                    .down = true };
             }
             else
             {
-                m_buttons.at(event.number).down = false;
+                m_buttons.at(number).down = false;
             }
 
             break;
-
+        }
         case JS_EVENT_AXIS:
         {
-            const auto axis = event.number / 2;
+            const auto axis{event.number / 2};
 
             if (axis < 3)
             {
@@ -229,6 +250,98 @@ void
             }
 
             break;
+        }
+    }
+}
+
+//-------------------------------------------------------------------------
+
+int
+raspifb16::Joystick::rawButton(int button) const
+{
+    for (int i = 0 ; i < m_buttonNumbers.size() ; ++i)
+    {
+        if (m_buttonNumbers[i] == button)
+        {
+            return i;
+        }
+    }
+
+    return m_buttonCount;
+}
+
+//-------------------------------------------------------------------------
+
+void
+raspifb16::Joystick::read()
+{
+    if (m_blocking)
+    {
+        auto event{readJoystickEvent(m_joystickFd)};
+        if (event)
+        {
+            process(*event);
+        }
+    }
+    else
+    {
+        while (auto event = readJoystickEvent(m_joystickFd))
+        {
+            process(*event);
+        }
+    }
+}
+
+//-------------------------------------------------------------------------
+
+void
+raspifb16::Joystick::
+readConfig()
+{
+    std::map<std::string, Buttons> stringToButton =
+    {
+        {"BUTTON_X", BUTTON_X},
+        {"BUTTON_A", BUTTON_A},
+        {"BUTTON_B", BUTTON_B},
+        {"BUTTON_Y", BUTTON_Y},
+        {"BUTTON_LEFT_SHOULDER", BUTTON_LEFT_SHOULDER},
+        {"BUTTON_RIGHT_SHOULDER", BUTTON_RIGHT_SHOULDER},
+        {"BUTTON_SELECT", BUTTON_SELECT},
+        {"BUTTON_START", BUTTON_START},
+    };
+
+    std::string configFile{std::getenv("HOME") +
+                           std::string{"/.config/raspifb16/joystickButtons"}};
+
+    std::ifstream ifs{configFile.c_str()};
+
+    if (ifs)
+    {
+        const std::regex pattern{R"((\w+)\s*=\s*(\d+))"};
+        std::string line;
+
+        while (std::getline(ifs, line))
+        {
+            try
+            {
+                std::smatch match;
+
+                if (std::regex_match(line, match, pattern))
+                {
+                    const auto key = match[1].str();
+                    const auto value = std::stoi(match[2].str());
+
+                    if ((value >= 0) and (value < m_buttonNumbers.size()))
+                    {
+                        const auto button = stringToButton.at(key);
+                        m_buttonNumbers[value] = button;
+                    }
+                }
+            }
+            catch (std::exception&)
+            {
+                // ignore
+            }
         }
     }
 }
