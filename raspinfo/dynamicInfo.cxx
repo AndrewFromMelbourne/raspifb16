@@ -140,61 +140,42 @@ vcGenCmd(const std::string& command)
 std::string
 getMemorySplit()
 {
-    std::string result{};
-
-    int arm_mem{};
-    int gpu_mem{};
-
-    const auto& arm{vcGenCmd("get_mem arm")};
-
-    if (not arm.empty())
+    auto getValue = [](const std::string& token) -> int
     {
-        try
-        {
-            std::regex pattern{R"(arm=(\d+)M)"};
-            std::smatch match;
-            std::string vcGenResult(arm);
+        const auto& vcGenResult{vcGenCmd("get_mem " + token)};
+        int value{};
 
-            if (std::regex_search(vcGenResult, match, pattern) and
-                (match.size() == 2))
+        if (not vcGenResult.empty())
+        {
+            try
             {
-                arm_mem = std::stoi(match[1].str());
+                std::regex pattern{token + "=(\\d+)M"};
+                std::smatch match;
+
+                if (std::regex_match(vcGenResult, match, pattern) and
+                    (match.size() == 2))
+                {
+                    value = std::stoi(match[1].str());
+                }
+            }
+            catch (std::exception&)
+            {
+                // ignore
             }
         }
-        catch (std::exception&)
-        {
-            // ignore
-        }
-    }
 
-    const auto& gpu{vcGenCmd("get_mem gpu")};
+        return value;
+    };
 
-    if (not gpu.empty())
+    const int arm_mem{getValue("arm")};
+    const int gpu_mem{getValue("gpu")};
+
+    if (not arm_mem or not gpu_mem)
     {
-        try
-        {
-            std::regex pattern{R"(gpu=(\d+)M)"};
-            std::smatch match;
-            std::string vcGenResult(gpu);
-
-            if (std::regex_search(vcGenResult, match, pattern) and
-                (match.size() == 2))
-            {
-                gpu_mem = std::stoi(match[1].str());
-            }
-        }
-        catch (std::exception&)
-        {
-            // ignore
-        }
+        return "";
     }
 
-    if (arm_mem and gpu_mem)
-    {
-        result = std::to_string(gpu_mem) + "/" + std::to_string(arm_mem);
-    }
-
-    return result;
+    return std::to_string(gpu_mem) + "/" + std::to_string(arm_mem);
 }
 
 //-------------------------------------------------------------------------
