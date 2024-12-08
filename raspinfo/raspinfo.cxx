@@ -434,7 +434,7 @@ main(
 
             fb->update();
 
-            const auto nextSecond = now + 1s;
+            const auto nextSecond = std::chrono::round<Sec>(now) + 1s;
             std::this_thread::sleep_until(nextSecond);
         }
 
