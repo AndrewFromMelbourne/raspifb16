@@ -152,6 +152,11 @@ Trace::addData(
     {
         auto then = m_time.back() + 1;
 
+        if (then > now)
+        {
+            return;
+        }
+
         while (then < now)
         {
             addDataPoint(std::vector<int>(data.size()), then++);
