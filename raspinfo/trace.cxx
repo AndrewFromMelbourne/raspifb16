@@ -67,22 +67,15 @@ Trace::Trace(
     m_title{title},
     m_autoScale{traceScale == 0},
     m_traceData(),
-    m_time(width)
+    m_time()
 {
     for (int trace = 0 ; trace < traces ; ++trace)
     {
-
-        TraceData traceData =
-        {
-            traceNames[trace],
-            traceColours[trace],
-            raspifb16::RGB565::blend(63,
-                                     sc_gridColour,
-                                     traceColours[trace]),
-        };
-        traceData.m_values.resize(width, 0);
-
-        m_traceData.push_back(traceData);
+        m_traceData.emplace_back(traceNames[trace],
+                                 traceColours[trace],
+                                 raspifb16::RGB565::blend(63,
+                                                          sc_gridColour,
+                                                          traceColours[trace]));
     }
 }
 
@@ -155,35 +148,17 @@ Trace::addData(
     const std::vector<int>& data,
     time_t now)
 {
-    int index{0};
-
-    if (m_columns < getImage().getWidth())
+    if (m_time.size())
     {
-        index = m_columns++;
-    }
-    else
-    {
-        index = m_columns - 1;
+        auto then = m_time.back() + 1;
 
-        for (auto& trace : m_traceData)
+        while (then < now)
         {
-            std::rotate(trace.m_values.begin(),
-                        trace.m_values.begin() + 1,
-                        trace.m_values.end());
+            addDataPoint(std::vector<int>(data.size()), then++);
         }
-
-        std::rotate(m_time.begin(), m_time.begin() + 1, m_time.end());
     }
 
-    //-----------------------------------------------------------------
-
-    auto value = data.begin();
-    for (auto& trace : m_traceData)
-    {
-        trace.m_values[index] = *(value++);
-    }
-
-    m_time[index] = now % 60;
+    addDataPoint(data, now);
 
     //-----------------------------------------------------------------
 
@@ -208,5 +183,45 @@ Trace::addData(
     //-----------------------------------------------------------------
 
     draw();
+}
+
+//-------------------------------------------------------------------------
+
+void
+Trace::addDataPoint(
+    const std::vector<int>& data,
+    time_t now)
+{
+    if (m_columns < getImage().getWidth())
+    {
+        ++m_columns;
+
+        auto value{data.cbegin()};
+        for (auto& trace : m_traceData)
+        {
+            trace.m_values.push_back(*(value++));
+        }
+
+        m_time.push_back(now);
+    }
+    else
+    {
+        for (auto& trace : m_traceData)
+        {
+            std::rotate(trace.m_values.begin(),
+                        trace.m_values.begin() + 1,
+                        trace.m_values.end());
+        }
+
+        std::rotate(m_time.begin(), m_time.begin() + 1, m_time.end());
+
+        auto value{data.cbegin()};
+        for (auto& trace : m_traceData)
+        {
+            trace.m_values.back() = *(value++);
+        }
+
+        m_time.back() = now;
+    }
 }
 

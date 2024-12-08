@@ -59,6 +59,10 @@
 
 //-------------------------------------------------------------------------
 
+using namespace std::chrono_literals;
+
+//-------------------------------------------------------------------------
+
 namespace
 {
 volatile static std::sig_atomic_t run{1};
@@ -411,9 +415,7 @@ main(
 
         //-----------------------------------------------------------------
 
-        constexpr auto oneSecond(std::chrono::seconds(1));
-
-        std::this_thread::sleep_for(oneSecond);
+        std::this_thread::sleep_for(1s);
 
         while (run)
         {
@@ -431,7 +433,9 @@ main(
             }
 
             fb->update();
-            std::this_thread::sleep_for(oneSecond);
+
+            const auto nextSecond = now + 1s;
+            std::this_thread::sleep_until(nextSecond);
         }
 
         fb->clear();

@@ -81,7 +81,7 @@ draw()
 
             for (int v = 0 ; v < value ; ++v)
             {
-                if (((j % m_gridHeight) == 0) or (m_time[i] == 0))
+                if (((j % m_gridHeight) == 0) or ((m_time[i] % 60) == 0))
                 {
                     getImage().setPixelRGB(
                         raspifb16::Interface565Point{i, j--},
@@ -98,7 +98,7 @@ draw()
 
         for ( ; j >= 0 ; --j)
         {
-            if (((j % m_gridHeight) == 0) or (m_time[i] == 0))
+            if (((j % m_gridHeight) == 0) or ((m_time[i] % 60) == 0))
             {
                 getImage().setPixelRGB(
                     raspifb16::Interface565Point{i, j},

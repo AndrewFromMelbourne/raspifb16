@@ -95,11 +95,15 @@ protected:
     bool m_autoScale;
 
     std::vector<TraceData> m_traceData;
-    std::vector<int8_t> m_time;
+    std::vector<time_t> m_time;
 
     static const raspifb16::RGB565 sc_foreground;
     static const raspifb16::RGB565 sc_background;
     static const raspifb16::RGB565 sc_gridColour;
+
+private:
+
+    void addDataPoint(const std::vector<int>& data, time_t now);
 };
 
 //-------------------------------------------------------------------------
