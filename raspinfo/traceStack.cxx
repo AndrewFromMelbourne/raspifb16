@@ -37,18 +37,16 @@
 
 //-------------------------------------------------------------------------
 
-TraceStack::
-TraceStack(
+TraceStack::TraceStack(
     int width,
     int traceHeight,
     int fontHeight,
     int traceScale,
     int yPosition,
     int gridHeight,
-    int traces,
     const std::string& title,
-    const std::vector<std::string>& traceNames,
-    const std::vector<raspifb16::RGB565>& traceColours)
+    const std::vector<TraceConfiguration>& traces)
+
 :
     Trace(
         width,
@@ -57,18 +55,15 @@ TraceStack(
         traceScale,
         yPosition,
         gridHeight,
-        traces,
         title,
-        traceNames,
-        traceColours)
+        traces)
 {
 }
 
 //-------------------------------------------------------------------------
 
 void
-TraceStack::
-draw()
+TraceStack::draw()
 {
     for (int i = 0 ; i < m_columns ; ++i)
     {
@@ -76,7 +71,7 @@ draw()
 
         for (auto& trace : m_traceData)
         {
-            int value = (trace.m_values[i] * m_traceHeight)
+            int value = (trace.value(i) * m_traceHeight)
                           / m_traceScale;
 
             for (int v = 0 ; v < value ; ++v)
@@ -85,13 +80,13 @@ draw()
                 {
                     getImage().setPixelRGB(
                         raspifb16::Interface565Point{i, j--},
-                        trace.m_gridColour);
+                        trace.gridColour());
                 }
                 else
                 {
                     getImage().setPixelRGB(
                         raspifb16::Interface565Point{i, j--},
-                        trace.m_traceColour);
+                        trace.traceColour());
                 }
             }
         }

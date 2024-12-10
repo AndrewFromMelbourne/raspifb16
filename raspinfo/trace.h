@@ -48,12 +48,46 @@ class FrameBuffer565;
 
 //-------------------------------------------------------------------------
 
-struct TraceData
+class TraceData
 {
+public:
+
+    TraceData(
+        const std::string& name,
+        raspifb16::RGB565 traceColour,
+        raspifb16::RGB565 gridColour,
+        int width)
+    :
+        m_name{name},
+        m_traceColour{traceColour},
+        m_gridColour{gridColour},
+        m_values{}
+    {
+        m_values.reserve(width);
+    }
+
+    const std::string& name() const{ return m_name; }
+    raspifb16::RGB565 traceColour() const { return m_traceColour; }
+    raspifb16::RGB565 gridColour() const { return m_gridColour; }
+
+    void addData(int value);
+    int max() const;
+    int value(int i) const { return m_values[i]; }
+
+private:
+
     std::string m_name;
     raspifb16::RGB565 m_traceColour;
     raspifb16::RGB565 m_gridColour;
     std::vector<int> m_values;
+};
+
+//-------------------------------------------------------------------------
+
+struct TraceConfiguration
+{
+    std::string m_name;
+    raspifb16::RGB565 m_traceColour;
 };
 
 //-------------------------------------------------------------------------
@@ -71,10 +105,8 @@ public:
         int traceScale,
         int yPosition,
         int gridHeight,
-        int traces,
         const std::string& title,
-        const std::vector<std::string>& traceNames,
-        const std::vector<raspifb16::RGB565>& traceColours);
+        const std::vector<TraceConfiguration>& traces);
 
     void init(raspifb16::Interface565Font& font) override;
     void update(time_t now, raspifb16::Interface565Font& font) override = 0;

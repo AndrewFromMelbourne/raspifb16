@@ -36,8 +36,7 @@
 
 //-------------------------------------------------------------------------
 
-CpuStats::
-CpuStats()
+CpuStats::CpuStats()
 {
     std::ifstream ifs{"/proc/stat", std::ifstream::in};
 
@@ -73,8 +72,7 @@ CpuStats()
 //-------------------------------------------------------------------------
 
 int
-CpuStats::
-total() const
+CpuStats::total() const
 {
     return m_user +
            m_nice +
@@ -91,8 +89,7 @@ total() const
 //-------------------------------------------------------------------------
 
 CpuStats&
-CpuStats::
-operator-=(
+CpuStats::operator-=(
     const CpuStats& rhs)
 {
     m_user -= rhs.m_user;
@@ -121,8 +118,7 @@ operator-(
 
 //-------------------------------------------------------------------------
 
-CpuTrace::
-CpuTrace(
+CpuTrace::CpuTrace(
     int width,
     int traceHeight,
     int fontHeight,
@@ -136,12 +132,11 @@ CpuTrace(
         100,
         yPosition,
         gridHeight,
-        3,
         "CPU",
-        std::vector<std::string>{"user", "nice", "system"},
-        std::vector<raspifb16::RGB565>{{4, 90, 141},
-                                       {116, 169, 207},
-                                       {241, 238, 246}}),
+        std::vector<TraceConfiguration>{
+            {"user", {4, 90, 141}},
+            {"nice", {116, 169, 207}},
+            {"system", {241, 238, 246}}}),
     m_previousStats{}
 {
 }
@@ -149,8 +144,7 @@ CpuTrace(
 //-------------------------------------------------------------------------
 
 void
-CpuTrace::
-update(
+CpuTrace::update(
     time_t now,
     raspifb16::Interface565Font& font)
 {

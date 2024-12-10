@@ -50,10 +50,8 @@ public:
         int traceScale,
         int yPosition,
         int gridHeight,
-        int traces,
         const std::string& title,
-        const std::vector<std::string>& traceNames,
-        const std::vector<raspifb16::RGB565>& traceColours);
+        const std::vector<TraceConfiguration>& traces);
 
     void update(time_t now, raspifb16::Interface565Font& font) override = 0;
 

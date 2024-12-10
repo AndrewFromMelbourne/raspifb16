@@ -37,8 +37,7 @@
 
 //-------------------------------------------------------------------------
 
-MemoryStats::
-MemoryStats()
+MemoryStats::MemoryStats()
 :
     m_total{0},
     m_buffers{0},
@@ -87,8 +86,7 @@ MemoryStats()
 
 //-------------------------------------------------------------------------
 
-MemoryTrace::
-MemoryTrace(
+MemoryTrace::MemoryTrace(
     int width,
     int traceHeight,
     int fontHeight,
@@ -102,20 +100,18 @@ MemoryTrace(
         100,
         yPosition,
         gridHeight,
-        3,
         "Memory",
-        std::vector<std::string>{"used", "buffers", "cached"},
-        std::vector<raspifb16::RGB565>{{0, 109, 44},
-                                       {102, 194, 164},
-                                       {237, 248, 251}})
+        std::vector<TraceConfiguration>{
+            {"used", {0, 109, 44}},
+            {"buffers", {102, 194, 164}},
+            {"cached", {237, 248, 251}}})
 {
 }
 
 //-------------------------------------------------------------------------
 
 void
-MemoryTrace::
-update(
+MemoryTrace::update(
     time_t now,
     raspifb16::Interface565Font& font)
 {

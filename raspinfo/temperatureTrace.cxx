@@ -37,8 +37,7 @@
 
 //-------------------------------------------------------------------------
 
-TemperatureTrace::
-TemperatureTrace(
+TemperatureTrace::TemperatureTrace(
     int width,
     int traceHeight,
     int fontHeight,
@@ -52,18 +51,16 @@ TemperatureTrace(
         100,
         yPosition,
         gridHeight,
-        1,
         "Temperature",
-        std::vector<std::string>{"temperature"},
-        std::vector<raspifb16::RGB565>{{102, 167, 225}})
+        std::vector<TraceConfiguration>{{"temperature", {102, 167, 225}}})
+
 {
 }
 
 //-------------------------------------------------------------------------
 
 void
-TemperatureTrace::
-update(
+TemperatureTrace::update(
     time_t now,
     raspifb16::Interface565Font& font)
 {

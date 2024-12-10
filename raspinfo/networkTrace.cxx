@@ -44,8 +44,7 @@
 
 //-------------------------------------------------------------------------
 
-NetworkStats::
-NetworkStats()
+NetworkStats::NetworkStats()
 :
     m_tx{0},
     m_rx{0}
@@ -83,8 +82,7 @@ NetworkStats()
 //-------------------------------------------------------------------------
 
 NetworkStats&
-NetworkStats::
-operator-=(
+NetworkStats::operator-=(
     const NetworkStats& rhs)
 {
     m_tx -= rhs.m_tx;
@@ -105,8 +103,7 @@ operator-(
 
 //-------------------------------------------------------------------------
 
-NetworkTrace::
-NetworkTrace(
+NetworkTrace::NetworkTrace(
     int width,
     int traceHeight,
     int fontHeight,
@@ -120,10 +117,10 @@ NetworkTrace(
         0,
         yPosition,
         gridHeight,
-        2,
         "Network",
-        std::vector<std::string>{"tx", "rx"},
-        std::vector<raspifb16::RGB565>{{102, 167, 225}, {225, 225, 102}}),
+        std::vector<TraceConfiguration>{
+            {"tx", {102, 167, 225}},
+            {"rx", {225, 225, 102}}}),
     m_previousStats{}
 {
 }
@@ -131,8 +128,7 @@ NetworkTrace(
 //-------------------------------------------------------------------------
 
 void
-NetworkTrace::
-update(
+NetworkTrace::update(
     time_t now,
     raspifb16::Interface565Font& font)
 {

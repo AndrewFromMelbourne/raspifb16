@@ -103,7 +103,7 @@ getIpAddress()
 std::string
 vcGenCmd(const std::string& command)
 {
-     raspifb16::FileDescriptor fd{::open("/dev/vcio", 0)};
+    raspifb16::FileDescriptor fd{::open("/dev/vcio", 0)};
 
     if (fd.fd() == -1)
     {

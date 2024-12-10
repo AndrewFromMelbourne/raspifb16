@@ -33,8 +33,7 @@
 //-------------------------------------------------------------------------
 
 int
-raspinfo::
-getTemperature()
+raspinfo::getTemperature()
 {
     int millidegrees = 0;
 

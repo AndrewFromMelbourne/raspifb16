@@ -53,10 +53,8 @@ Trace::Trace(
     int traceScale,
     int yPosition,
     int gridHeight,
-    int traces,
     const std::string& title,
-    const std::vector<std::string>& traceNames,
-    const std::vector<raspifb16::RGB565>& traceColours)
+    const std::vector<TraceConfiguration>& traces)
 :
     Panel(width, traceHeight + fontHeight + 4, yPosition),
     m_traceHeight{traceHeight},
@@ -69,13 +67,18 @@ Trace::Trace(
     m_traceData(),
     m_time()
 {
-    for (int trace = 0 ; trace < traces ; ++trace)
+    m_time.reserve(width);
+
+    for (auto& trace : traces)
     {
-        m_traceData.emplace_back(traceNames[trace],
-                                 traceColours[trace],
-                                 raspifb16::RGB565::blend(63,
-                                                          sc_gridColour,
-                                                          traceColours[trace]));
+        const auto gridColour{raspifb16::RGB565::blend(63,
+                                                       sc_gridColour,
+                                                       trace.m_traceColour)};
+
+        m_traceData.emplace_back(trace.m_name,
+                                 trace.m_traceColour,
+                                 gridColour,
+                                 width);
     }
 }
 
@@ -108,7 +111,7 @@ Trace::init(
         }
 
         position = font.drawString(position,
-                                   trace.m_name + ":",
+                                   trace.name() + ":",
                                    sc_foreground,
                                    getImage());
 
@@ -122,7 +125,7 @@ Trace::init(
         const raspifb16::Interface565Point p2{position.x() + width / 2,
                                               position.y() + (3 * height) / 4};
 
-        boxFilled(getImage(), p1, p2, trace.m_traceColour);
+        boxFilled(getImage(), p1, p2, trace.traceColour());
         position.setX(position.x() + font.getPixelWidth());
     }
 
@@ -173,10 +176,7 @@ Trace::addData(
 
         for (auto& trace : m_traceData)
         {
-            const int max = *max_element(trace.m_values.begin(),
-                                         trace.m_values.end());
-
-            m_traceScale = std::max(m_traceScale, max);
+            m_traceScale = std::max(m_traceScale, trace.max());
         }
 
         if (m_traceScale == 0)
@@ -200,33 +200,43 @@ Trace::addDataPoint(
     if (m_columns < getImage().getWidth())
     {
         ++m_columns;
-
-        auto value{data.cbegin()};
-        for (auto& trace : m_traceData)
-        {
-            trace.m_values.push_back(*(value++));
-        }
-
         m_time.push_back(now);
     }
     else
     {
-        for (auto& trace : m_traceData)
-        {
-            std::rotate(trace.m_values.begin(),
-                        trace.m_values.begin() + 1,
-                        trace.m_values.end());
-        }
-
         std::rotate(m_time.begin(), m_time.begin() + 1, m_time.end());
-
-        auto value{data.cbegin()};
-        for (auto& trace : m_traceData)
-        {
-            trace.m_values.back() = *(value++);
-        }
-
         m_time.back() = now;
     }
+
+    auto value{data.cbegin()};
+    for (auto& trace : m_traceData)
+    {
+        trace.addData(*(value++));
+    }
+}
+
+//=========================================================================
+
+void
+TraceData::addData(
+    int value)
+{
+    if (m_values.size() < m_values.capacity())
+    {
+        m_values.push_back(value);
+    }
+    else
+    {
+        std::rotate(m_values.begin(), m_values.begin() + 1, m_values.end());
+        m_values.back() = value;
+    }
+}
+
+//-------------------------------------------------------------------------
+
+int
+TraceData::max() const
+{
+    return *std::max_element(m_values.begin(), m_values.end());
 }
 
