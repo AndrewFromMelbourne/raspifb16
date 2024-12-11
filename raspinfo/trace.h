@@ -61,7 +61,8 @@ public:
         m_name{name},
         m_traceColour{traceColour},
         m_gridColour{gridColour},
-        m_values{}
+        m_values{},
+        m_width{width}
     {
         m_values.reserve(width);
     }
@@ -80,6 +81,7 @@ private:
     raspifb16::RGB565 m_traceColour;
     raspifb16::RGB565 m_gridColour;
     std::vector<int> m_values;
+    int m_width;
 };
 
 //-------------------------------------------------------------------------

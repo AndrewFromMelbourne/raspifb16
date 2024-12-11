@@ -69,7 +69,7 @@ Trace::Trace(
 {
     m_time.reserve(width);
 
-    for (auto& trace : traces)
+    for (const auto& trace : traces)
     {
         const auto gridColour{raspifb16::RGB565::blend(63,
                                                        sc_gridColour,
@@ -99,7 +99,7 @@ Trace::init(
                    getImage());
 
     bool first = true;
-    for (auto& trace : m_traceData)
+    for (const auto& trace : m_traceData)
     {
         if (first)
         {
@@ -134,7 +134,7 @@ Trace::init(
                                sc_foreground,
                                getImage());
 
-    for (auto j = 0 ; j < m_traceHeight + 1 ; j+= m_gridHeight)
+    for (auto j = 0 ; j < m_traceHeight + 1 ; j += m_gridHeight)
     {
         horizontalLine(getImage(),
                        0,
@@ -174,7 +174,7 @@ Trace::addData(
     {
         m_traceScale = 0;
 
-        for (auto& trace : m_traceData)
+        for (const auto& trace : m_traceData)
         {
             m_traceScale = std::max(m_traceScale, trace.max());
         }
@@ -221,7 +221,7 @@ void
 TraceData::addData(
     int value)
 {
-    if (m_values.size() < m_values.capacity())
+    if (m_values.size() < m_width)
     {
         m_values.push_back(value);
     }
