@@ -71,6 +71,8 @@ public:
     int getPixelHeight() const override;
     int getPixelWidth() const override;
 
+    std::optional<char> getCharacterCode(CharacterCode code) const override;
+
     int getPixelSize() const
     {
         return m_pixelSize;

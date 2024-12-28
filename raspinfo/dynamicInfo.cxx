@@ -309,10 +309,11 @@ DynamicInfo::update(
                                m_foreground,
                                getImage());
 
-    const uint8_t degreeSymbol = 0xF8;
+    const auto degreeCode{raspifb16::Interface565Font::CharacterCode::DEGREE_SYMBOL};
+    const auto degreeSymbol = font.getCharacterCode(degreeCode);
 
     position = font.drawChar(position,
-                             degreeSymbol,
+                             *degreeSymbol,
                              m_foreground,
                              getImage());
 

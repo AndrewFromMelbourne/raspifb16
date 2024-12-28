@@ -49,6 +49,11 @@ class Interface565Font
 {
 public:
 
+    enum class CharacterCode
+    {
+        DEGREE_SYMBOL
+    };
+
     Interface565Font();
     virtual ~Interface565Font() = 0;
 
@@ -59,6 +64,8 @@ public:
 
     virtual int getPixelHeight() const = 0;
     virtual int getPixelWidth() const = 0;
+
+    virtual std::optional<char> getCharacterCode(CharacterCode code) const = 0;
 
     virtual Interface565Point
     drawChar(

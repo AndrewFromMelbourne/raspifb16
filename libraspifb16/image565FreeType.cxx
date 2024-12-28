@@ -1,4 +1,3 @@
-
 //-------------------------------------------------------------------------
 //
 // The MIT License (MIT)
@@ -95,6 +94,23 @@ int
 Image565FreeType::getPixelWidth() const
 {
     return m_face->size->metrics.max_advance >> 6;
+}
+
+//-------------------------------------------------------------------------
+
+std::optional<char>
+Image565FreeType::getCharacterCode(Interface565Font::CharacterCode code) const
+{
+    switch (code)
+    {
+        using enum Interface565Font::CharacterCode;
+
+    case DEGREE_SYMBOL:
+
+        return char(0xB0);
+    }
+
+    return {};
 }
 
 //-------------------------------------------------------------------------

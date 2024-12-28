@@ -4674,6 +4674,23 @@ Image565Font8x16::getPixelWidth() const
 
 //-------------------------------------------------------------------------
 
+std::optional<char>
+Image565Font8x16::getCharacterCode(Interface565Font::CharacterCode code) const
+{
+    switch (code)
+    {
+        using enum Interface565Font::CharacterCode;
+
+    case DEGREE_SYMBOL:
+
+        return char(0xF8);
+    }
+
+    return {};
+}
+
+//-------------------------------------------------------------------------
+
 Interface565Point
 Image565Font8x16::drawChar(
     const Interface565Point& p,
