@@ -107,7 +107,10 @@ Trace::init(
         }
         else
         {
-            position.setX(position.x() + font.getPixelWidth());
+            position = font.drawString(position,
+                                       " ",
+                                       sc_foreground,
+                                       getImage());
         }
 
         position = font.drawString(position,
@@ -120,9 +123,9 @@ Trace::init(
         const auto width = font.getPixelWidth();
         const auto height = font.getPixelHeight();
 
-        const raspifb16::Interface565Point p1{position.x(),
+        const raspifb16::Interface565Point p1{position.x() + width / 4,
                                               position.y() + height / 4};
-        const raspifb16::Interface565Point p2{position.x() + width / 2,
+        const raspifb16::Interface565Point p2{position.x() + (3 * width) / 4,
                                               position.y() + (3 * height) / 4};
 
         boxFilled(getImage(), p1, p2, trace.traceColour());
