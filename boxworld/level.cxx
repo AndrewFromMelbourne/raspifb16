@@ -29,7 +29,7 @@
 
 //-------------------------------------------------------------------------
 
-Level::Level(const LevelType& level)
+Level::Level(const LevelType& level) noexcept
 :
     m_level(level)
 {
@@ -38,7 +38,7 @@ Level::Level(const LevelType& level)
 //-------------------------------------------------------------------------
 
 const Level::LevelType
-Level::level() const
+Level::level() const noexcept
 {
     return m_level;
 }

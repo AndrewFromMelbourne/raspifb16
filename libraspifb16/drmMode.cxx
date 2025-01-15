@@ -88,7 +88,7 @@ drm::DrmDevices::getDevice(int index) const
 drm::drmModeConnector_ptr
 drm::drmModeGetConnector(
     raspifb16::FileDescriptor& fd,
-    uint32_t connId)
+    uint32_t connId) noexcept
 {
     return drmModeConnector_ptr(::drmModeGetConnector(fd.fd(), connId),
                                 &drmModeFreeConnector);
@@ -99,7 +99,7 @@ drm::drmModeGetConnector(
 drm::drmModeCrtc_ptr
 drm::drmModeGetCrtc(
     raspifb16::FileDescriptor& fd,
-    uint32_t crtcId)
+    uint32_t crtcId) noexcept
 {
     return drmModeCrtc_ptr(::drmModeGetCrtc(fd.fd(), crtcId),
                            &drmModeFreeCrtc);
@@ -110,7 +110,7 @@ drm::drmModeGetCrtc(
 drm::drmModeEncoder_ptr
 drm::drmModeGetEncoder(
     raspifb16::FileDescriptor& fd,
-    uint32_t encoderId)
+    uint32_t encoderId) noexcept
 {
     return drmModeEncoder_ptr(::drmModeGetEncoder(fd.fd(), encoderId),
                               &drmModeFreeEncoder);
@@ -122,9 +122,11 @@ drm::drmModeObjectProperties_ptr
 drm::drmModeObjectGetProperties(
     raspifb16::FileDescriptor& fd,
     uint32_t objectId,
-    uint32_t objectType)
+    uint32_t objectType) noexcept
 {
-    return drmModeObjectProperties_ptr(::drmModeObjectGetProperties(fd.fd(), objectId, objectType),
+    return drmModeObjectProperties_ptr(::drmModeObjectGetProperties(fd.fd(),
+                                                                    objectId,
+                                                                    objectType),
                                        &drmModeFreeObjectProperties);
 }
 
@@ -133,7 +135,7 @@ drm::drmModeObjectGetProperties(
 drm::drmModePlane_ptr
 drm::drmModeGetPlane(
     raspifb16::FileDescriptor& fd,
-    uint32_t planeId)
+    uint32_t planeId) noexcept
 {
     return drmModePlane_ptr(::drmModeGetPlane(fd.fd(), planeId),
                             &drmModeFreePlane);
@@ -143,7 +145,7 @@ drm::drmModeGetPlane(
 
 drm::drmModePlaneRes_ptr
 drm::drmModeGetPlaneResources(
-    raspifb16::FileDescriptor& fd)
+    raspifb16::FileDescriptor& fd) noexcept
 {
     return drmModePlaneRes_ptr(::drmModeGetPlaneResources(fd.fd()),
                                &drmModeFreePlaneResources);
@@ -154,7 +156,7 @@ drm::drmModeGetPlaneResources(
 drm::drmModePropertyRes_ptr
 drm::drmModeGetProperty(
     raspifb16::FileDescriptor& fd,
-    uint32_t propertyId)
+    uint32_t propertyId) noexcept
 {
     return drmModePropertyRes_ptr(::drmModeGetProperty(fd.fd(), propertyId),
                                   &drmModeFreeProperty);
@@ -164,7 +166,7 @@ drm::drmModeGetProperty(
 
 drm::drmModeRes_ptr
 drm::drmModeGetResources(
-    raspifb16::FileDescriptor& fd)
+    raspifb16::FileDescriptor& fd) noexcept
 {
     return drmModeRes_ptr(::drmModeGetResources(fd.fd()),
                           &drmModeFreeResources);
@@ -177,9 +179,9 @@ drm::drmGetPropertyValue(
     raspifb16::FileDescriptor& fd,
     uint32_t objectId,
     uint32_t objectType,
-    const std::string& name)
+    const std::string& name) noexcept
 {
-    const auto properties{drmModeObjectGetProperties(fd, objectId, objectType)};
+    auto properties{drmModeObjectGetProperties(fd, objectId, objectType)};
 
     for (auto i = 0; i < properties->count_props; ++i)
     {

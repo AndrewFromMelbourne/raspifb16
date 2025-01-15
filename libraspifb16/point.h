@@ -41,33 +41,56 @@ public:
 
     Point(
         T x,
-        T y)
+        T y) noexcept
     :
         m_x(x),
         m_y(y)
     {
     }
 
-    T x() const { return m_x; }
-    T y() const { return m_y; }
+    T x() const  noexcept{ return m_x; }
+    T y() const  noexcept{ return m_y; }
 
     void
     set(
         T x,
-        T y)
+        T y) noexcept
     {
         m_x = x;
         m_y = y;
     }
 
+    void
+    incr(
+        T dx,
+        T dy) noexcept
+    {
+        m_x += dx;
+        m_y += dy;
+    }
+
+    void
+    incrX(
+        T dx) noexcept
+    {
+        m_x += dx;
+    }
+
+    void
+    incrY(
+        T dy) noexcept
+    {
+        m_y += dy;
+    }
+
     void setX(
-        T x)
+        T x) noexcept
     {
         m_x = x;
     }
 
     void setY(
-        T y)
+        T y) noexcept
     {
         m_y = y;
     }

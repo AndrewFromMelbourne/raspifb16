@@ -185,7 +185,7 @@ raspifb16::Joystick::init()
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::Joystick::isValidButton(int button) const
+raspifb16::Joystick::isValidButton(int button) const noexcept
 {
     return (button >= 0) and (button < numberOfButtons());
 }
@@ -193,7 +193,7 @@ raspifb16::Joystick::isValidButton(int button) const
 //-------------------------------------------------------------------------
 
 int
-raspifb16::Joystick::numberOfButtons() const
+raspifb16::Joystick::numberOfButtons() const noexcept
 {
     return m_buttonCount;
 }
@@ -201,7 +201,7 @@ raspifb16::Joystick::numberOfButtons() const
 //-------------------------------------------------------------------------
 
 int
-raspifb16::Joystick::numberOfAxes() const
+raspifb16::Joystick::numberOfAxes() const noexcept
 {
     return m_joystickCount;
 }

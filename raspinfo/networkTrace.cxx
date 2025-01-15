@@ -83,7 +83,7 @@ NetworkStats::NetworkStats()
 
 NetworkStats&
 NetworkStats::operator-=(
-    const NetworkStats& rhs)
+    const NetworkStats& rhs) noexcept
 {
     m_tx -= rhs.m_tx;
     m_rx -= rhs.m_rx;
@@ -96,7 +96,7 @@ NetworkStats::operator-=(
 NetworkStats
 operator-(
     const NetworkStats& lhs,
-    const NetworkStats& rhs)
+    const NetworkStats& rhs) noexcept
 {
     return NetworkStats(lhs) -= rhs;
 }

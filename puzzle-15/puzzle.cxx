@@ -208,10 +208,10 @@ Puzzle::draw(Interface565& fb)
     {
         for (int i = 0 ; i < puzzleWidth ; ++i)
         {
-           const Interface565Point p{ xOffset + (i * tileWidth),
-                                      yOffset + (j * tileHeight) };
-           const int tile = m_board[i + (j * puzzleWidth)];
-           fb.putImage(p, m_tileBuffers[tile]);
+            const Interface565Point p{ xOffset + (i * tileWidth),
+                                       yOffset + (j * tileHeight) };
+            const int tile = m_board[i + (j * puzzleWidth)];
+            fb.putImage(p, m_tileBuffers[tile]);
         }
     }
 }

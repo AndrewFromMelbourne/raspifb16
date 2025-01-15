@@ -31,6 +31,8 @@
 
 #include <cstdint>
 
+#include <sys/types.h>
+
 #include "interface565.h"
 #include "interface565Font.h"
 #include "image565.h"
@@ -53,10 +55,10 @@ public:
 
     virtual ~Panel() = default;
 
-    int getBottom() const { return m_yPosition + m_image.getHeight(); }
+    int getBottom() const noexcept { return m_yPosition + m_image.getHeight(); }
 
-    raspifb16::Image565& getImage() { return m_image; }
-    const raspifb16::Image565& getImage() const { return m_image; }
+    raspifb16::Image565& getImage() noexcept { return m_image; }
+    const raspifb16::Image565& getImage() const noexcept { return m_image; }
 
     void show(raspifb16::Interface565& fb) const;
     virtual void init(raspifb16::Interface565Font& font) = 0;

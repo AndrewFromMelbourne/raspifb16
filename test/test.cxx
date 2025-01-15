@@ -156,11 +156,7 @@ main(
              Interface565Point(47,47),
              green);
 
-        const Interface565Point imageLocation
-        {
-            (fb->getWidth() - image.getWidth()) / 2,
-            (fb->getHeight() - image.getHeight()) / 2
-        };
+        auto imageLocation = center(*fb, image);
 
         fb->putImage(imageLocation, image);
 
@@ -177,17 +173,17 @@ main(
         Image565 textImage(168, 16);
         textImage.clear(darkBlue);
 
-        const Interface565Point textLocation
-        {
-            (fb->getWidth() - textImage.getWidth()) / 2,
-            (fb->getHeight() - textImage.getHeight()) / 3
-        };
-
         font.drawString(
             Interface565Point{0, 0},
             "This is a test string",
             white,
             textImage);
+
+        const Interface565Point textLocation
+        {
+            (fb->getWidth() - textImage.getWidth()) / 2,
+            (fb->getHeight() - textImage.getHeight()) / 3
+        };
 
         fb->putImage(textLocation, textImage);
         fb->update();

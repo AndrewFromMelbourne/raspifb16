@@ -76,7 +76,7 @@ public:
     DrmDevices& operator=(DrmDevices&&) = delete;
 
     drmDevicePtr getDevice(int index) const;
-    int getDeviceCount() const { return m_deviceCount; }
+    int getDeviceCount() const noexcept { return m_deviceCount; }
 
 private:
 
@@ -86,15 +86,15 @@ private:
 
 //-------------------------------------------------------------------------
 
-drmModeConnector_ptr drmModeGetConnector(raspifb16::FileDescriptor& fd, uint32_t connId);
-drmModeCrtc_ptr drmModeGetCrtc(raspifb16::FileDescriptor& fd, uint32_t crtcId);
-drmModeEncoder_ptr drmModeGetEncoder(raspifb16::FileDescriptor& fd, uint32_t encoderId);
-drmModeObjectProperties_ptr drmModeObjectGetProperties(raspifb16::FileDescriptor& fd, uint32_t objectId, uint32_t objectType);
-drmModePlane_ptr drmModeGetPlane(raspifb16::FileDescriptor& fd, uint32_t planeId);
-drmModePlaneRes_ptr drmModeGetPlaneResources(raspifb16::FileDescriptor& fd);
-drmModePropertyRes_ptr drmModeGetProperty(raspifb16::FileDescriptor& fd, uint32_t propertyId);
-drmModeRes_ptr drmModeGetResources(raspifb16::FileDescriptor& fd);
-uint64_t drmGetPropertyValue(raspifb16::FileDescriptor& fd, uint32_t objectId, uint32_t objectType, const std::string& name);
+drmModeConnector_ptr drmModeGetConnector(raspifb16::FileDescriptor& fd, uint32_t connId) noexcept;
+drmModeCrtc_ptr drmModeGetCrtc(raspifb16::FileDescriptor& fd, uint32_t crtcId) noexcept;
+drmModeEncoder_ptr drmModeGetEncoder(raspifb16::FileDescriptor& fd, uint32_t encoderId) noexcept;
+drmModeObjectProperties_ptr drmModeObjectGetProperties(raspifb16::FileDescriptor& fd, uint32_t objectId, uint32_t objectType) noexcept;
+drmModePlane_ptr drmModeGetPlane(raspifb16::FileDescriptor& fd, uint32_t planeId) noexcept;
+drmModePlaneRes_ptr drmModeGetPlaneResources(raspifb16::FileDescriptor& fd) noexcept;
+drmModePropertyRes_ptr drmModeGetProperty(raspifb16::FileDescriptor& fd, uint32_t propertyId) noexcept;
+drmModeRes_ptr drmModeGetResources(raspifb16::FileDescriptor& fd) noexcept;
+uint64_t drmGetPropertyValue(raspifb16::FileDescriptor& fd, uint32_t objectId, uint32_t objectType, const std::string& name) noexcept;
 
 //-------------------------------------------------------------------------
 

@@ -235,13 +235,7 @@ main(
 
         //-----------------------------------------------------------------
 
-        Interface565Point imageLocation
-        {
-            (fb->getWidth() - image.getWidth()) / 2,
-            (fb->getHeight() - image.getHeight()) / 2
-        };
-
-        fb->putImage(imageLocation, image);
+        fb->putImage(center(*fb, image), image);
         fb->update();
 
         //-----------------------------------------------------------------

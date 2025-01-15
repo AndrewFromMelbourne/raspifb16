@@ -29,7 +29,7 @@
 
 //-------------------------------------------------------------------------
 
-#include <string>
+#include <string_view>
 
 #include "interface565.h"
 #include "point.h"
@@ -62,10 +62,10 @@ public:
     Interface565Font& operator=(const Interface565Font&) = delete;
     Interface565Font& operator=(Interface565Font&&) = delete;
 
-    virtual int getPixelHeight() const = 0;
-    virtual int getPixelWidth() const = 0;
+    virtual int getPixelHeight() const noexcept = 0;
+    virtual int getPixelWidth() const noexcept = 0;
 
-    virtual std::optional<char> getCharacterCode(CharacterCode code) const = 0;
+    virtual std::optional<char> getCharacterCode(CharacterCode code) const noexcept = 0;
 
     virtual Interface565Point
     drawChar(
@@ -84,28 +84,14 @@ public:
     virtual Interface565Point
     drawString(
         const Interface565Point& p,
-        const char* string,
-        const RGB565& rgb,
-        Interface565& image) = 0;
-
-    virtual Interface565Point
-    drawString(
-        const Interface565Point& p,
-        const char* string,
+        std::string_view sv,
         uint16_t rgb,
         Interface565& image) = 0;
 
     virtual Interface565Point
     drawString(
         const Interface565Point& p,
-        const std::string& string,
-        uint16_t rgb,
-        Interface565& image) = 0;
-
-    virtual Interface565Point
-    drawString(
-        const Interface565Point& p,
-        const std::string& string,
+        std::string_view sv,
         const RGB565& rgb,
         Interface565& image) = 0;
 };

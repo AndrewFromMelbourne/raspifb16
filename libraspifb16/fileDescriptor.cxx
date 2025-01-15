@@ -82,7 +82,7 @@ raspifb16::FileDescriptor::operator= (
 //-------------------------------------------------------------------------
 
 void
-raspifb16::FileDescriptor::closeFd()
+raspifb16::FileDescriptor::closeFd() noexcept
 {
     if (m_close_if(m_fd))
     {

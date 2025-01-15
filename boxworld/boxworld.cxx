@@ -168,8 +168,8 @@ Boxworld::draw(
 void
 Boxworld::drawBoard(Interface565& fb)
 {
-    constexpr int xOffset = 40;
-    constexpr int yOffset = 8;
+    const int xOffset = (fb.getWidth() - m_topTextImage.getWidth()) / 2;
+    const int yOffset = 8;
     static uint8_t frame = 0;
 
     for (int j = 0 ; j < Level::levelHeight ; ++j)
@@ -210,10 +210,6 @@ Boxworld::drawText(
     Interface565& fb,
     Interface565Font& font)
 {
-    constexpr int xOffset = 40;
-
-    //---------------------------------------------------------------------
-
     m_topTextImage.clear(m_backgroundRGB);
 
     Interface565Point position{ 2, 0 };
@@ -234,6 +230,7 @@ Boxworld::drawText(
                                    m_topTextImage);
     }
 
+    int xOffset = (fb.getWidth() - m_topTextImage.getWidth()) / 2;
     fb.putImage(Interface565Point{ xOffset, 0 }, m_topTextImage);
 
     //---------------------------------------------------------------------
@@ -291,7 +288,8 @@ Boxworld::drawText(
                                previousRGB,
                                m_bottomTextImage);
 
-    fb.putImage(Interface565Point{0, 220}, m_bottomTextImage);
+    xOffset = (fb.getWidth() - m_bottomTextImage.getWidth()) / 2;
+    fb.putImage(Interface565Point{xOffset, 220}, m_bottomTextImage);
 }
 
 //-------------------------------------------------------------------------

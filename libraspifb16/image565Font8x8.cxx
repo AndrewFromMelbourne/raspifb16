@@ -2611,7 +2611,7 @@ constexpr uint8_t font[256][sc_fontHeight] =
 //-------------------------------------------------------------------------
 
 int
-Image565Font8x8::getPixelHeight() const
+Image565Font8x8::getPixelHeight() const noexcept
 {
     return sc_fontHeight;
 }
@@ -2619,7 +2619,7 @@ Image565Font8x8::getPixelHeight() const
 //-------------------------------------------------------------------------
 
 int
-Image565Font8x8::getPixelWidth() const
+Image565Font8x8::getPixelWidth() const noexcept
 {
     return sc_fontWidth;
 }
@@ -2627,7 +2627,7 @@ Image565Font8x8::getPixelWidth() const
 //-------------------------------------------------------------------------
 
 std::optional<char>
-Image565Font8x8::getCharacterCode(Interface565Font::CharacterCode code) const
+Image565Font8x8::getCharacterCode(Interface565Font::CharacterCode code) const noexcept
 {
     switch (code)
     {
@@ -2690,11 +2690,11 @@ Image565Font8x8::drawChar(
 Interface565Point
 Image565Font8x8::drawString(
     const Interface565Point& p,
-    const char* string,
+    std::string_view sv,
     const RGB565& rgb,
     Interface565& image)
 {
-    return drawString(p, std::string(string), rgb, image);
+    return drawString(p, sv, rgb.get565(), image);
 }
 
 //-------------------------------------------------------------------------
@@ -2702,38 +2702,14 @@ Image565Font8x8::drawString(
 Interface565Point
 Image565Font8x8::drawString(
     const Interface565Point& p,
-    const char* string,
-    uint16_t rgb,
-    Interface565& image)
-{
-    return drawString(p, std::string(string), rgb, image);
-}
-
-//-------------------------------------------------------------------------
-
-Interface565Point
-Image565Font8x8::drawString(
-    const Interface565Point& p,
-    const std::string& string,
-    const RGB565& rgb,
-    Interface565& image)
-{
-    return drawString(p, string, rgb.get565(), image);
-}
-
-//-------------------------------------------------------------------------
-
-Interface565Point
-Image565Font8x8::drawString(
-    const Interface565Point& p,
-    const std::string& string,
+    std::string_view sv,
     uint16_t rgb,
     Interface565& image)
 {
     Interface565Point position{p};
     const Interface565Point start{p};
 
-    for (const auto c : string)
+    for (const auto c : sv)
     {
         if (c == '\n')
         {

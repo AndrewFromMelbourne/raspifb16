@@ -65,10 +65,10 @@ public:
     Image565Font8x16& operator=(const Image565Font8x16&) = default;
     Image565Font8x16& operator=(Image565Font8x16&&) = default;
 
-    int getPixelHeight() const override;
-    int getPixelWidth() const override;
+    int getPixelHeight() const noexcept override;
+    int getPixelWidth() const noexcept override;
 
-    std::optional<char> getCharacterCode(CharacterCode code) const override;
+    std::optional<char> getCharacterCode(CharacterCode code) const noexcept override;
 
     Interface565Point
     drawChar(
@@ -87,28 +87,14 @@ public:
     Interface565Point
     drawString(
         const Interface565Point& p,
-        const char* string,
+        std::string_view sv,
         const RGB565& rgb,
         Interface565& image) override;
 
     Interface565Point
     drawString(
         const Interface565Point& p,
-        const char* string,
-        uint16_t rgb,
-        Interface565& image) override;
-
-    Interface565Point
-    drawString(
-        const Interface565Point& p,
-        const std::string& string,
-        const RGB565& rgb,
-        Interface565& image) override;
-
-    Interface565Point
-    drawString(
-        const Interface565Point& p,
-        const std::string& string,
+        std::string_view sv,
         uint16_t rgb,
         Interface565& image) override;
 };

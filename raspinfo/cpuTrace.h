@@ -44,12 +44,12 @@ public:
 
     CpuStats();
 
-    int total() const;
-    int user() const { return m_user; }
-    int nice() const { return m_nice; }
-    int system() const { return m_system; }
+    int total() const noexcept;
+    int user() const noexcept { return m_user; }
+    int nice() const noexcept { return m_nice; }
+    int system() const noexcept { return m_system; }
 
-    CpuStats& operator-=(const CpuStats& rhs);
+    CpuStats& operator-=(const CpuStats& rhs) noexcept;
 
 private:
 
@@ -65,7 +65,7 @@ private:
     int m_guest_nice;
 };
 
-CpuStats operator-(const CpuStats& lhs, const CpuStats& rhs);
+CpuStats operator-(const CpuStats& lhs, const CpuStats& rhs) noexcept;
 
 //-------------------------------------------------------------------------
 

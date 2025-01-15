@@ -84,8 +84,8 @@ public:
     explicit Joystick(bool blocking = false);
     explicit Joystick(const std::string& device, bool blocking = false);
 
-    int numberOfButtons() const;
-    int numberOfAxes() const;
+    int numberOfButtons() const noexcept;
+    int numberOfAxes() const noexcept;
 
     bool buttonPressed(int button);
     bool buttonDown(int button) const;
@@ -98,7 +98,7 @@ public:
 private:
 
     void init();
-    bool isValidButton(int button) const;
+    bool isValidButton(int button) const noexcept;
     void process(const struct js_event& event);
     void readConfig();
 

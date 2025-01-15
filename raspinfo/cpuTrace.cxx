@@ -72,7 +72,7 @@ CpuStats::CpuStats()
 //-------------------------------------------------------------------------
 
 int
-CpuStats::total() const
+CpuStats::total() const noexcept
 {
     return m_user +
            m_nice +
@@ -90,7 +90,7 @@ CpuStats::total() const
 
 CpuStats&
 CpuStats::operator-=(
-    const CpuStats& rhs)
+    const CpuStats& rhs) noexcept
 {
     m_user -= rhs.m_user;
     m_nice -= rhs.m_nice;
@@ -111,7 +111,7 @@ CpuStats::operator-=(
 CpuStats
 operator-(
     const CpuStats& lhs,
-    const CpuStats& rhs)
+    const CpuStats& rhs) noexcept
 {
     return CpuStats(lhs) -= rhs;
 }

@@ -45,9 +45,9 @@ public:
     using LevelRow = std::array<uint8_t, levelWidth>;
     using LevelType = std::array<LevelRow, levelHeight>;
 
-    Level(const LevelType& level);
+    Level(const LevelType& level) noexcept;
 
-    const LevelType level() const;
+    const LevelType level() const noexcept;
 
 private:
 

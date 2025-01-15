@@ -32,7 +32,7 @@
 raspifb16::RGB565::RGB565(
     uint8_t red,
     uint8_t green,
-    uint8_t blue)
+    uint8_t blue) noexcept
 :
     m_rgb{0}
 {
@@ -42,7 +42,7 @@ raspifb16::RGB565::RGB565(
 //-------------------------------------------------------------------------
 
 raspifb16::RGB565::RGB565(
-    uint16_t rgb)
+    uint16_t rgb) noexcept
 :
     m_rgb{rgb}
 {
@@ -51,7 +51,7 @@ raspifb16::RGB565::RGB565(
 //-------------------------------------------------------------------------
 
 uint8_t
-raspifb16::RGB565::getRed() const
+raspifb16::RGB565::getRed() const noexcept
 {
     const auto r5 = (m_rgb >> 11) & 0x1F;
 
@@ -61,7 +61,7 @@ raspifb16::RGB565::getRed() const
 //-------------------------------------------------------------------------
 
 uint8_t
-raspifb16::RGB565::getGreen() const
+raspifb16::RGB565::getGreen() const noexcept
 {
     const auto g6 = (m_rgb >> 5) & 0x3F;
 
@@ -71,7 +71,7 @@ raspifb16::RGB565::getGreen() const
 //-------------------------------------------------------------------------
 
 uint8_t
-raspifb16::RGB565::getBlue() const
+raspifb16::RGB565::getBlue() const noexcept
 {
     const auto b5 = m_rgb & 0x1F;
 
@@ -84,7 +84,7 @@ void
 raspifb16::RGB565::setRGB(
     uint8_t red,
     uint8_t green,
-    uint8_t blue)
+    uint8_t blue) noexcept
 {
     m_rgb = ((red >> 3) << 11) | ((green >> 2) << 5) | (blue >> 3);
 }
@@ -95,7 +95,7 @@ raspifb16::RGB565
 raspifb16::RGB565::blend(
     uint8_t alpha,
     const RGB565& a,
-    const RGB565& b)
+    const RGB565& b) noexcept
 {
     auto blendChannel = [](uint8_t alpha, int a, int b) -> int
     {

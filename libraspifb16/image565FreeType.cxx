@@ -66,7 +66,7 @@ Image565FreeType::~Image565FreeType()
 //-------------------------------------------------------------------------
 
 std::string
-Image565FreeType::getFontFamilyName() const
+Image565FreeType::getFontFamilyName() const noexcept
 {
     return m_face->family_name;
 }
@@ -74,7 +74,7 @@ Image565FreeType::getFontFamilyName() const
 //-------------------------------------------------------------------------
 
 std::string
-Image565FreeType::getFontStyleName() const
+Image565FreeType::getFontStyleName() const noexcept
 {
     return m_face->style_name;
 }
@@ -82,7 +82,7 @@ Image565FreeType::getFontStyleName() const
 //-------------------------------------------------------------------------
 
 int
-Image565FreeType::getPixelHeight() const
+Image565FreeType::getPixelHeight() const noexcept
 {
     return (m_face->size->metrics.ascender +
             abs(m_face->size->metrics.descender)) >> 6;
@@ -91,7 +91,7 @@ Image565FreeType::getPixelHeight() const
 //-------------------------------------------------------------------------
 
 int
-Image565FreeType::getPixelWidth() const
+Image565FreeType::getPixelWidth() const noexcept
 {
     return m_face->size->metrics.max_advance >> 6;
 }
@@ -99,7 +99,7 @@ Image565FreeType::getPixelWidth() const
 //-------------------------------------------------------------------------
 
 std::optional<char>
-Image565FreeType::getCharacterCode(Interface565Font::CharacterCode code) const
+Image565FreeType::getCharacterCode(Interface565Font::CharacterCode code) const noexcept
 {
     switch (code)
     {
@@ -117,7 +117,7 @@ Image565FreeType::getCharacterCode(Interface565Font::CharacterCode code) const
 
 bool
 Image565FreeType::setPixelSize(
-    int pixelSize)
+    int pixelSize) noexcept
 {
     if (pixelSize == m_pixelSize)
     {
@@ -193,36 +193,7 @@ Image565FreeType::drawWideChar(
 Interface565Point
 Image565FreeType::drawString(
     const Interface565Point& p,
-    const char* string,
-    const RGB565& rgb,
-    Interface565& image)
-{
-    if (not string)
-    {
-        return Interface565Point{p};
-    }
-
-    return drawString(p, std::string(string), rgb, image);
-}
-
-//-------------------------------------------------------------------------
-
-Interface565Point
-Image565FreeType::drawString(
-    const Interface565Point& p,
-    const char* string,
-    uint16_t rgb,
-    Interface565& image)
-{
-    return drawString(p, string, RGB565(rgb), image);
-}
-
-//-------------------------------------------------------------------------
-
-Interface565Point
-Image565FreeType::drawString(
-    const Interface565Point& p,
-    const std::string& string,
+    std::string_view sv,
     const RGB565& rgb,
     Interface565& image)
 {
@@ -233,7 +204,7 @@ Image565FreeType::drawString(
     const auto use_kerning{FT_HAS_KERNING(m_face)};
     FT_UInt previous{0};
 
-    for (const auto c : string)
+    for (const auto c : sv)
     {
         if (c == '\n')
         {
@@ -291,11 +262,11 @@ Image565FreeType::drawString(
 Interface565Point
 Image565FreeType::drawString(
     const Interface565Point& p,
-    const std::string& string,
+    std::string_view sv,
     uint16_t rgb,
     Interface565& image)
 {
-    return drawString(p, string, RGB565(rgb), image);
+    return drawString(p, sv, RGB565(rgb), image);
 }
 //-------------------------------------------------------------------------
 

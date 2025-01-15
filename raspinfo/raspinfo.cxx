@@ -160,7 +160,7 @@ printUsage(
 
 static void
 signalHandler(
-    int signalNumber)
+    int signalNumber) noexcept
 {
     switch (signalNumber)
     {

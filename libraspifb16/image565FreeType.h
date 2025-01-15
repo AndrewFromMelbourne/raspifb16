@@ -65,20 +65,20 @@ public:
     Image565FreeType& operator=(const Image565FreeType&) = delete;
     Image565FreeType& operator=(Image565FreeType&&) = delete;
 
-    std::string getFontFamilyName() const;
-    std::string getFontStyleName() const;
+    std::string getFontFamilyName() const noexcept;
+    std::string getFontStyleName() const noexcept;
 
-    int getPixelHeight() const override;
-    int getPixelWidth() const override;
+    int getPixelHeight() const noexcept override;
+    int getPixelWidth() const noexcept override;
 
-    std::optional<char> getCharacterCode(CharacterCode code) const override;
+    std::optional<char> getCharacterCode(CharacterCode code) const noexcept override;
 
-    int getPixelSize() const
+    int getPixelSize() const noexcept
     {
         return m_pixelSize;
     }
 
-    bool setPixelSize(int pixelSize);
+    bool setPixelSize(int pixelSize) noexcept;
 
     Interface565Point
     drawChar(
@@ -104,33 +104,18 @@ public:
     Interface565Point
     drawString(
         const Interface565Point& p,
-        const char* string,
+        std::string_view sv,
         const RGB565& rgb,
         Interface565& image) override;
 
     Interface565Point
     drawString(
         const Interface565Point& p,
-        const char* string,
-        uint16_t rgb,
-        Interface565& image) override;
-
-    Interface565Point
-    drawString(
-        const Interface565Point& p,
-        const std::string& string,
-        const RGB565& rgb,
-        Interface565& image) override;
-
-    Interface565Point
-    drawString(
-        const Interface565Point& p,
-        const std::string& string,
+        std::string_view sv,
         uint16_t rgb,
         Interface565& image) override;
 
 private:
-
 
     void
     drawChar(

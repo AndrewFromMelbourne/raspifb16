@@ -62,8 +62,8 @@ public:
     Interface565& operator=(const Interface565&) = default;
     Interface565& operator=(Interface565&&) = delete;
 
-    virtual int getWidth() const = 0;
-    virtual int getHeight() const = 0;
+    virtual int getWidth() const noexcept = 0;
+    virtual int getHeight() const noexcept = 0;
 
     void clear(const RGB565& rgb) { clear(rgb.get565()); }
     void clear(uint16_t rgb = 0);
@@ -92,10 +92,10 @@ public:
                (p.y() < getHeight());
     }
 
-    virtual uint16_t* getBuffer() = 0;
-    virtual const uint16_t* getBuffer() const = 0;
-    virtual int getLineLengthPixels() const = 0;
-    virtual size_t offset(const Interface565Point& p) const = 0;
+    virtual uint16_t* getBuffer() noexcept = 0;
+    virtual const uint16_t* getBuffer() const noexcept = 0;
+    virtual int getLineLengthPixels() const noexcept = 0;
+    virtual size_t offset(const Interface565Point& p) const noexcept = 0;
 
     virtual void update() {}
 
@@ -106,8 +106,15 @@ private:
         const Interface565Point& p,
         const Image565& image);
 
-    uint16_t* getBufferStart();
+    uint16_t* getBufferStart() noexcept;
 };
+
+//-------------------------------------------------------------------------
+
+Interface565Point
+center(
+    const Interface565& frame,
+    const Interface565& image) noexcept;
 
 //-------------------------------------------------------------------------
 

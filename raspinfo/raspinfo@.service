@@ -3,8 +3,8 @@ Description=Display Raspberry Pi specific system information directly on the fra
 
 [Service]
 Type=forking
-PIDFile=/var/run/raspinfo%i.pid
-ExecStart=/usr/local/bin/raspinfo --daemon --device /dev/fb%i --pidfile /var/run/raspinfo%i.pid
+PIDFile=/run/raspinfo%i.pid
+ExecStart=/usr/local/bin/raspinfo --daemon --device /dev/fb%i --pidfile /run/raspinfo%i.pid
 Restart=on-failure
 RestartSec=5
 

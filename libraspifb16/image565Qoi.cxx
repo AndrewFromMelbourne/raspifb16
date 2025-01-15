@@ -68,10 +68,10 @@ public:
 
     QoiHeader(const std::array<uint8_t, QOI_HEADER_SIZE>& data);
 
-    uint32_t getWidth() const { return m_width; }
-    uint32_t getHeight() const { return m_height; }
-    uint8_t getChannels() const { return m_channels; }
-    uint8_t getColorSpace() const { return m_colorSpace; }
+    uint32_t getWidth() const noexcept { return m_width; }
+    uint32_t getHeight() const noexcept { return m_height; }
+    uint8_t getChannels() const noexcept { return m_channels; }
+    uint8_t getColorSpace() const noexcept { return m_colorSpace; }
 
 private:
 
@@ -160,7 +160,7 @@ struct QoiRGBA
 
 //-------------------------------------------------------------------------
 
-int rgbaHashQoi(const QoiRGBA& rgba)
+int rgbaHashQoi(const QoiRGBA& rgba) noexcept
 {
     return (rgba.r * 3 + rgba.g * 5 + rgba.b * 7 + rgba.a * 11) % 64;
 }

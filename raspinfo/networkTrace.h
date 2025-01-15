@@ -43,10 +43,10 @@ public:
 
     NetworkStats();
 
-    int tx() const { return m_tx; }
-    int rx() const { return m_rx; }
+    int tx() const noexcept { return m_tx; }
+    int rx() const noexcept { return m_rx; }
 
-    NetworkStats& operator-=(const NetworkStats& rhs);
+    NetworkStats& operator-=(const NetworkStats& rhs) noexcept;
 
 private:
 
@@ -54,7 +54,7 @@ private:
     int m_rx;
 };
 
-NetworkStats operator-(const NetworkStats& lhs, const NetworkStats& rhs);
+NetworkStats operator-(const NetworkStats& lhs, const NetworkStats& rhs) noexcept;
 
 //-------------------------------------------------------------------------
 

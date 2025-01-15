@@ -190,7 +190,19 @@ raspifb16::Interface565::putImagePartial(
 //-------------------------------------------------------------------------
 
 uint16_t*
-raspifb16::Interface565::getBufferStart()
+raspifb16::Interface565::getBufferStart() noexcept
 {
     return getBuffer() + offset(Interface565Point{0, 0});
 }
+
+//-------------------------------------------------------------------------
+
+raspifb16::Interface565Point
+raspifb16::center(
+    const raspifb16::Interface565& frame,
+    const raspifb16::Interface565& image) noexcept
+{
+    return {(frame.getWidth() - image.getWidth()) / 2,
+            (frame.getHeight() - image.getHeight()) / 2};
+}
+

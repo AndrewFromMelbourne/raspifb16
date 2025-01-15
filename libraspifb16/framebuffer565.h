@@ -70,15 +70,15 @@ public:
     FrameBuffer565(FrameBuffer565&& fb) = delete;
     FrameBuffer565& operator=(FrameBuffer565&& fb) = delete;
 
-    int32_t getWidth() const override { return m_vinfo.xres; }
-    int32_t getHeight() const override { return m_vinfo.yres; }
+    int32_t getWidth() const noexcept override { return m_vinfo.xres; }
+    int32_t getHeight() const noexcept override { return m_vinfo.yres; }
 
-    bool hideCursor();
+    bool hideCursor() noexcept;
 
-    uint16_t* getBuffer() override { return m_fbp; };
-    const uint16_t* getBuffer() const override { return m_fbp; };
-    int getLineLengthPixels() const override { return m_lineLengthPixels; };
-    size_t offset(const Interface565Point& p) const override;
+    uint16_t* getBuffer() noexcept override { return m_fbp; };
+    const uint16_t* getBuffer() const noexcept override { return m_fbp; };
+    int getLineLengthPixels() const noexcept override { return m_lineLengthPixels; };
+    size_t offset(const Interface565Point& p) const noexcept override;
 
 private:
 

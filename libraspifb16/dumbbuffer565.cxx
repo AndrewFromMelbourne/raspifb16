@@ -70,7 +70,7 @@ FoundDrmResource
 findDrmResourcesForConnector(
     raspifb16::FileDescriptor& fd,
     uint32_t connectorId,
-    const drm::drmModeRes_ptr& resources)
+    const drm::drmModeRes_ptr& resources) noexcept
 {
     const auto connector{drm::drmModeGetConnector(fd, connectorId)};
     const bool connected{connector->connection == DRM_MODE_CONNECTED};
@@ -112,7 +112,7 @@ findDrmResourcesForConnector(
 FoundDrmResource
 findDrmResourcesForConnector(
     raspifb16::FileDescriptor& fd,
-    uint32_t connectorId)
+    uint32_t connectorId) noexcept
 {
     return findDrmResourcesForConnector(fd, connectorId, drm::drmModeGetResources(fd));
 }
@@ -123,7 +123,7 @@ findDrmResourcesForConnector(
 FoundDrmResource
 findDrmResources(
     raspifb16::FileDescriptor& fd,
-    uint32_t connectorId)
+    uint32_t connectorId) noexcept
 {
     if (connectorId)
     {
@@ -421,7 +421,7 @@ raspifb16::DumbBuffer565::~DumbBuffer565()
 
 size_t
 raspifb16::DumbBuffer565::offset(
-    const Interface565Point& p) const
+    const Interface565Point& p) const noexcept
 {
     return p.x() + p.y() * m_lineLengthPixels;
 }

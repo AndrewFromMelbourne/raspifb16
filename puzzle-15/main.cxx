@@ -141,6 +141,7 @@ main(
         Puzzle puzzle;
         puzzle.init();
         puzzle.draw(*fb);
+        fb->update();
 
         //-----------------------------------------------------------------
 

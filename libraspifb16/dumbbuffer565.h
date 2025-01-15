@@ -73,13 +73,13 @@ public:
     DumbBuffer565(DumbBuffer565&& fb) = delete;
     DumbBuffer565& operator=(DumbBuffer565&& fb) = delete;
 
-    int getWidth() const override { return m_width; }
-    int getHeight() const override { return m_height; }
+    int getWidth() const noexcept override { return m_width; }
+    int getHeight() const noexcept override { return m_height; }
 
-    uint16_t* getBuffer() override { return m_fbp; };
-    const uint16_t* getBuffer() const override { return m_fbp; };
-    int getLineLengthPixels() const override { return m_lineLengthPixels; };
-    size_t offset(const Interface565Point& p) const override;
+    uint16_t* getBuffer() noexcept override { return m_fbp; };
+    const uint16_t* getBuffer() const noexcept override { return m_fbp; };
+    int getLineLengthPixels() const noexcept override { return m_lineLengthPixels; };
+    size_t offset(const Interface565Point& p) const noexcept override;
 
     void update() override;
 

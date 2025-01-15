@@ -60,11 +60,11 @@ public:
     FileDescriptor(FileDescriptor&& rhs);
     FileDescriptor& operator= (FileDescriptor&& rhs);
 
-    int fd() const { return m_fd; }
+    int fd() const noexcept { return m_fd; }
 
 private:
 
-    void closeFd();
+    void closeFd() noexcept;
 
     int m_fd{};
     CloseIfFunction m_close_if = [](int fd) { return fd != -1; };

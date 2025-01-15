@@ -72,7 +72,7 @@ raspifb16::Image565::Image565(
 
 void
 raspifb16::Image565::setFrame(
-    uint8_t frame)
+    uint8_t frame) noexcept
 {
     if (frame < m_numberOfFrames)
     {
@@ -84,7 +84,7 @@ raspifb16::Image565::setFrame(
 
 const uint16_t*
 raspifb16::Image565::getRow(
-    int y) const
+    int y) const noexcept
 {
     const Interface565Point p{0, y};
 
@@ -102,7 +102,7 @@ raspifb16::Image565::getRow(
 
 size_t
 raspifb16::Image565::offset(
-    const Interface565Point& p) const
+    const Interface565Point& p) const noexcept
 {
     return p.x() + (p.y() * m_width) + (m_frame * m_width * m_height);
 }

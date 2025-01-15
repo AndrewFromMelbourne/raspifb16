@@ -65,7 +65,7 @@ ScanEntry:: setEssid(
 
 void
 ScanEntry:: setFrequency(
-    double frequency)
+    double frequency) noexcept
 {
     m_frequency = frequency;
 }
@@ -74,7 +74,7 @@ ScanEntry:: setFrequency(
 
 void
 ScanEntry:: setChannel(
-    int channel)
+    int channel) noexcept
 {
     m_channel = channel;
 }
@@ -83,7 +83,7 @@ ScanEntry:: setChannel(
 
 void
 ScanEntry:: setSignalQuality(
-    double signalQuality)
+    double signalQuality) noexcept
 {
     m_signalQuality = signalQuality;
 }
@@ -92,7 +92,7 @@ ScanEntry:: setSignalQuality(
 
 void
 ScanEntry:: setSignalLevel(
-    double signalLevel)
+    double signalLevel) noexcept
 {
     m_signalLevel = signalLevel;
 }

@@ -69,19 +69,19 @@ public:
     Image565& operator=(const Image565&) = default;
     Image565& operator=(Image565&&) = delete;
 
-    int getWidth() const override { return m_width; }
-    int getHeight() const override { return m_height; }
+    int getWidth() const noexcept override { return m_width; }
+    int getHeight() const noexcept override { return m_height; }
 
-    uint8_t getFrame() const { return m_frame; }
-    uint8_t getNumberOfFrames() const { return m_numberOfFrames; }
-    void setFrame(uint8_t frame);
+    uint8_t getFrame() const noexcept { return m_frame; }
+    uint8_t getNumberOfFrames() const noexcept { return m_numberOfFrames; }
+    void setFrame(uint8_t frame) noexcept;
 
-    const uint16_t* getRow(int y) const;
+    const uint16_t* getRow(int y) const noexcept;
 
-    uint16_t* getBuffer() override { return m_buffer.data(); };
-    const uint16_t* getBuffer() const override { return m_buffer.data(); };
-    int getLineLengthPixels() const override { return m_width; };
-    size_t offset(const Interface565Point& p) const override;
+    uint16_t* getBuffer() noexcept override { return m_buffer.data(); };
+    const uint16_t* getBuffer() const noexcept override { return m_buffer.data(); };
+    int getLineLengthPixels() const noexcept override { return m_width; };
+    size_t offset(const Interface565Point& p) const noexcept override;
 
 private:
 

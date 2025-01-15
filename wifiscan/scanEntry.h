@@ -41,10 +41,10 @@ public:
 
     void setMac48(const std::string& mac48);
     void setEssid(const std::string& essid);
-    void setFrequency(double frequency);
-    void setChannel(int channel);
-    void setSignalQuality(double signalQuality);
-    void setSignalLevel(double signalLevel);
+    void setFrequency(double frequency) noexcept;
+    void setChannel(int channel) noexcept;
+    void setSignalQuality(double signalQuality) noexcept;
+    void setSignalLevel(double signalLevel) noexcept;
 
     std::string asString() const;
 

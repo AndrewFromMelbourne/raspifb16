@@ -123,7 +123,7 @@ raspifb16::FrameBuffer565::~FrameBuffer565()
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::FrameBuffer565::hideCursor()
+raspifb16::FrameBuffer565::hideCursor() noexcept
 {
     std::string name{::ttyname(0)};
     bool result = true;
@@ -159,7 +159,7 @@ raspifb16::FrameBuffer565::hideCursor()
 
 size_t
 raspifb16::FrameBuffer565::offset(
-    const Interface565Point& p) const
+    const Interface565Point& p) const noexcept
 {
     return p.x() + p.y() * m_lineLengthPixels;
 }
