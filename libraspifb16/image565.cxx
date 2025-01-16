@@ -51,15 +51,38 @@ raspifb16::Image565::Image565(
 raspifb16::Image565::Image565(
     int width,
     int height,
-    const std::vector<uint16_t>& buffer,
+    std::initializer_list<uint16_t> buffer,
     uint8_t numberOfFrames)
 :
     m_width{width},
     m_height{height},
     m_frame{0},
     m_numberOfFrames{numberOfFrames},
-    m_buffer(buffer)
+    m_buffer{buffer}
 {
+    const size_t minBufferSize = width * height * numberOfFrames;
+
+    if (m_buffer.size() < minBufferSize)
+    {
+        m_buffer.resize(minBufferSize);
+    }
+}
+
+//-------------------------------------------------------------------------
+raspifb16::Image565::Image565(
+    int width,
+    int height,
+    std::span<const uint16_t> buffer,
+    uint8_t numberOfFrames)
+:
+    m_width{width},
+    m_height{height},
+    m_frame{0},
+    m_numberOfFrames{numberOfFrames},
+    m_buffer{}
+{
+    m_buffer.assign(buffer.begin(), buffer.end());
+
     const size_t minBufferSize = width * height * numberOfFrames;
 
     if (m_buffer.size() < minBufferSize)

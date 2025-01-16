@@ -31,7 +31,9 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <initializer_list>
 #include <optional>
+#include <span>
 #include <vector>
 
 #include "rgb565.h"
@@ -59,7 +61,12 @@ public:
 
     Image565(int width,
              int height,
-             const std::vector<uint16_t>& buffer,
+             std::initializer_list<uint16_t> buffer,
+             uint8_t numberOfFrames = 1);
+
+    Image565(int width,
+             int height,
+             std::span<const uint16_t> buffer,
              uint8_t numberOfFrames = 1);
 
     ~Image565() override = default;
