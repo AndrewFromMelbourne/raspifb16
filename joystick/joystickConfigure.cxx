@@ -198,7 +198,8 @@ main(
                                     std::string{"/.config/raspifb16"}};
 
 
-        if (std::filesystem::create_directories(configDirectory))
+        if (std::filesystem::exists(configDirectory) or
+            std::filesystem::create_directories(configDirectory))
         {
             std::string configFile{configDirectory + "/joystickButtons"};
 
