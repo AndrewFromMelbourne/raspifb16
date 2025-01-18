@@ -170,7 +170,8 @@ int rgbaHashQoi(const QoiRGBA& rgba) noexcept
 raspifb16::Image565
 decodeQoi(
     const QoiHeader& header,
-    const std::vector<uint8_t>& data)
+    const std::vector<uint8_t>& data,
+    const raspifb16::RGB565& background)
 {
 
     raspifb16::Image565 image(header.getWidth(), header.getHeight());
@@ -263,6 +264,12 @@ decodeQoi(
         const int y = i / header.getWidth();
 
         raspifb16::RGB565 rgb{currentRGBA.r, currentRGBA.g, currentRGBA.b};
+
+        if (currentRGBA.a != 255)
+        {
+            rgb = raspifb16::RGB565::blend(currentRGBA.a, rgb, background);
+        }
+
         image.setPixelRGB(raspifb16::Interface565Point{x, y}, rgb);
     }
 
@@ -282,7 +289,8 @@ namespace raspifb16
 
 Image565
 readQoi(
-    const std::string& name)
+    const std::string& name,
+    const RGB565& background)
 {
     const auto length = std::filesystem::file_size(std::filesystem::path(name));
 
@@ -299,7 +307,7 @@ readQoi(
     ifs.read(reinterpret_cast<char*>(rawFooter.data()), rawFooter.size());
     checkFooter(rawFooter);
 
-    return decodeQoi(header, buffer);
+    return decodeQoi(header, buffer, background);
 }
 
 //-------------------------------------------------------------------------

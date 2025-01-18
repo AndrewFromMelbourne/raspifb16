@@ -40,7 +40,9 @@ namespace raspifb16
 
 //-------------------------------------------------------------------------
 
-Image565 readQoi(const std::string& name);
+Image565 readQoi(
+    const std::string& name,
+    const RGB565& background = RGB565{0, 0, 0});
 
 //-------------------------------------------------------------------------
 
