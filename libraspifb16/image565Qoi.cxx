@@ -262,15 +262,10 @@ decodeQoi(
 
         const int x = i % header.getWidth();
         const int y = i / header.getWidth();
+        const raspifb16::RGB565 rgb{currentRGBA.r, currentRGBA.g, currentRGBA.b};
 
-        raspifb16::RGB565 rgb{currentRGBA.r, currentRGBA.g, currentRGBA.b};
-
-        if (currentRGBA.a != 255)
-        {
-            rgb = raspifb16::RGB565::blend(currentRGBA.a, rgb, background);
-        }
-
-        image.setPixelRGB(raspifb16::Interface565Point{x, y}, rgb);
+        image.setPixelRGB(raspifb16::Interface565Point{x, y},
+                          rgb.blend(currentRGBA.a, background));
     }
 
     return raspifb16::Image565(image);

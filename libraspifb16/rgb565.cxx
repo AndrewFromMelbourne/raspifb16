@@ -50,6 +50,16 @@ raspifb16::RGB565::RGB565(
 
 //-------------------------------------------------------------------------
 
+raspifb16::RGB565
+raspifb16::RGB565::blend(
+    uint8_t alpha,
+    const RGB565& background) const noexcept
+{
+    return blend(alpha, *this, background);
+}
+
+//-------------------------------------------------------------------------
+
 uint8_t
 raspifb16::RGB565::getRed() const noexcept
 {

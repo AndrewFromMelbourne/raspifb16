@@ -46,6 +46,8 @@ public:
 
     explicit RGB565(uint16_t rgb) noexcept;
 
+    RGB565 blend(uint8_t alpha, const RGB565& background) const noexcept;
+
     uint8_t getRed() const noexcept;
     uint8_t getGreen() const noexcept;
     uint8_t getBlue() const noexcept;

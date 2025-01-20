@@ -292,10 +292,7 @@ Image565FreeType::drawChar(
 
                 if (background)
                 {
-                    image.setPixelRGB(p,
-                                      RGB565::blend(row[i],
-                                                    rgb,
-                                                    *background));
+                    image.setPixelRGB(p, rgb.blend(row[i], *background));
                 }
             }
         }

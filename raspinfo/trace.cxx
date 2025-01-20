@@ -71,9 +71,7 @@ Trace::Trace(
 
     for (const auto& trace : traces)
     {
-        const auto gridColour{raspifb16::RGB565::blend(63,
-                                                       sc_gridColour,
-                                                       trace.m_traceColour)};
+        const auto gridColour{sc_gridColour.blend(63, trace.m_traceColour)};
 
         m_traceData.emplace_back(trace.m_name,
                                  trace.m_traceColour,
