@@ -83,10 +83,10 @@ public:
     uint8_t getNumberOfFrames() const noexcept { return m_numberOfFrames; }
     void setFrame(uint8_t frame) noexcept;
 
-    const uint16_t* getRow(int y) const noexcept;
+    std::span<const uint16_t> getRow(int y) const noexcept;
 
-    uint16_t* getBuffer() noexcept override { return m_buffer.data(); };
-    const uint16_t* getBuffer() const noexcept override { return m_buffer.data(); };
+    std::span<uint16_t> getBuffer() noexcept override { return m_buffer; };
+    std::span<const uint16_t> getBuffer() const noexcept override { return m_buffer; };
     int getLineLengthPixels() const noexcept override { return m_width; };
     size_t offset(const Interface565Point& p) const noexcept override;
 

@@ -31,6 +31,7 @@
 
 #include <cstdint>
 #include <optional>
+#include <span>
 
 #include "point.h"
 #include "rgb565.h"
@@ -92,8 +93,8 @@ public:
                (p.y() < getHeight());
     }
 
-    virtual uint16_t* getBuffer() noexcept = 0;
-    virtual const uint16_t* getBuffer() const noexcept = 0;
+    virtual std::span<uint16_t> getBuffer() noexcept = 0;
+    virtual std::span<const uint16_t> getBuffer() const noexcept = 0;
     virtual int getLineLengthPixels() const noexcept = 0;
     virtual size_t offset(const Interface565Point& p) const noexcept = 0;
 
@@ -106,7 +107,7 @@ private:
         const Interface565Point& p,
         const Image565& image);
 
-    uint16_t* getBufferStart() noexcept;
+    std::span<uint16_t> getBufferStart() noexcept;
 };
 
 //-------------------------------------------------------------------------

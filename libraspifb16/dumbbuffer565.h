@@ -76,8 +76,9 @@ public:
     int getWidth() const noexcept override { return m_width; }
     int getHeight() const noexcept override { return m_height; }
 
-    uint16_t* getBuffer() noexcept override { return m_fbp; };
-    const uint16_t* getBuffer() const noexcept override { return m_fbp; };
+    std::span<uint16_t> getBuffer() noexcept override { return {m_fbp, getBufferSize()}; };
+    std::span<const uint16_t> getBuffer() const noexcept override { return {m_fbp, getBufferSize()}; }
+    size_t getBufferSize() const noexcept { return m_lineLengthPixels * m_height; }
     int getLineLengthPixels() const noexcept override { return m_lineLengthPixels; };
     size_t offset(const Interface565Point& p) const noexcept override;
 

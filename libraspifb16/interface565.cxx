@@ -48,7 +48,7 @@ raspifb16::Interface565::clear(uint16_t rgb)
     auto buffer{getBufferStart()};
     const auto length{getLineLengthPixels() * getHeight()};
 
-    std::fill(buffer, buffer + length, rgb);
+    std::fill(buffer.begin(), buffer.end(), rgb);
 }
 
 //-------------------------------------------------------------------------
@@ -62,7 +62,7 @@ raspifb16::Interface565::setPixel(
 
     if (isValid)
     {
-        *(getBuffer() + offset(p)) = rgb;
+        *(getBuffer().data() + offset(p)) = rgb;
     }
 
     return isValid;
@@ -79,7 +79,7 @@ raspifb16::Interface565::getPixelRGB(
         return {};
     }
 
-    return RGB565(*(getBuffer() + offset(p)));
+    return RGB565(*(getBuffer().data() + offset(p)));
 }
 
 //-------------------------------------------------------------------------
@@ -93,7 +93,7 @@ raspifb16::Interface565::getPixel(
         return {};
     }
 
-    return *(getBuffer() + offset(p));
+    return *(getBuffer().data() + offset(p));
 }
 
 
@@ -116,13 +116,12 @@ raspifb16::Interface565::putImage(
         return putImagePartial(p, image);
     }
 
-    for (int32_t j = 0 ; j < image.getHeight() ; ++j)
+    for (int j = 0 ; j < image.getHeight() ; ++j)
     {
-        auto start = image.getRow(j);
+        auto row = image.getRow(j);
+        const auto ost = offset(Interface565Point{p.x(), j + p.y()});
 
-        std::copy(start,
-                  start + image.getWidth(),
-                  getBufferStart() + ((j + p.y()) * getLineLengthPixels()) + p.x());
+        std::copy(row.begin(), row.end(), getBuffer().subspan(ost).begin());
     }
 
     return true;
@@ -175,13 +174,14 @@ raspifb16::Interface565::putImagePartial(
         return false;
     }
 
+    const auto xLength = xEnd - xStart + 1;
+
     for (auto j = yStart ; j <= yEnd ; ++j)
     {
-        auto start = image.getRow(j) + xStart;
+        auto row = image.getRow(j).subspan(xStart, xLength);
+        const auto ost = offset(Interface565Point{x, j - yStart + y});
 
-        std::copy(start,
-                  start + (xEnd - xStart + 1),
-                  getBufferStart() + ((j - yStart + y) * getLineLengthPixels()) + x);
+        std::copy(row.begin(), row.end(), getBuffer().subspan(ost).begin());
     }
 
     return true;
@@ -189,10 +189,11 @@ raspifb16::Interface565::putImagePartial(
 
 //-------------------------------------------------------------------------
 
-uint16_t*
+std::span<uint16_t>
 raspifb16::Interface565::getBufferStart() noexcept
 {
-    return getBuffer() + offset(Interface565Point{0, 0});
+    return getBuffer().subspan(offset(Interface565Point{0, 0}),
+                               getLineLengthPixels() * getHeight());
 }
 
 //-------------------------------------------------------------------------

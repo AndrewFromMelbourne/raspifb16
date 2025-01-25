@@ -146,12 +146,15 @@ main(
         //-----------------------------------------------------------------
 
         Image565FreeType ft{font, 32};
-        const Interface565Point p = ft.drawWideChar(p, c, white, image);
+        ft.drawWideChar(Interface565Point{0, 0}, c, white, image);
 
         //-----------------------------------------------------------------
 
         fb->putImage(Interface565Point{0, 0}, image);
         fb->update();
+
+        //-----------------------------------------------------------------
+
         std::this_thread::sleep_for(10s);
         fb->clear();
 

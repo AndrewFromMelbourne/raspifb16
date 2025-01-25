@@ -105,7 +105,7 @@ raspifb16::Image565::setFrame(
 
 //-------------------------------------------------------------------------
 
-const uint16_t*
+std::span<const uint16_t>
 raspifb16::Image565::getRow(
     int y) const noexcept
 {
@@ -113,11 +113,11 @@ raspifb16::Image565::getRow(
 
     if (validPixel(p))
     {
-        return m_buffer.data() + offset(p);
+        return  getBuffer().subspan(offset(p), m_width);
     }
     else
     {
-        return nullptr;
+        return {};
     }
 }
 

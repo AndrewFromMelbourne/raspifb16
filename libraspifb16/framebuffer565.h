@@ -75,9 +75,10 @@ public:
 
     bool hideCursor() noexcept;
 
-    uint16_t* getBuffer() noexcept override { return m_fbp; };
-    const uint16_t* getBuffer() const noexcept override { return m_fbp; };
-    int getLineLengthPixels() const noexcept override { return m_lineLengthPixels; };
+    std::span<uint16_t> getBuffer() noexcept override { return {m_fbp, getBufferSize()}; };
+    std::span<const uint16_t> getBuffer() const noexcept override { return {m_fbp, getBufferSize()}; }
+    size_t getBufferSize() const noexcept { return m_lineLengthPixels * getHeight(); }
+    int getLineLengthPixels() const noexcept override { return m_lineLengthPixels; }
     size_t offset(const Interface565Point& p) const noexcept override;
 
 private:

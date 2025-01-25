@@ -168,7 +168,7 @@ Image565FreeType::drawWideChar(
     Interface565& image)
 {
     Interface565Point position{p};
-    position.setY(position.y() + (m_face->size->metrics.ascender >> 6));
+    position.incrY(m_face->size->metrics.ascender >> 6);
     const auto glyph_index{FT_Get_Char_Index(m_face, c)};
 
     if (FT_Load_Glyph(m_face, glyph_index, FT_LOAD_RENDER) == 0)
@@ -176,15 +176,15 @@ Image565FreeType::drawWideChar(
         const auto slot{m_face->glyph};
 
         drawChar(position.x() + slot->bitmap_left,
-                position.y() - slot->bitmap_top,
-                slot->bitmap,
-                rgb,
-                image);
+                 position.y() - slot->bitmap_top,
+                 slot->bitmap,
+                 rgb,
+                 image);
 
-        position.setX(position.x() + (slot->advance.x >> 6));
+        position.incrX(slot->advance.x >> 6);
     }
 
-    position.setY(position.y() - (m_face->size->metrics.ascender >> 6));
+    position.incrY(-(m_face->size->metrics.ascender >> 6));
     return position;
 }
 
@@ -198,7 +198,7 @@ Image565FreeType::drawString(
     Interface565& image)
 {
     Interface565Point position{p};
-    position.setY(position.y() + (m_face->size->metrics.ascender >> 6));
+    position.incrY(m_face->size->metrics.ascender >> 6);
 
     const auto slot{m_face->glyph};
     const auto use_kerning{FT_HAS_KERNING(m_face)};
@@ -224,7 +224,7 @@ Image565FreeType::drawString(
                                ft_kerning_default,
                                &delta);
 
-                position.setX(position.x() + (delta.x >> 6));
+                position.incrX(delta.x >> 6);
             }
 
             if (FT_Load_Glyph(m_face, glyph_index, FT_LOAD_RENDER) == 0)
@@ -237,7 +237,7 @@ Image565FreeType::drawString(
                         rgb,
                         image);
 
-                position.setX(position.x() + (slot->advance.x >> 6));
+                position.incrX(slot->advance.x >> 6);
                 previous = glyph_index;
             }
         }
@@ -249,10 +249,10 @@ Image565FreeType::drawString(
 
     if (advance > 0)
     {
-        position.setX(position.x() + advance);
+        position.incrX(advance);
     }
 
-    position.setY(position.y() - (m_face->size->metrics.ascender >> 6));
+    position.incrY(-(m_face->size->metrics.ascender >> 6));
 
     return position;
 }
@@ -268,6 +268,7 @@ Image565FreeType::drawString(
 {
     return drawString(p, sv, RGB565(rgb), image);
 }
+
 //-------------------------------------------------------------------------
 
 void
@@ -280,7 +281,7 @@ Image565FreeType::drawChar(
 {
     for (unsigned j = 0 ; j < bitmap.rows ; ++j)
     {
-        uint8_t* row{bitmap.buffer + (j * bitmap.pitch)};
+        const auto row{bitmap.buffer + (j * bitmap.pitch)};
 
         for (unsigned i = 0 ; i < bitmap.width ; ++i)
         {
