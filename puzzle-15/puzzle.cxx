@@ -47,24 +47,24 @@ Puzzle::Puzzle()
         0x0D, 0x0E, 0x0F, 0x00
     },
     m_tileBuffers(
-        { {
-            { tileWidth, tileHeight, piece0 },
-            { tileWidth, tileHeight, piece1 },
-            { tileWidth, tileHeight, piece2 },
-            { tileWidth, tileHeight, piece3 },
-            { tileWidth, tileHeight, piece4 },
-            { tileWidth, tileHeight, piece5 },
-            { tileWidth, tileHeight, piece6 },
-            { tileWidth, tileHeight, piece7 },
-            { tileWidth, tileHeight, piece8 },
-            { tileWidth, tileHeight, piece9 },
-            { tileWidth, tileHeight, piece10 },
-            { tileWidth, tileHeight, piece11 },
-            { tileWidth, tileHeight, piece12 },
-            { tileWidth, tileHeight, piece13 },
-            { tileWidth, tileHeight, piece14 },
-            { tileWidth, tileHeight, piece15 },
-        } }),
+        {
+            { c_tileWidth, c_tileHeight, c_piece0 },
+            { c_tileWidth, c_tileHeight, c_piece1 },
+            { c_tileWidth, c_tileHeight, c_piece2 },
+            { c_tileWidth, c_tileHeight, c_piece3 },
+            { c_tileWidth, c_tileHeight, c_piece4 },
+            { c_tileWidth, c_tileHeight, c_piece5 },
+            { c_tileWidth, c_tileHeight, c_piece6 },
+            { c_tileWidth, c_tileHeight, c_piece7 },
+            { c_tileWidth, c_tileHeight, c_piece8 },
+            { c_tileWidth, c_tileHeight, c_piece9 },
+            { c_tileWidth, c_tileHeight, c_piece10 },
+            { c_tileWidth, c_tileHeight, c_piece11 },
+            { c_tileWidth, c_tileHeight, c_piece12 },
+            { c_tileWidth, c_tileHeight, c_piece13 },
+            { c_tileWidth, c_tileHeight, c_piece14 },
+            { c_tileWidth, c_tileHeight, c_piece15 },
+        }),
     m_blankLocation{ 3, 3 }
 {
 }
@@ -76,9 +76,9 @@ Puzzle::getInversionCount() const
 {
     int inversions{};
 
-    for (auto i = 0 ; i < boardSize - 1 ; ++i)
+    for (auto i = 0 ; i < c_boardSize - 1 ; ++i)
     {
-        for (auto j = i + 1 ; j < boardSize ; ++j)
+        for (auto j = i + 1 ; j < c_boardSize ; ++j)
         {
             if (m_board[i] and m_board[j] and (m_board[i] > m_board[j]))
             {
@@ -113,7 +113,7 @@ Puzzle::isSolved() const
 {
     bool solved = true;
 
-    for (auto i = 0 ; i < boardSize - 1 ; ++i)
+    for (auto i = 0 ; i < c_boardSize - 1 ; ++i)
     {
         if (m_board[i] != (i + 1))
         {
@@ -134,19 +134,19 @@ Puzzle::init()
 
     do
     {
-        for (auto i = 0 ; i < boardSize - 1 ; ++i)
+        for (auto i = 0 ; i < c_boardSize - 1 ; ++i)
         {
-            std::uniform_int_distribution<> distribution(i, boardSize - 1);
+            std::uniform_int_distribution<> distribution(i, c_boardSize - 1);
             const auto j = distribution(generator);
             std::swap(m_board[i], m_board[j]);
         }
 
-        for (auto i = 0 ; i < boardSize ; ++i)
+        for (auto i = 0 ; i < c_boardSize ; ++i)
         {
             if (m_board[i] == 0)
             {
-                m_blankLocation.x = i % puzzleWidth;
-                m_blankLocation.y = i / puzzleWidth;
+                m_blankLocation.x = i % c_puzzleWidth;
+                m_blankLocation.y = i / c_puzzleWidth;
                 break;
             }
         }
@@ -179,12 +179,12 @@ Puzzle::update(Joystick& js)
                                   .y = m_blankLocation.y - dy};
 
     if ((newLocation.x >= 0) and
-        (newLocation.x < puzzleWidth) and
+        (newLocation.x < c_puzzleWidth) and
         (newLocation.y >= 0) and
-        (newLocation.y < puzzleHeight))
+        (newLocation.y < c_puzzleHeight))
     {
-        const auto indexNew = newLocation.x + (newLocation.y * puzzleWidth);
-        const auto indexBlank = m_blankLocation.x + (m_blankLocation.y * puzzleWidth);
+        const auto indexNew = newLocation.x + (newLocation.y * c_puzzleWidth);
+        const auto indexBlank = m_blankLocation.x + (m_blankLocation.y * c_puzzleWidth);
         std::swap(m_board[indexNew], m_board[indexBlank]);
 
         m_blankLocation = newLocation;
@@ -199,18 +199,18 @@ Puzzle::update(Joystick& js)
 void
 Puzzle::draw(Interface565& fb)
 {
-    constexpr int width = puzzleWidth * tileWidth;
-    constexpr int height = puzzleHeight * tileHeight;
+    constexpr int width = c_puzzleWidth * c_tileWidth;
+    constexpr int height = c_puzzleHeight * c_tileHeight;
     const int xOffset = (fb.getWidth() - width) / 2;
     const int yOffset = (fb.getHeight() - height) / 2;
 
-    for (int j = 0 ; j < puzzleHeight ; ++j)
+    for (int j = 0 ; j < c_puzzleHeight ; ++j)
     {
-        for (int i = 0 ; i < puzzleWidth ; ++i)
+        for (int i = 0 ; i < c_puzzleWidth ; ++i)
         {
-            const Interface565Point p{ xOffset + (i * tileWidth),
-                                       yOffset + (j * tileHeight) };
-            const int tile = m_board[i + (j * puzzleWidth)];
+            const Interface565Point p{ xOffset + (i * c_tileWidth),
+                                       yOffset + (j * c_tileHeight) };
+            const int tile = m_board[i + (j * c_puzzleWidth)];
             fb.putImage(p, m_tileBuffers[tile]);
         }
     }

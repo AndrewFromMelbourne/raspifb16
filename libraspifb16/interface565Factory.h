@@ -49,7 +49,7 @@ enum class InterfaceType565
 
 //-------------------------------------------------------------------------
 
-std::unique_ptr<Interface565>
+[[nodiscard]] std::unique_ptr<Interface565>
 createInterface565(
     InterfaceType565 type,
     const std::string& device);

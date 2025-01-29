@@ -55,10 +55,10 @@ public:
 
     virtual ~Panel() = default;
 
-    int getBottom() const noexcept { return m_yPosition + m_image.getHeight(); }
+    [[nodiscard]] int getBottom() const noexcept { return m_yPosition + m_image.getHeight(); }
 
-    raspifb16::Image565& getImage() noexcept { return m_image; }
-    const raspifb16::Image565& getImage() const noexcept { return m_image; }
+    [[nodiscard]] raspifb16::Image565& getImage() noexcept { return m_image; }
+    [[nodiscard]] const raspifb16::Image565& getImage() const noexcept { return m_image; }
 
     void show(raspifb16::Interface565& fb) const;
     virtual void init(raspifb16::Interface565Font& font) = 0;

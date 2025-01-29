@@ -52,7 +52,7 @@ class Interface565
 {
 public:
 
-    static constexpr auto BytesPerPixel{2};
+    static constexpr auto c_bytesPerPixel{2};
 
     Interface565();
     virtual ~Interface565() = 0;
@@ -63,8 +63,8 @@ public:
     Interface565& operator=(const Interface565&) = default;
     Interface565& operator=(Interface565&&) = delete;
 
-    virtual int getWidth() const noexcept = 0;
-    virtual int getHeight() const noexcept = 0;
+    [[nodiscard]] virtual int getWidth() const noexcept = 0;
+    [[nodiscard]] virtual int getHeight() const noexcept = 0;
 
     void clear(const RGB565& rgb) { clear(rgb.get565()); }
     void clear(uint16_t rgb = 0);
@@ -79,12 +79,12 @@ public:
 
     bool setPixel(const Interface565Point& p, uint16_t rgb);
 
-    std::optional<RGB565> getPixelRGB(const Interface565Point& p) const;
-    std::optional<uint16_t> getPixel(const Interface565Point& p) const;
+    [[nodiscard]] std::optional<RGB565> getPixelRGB(const Interface565Point& p) const;
+    [[nodiscard]] std::optional<uint16_t> getPixel(const Interface565Point& p) const;
 
     bool putImage(const Interface565Point&, const Image565&);
 
-    bool
+    [[nodiscard]] bool
     validPixel(const Interface565Point& p) const
     {
         return (p.x() >= 0) and
@@ -93,10 +93,10 @@ public:
                (p.y() < getHeight());
     }
 
-    virtual std::span<uint16_t> getBuffer() noexcept = 0;
-    virtual std::span<const uint16_t> getBuffer() const noexcept = 0;
-    virtual int getLineLengthPixels() const noexcept = 0;
-    virtual size_t offset(const Interface565Point& p) const noexcept = 0;
+    [[nodiscard]] virtual std::span<uint16_t> getBuffer() noexcept = 0;
+    [[nodiscard]] virtual std::span<const uint16_t> getBuffer() const noexcept = 0;
+    [[nodiscard]] virtual int getLineLengthPixels() const noexcept = 0;
+    [[nodiscard]] virtual size_t offset(const Interface565Point& p) const noexcept = 0;
 
     virtual void update() {}
 

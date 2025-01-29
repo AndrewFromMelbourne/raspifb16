@@ -59,7 +59,7 @@ class DumbBuffer565
 {
 public:
 
-    static constexpr size_t bytesPerPixel{2};
+    static constexpr size_t c_bytesPerPixel{2};
 
     explicit DumbBuffer565(
         const std::string& device = "",
@@ -73,14 +73,14 @@ public:
     DumbBuffer565(DumbBuffer565&& fb) = delete;
     DumbBuffer565& operator=(DumbBuffer565&& fb) = delete;
 
-    int getWidth() const noexcept override { return m_width; }
-    int getHeight() const noexcept override { return m_height; }
+    [[nodiscard]] int getWidth() const noexcept override { return m_width; }
+    [[nodiscard]] int getHeight() const noexcept override { return m_height; }
 
-    std::span<uint16_t> getBuffer() noexcept override { return {m_fbp, getBufferSize()}; };
-    std::span<const uint16_t> getBuffer() const noexcept override { return {m_fbp, getBufferSize()}; }
-    size_t getBufferSize() const noexcept { return m_lineLengthPixels * m_height; }
-    int getLineLengthPixels() const noexcept override { return m_lineLengthPixels; };
-    size_t offset(const Interface565Point& p) const noexcept override;
+    [[nodiscard]] std::span<uint16_t> getBuffer() noexcept override { return {m_fbp, getBufferSize()}; };
+    [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept override { return {m_fbp, getBufferSize()}; }
+    [[nodiscard]] size_t getBufferSize() const noexcept { return m_lineLengthPixels * m_height; }
+    [[nodiscard]] int getLineLengthPixels() const noexcept override { return m_lineLengthPixels; };
+    [[nodiscard]] size_t offset(const Interface565Point& p) const noexcept override;
 
     void update() override;
 

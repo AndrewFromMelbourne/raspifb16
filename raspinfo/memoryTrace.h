@@ -43,10 +43,10 @@ public:
 
     MemoryStats();
 
-    int total() const noexcept { return m_total; }
-    int buffers() const noexcept { return m_buffers; }
-    int cached() const noexcept { return m_cached; }
-    int used() const noexcept { return m_used; }
+    [[nodiscard]] int total() const noexcept { return m_total; }
+    [[nodiscard]] int buffers() const noexcept { return m_buffers; }
+    [[nodiscard]] int cached() const noexcept { return m_cached; }
+    [[nodiscard]] int used() const noexcept { return m_used; }
 
 private:
 

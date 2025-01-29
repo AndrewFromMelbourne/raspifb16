@@ -65,15 +65,15 @@ public:
     Image565FreeType& operator=(const Image565FreeType&) = delete;
     Image565FreeType& operator=(Image565FreeType&&) = delete;
 
-    std::string getFontFamilyName() const noexcept;
-    std::string getFontStyleName() const noexcept;
+    [[nodiscard]] std::string getFontFamilyName() const noexcept;
+    [[nodiscard]] std::string getFontStyleName() const noexcept;
 
-    int getPixelHeight() const noexcept override;
-    int getPixelWidth() const noexcept override;
+    [[nodiscard]] int getPixelHeight() const noexcept override;
+    [[nodiscard]] int getPixelWidth() const noexcept override;
 
-    std::optional<char> getCharacterCode(CharacterCode code) const noexcept override;
+    [[nodiscard]] std::optional<char> getCharacterCode(CharacterCode code) const noexcept override;
 
-    int getPixelSize() const noexcept
+    [[nodiscard]] int getPixelSize() const noexcept
     {
         return m_pixelSize;
     }

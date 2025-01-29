@@ -62,10 +62,10 @@ public:
     Interface565Font& operator=(const Interface565Font&) = delete;
     Interface565Font& operator=(Interface565Font&&) = delete;
 
-    virtual int getPixelHeight() const noexcept = 0;
-    virtual int getPixelWidth() const noexcept = 0;
+    [[nodiscard]] virtual int getPixelHeight() const noexcept = 0;
+    [[nodiscard]] virtual int getPixelWidth() const noexcept = 0;
 
-    virtual std::optional<char> getCharacterCode(CharacterCode code) const noexcept = 0;
+    [[nodiscard]] virtual std::optional<char> getCharacterCode(CharacterCode code) const noexcept = 0;
 
     virtual Interface565Point
     drawChar(

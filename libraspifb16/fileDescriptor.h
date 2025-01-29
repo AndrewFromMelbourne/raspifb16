@@ -60,7 +60,7 @@ public:
     FileDescriptor(FileDescriptor&& rhs);
     FileDescriptor& operator= (FileDescriptor&& rhs);
 
-    int fd() const noexcept { return m_fd; }
+    [[nodiscard]] int fd() const noexcept { return m_fd; }
 
 private:
 

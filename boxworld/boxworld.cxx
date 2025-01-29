@@ -46,16 +46,16 @@ Boxworld::Boxworld()
     m_boardPrevious(),
     m_levels(),
     m_tileBuffers(
-        { {
-            { tileWidth, tileHeight, emptyImage },
-            { tileWidth, tileHeight, passageImage },
-            { tileWidth, tileHeight, boxImage },
-            { tileWidth, tileHeight, playerImage, 2 },
-            { tileWidth, tileHeight, wallImage },
-            { tileWidth, tileHeight, passageWithTargetImage },
-            { tileWidth, tileHeight, boxOnTargetImage },
-            { tileWidth, tileHeight, playerOnTargetImage, 2 }
-        } }),
+        {
+            { c_tileWidth, c_tileHeight, c_emptyImage },
+            { c_tileWidth, c_tileHeight, c_passageImage },
+            { c_tileWidth, c_tileHeight, c_boxImage },
+            { c_tileWidth, c_tileHeight, c_playerImage, 2 },
+            { c_tileWidth, c_tileHeight, c_wallImage },
+            { c_tileWidth, c_tileHeight, c_passageWithTargetImage },
+            { c_tileWidth, c_tileHeight, c_boxOnTargetImage },
+            { c_tileWidth, c_tileHeight, c_playerOnTargetImage, 2 }
+        }),
     m_topTextImage{ 240, 8 },
     m_bottomTextImage{ 320, 16 },
     m_textRGB(255, 255, 255),
@@ -85,7 +85,7 @@ Boxworld::update(Joystick& js)
 {
     if (js.buttonPressed(Joystick::BUTTON_A))
     {
-        if (m_level < (Level::levelCount - 1))
+        if (m_level < (Level::c_levelCount - 1))
         {
             ++m_level;
             init();
@@ -125,7 +125,7 @@ Boxworld::update(Joystick& js)
         const auto dy = (value.y) ? (value.y / std::abs(value.y)) : 0;
 
         const Location next{ .x = m_player.x + dx, .y = m_player.y + dy };
-        const auto piece1 = m_board[next.y][next.x] & ~targetMask;
+        const auto piece1 = m_board[next.y][next.x] & ~c_targetMask;
 
 
         if (piece1 == PASSAGE)
@@ -136,7 +136,7 @@ Boxworld::update(Joystick& js)
         else if (piece1 == BOX)
         {
             const Location afterBox{ .x = next.x + dx, .y = next.y + dy };
-            const auto piece2 = m_board[afterBox.y][afterBox.x] & ~targetMask;
+            const auto piece2 = m_board[afterBox.y][afterBox.x] & ~c_targetMask;
 
             if (piece2 == PASSAGE)
             {
@@ -172,9 +172,9 @@ Boxworld::drawBoard(Interface565& fb)
     const int yOffset = 8;
     static uint8_t frame = 0;
 
-    for (int j = 0 ; j < Level::levelHeight ; ++j)
+    for (int j = 0 ; j < Level::c_levelHeight ; ++j)
     {
-        for (int i = 0 ; i < Level::levelWidth ; ++i)
+        for (int i = 0 ; i < Level::c_levelWidth ; ++i)
         {
             const auto piece = m_board[j][i];
             auto& tile = m_tileBuffers[piece];
@@ -186,8 +186,8 @@ Boxworld::drawBoard(Interface565& fb)
 
             fb.putImage(
                 Interface565Point{
-                    (i * tileWidth) + xOffset,
-                    (j * tileHeight) + yOffset
+                    (i * c_tileWidth) + xOffset,
+                    (j * c_tileHeight) + yOffset
                 },
                 tile);
         }
@@ -261,7 +261,7 @@ Boxworld::drawText(
     const int halfWidth = 2 + (m_bottomTextImage.getWidth() / 2);
 
     position = Interface565Point{ halfWidth, 2 };
-    auto& nextRGB = ((m_level < (Level::levelCount - 1))
+    auto& nextRGB = ((m_level < (Level::c_levelCount - 1))
                   ? m_textRGB
                   : m_disabledRGB);
 
@@ -299,11 +299,11 @@ Boxworld::findPlayer()
 {
     bool found = false;
 
-    for (int j = 0 ; (j < Level::levelHeight) and not found ; ++j)
+    for (int j = 0 ; (j < Level::c_levelHeight) and not found ; ++j)
     {
-        for (int i = 0 ; (i < Level::levelWidth) and not found ; ++i)
+        for (int i = 0 ; (i < Level::c_levelWidth) and not found ; ++i)
         {
-            if ((m_board[j][i] & ~targetMask) == PLAYER)
+            if ((m_board[j][i] & ~c_targetMask) == PLAYER)
             {
                 found = true;
                 m_player.x = i;
@@ -318,11 +318,11 @@ Boxworld::findPlayer()
 void
 Boxworld::swapPieces(const Location& location1, const Location& location2)
 {
-    const auto piece1 = m_board[location1.y][location1.x] & ~targetMask;
-    const auto piece2 = m_board[location2.y][location2.x] & ~targetMask;
+    const auto piece1 = m_board[location1.y][location1.x] & ~c_targetMask;
+    const auto piece2 = m_board[location2.y][location2.x] & ~c_targetMask;
 
-    m_board[location1.y][location1.x] = (m_board[location1.y][location1.x] & targetMask) | piece2;
-    m_board[location2.y][location2.x] = (m_board[location2.y][location2.x] & targetMask) | piece1;
+    m_board[location1.y][location1.x] = (m_board[location1.y][location1.x] & c_targetMask) | piece2;
+    m_board[location2.y][location2.x] = (m_board[location2.y][location2.x] & c_targetMask) | piece1;
 }
 
 //-------------------------------------------------------------------------
@@ -332,9 +332,9 @@ Boxworld::isLevelSolved()
 {
     m_levelSolved = true;
 
-    for (int j = 0 ; (j < Level::levelHeight) and m_levelSolved ; ++j)
+    for (int j = 0 ; (j < Level::c_levelHeight) and m_levelSolved ; ++j)
     {
-        for (int i = 0 ; (i < Level::levelWidth) and m_levelSolved ; ++i)
+        for (int i = 0 ; (i < Level::c_levelWidth) and m_levelSolved ; ++i)
         {
             if (m_board[j][i] == BOX)
             {

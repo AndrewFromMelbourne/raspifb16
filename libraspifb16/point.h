@@ -48,8 +48,8 @@ public:
     {
     }
 
-    T x() const  noexcept{ return m_x; }
-    T y() const  noexcept{ return m_y; }
+    [[nodiscard]] T x() const  noexcept{ return m_x; }
+    [[nodiscard]] T y() const  noexcept{ return m_y; }
 
     void
     set(

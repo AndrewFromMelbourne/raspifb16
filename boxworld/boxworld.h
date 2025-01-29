@@ -65,10 +65,10 @@ public:
 
     //---------------------------------------------------------------------
 
-    static constexpr uint8_t targetMask = 0x04;
+    static constexpr uint8_t c_targetMask{0x04};
 
-    static constexpr int boardYoffset = 10;
-    static constexpr int boardYend = boardYoffset + (tileHeight * Level::levelHeight);
+    static constexpr int c_boardYoffset{10};
+    static constexpr int c_boardYend{c_boardYoffset + (c_tileHeight * Level::c_levelHeight)};
 
     //---------------------------------------------------------------------
 
@@ -99,7 +99,7 @@ private:
     Level::LevelType m_boardPrevious;
     const Levels m_levels;
 
-    std::array<raspifb16::Image565, tileCount> m_tileBuffers;
+    std::array<raspifb16::Image565, c_tileCount> m_tileBuffers;
     raspifb16::Image565 m_topTextImage;
     raspifb16::Image565 m_bottomTextImage;
 

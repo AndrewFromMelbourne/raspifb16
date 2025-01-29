@@ -76,19 +76,19 @@ public:
     Image565& operator=(const Image565&) = default;
     Image565& operator=(Image565&&) = delete;
 
-    int getWidth() const noexcept override { return m_width; }
-    int getHeight() const noexcept override { return m_height; }
+    [[nodiscard]] int getWidth() const noexcept override { return m_width; }
+    [[nodiscard]] int getHeight() const noexcept override { return m_height; }
 
-    uint8_t getFrame() const noexcept { return m_frame; }
-    uint8_t getNumberOfFrames() const noexcept { return m_numberOfFrames; }
+    [[nodiscard]] uint8_t getFrame() const noexcept { return m_frame; }
+    [[nodiscard]] uint8_t getNumberOfFrames() const noexcept { return m_numberOfFrames; }
     void setFrame(uint8_t frame) noexcept;
 
-    std::span<const uint16_t> getRow(int y) const noexcept;
+    [[nodiscard]] std::span<const uint16_t> getRow(int y) const noexcept;
 
-    std::span<uint16_t> getBuffer() noexcept override { return m_buffer; };
-    std::span<const uint16_t> getBuffer() const noexcept override { return m_buffer; };
-    int getLineLengthPixels() const noexcept override { return m_width; };
-    size_t offset(const Interface565Point& p) const noexcept override;
+    [[nodiscard]] std::span<uint16_t> getBuffer() noexcept override { return m_buffer; };
+    [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept override { return m_buffer; };
+    [[nodiscard]] int getLineLengthPixels() const noexcept override { return m_width; };
+    [[nodiscard]] size_t offset(const Interface565Point& p) const noexcept override;
 
 private:
 

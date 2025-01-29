@@ -38,16 +38,16 @@ class Level
 {
 public:
 
-    static constexpr int levelWidth = 16;
-    static constexpr int levelHeight = 14;
-    static constexpr int levelCount = 100;
+    static constexpr int c_levelWidth{16};
+    static constexpr int c_levelHeight{14};
+    static constexpr int c_levelCount{100};
 
-    using LevelRow = std::array<uint8_t, levelWidth>;
-    using LevelType = std::array<LevelRow, levelHeight>;
+    using LevelRow = std::array<uint8_t, c_levelWidth>;
+    using LevelType = std::array<LevelRow, c_levelHeight>;
 
     Level(const LevelType& level) noexcept;
 
-    const LevelType level() const noexcept;
+    [[nodiscard]] const LevelType level() const noexcept;
 
 private:
 

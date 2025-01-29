@@ -326,7 +326,7 @@ raspifb16::DumbBuffer565::DumbBuffer565(
     //---------------------------------------------------------------------
 
     m_length = dmcb.size;
-    m_lineLengthPixels = dmcb.pitch / bytesPerPixel;
+    m_lineLengthPixels = dmcb.pitch / c_bytesPerPixel;
     m_fbHandle = dmcb.handle;
 
     uint32_t handles[4] = { dmcb.handle };

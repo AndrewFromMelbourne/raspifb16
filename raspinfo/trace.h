@@ -67,13 +67,13 @@ public:
         m_values.reserve(width);
     }
 
-    const std::string& name() const noexcept { return m_name; }
-    raspifb16::RGB565 traceColour() const noexcept { return m_traceColour; }
-    raspifb16::RGB565 gridColour() const noexcept { return m_gridColour; }
+    [[nodiscard]] const std::string& name() const noexcept { return m_name; }
+    [[nodiscard]] raspifb16::RGB565 traceColour() const noexcept { return m_traceColour; }
+    [[nodiscard]] raspifb16::RGB565 gridColour() const noexcept { return m_gridColour; }
 
     void addData(int value);
-    int max() const;
-    int value(int i) const { return m_values[i]; }
+    [[nodiscard]] int max() const;
+    [[nodiscard]] int value(int i) const { return m_values[i]; }
 
 private:
 

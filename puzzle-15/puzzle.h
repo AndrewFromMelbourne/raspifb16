@@ -1,5 +1,3 @@
-#pragma once
-
 //-------------------------------------------------------------------------
 //
 // The MIT License (MIT)
@@ -25,6 +23,10 @@
 // TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+//-------------------------------------------------------------------------
+
+#pragma once
+
 //-------------------------------------------------------------------------
 
 #include <array>
@@ -56,16 +58,16 @@ public:
 
 private:
 
-    int getInversionCount() const;
-    bool isSolvable() const;
-    bool isSolved() const;
+    [[nodiscard]] int getInversionCount() const;
+    [[nodiscard]] bool isSolvable() const;
+    [[nodiscard]] bool isSolved() const;
 
-    static constexpr int puzzleWidth = 4;
-    static constexpr int puzzleHeight = 4;
-    static constexpr int boardSize = puzzleWidth * puzzleHeight;
+    static constexpr int c_puzzleWidth{4};
+    static constexpr int c_puzzleHeight{4};
+    static constexpr int c_boardSize{c_puzzleWidth * c_puzzleHeight};
 
-    std::array<uint8_t, boardSize> m_board;
-    std::array<raspifb16::Image565, tileCount> m_tileBuffers;
+    std::array<uint8_t, c_boardSize> m_board;
+    std::array<raspifb16::Image565, c_tileCount> m_tileBuffers;
     Location m_blankLocation;
 };
 

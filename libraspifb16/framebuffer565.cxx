@@ -86,7 +86,7 @@ raspifb16::FrameBuffer565::FrameBuffer565(
 
     //---------------------------------------------------------------------
 
-    m_lineLengthPixels = m_finfo.line_length / bytesPerPixel;
+    m_lineLengthPixels = m_finfo.line_length / c_bytesPerPixel;
 
     //---------------------------------------------------------------------
 

@@ -43,8 +43,8 @@ public:
 
     NetworkStats();
 
-    int tx() const noexcept { return m_tx; }
-    int rx() const noexcept { return m_rx; }
+    [[nodiscard]] int tx() const noexcept { return m_tx; }
+    [[nodiscard]] int rx() const noexcept { return m_rx; }
 
     NetworkStats& operator-=(const NetworkStats& rhs) noexcept;
 

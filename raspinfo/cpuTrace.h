@@ -44,10 +44,10 @@ public:
 
     CpuStats();
 
-    int total() const noexcept;
-    int user() const noexcept { return m_user; }
-    int nice() const noexcept { return m_nice; }
-    int system() const noexcept { return m_system; }
+    [[nodiscard]] int total() const noexcept;
+    [[nodiscard]] int user() const noexcept { return m_user; }
+    [[nodiscard]] int nice() const noexcept { return m_nice; }
+    [[nodiscard]] int system() const noexcept { return m_system; }
 
     CpuStats& operator-=(const CpuStats& rhs) noexcept;
 

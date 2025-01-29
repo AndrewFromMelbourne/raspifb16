@@ -84,14 +84,14 @@ public:
     explicit Joystick(bool blocking = false);
     explicit Joystick(const std::string& device, bool blocking = false);
 
-    int numberOfButtons() const noexcept;
-    int numberOfAxes() const noexcept;
+    [[nodiscard]] int numberOfButtons() const noexcept;
+    [[nodiscard]] int numberOfAxes() const noexcept;
 
-    bool buttonPressed(int button);
-    bool buttonDown(int button) const;
-    JoystickAxes getAxes(int joystickNumber) const;
+    [[nodiscard]] bool buttonPressed(int button);
+    [[nodiscard]] bool buttonDown(int button) const;
+    [[nodiscard]] JoystickAxes getAxes(int joystickNumber) const;
 
-    int rawButton(int button) const;
+    [[nodiscard]] int rawButton(int button) const;
 
     void read();
 

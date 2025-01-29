@@ -46,19 +46,19 @@ public:
 
     explicit RGB565(uint16_t rgb) noexcept;
 
-    RGB565 blend(uint8_t alpha, const RGB565& background) const noexcept;
+    [[nodiscard]] RGB565 blend(uint8_t alpha, const RGB565& background) const noexcept;
 
-    uint8_t getRed() const noexcept;
-    uint8_t getGreen() const noexcept;
-    uint8_t getBlue() const noexcept;
+    [[nodiscard]] uint8_t getRed() const noexcept;
+    [[nodiscard]] uint8_t getGreen() const noexcept;
+    [[nodiscard]] uint8_t getBlue() const noexcept;
 
-    uint16_t get565() const noexcept { return m_rgb; }
+    [[nodiscard]] uint16_t get565() const noexcept { return m_rgb; }
 
     void setRGB(uint8_t red, uint8_t green, uint8_t blue) noexcept;
 
     void set565(uint16_t rgb) noexcept { m_rgb = rgb; }
 
-    static RGB565 blend(uint8_t alpha, const RGB565& a, const RGB565& b) noexcept;
+    [[nodiscard]] static RGB565 blend(uint8_t alpha, const RGB565& a, const RGB565& b) noexcept;
 
 private:
 

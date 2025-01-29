@@ -46,7 +46,7 @@ public:
     void setSignalQuality(double signalQuality) noexcept;
     void setSignalLevel(double signalLevel) noexcept;
 
-    std::string asString() const;
+    [[nodiscard]] std::string asString() const;
 
     void clear();
 

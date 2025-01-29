@@ -65,7 +65,7 @@ class DrmDevices
 {
 public:
 
-    static constexpr int MaxDrmNodes{256};
+    static constexpr int c_maxDrmNodes{256};
 
     DrmDevices();
     ~DrmDevices();
@@ -75,13 +75,13 @@ public:
     DrmDevices& operator=(const DrmDevices&) = delete;
     DrmDevices& operator=(DrmDevices&&) = delete;
 
-    drmDevicePtr getDevice(int index) const;
-    int getDeviceCount() const noexcept { return m_deviceCount; }
+    [[nodiscard]] drmDevicePtr getDevice(int index) const;
+    [[nodiscard]] int getDeviceCount() const noexcept { return m_deviceCount; }
 
 private:
 
     int m_deviceCount{};
-    std::array<drmDevicePtr, MaxDrmNodes> m_devices{};
+    std::array<drmDevicePtr, c_maxDrmNodes> m_devices{};
 };
 
 //-------------------------------------------------------------------------
