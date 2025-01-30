@@ -110,22 +110,22 @@ vcGenCmd(const std::string& command)
         return {};
     }
 
-    static constexpr auto RESPONSE_LENGTH{1024};
-    static constexpr auto PROPERTY_SIZE{(RESPONSE_LENGTH / 4) + 7};
+    static constexpr auto c_responseLength{1024};
+    static constexpr auto c_propertySize{(c_responseLength / 4) + 7};
 
-    uint32_t property[PROPERTY_SIZE] =
+    uint32_t property[c_propertySize] =
     {
         0x00000000,
         0x00000000,
         0x00030080,
-        RESPONSE_LENGTH,
+        c_responseLength,
         0x00000000,
         0x00000000,
     };
 
     memcpy(property + 6, command.data(), command.length() + 1);
 
-    property[0] = PROPERTY_SIZE * sizeof(property[0]);
+    property[0] = c_propertySize * sizeof(property[0]);
 
     if (::ioctl(fd.fd(), _IOWR(100, 0, char *), property) == -1)
     {
