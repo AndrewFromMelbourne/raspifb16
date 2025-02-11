@@ -33,7 +33,7 @@ def main():
     name_stem = Path(args.name).stem
     name = f"{name_stem}Image"
     length = image.width * image.height
-    print(f"std::vector<uint32_t> {name} = ")
+    print(f"std::vector<uint16_t> {name} = ")
     print("{", end='')
 
     codeWidth = 10
@@ -55,14 +55,16 @@ def main():
             y = j
             pixel = data[y][x]
 
-            r = pixel[0]
-            g = pixel[1]
-            b = pixel[2]
+            r = (pixel[0] >> 3) & 0x1F
+            g = (pixel[1] >> 2) & 0x3F
+            b = (pixel[2] >> 3) & 0x1F
             a = pixel[3]
 
-            value = b | (g << 8) | (r << 16)
 
-            print(hex_fill(value, 8) + ", ", end='')
+
+            value = b | (g << 5) | (r << 11)
+
+            print(hex_fill(value, 4) + ", ", end='')
 
     print("")
     print("};")
