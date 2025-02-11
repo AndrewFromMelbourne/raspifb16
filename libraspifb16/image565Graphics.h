@@ -78,6 +78,25 @@ boxFilled(
     boxFilled(image, p1, p2, rgb.get565());
 }
 
+void
+boxFilled(
+    Interface565& image,
+    const Interface565Point& p1,
+    const Interface565Point& p2,
+    const RGB565& rgb,
+    uint8_t alpha);
+
+inline void
+boxFilled(
+        Interface565& image,
+        const Interface565Point& p1,
+        const Interface565Point& p2,
+        uint16_t rgb,
+        uint8_t alpha)
+{
+    boxFilled(image, p1, p2, RGB565{rgb}, alpha);
+}
+
 //-------------------------------------------------------------------------
 
 void

@@ -74,6 +74,35 @@ boxFilled(
 
 void
 raspifb16::
+boxFilled(
+    Interface565& image,
+    const Interface565Point& p1,
+    const Interface565Point& p2,
+    const RGB565& rgb,
+    uint8_t alpha)
+{
+    const auto sign_x = (p1.x() <= p2.x()) ? 1 : -1;
+    const auto sign_y = (p1.y() <= p2.y()) ? 1 : -1;
+
+    for (auto j = p1.y() ; j <= p2.y() ; j += sign_y)
+    {
+        for (auto i = p1.x() ; i <= p2.x() ; i += sign_x)
+        {
+            const Interface565Point p{i, j};
+            auto background = image.getPixelRGB(p);
+
+            if (background.has_value())
+            {
+                image.setPixelRGB(p, rgb.blend(alpha, *background));
+            }
+        }
+    }
+}
+
+//-------------------------------------------------------------------------
+
+void
+raspifb16::
 line(
     Interface565& image,
     const Interface565Point& p1,
