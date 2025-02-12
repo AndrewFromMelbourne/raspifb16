@@ -27,7 +27,7 @@ def main():
 
     image = Image.open(args.name)
 
-    image_rgba = image.convert('RGBA')
+    image_rgba = image.convert('RGB')
     data = asarray(image_rgba)
 
     name_stem = Path(args.name).stem
@@ -36,31 +36,21 @@ def main():
     print(f"std::vector<uint16_t> {name} = ")
     print("{", end='')
 
-    codeWidth = 10
-    #codeWidth = image.width
-
-    #while codeWidth > 16:
-    #    codeWidth = codeWidth // 2
-
+    codeWidth = 15
     index = 0
 
-    for i in range(image.width):
-        x = image.width - 1 - i
-        for j in range(image.height):
+    for j in range(image.height):
+        for i in range(image.width):
 
             if ((index % codeWidth) == 0):
                 print("")
                 print("    ", end='')
             index += 1
-            y = j
-            pixel = data[y][x]
+            pixel = data[j][i]
 
             r = (pixel[0] >> 3) & 0x1F
             g = (pixel[1] >> 2) & 0x3F
             b = (pixel[2] >> 3) & 0x1F
-            a = pixel[3]
-
-
 
             value = b | (g << 5) | (r << 11)
 
