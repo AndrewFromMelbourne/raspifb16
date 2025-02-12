@@ -65,6 +65,7 @@ Puzzle::Puzzle()
             { c_tileWidth, c_tileHeight, c_piece14 },
             { c_tileWidth, c_tileHeight, c_piece15 },
         }),
+    m_tileSolved{ c_tileWidth, c_tileHeight, c_smiley },
     m_blankLocation{ 3, 3 }
 {
 }
@@ -211,7 +212,15 @@ Puzzle::draw(Interface565& fb)
             const Interface565Point p{ xOffset + (i * c_tileWidth),
                                        yOffset + (j * c_tileHeight) };
             const int tile = m_board[i + (j * c_puzzleWidth)];
-            fb.putImage(p, m_tileBuffers[tile]);
+
+            if ((tile == 0) and isSolved())
+            {
+                fb.putImage(p, m_tileSolved);
+            }
+            else
+            {
+                fb.putImage(p, m_tileBuffers[tile]);
+            }
         }
     }
 }

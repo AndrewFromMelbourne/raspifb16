@@ -68,6 +68,8 @@ private:
 
     std::array<uint8_t, c_boardSize> m_board;
     std::array<raspifb16::Image565, c_tileCount> m_tileBuffers;
+    raspifb16::Image565 m_tileSolved;
+
     Location m_blankLocation;
 };
 
