@@ -29,6 +29,7 @@
 
 //-------------------------------------------------------------------------
 
+#include <array>
 #include <cstdint>
 #include <string>
 
@@ -59,7 +60,22 @@ class DumbBuffer565
 {
 public:
 
+    //---------------------------------------------------------------------
+
     static constexpr size_t c_bytesPerPixel{2};
+
+    //---------------------------------------------------------------------
+
+    struct DumbBuffer
+    {
+        uint16_t* m_fbp{nullptr};
+        uint32_t m_fbId{0};
+        uint32_t m_fbHandle{0};
+        int m_length{0};
+        int m_lineLengthPixels{0};
+    };
+
+    //---------------------------------------------------------------------
 
     explicit DumbBuffer565(
         const std::string& device = "",
@@ -76,25 +92,29 @@ public:
     [[nodiscard]] int getWidth() const noexcept override { return m_width; }
     [[nodiscard]] int getHeight() const noexcept override { return m_height; }
 
-    [[nodiscard]] std::span<uint16_t> getBuffer() noexcept override { return {m_fbp, getBufferSize()}; };
-    [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept override { return {m_fbp, getBufferSize()}; }
-    [[nodiscard]] size_t getBufferSize() const noexcept { return m_lineLengthPixels * m_height; }
-    [[nodiscard]] int getLineLengthPixels() const noexcept override { return m_lineLengthPixels; };
+    [[nodiscard]] std::span<uint16_t> getBuffer() noexcept override;
+    [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept override;
+    [[nodiscard]] size_t getBufferSize() const noexcept;
+    [[nodiscard]] int getLineLengthPixels() const noexcept override;
     [[nodiscard]] size_t offset(const Interface565Point& p) const noexcept override;
 
     void update() override;
 
 private:
 
+    void createDumbBuffer(int index);
+    void destroyDumbBuffer(int index);
+
+    void findResources(uint32_t connectorId);
+
     int m_width;
     int m_height;
-    int m_length;
-    int m_lineLengthPixels;
 
     FileDescriptor m_fd;
-    uint16_t* m_fbp;
-    uint32_t m_fbId;
-    uint32_t m_fbHandle;
+
+    std::array<DumbBuffer, 2> m_dbs;
+    int m_dbFront;
+    int m_dbBack;
 
     uint32_t m_connectorId;
     uint32_t m_crtcId;
