@@ -31,8 +31,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include <iostream>
-
 #include <cstdlib>
 #include <fstream>
 #include <map>

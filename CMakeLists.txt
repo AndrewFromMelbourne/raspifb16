@@ -17,6 +17,7 @@ find_package(Freetype)
 find_package(Libiw)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(DRM QUIET libdrm)
+pkg_check_modules(FMT REQUIRED fmt)
 
 #--------------------------------------------------------------------------
 
@@ -57,18 +58,20 @@ add_executable(boxworld boxworld/main.cxx
                         boxworld/boxworld.cxx)
 
 target_link_libraries(boxworld raspifb16
-                               ${DRM_LIBRARIES})
+                               ${DRM_LIBRARIES}
+                               ${FMT_LIBRARIES})
 
 #--------------------------------------------------------------------------
 
 add_executable(fbpipe fbpipe/fbpipe.cxx)
 target_link_libraries(fbpipe raspifb16
-                             ${DRM_LIBRARIES})
+                             ${DRM_LIBRARIES}
+                             ${FMT_LIBRARIES})
 
 #--------------------------------------------------------------------------
 
 add_executable(joystickConfigure joystick/joystickConfigure.cxx)
-target_link_libraries(joystickConfigure raspifb16)
+target_link_libraries(joystickConfigure raspifb16 ${FMT_LIBRARIES})
 
 #--------------------------------------------------------------------------
 
@@ -76,7 +79,8 @@ add_executable(puzzle-15 puzzle-15/main.cxx
                          puzzle-15/puzzle.cxx)
 
 target_link_libraries(puzzle-15 raspifb16
-                                ${DRM_LIBRARIES})
+                                ${DRM_LIBRARIES}
+                                ${FMT_LIBRARIES})
 
 #--------------------------------------------------------------------------
 
@@ -95,7 +99,8 @@ add_executable(raspinfo raspinfo/raspinfo.cxx
 target_link_libraries(raspinfo raspifb16
                                -lbsd
                                ${FREETYPE_LIBRARIES}
-                               ${DRM_LIBRARIES})
+                               ${DRM_LIBRARIES}
+                               ${FMT_LIBRARIES})
 
 set_property(TARGET raspinfo PROPERTY SKIP_BUILD_RPATH TRUE)
 install (TARGETS raspinfo RUNTIME DESTINATION bin)
@@ -104,37 +109,43 @@ install (TARGETS raspinfo RUNTIME DESTINATION bin)
 
 add_executable(splash splash/splash.cxx)
 target_link_libraries(splash raspifb16
-                             ${DRM_LIBRARIES})
+                             ${DRM_LIBRARIES}
+                             ${FMT_LIBRARIES})
 
 #--------------------------------------------------------------------------
 
 add_executable(test test/test.cxx)
 target_link_libraries(test raspifb16
-                           ${DRM_LIBRARIES})
+                           ${DRM_LIBRARIES}
+                           ${FMT_LIBRARIES})
 
 #--------------------------------------------------------------------------
 
 add_executable(testCircle test/testCircle.cxx)
 target_link_libraries(testCircle raspifb16
-                                 ${DRM_LIBRARIES})
+                                 ${DRM_LIBRARIES}
+                                 ${FMT_LIBRARIES})
 
 #--------------------------------------------------------------------------
 
 add_executable(testColour test/testColour.cxx)
 target_link_libraries(testColour raspifb16
-                                 ${DRM_LIBRARIES})
+                                 ${DRM_LIBRARIES}
+                                 ${FMT_LIBRARIES})
 
 #--------------------------------------------------------------------------
 
 add_executable(testColourBlend test/testColourBlend.cxx)
 target_link_libraries(testColourBlend raspifb16
-                                      ${DRM_LIBRARIES})
+                                      ${DRM_LIBRARIES}
+                                      ${FMT_LIBRARIES})
 
 #--------------------------------------------------------------------------
 
 add_executable(testPutImage test/testPutImage.cxx)
 target_link_libraries(testPutImage raspifb16
-                                   ${DRM_LIBRARIES})
+                                   ${DRM_LIBRARIES}
+                                   ${FMT_LIBRARIES})
 
 #--------------------------------------------------------------------------
 
@@ -142,12 +153,14 @@ if (FREETYPE_FOUND)
 add_executable(testft test/testft.cxx)
 target_link_libraries(testft raspifb16
                              ${FREETYPE_LIBRARIES}
-                             ${DRM_LIBRARIES})
+                             ${DRM_LIBRARIES}
+                             ${FMT_LIBRARIES})
 
 add_executable(testft2 test/testft2.cxx)
 target_link_libraries(testft2 raspifb16
                               ${FREETYPE_LIBRARIES}
-                              ${DRM_LIBRARIES})
+                              ${DRM_LIBRARIES}
+                              ${FMT_LIBRARIES})
 endif()
 
 #--------------------------------------------------------------------------
@@ -157,7 +170,8 @@ add_executable(modes modes/modes.cxx)
 
 target_include_directories(modes PUBLIC ${DRM_INCLUDE_DIRS})
 target_link_libraries(modes raspifb16
-                            ${DRM_LIBRARIES})
+                            ${DRM_LIBRARIES}
+                            ${FMT_LIBRARIES})
 endif()
 
 #--------------------------------------------------------------------------
@@ -169,5 +183,6 @@ add_executable(wifiscan wifiscan/scanEntry.cxx
 target_link_libraries(wifiscan raspifb16
                                ${FREETYPE_LIBRARIES}
                                ${DRM_LIBRARIES}
+                               ${FMT_LIBRARIES}
                                ${LIBIW_LIBRARIES})
 endif()

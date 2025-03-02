@@ -25,12 +25,6 @@
 //
 //-------------------------------------------------------------------------
 
-#include <algorithm>
-#include <cstdint>
-#include <stdexcept>
-#include <string>
-#include <system_error>
-
 #include <ifaddrs.h>
 #include <netdb.h>
 #include <unistd.h>
@@ -38,6 +32,12 @@
 #include <arpa/inet.h>
 #include <linux/if_link.h>
 #include <sys/socket.h>
+
+#include <algorithm>
+#include <cstdint>
+#include <stdexcept>
+#include <string>
+#include <system_error>
 
 #include "system.h"
 #include "networkTrace.h"

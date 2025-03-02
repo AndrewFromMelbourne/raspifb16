@@ -26,17 +26,14 @@
 //
 //-------------------------------------------------------------------------
 
-#include "image565Qoi.h"
-
-//-------------------------------------------------------------------------
-
 #include <array>
 #include <cstdint>
 #include <filesystem>
 #include <fstream>
-#include <iostream>
 #include <stdexcept>
 #include <vector>
+
+#include "image565Qoi.h"
 
 //=========================================================================
 

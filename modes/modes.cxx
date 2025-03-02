@@ -25,12 +25,11 @@
 //
 //-------------------------------------------------------------------------
 
-#include "drmMode.h"
-
 #include <fcntl.h>
+#include <fmt/format.h>
 #include <sys/stat.h>
 
-#include <iostream>
+#include "drmMode.h"
 
 //-------------------------------------------------------------------------
 
@@ -70,13 +69,14 @@ findConnectedConnectors(
                         const auto crtc = drm::drmModeGetCrtc(fd, crtcId);
                         if ((crtc->mode.hdisplay > 0) and (crtc->mode.vdisplay > 0))
                         {
-                            std::cout
-                                << "device = " << device
-                                << ", connector = " << connectorId
-                                << ", encoder = " << encoderId
-                                << ", ctrc = " << crtcId
-                                << ", mode = " << crtc->mode.hdisplay << "x" << crtc->mode.vdisplay
-                                << '\n';
+                            fmt::print(
+                                "device = {}, connector = {}, encoder = {}, crtc = {}, mode = {}x{}\n",
+                                device,
+                                connectorId,
+                                encoderId,
+                                crtcId,
+                                crtc->mode.hdisplay,
+                                crtc->mode.vdisplay);
                         }
                     }
                 }
@@ -99,7 +99,7 @@ main()
 
     for (auto i = 0 ; i < devices.getDeviceCount() ; ++i)
     {
-        auto device = devices.getDevice(i);
+        const auto device = devices.getDevice(i);
 
         if (device->available_nodes & (1 << DRM_NODE_PRIMARY))
         {

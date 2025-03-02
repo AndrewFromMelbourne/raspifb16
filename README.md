@@ -5,9 +5,9 @@ pixel framebuffers found on the accessory LCD displays on the Raspberry Pi.
 
 # libraries
 
-You will need to install libbsd-dev, libdrm-dev, libfreetype-dev, libiw-dev
+You will need to install libbsd-dev, libdrm-dev, libfreetype-dev, libfmt-dev, libiw-dev
 
-	sudo apt-get install libbsd-dev libdrm-dev libfreetype-dev libiw-dev
+	sudo apt-get install libbsd-dev libdrm-dev libfreetype-dev libfmt-dev libiw-dev
 
 # libfb16
 The library itself.

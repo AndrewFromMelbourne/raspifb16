@@ -25,13 +25,13 @@
 //
 //-------------------------------------------------------------------------
 
+#include <inttypes.h>
+#include <unistd.h>
+
 #include <cstdint>
 #include <fstream>
 #include <stdexcept>
 #include <system_error>
-
-#include <inttypes.h>
-#include <unistd.h>
 
 #include "memoryTrace.h"
 

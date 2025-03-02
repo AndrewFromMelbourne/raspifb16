@@ -29,6 +29,8 @@
 #include <libgen.h>
 #include <unistd.h>
 
+#include <fmt/format.h>
+
 #include <array>
 #include <filesystem>
 #include <fstream>
@@ -54,15 +56,15 @@ using namespace raspifb16;
 
 void
 printUsage(
-    std::ostream& os,
+    FILE* file,
     const std::string& name)
 {
-    os << '\n';
-    os << "Usage: " << name << " <options>\n";
-    os << '\n';
-    os << "    --help,-h - print usage and exit\n";
-    os << "    --joystick,-j - joystick device\n";
-    os << '\n';
+    fmt::print(file, "\n");
+    fmt::print(file, "Usage: {} <options>\n", name);
+    fmt::print(file, "\n");
+    fmt::print(file, "    --help,-h - print usage and exit\n");
+    fmt::print(file, "    --joystick,-j - joystick device\n");
+    fmt::print(file, "\n");
 }
 
 //-------------------------------------------------------------------------
@@ -93,7 +95,7 @@ main(
         {
         case 'h':
 
-            printUsage(std::cout, program);
+            printUsage(stdout, program);
             ::exit(EXIT_SUCCESS);
 
             break;
@@ -106,7 +108,7 @@ main(
 
         default:
 
-            printUsage(std::cerr, program);
+            printUsage(stderr, program);
             ::exit(EXIT_FAILURE);
 
             break;
@@ -160,7 +162,7 @@ main(
                 continue;
             }
 
-            std::cout << "Press and release " << descriptions[i] << " button\n";
+            fmt::print("Press and release {} button\n", descriptions[i]);
 
             bool found{false};
 
@@ -184,7 +186,7 @@ main(
 
         //-----------------------------------------------------------------
 
-        std::cout << "Write conifiguration file? [y/N]\n";
+        fmt::print("Write conifiguration file? [y/N]\n");
 
         std::string reply;
         std::cin >> reply;
@@ -216,7 +218,7 @@ main(
     }
     catch (std::exception& error)
     {
-        std::cerr << "Error: " << error.what() << '\n';
+        fmt::print(stderr, "Error: {}\n", error.what());
         exit(EXIT_FAILURE);
     }
 

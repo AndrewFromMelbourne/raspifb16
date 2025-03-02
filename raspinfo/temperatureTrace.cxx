@@ -25,12 +25,12 @@
 //
 //-------------------------------------------------------------------------
 
+#include <unistd.h>
+
 #include <cmath>
 #include <cstdint>
 #include <stdexcept>
 #include <string>
-
-#include <unistd.h>
 
 #include "system.h"
 #include "temperatureTrace.h"

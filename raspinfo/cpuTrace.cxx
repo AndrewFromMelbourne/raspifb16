@@ -25,12 +25,12 @@
 //
 //-------------------------------------------------------------------------
 
+#include <unistd.h>
+
 #include <cstdint>
 #include <fstream>
 #include <stdexcept>
 #include <system_error>
-
-#include <unistd.h>
 
 #include "cpuTrace.h"
 

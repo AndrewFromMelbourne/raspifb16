@@ -28,6 +28,8 @@
 #include <getopt.h>
 #include <libgen.h>
 
+#include <fmt/format.h>
+
 #include <chrono>
 #include <cstdlib>
 #include <iostream>
@@ -47,17 +49,17 @@ using namespace std::chrono_literals;
 
 void
 printUsage(
-    std::ostream& os,
+    FILE* file,
     const std::string& name)
 {
-    os << '\n';
-    os << "Usage: " << name << " <options>\n";
-    os << '\n';
-    os << "    --character,-c - character to print\n";
-    os << "    --device,-d - device to use\n";
-    os << "    --font,-f - font file to use\n";
-    os << "    --help,-h - print usage and exit\n";
-    os << '\n';
+    fmt::print(file, "\n");
+    fmt::print(file, "Usage: {}\n", name);
+    fmt::print(file, "\n");
+    fmt::print(file, "    --device,-d - device to use\n");
+    fmt::print(file, "    --font,-f - font file to use\n");
+    fmt::print(file, "    --help,-h - print usage and exit\n");
+    fmt::print(file, "    --kmsdrm,-k - use KMS/DRM dumb buffer\n");
+    fmt::print(file, "\n");
 }
 
 //-------------------------------------------------------------------------
@@ -110,7 +112,7 @@ main(
 
         case 'h':
 
-            printUsage(std::cout, program);
+            printUsage(stdout, program);
             ::exit(EXIT_SUCCESS);
 
             break;
@@ -123,7 +125,7 @@ main(
 
         default:
 
-            printUsage(std::cerr, program);
+            printUsage(stderr, program);
             ::exit(EXIT_FAILURE);
 
             break;
@@ -161,7 +163,7 @@ main(
     }
     catch (std::exception& error)
     {
-        std::cerr << "Error: " << error.what() << '\n';
+        fmt::print(stderr, "Error: {}\n", error.what());
         exit(EXIT_FAILURE);
     }
 

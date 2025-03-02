@@ -25,15 +25,6 @@
 //
 //-------------------------------------------------------------------------
 
-#include <cmath>
-#include <cstdint>
-#include <cstring>
-#include <iomanip>
-#include <regex>
-#include <sstream>
-#include <stdexcept>
-#include <string>
-
 #include <fcntl.h>
 #include <ifaddrs.h>
 #include <unistd.h>
@@ -42,6 +33,15 @@
 #include <netinet/in.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
+
+#include <cmath>
+#include <cstdint>
+#include <cstring>
+#include <iomanip>
+#include <regex>
+#include <sstream>
+#include <stdexcept>
+#include <string>
 
 #include "dynamicInfo.h"
 #include "fileDescriptor.h"

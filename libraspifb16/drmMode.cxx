@@ -25,11 +25,11 @@
 //
 //-------------------------------------------------------------------------
 
-#include "drmMode.h"
-#include "fileDescriptor.h"
-
 #include <fcntl.h>
 #include <sys/stat.h>
+
+#include "drmMode.h"
+#include "fileDescriptor.h"
 
 //-------------------------------------------------------------------------
 

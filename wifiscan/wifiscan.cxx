@@ -31,19 +31,20 @@
 #include <iwlib.h>
 #include <unistd.h>
 
+#include <fmt/format.h>
+
+#include <linux/wireless.h>
+
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
 
-#include <linux/wireless.h>
-
 #include <algorithm>
 #include <chrono>
 #include <csignal>
 #include <cstring>
-#include <iostream>
 #include <string>
 #include <thread>
 #include <vector>
@@ -85,18 +86,19 @@ signalHandler(
 
 void
 printUsage(
-    std::ostream& os,
+    FILE* file,
     const std::string& name)
 {
-    os << '\n';
-    os << "Usage: " << name << " <options>\n";
-    os << '\n';
-    os << "    --active,-a - use active scan\n";
-    os << "    --device,-d - device to use\n";
-    os << "    --help,-h - print usage and exit\n";
-    os << "    --interface,-i - WiFi interface to use\n";
-    os << "    --kmsdrm,-k - use KMS/DRM dumb buffer\n";
-    os << '\n';
+    fmt::print(file, "\n");
+    fmt::print(file, "Usage: {}\n", name);
+    fmt::print(file, "\n");
+    fmt::print(file, "    --active,-a - use active scan\n");
+    fmt::print(file, "    --device,-d - device to use\n");
+    fmt::print(file, "    --help,-h - print usage and exit\n");
+    fmt::print(file, "    --interface,-i - WiFi interface to use\n");
+    fmt::print(file, "    --kmsdrm,-k - use KMS/DRM dumb buffer\n");
+    fmt::print(file, "    --qoi,-q - qoi file to display\n");
+    fmt::print(file, "\n");
 }
 
 //-------------------------------------------------------------------------
@@ -145,7 +147,7 @@ main(
 
         case 'h':
 
-            printUsage(std::cout, program);
+            printUsage(stdout, program);
             ::exit(EXIT_SUCCESS);
 
             break;
@@ -164,7 +166,7 @@ main(
 
         default:
 
-            printUsage(std::cerr, program);
+            printUsage(stderr, program);
             ::exit(EXIT_FAILURE);
 
             break;
@@ -177,11 +179,12 @@ main(
     {
         if (std::signal(signal, signalHandler) == SIG_ERR)
         {
-            std::string message {"installing "};
-            message += strsignal(signal);
-            message += " signal handler";
+            fmt::print(
+                stderr,
+                "Error: installing {} signal handler : {}\n",
+                strsignal(signal),
+                strerror(errno));
 
-            perror(message.c_str());
             ::exit(EXIT_FAILURE);
         }
     }
@@ -203,7 +206,7 @@ main(
         if ((iw_get_range_info(sockfd, interfaceName.c_str(), &range) < 0) or
             (range.we_version_compiled < 14))
         {
-            std::cerr << interfaceName <<  " doesn't support scanning\n";
+            fmt::print(stderr,  "{} doesn't support scanning\n", interfaceName);
             exit(EXIT_FAILURE);
         }
 
@@ -428,7 +431,7 @@ main(
     }
     catch (std::exception& error)
     {
-        std::cerr << "Error: " << error.what() << '\n';
+        fmt::print(stderr, "Error: {}\n", error.what());
         exit(EXIT_FAILURE);
     }
 
