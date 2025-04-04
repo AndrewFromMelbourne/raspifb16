@@ -147,6 +147,31 @@ findDrmResources(
 
 //-------------------------------------------------------------------------
 
+int
+getModeCount(const std::string& card)
+{
+    raspifb16::FileDescriptor fd{::open(card.c_str(), O_RDWR)};
+    int modes{0};
+
+    const auto resources = drm::drmModeGetResources(fd);
+
+    for (auto i = 0 ; i < resources->count_connectors ; ++i)
+    {
+        const auto connectorId = resources->connectors[i];
+        const auto connector = drm::drmModeGetConnector(fd, connectorId);
+        const bool connected{connector->connection == DRM_MODE_CONNECTED};
+
+        if (connected)
+        {
+            modes += connector->count_modes;
+        }
+    }
+
+    return modes;
+}
+
+//-------------------------------------------------------------------------
+
 std::string
 findDrmDevice()
 {
@@ -164,7 +189,12 @@ findDrmDevice()
         if ((device->available_nodes & (1 << DRM_NODE_PRIMARY)) and
             drm::drmDeviceHasDumbBuffer(device->nodes[DRM_NODE_PRIMARY]))
         {
-            return device->nodes[DRM_NODE_PRIMARY];
+            std::string card = device->nodes[DRM_NODE_PRIMARY];
+
+            if (getModeCount(card) > 0)
+            {
+                return card;
+            }
         }
     }
 
