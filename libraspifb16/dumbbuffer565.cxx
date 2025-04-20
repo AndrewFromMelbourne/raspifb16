@@ -389,7 +389,7 @@ raspifb16::DumbBuffer565::offset(
 
 //-------------------------------------------------------------------------
 
-void
+bool
 raspifb16::DumbBuffer565::update()
 {
     std::swap(m_dbFront, m_dbBack);
@@ -414,6 +414,8 @@ raspifb16::DumbBuffer565::update()
                                 std::system_category(),
                                 "unable to set crtc with frame buffer");
     }
+
+    return true;
 }
 
 //-------------------------------------------------------------------------

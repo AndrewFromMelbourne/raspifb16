@@ -98,7 +98,7 @@ public:
     [[nodiscard]] int getLineLengthPixels() const noexcept override;
     [[nodiscard]] size_t offset(const Interface565Point& p) const noexcept override;
 
-    void update() override;
+    bool update() override;
 
 private:
 

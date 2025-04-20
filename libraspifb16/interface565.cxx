@@ -53,6 +53,19 @@ raspifb16::Interface565::clear(uint16_t rgb)
 
 //-------------------------------------------------------------------------
 
+void
+raspifb16::Interface565::clearBuffers(uint16_t rgb)
+{
+    clear(rgb);
+
+    if (update())
+    {
+        clear(rgb);
+    }
+}
+
+//-------------------------------------------------------------------------
+
 bool
 raspifb16::Interface565::setPixel(
     const Interface565Point& p,

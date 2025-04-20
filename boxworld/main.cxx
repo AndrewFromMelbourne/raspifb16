@@ -140,7 +140,7 @@ main(
         Image565Font8x8 font;
         Joystick js{joystick};
         auto fb{raspifb16::createInterface565(interfaceType, device)};
-        fb->clear(RGB565{0, 0, 0});
+        fb->clearBuffers(RGB565{0, 0, 0});
 
         Boxworld boxworld;
         boxworld.init();
@@ -166,7 +166,7 @@ main(
             std::this_thread::sleep_for(250ms);
         }
 
-        fb->clear();
+        fb->clearBuffers();
     }
     catch (std::exception& error)
     {

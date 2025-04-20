@@ -55,3 +55,6 @@ A wifi access point scanner.
 	cmake ..
 	make
 
+# The down side of double buffering
+
+I created a bug by enabling double buffering in the KMS/DRM dumb buffer. When you draw persisently and directly to the frame buffer you need to make sure that you draw to both front and back buffers. I have added a convenience function clearBuffer() that will clear the front and back buffers for the dumb buffer. It adds a small amount of overhead for the frame buffer.

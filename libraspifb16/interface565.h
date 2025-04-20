@@ -69,6 +69,9 @@ public:
     void clear(const RGB565& rgb) { clear(rgb.get565()); }
     void clear(uint16_t rgb = 0);
 
+    void clearBuffers(const RGB565& rgb) { clear(rgb.get565()); }
+    void clearBuffers(uint16_t rgb = 0);
+
     bool
     setPixelRGB(
         const Interface565Point& p,
@@ -98,7 +101,7 @@ public:
     [[nodiscard]] virtual int getLineLengthPixels() const noexcept = 0;
     [[nodiscard]] virtual size_t offset(const Interface565Point& p) const noexcept = 0;
 
-    virtual void update() {}
+    virtual bool update() { return false; }
 
 private:
 

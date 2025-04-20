@@ -140,7 +140,7 @@ main(
         Joystick js{block};
         auto fb{raspifb16::createInterface565(interfaceType, device)};
 
-        fb->clear();
+        fb->clearBuffers();
 
         const auto image = readQoi(qoi);
         fb->putImage(center(*fb, image), image);
@@ -151,7 +151,7 @@ main(
         }
         while (not js.buttonPressed(Joystick::BUTTON_START));
 
-        fb->clear();
+        fb->clearBuffers();
     }
     catch (std::exception& error)
     {

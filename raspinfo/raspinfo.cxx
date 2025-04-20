@@ -337,7 +337,7 @@ main(
     {
         auto fb{raspifb16::createInterface565(interfaceType, device)};
 
-        fb->clear(raspifb16::RGB565{0, 0, 0});
+        fb->clearBuffers(raspifb16::RGB565{0, 0, 0});
 
         //-----------------------------------------------------------------
 
@@ -437,7 +437,7 @@ main(
             std::this_thread::sleep_until(nextSecond);
         }
 
-        fb->clear();
+        fb->clearBuffers();
     }
     catch (std::exception& error)
     {

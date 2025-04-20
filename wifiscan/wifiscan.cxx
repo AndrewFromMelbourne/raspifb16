@@ -216,7 +216,7 @@ main(
 
         Image565Font8x16 font;
         auto fb{raspifb16::createInterface565(interfaceType, device)};
-        fb->clear();
+        fb->clearBuffers();
         Image565 image{fb->getWidth(), fb->getHeight()};
 
         //-----------------------------------------------------------------
