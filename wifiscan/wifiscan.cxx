@@ -97,7 +97,6 @@ printUsage(
     fmt::print(file, "    --help,-h - print usage and exit\n");
     fmt::print(file, "    --interface,-i - WiFi interface to use\n");
     fmt::print(file, "    --kmsdrm,-k - use KMS/DRM dumb buffer\n");
-    fmt::print(file, "    --qoi,-q - qoi file to display\n");
     fmt::print(file, "\n");
 }
 
