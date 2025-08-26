@@ -1,7 +1,12 @@
 cmake_minimum_required(VERSION 3.10)
 project(raspifb16 LANGUAGES CXX)
 
+if (CMAKE_BUILD_TYPE STREQUAL "")
 set(CMAKE_BUILD_TYPE Release)
+endif()
+
+message("Build type ${CMAKE_BUILD_TYPE}")
+
 set(CMAKE_CXX_STANDARD 20)
 SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wno-psabi")
 set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
@@ -10,6 +15,14 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
+
+#--------------------------------------------------------------------------
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address,undefined")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address,undefined")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address,undefined")
+endif()
 
 #--------------------------------------------------------------------------
 
