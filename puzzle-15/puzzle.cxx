@@ -136,19 +136,18 @@ Puzzle::init()
     do
     {
         std::shuffle(m_board.begin(), m_board.end(), generator);
-    }
-    while (not isSolvable() or isSolved());
 
-    for (auto i = 0 ; i < c_boardSize ; ++i)
-    {
-        if (m_board[i] == 0)
+        for (auto i = 0 ; i < c_boardSize ; ++i)
         {
-            m_blankLocation.x = i % c_puzzleWidth;
-            m_blankLocation.y = i / c_puzzleWidth;
-            break;
+            if (m_board[i] == 0)
+            {
+                m_blankLocation.x = i % c_puzzleWidth;
+                m_blankLocation.y = i / c_puzzleWidth;
+                break;
+            }
         }
     }
-
+    while (not isSolvable() or isSolved());
 }
 
 //-------------------------------------------------------------------------
