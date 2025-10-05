@@ -135,24 +135,20 @@ Puzzle::init()
 
     do
     {
-        for (auto i = 0 ; i < c_boardSize - 1 ; ++i)
-        {
-            std::uniform_int_distribution<> distribution(i, c_boardSize - 1);
-            const auto j = distribution(generator);
-            std::swap(m_board[i], m_board[j]);
-        }
-
-        for (auto i = 0 ; i < c_boardSize ; ++i)
-        {
-            if (m_board[i] == 0)
-            {
-                m_blankLocation.x = i % c_puzzleWidth;
-                m_blankLocation.y = i / c_puzzleWidth;
-                break;
-            }
-        }
+        std::shuffle(m_board.begin(), m_board.end(), generator);
     }
     while (not isSolvable() or isSolved());
+
+    for (auto i = 0 ; i < c_boardSize ; ++i)
+    {
+        if (m_board[i] == 0)
+        {
+            m_blankLocation.x = i % c_puzzleWidth;
+            m_blankLocation.y = i / c_puzzleWidth;
+            break;
+        }
+    }
+
 }
 
 //-------------------------------------------------------------------------
