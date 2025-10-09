@@ -135,7 +135,7 @@ Puzzle::init()
 
     do
     {
-        std::shuffle(m_board.begin(), m_board.end(), generator);
+        std::ranges::shuffle(m_board, generator);
 
         for (auto i = 0 ; i < c_boardSize ; ++i)
         {

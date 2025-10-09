@@ -28,6 +28,8 @@
 #include "image565.h"
 #include "interface565.h"
 
+#include <algorithm>
+
 //-------------------------------------------------------------------------
 
 raspifb16::Interface565::Interface565()
@@ -48,7 +50,7 @@ raspifb16::Interface565::clear(uint16_t rgb)
     auto buffer{getBufferStart()};
     const auto length{getLineLengthPixels() * getHeight()};
 
-    std::fill(buffer.begin(), buffer.end(), rgb);
+    std::ranges::fill(buffer, rgb);
 }
 
 //-------------------------------------------------------------------------
@@ -134,7 +136,7 @@ raspifb16::Interface565::putImage(
         auto row = image.getRow(j);
         const auto ost = offset(Interface565Point{p.x(), j + p.y()});
 
-        std::copy(row.begin(), row.end(), getBuffer().subspan(ost).begin());
+        std::ranges::copy(row, getBuffer().subspan(ost).begin());
     }
 
     return true;
@@ -194,7 +196,7 @@ raspifb16::Interface565::putImagePartial(
         auto row = image.getRow(j).subspan(xStart, xLength);
         const auto ost = offset(Interface565Point{x, j - yStart + y});
 
-        std::copy(row.begin(), row.end(), getBuffer().subspan(ost).begin());
+        std::ranges::copy(row, getBuffer().subspan(ost).begin());
     }
 
     return true;

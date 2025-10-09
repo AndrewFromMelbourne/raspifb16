@@ -405,7 +405,7 @@ main(
                     cells.push_back(cell);
                 }
 
-                sort(cells.begin(), cells.end(), std::greater<ScanEntry>());
+                std::ranges::sort(cells, std::greater<ScanEntry>());
 
                 image.clear(RGB565{0, 0, 0});
                 Interface565Point position{0, 0};
