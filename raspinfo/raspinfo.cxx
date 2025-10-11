@@ -33,8 +33,6 @@
 
 #include <bsd/libutil.h>
 
-#include <fmt/format.h>
-
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
@@ -45,7 +43,9 @@
 #include <cstdint>
 #include <cstring>
 #include <exception>
+#include <iostream>
 #include <memory>
+#include <print>
 #include <thread>
 #include <vector>
 
@@ -85,42 +85,42 @@ messageLog(
     }
     else
     {
-        fmt::print(stderr, "{}[{}]:", name, getpid());
+        std::println(std::cerr, "{}[{}]:", name, getpid());
 
         switch (priority)
         {
         case LOG_DEBUG:
 
-            fmt::print(stderr, "debug");
+            std::println(std::cerr, "debug");
             break;
 
         case LOG_INFO:
 
-            fmt::print(stderr, "info");
+            std::println(std::cerr, "info");
             break;
 
         case LOG_NOTICE:
 
-            fmt::print(stderr, "notice");
+            std::println(std::cerr, "notice");
             break;
 
         case LOG_WARNING:
 
-            fmt::print(stderr, "warning");
+            std::println(std::cerr, "warning");
             break;
 
         case LOG_ERR:
 
-            fmt::print(stderr, "error");
+            std::println(std::cerr, "error");
             break;
 
         default:
 
-            fmt::print(stderr, "unknown({})", priority);
+            std::println(std::cerr, "unknown({})", priority);
             break;
         }
 
-        fmt::print(stderr, ":{}\n", message);
+        std::println(std::cerr, ":{}", message);
     }
 }
 
@@ -139,20 +139,20 @@ perrorLog(
 
 void
 printUsage(
-    FILE* file,
+    std::ostream& stream,
     const std::string& name)
 {
-    fmt::print(file, "\n");
-    fmt::print(file, "Usage: {}\n", name);
-    fmt::print(file, "\n");
-    fmt::print(file, "    --daemon,-D - start in the background as a daemon\n");
-    fmt::print(file, "    --device,-d - device to use\n");
-    fmt::print(file, "    --font,-f - font file to use\n");
-    fmt::print(file, "    --help,-h - print usage and exit\n");
-    fmt::print(file, "    --kmsdrm,-k - use KMS/DRM dumb buffer\n");
-    fmt::print(file, "    --off,-o - do not display at start\n");
-    fmt::print(file, "    --pidfile,-p <pidfile> - create and lock PID file\n");
-    fmt::print(file, "\n");
+    std::println(stream, "");
+    std::println(stream, "Usage: {}", name);
+    std::println(stream, "");
+    std::println(stream, "    --daemon,-D - start in the background as a daemon");
+    std::println(stream, "    --device,-d - device to use");
+    std::println(stream, "    --font,-f - font file to use");
+    std::println(stream, "    --help,-h - print usage and exit");
+    std::println(stream, "    --kmsdrm,-k - use KMS/DRM dumb buffer");
+    std::println(stream, "    --off,-o - do not display at start");
+    std::println(stream, "    --pidstream,-p <pidfile> - create and lock PID file");
+    std::println(stream, "");
 }
 
 //-------------------------------------------------------------------------
@@ -230,7 +230,7 @@ main(
 
         case 'h':
 
-            printUsage(stdout, program);
+            printUsage(std::cout, program);
             ::exit(EXIT_SUCCESS);
 
             break;
@@ -261,7 +261,7 @@ main(
 
         default:
 
-            printUsage(stderr, program);
+            printUsage(std::cerr, program);
             ::exit(EXIT_FAILURE);
 
             break;
@@ -281,9 +281,9 @@ main(
 
             if (not pfh)
             {
-                fmt::print(
-                    stderr,
-                    "{} is already running with pid {}\n",
+                std::println(
+                    std::cerr,
+                    "{} is already running with pid {}",
                     program,
                     otherpid);
                 ::exit(EXIT_FAILURE);
@@ -292,7 +292,7 @@ main(
 
         if (::daemon(0, 0) == -1)
         {
-            fmt::print(stderr, "Cannot daemonize\n");
+            std::println(std::cerr, "Cannot daemonize");
 
             if (pfh)
             {
@@ -321,9 +321,9 @@ main(
                 ::pidfile_remove(pfh);
             }
 
-            fmt::print(
-                stderr,
-                "Error: installing {} signal handler : {}\n",
+            std::println(
+                std::cerr,
+                "Error: installing {} signal handler : {}",
                 strsignal(signal),
                 strerror(errno));
 
@@ -351,7 +351,7 @@ main(
             }
             catch (std::exception& error)
             {
-                fmt::print(stderr, "Warning: {}\n", error.what());
+                std::println(std::cerr, "Warning: {}", error.what());
             }
         }
 
@@ -441,7 +441,7 @@ main(
     }
     catch (std::exception& error)
     {
-        fmt::print(stderr, "Error: {}\n", error.what());
+        std::println(std::cerr, "Error: {}", error.what());
         exit(EXIT_FAILURE);
     }
 

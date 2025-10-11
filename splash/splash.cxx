@@ -29,7 +29,8 @@
 #include <libgen.h>
 #include <unistd.h>
 
-#include <fmt/format.h>
+#include <iostream>
+#include <print>
 
 #include "image565.h"
 #include "image565Qoi.h"
@@ -51,17 +52,17 @@ const std::string defaultDevice{"/dev/fb1"};
 
 void
 printUsage(
-    FILE* file,
+    std::ostream& stream,
     const std::string& name)
 {
-    fmt::print(file, "\n");
-    fmt::print(file, "Usage: {}\n", name);
-    fmt::print(file, "\n");
-    fmt::print(file, "    --device,-d - device to use\n");
-    fmt::print(file, "    --help,-h - print usage and exit\n");
-    fmt::print(file, "    --kmsdrm,-k - use KMS/DRM dumb buffer\n");
-    fmt::print(file, "    --qoi,-q - qoi file to display\n");
-    fmt::print(file, "\n");
+    std::println(stream, "");
+    std::println(stream, "Usage: {}", name);
+    std::println(stream, "");
+    std::println(stream, "    --device,-d - device to use");
+    std::println(stream, "    --help,-h - print usage and exit");
+    std::println(stream, "    --kmsdrm,-k - use KMS/DRM dumb buffer");
+    std::println(stream, "    --qoi,-q - qoi file to display");
+    std::println(stream, "");
 }
 
 //-------------------------------------------------------------------------
@@ -102,7 +103,7 @@ main(
 
         case 'h':
 
-            printUsage(stdout, program);
+            printUsage(std::cout, program);
             ::exit(EXIT_SUCCESS);
 
             break;
@@ -121,7 +122,7 @@ main(
 
         default:
 
-            printUsage(stderr, program);
+            printUsage(std::cerr, program);
             ::exit(EXIT_FAILURE);
 
             break;
@@ -130,7 +131,7 @@ main(
 
     if (qoi.empty())
     {
-        printUsage(stderr, program);
+        printUsage(std::cerr, program);
         ::exit(EXIT_FAILURE);
     }
 
@@ -155,7 +156,7 @@ main(
     }
     catch (std::exception& error)
     {
-        fmt::print(stderr, "Error: {}\n", error.what());
+        std::println(std::cerr, "Error: {}", error.what());
         exit(EXIT_FAILURE);
     }
 

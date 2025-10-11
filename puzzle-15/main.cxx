@@ -28,9 +28,9 @@
 #include <getopt.h>
 #include <libgen.h>
 
-#include <fmt/format.h>
-
 #include <csignal>
+#include <iostream>
+#include <print>
 
 #include "interface565Factory.h"
 #include "joystick.h"
@@ -52,17 +52,17 @@ const std::string defaultJoystick{"/dev/input/js0"};
 
 void
 printUsage(
-    FILE* file,
+    std::ostream& stream,
     const std::string& name)
 {
-    fmt::print(file, "\n");
-    fmt::print(file, "Usage: {}\n", name);
-    fmt::print(file, "\n");
-    fmt::print(file, "    --device,-d - device to use\n");
-    fmt::print(file, "    --help,-h - print usage and exit\n");
-    fmt::print(file, "    --joystick,-j - joystick device to use, default {}\n", defaultJoystick);
-    fmt::print(file, "    --kmsdrm,-k - use KMS/DRM dumb buffer\n");
-    fmt::print(file, "\n");
+    std::println(stream, "");
+    std::println(stream, "Usage: {}", name);
+    std::println(stream, "");
+    std::println(stream, "    --device,-d - device to use");
+    std::println(stream, "    --help,-h - print usage and exit");
+    std::println(stream, "    --joystick,-j - joystick device to use, default {}", defaultJoystick);
+    std::println(stream, "    --kmsdrm,-k - use KMS/DRM dumb buffer");
+    std::println(stream, "");
 }
 
 //-------------------------------------------------------------------------
@@ -103,7 +103,7 @@ main(
 
         case 'h':
 
-            printUsage(stdout, program);
+            printUsage(std::cout, program);
             ::exit(EXIT_SUCCESS);
 
             break;
@@ -122,7 +122,7 @@ main(
 
         default:
 
-            printUsage(stderr, program);
+            printUsage(std::cerr, program);
             ::exit(EXIT_FAILURE);
 
             break;
@@ -164,7 +164,7 @@ main(
     }
     catch (std::exception& error)
     {
-        fmt::print(stderr, "Error: {}\n", error.what());
+        std::println(std::cerr, "Error: {}", error.what());
         exit(EXIT_FAILURE);
     }
 

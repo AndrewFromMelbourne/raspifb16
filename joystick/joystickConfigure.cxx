@@ -29,12 +29,11 @@
 #include <libgen.h>
 #include <unistd.h>
 
-#include <fmt/format.h>
-
 #include <array>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <print>
 #include <string>
 #include <system_error>
 #include <vector>
@@ -56,15 +55,15 @@ using namespace raspifb16;
 
 void
 printUsage(
-    FILE* file,
+    std::ostream& stream,
     const std::string& name)
 {
-    fmt::print(file, "\n");
-    fmt::print(file, "Usage: {} <options>\n", name);
-    fmt::print(file, "\n");
-    fmt::print(file, "    --help,-h - print usage and exit\n");
-    fmt::print(file, "    --joystick,-j - joystick device\n");
-    fmt::print(file, "\n");
+    std::println(stream, "");
+    std::println(stream, "Usage: {} <options>", name);
+    std::println(stream, "");
+    std::println(stream, "    --help,-h - print usage and exit");
+    std::println(stream, "    --joystick,-j - joystick device");
+    std::println(stream, "");
 }
 
 //-------------------------------------------------------------------------
@@ -95,7 +94,7 @@ main(
         {
         case 'h':
 
-            printUsage(stdout, program);
+            printUsage(std::cout, program);
             ::exit(EXIT_SUCCESS);
 
             break;
@@ -108,7 +107,7 @@ main(
 
         default:
 
-            printUsage(stderr, program);
+            printUsage(std::cerr, program);
             ::exit(EXIT_FAILURE);
 
             break;
@@ -162,7 +161,7 @@ main(
                 continue;
             }
 
-            fmt::print("Press and release {} button\n", descriptions[i]);
+            std::println("Press and release {} button", descriptions[i]);
 
             bool found{false};
 
@@ -186,7 +185,7 @@ main(
 
         //-----------------------------------------------------------------
 
-        fmt::print("Write conifiguration file? [y/N]\n");
+        std::print("Write conifiguration file? [y/N] ");
 
         std::string reply;
         std::cin >> reply;
@@ -211,14 +210,14 @@ main(
             {
                 for (const auto entry : configuration)
                 {
-                    ofs << entry << '\n';
+                    std::println(ofs, "{}", entry);
                 }
             }
         }
     }
     catch (std::exception& error)
     {
-        fmt::print(stderr, "Error: {}\n", error.what());
+        std::println(std::cerr, "Error: {}", error.what());
         exit(EXIT_FAILURE);
     }
 

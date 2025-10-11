@@ -26,8 +26,9 @@
 //-------------------------------------------------------------------------
 
 #include <fcntl.h>
-#include <fmt/format.h>
 #include <sys/stat.h>
+
+#include <print>
 
 #include "drmMode.h"
 
@@ -69,8 +70,8 @@ findConnectedConnectors(
                         const auto crtc = drm::drmModeGetCrtc(fd, crtcId);
                         if ((crtc->mode.hdisplay > 0) and (crtc->mode.vdisplay > 0))
                         {
-                            fmt::print(
-                                "device = {}, connector = {}, encoder = {}, crtc = {}, mode = {}x{}\n",
+                            std::println(
+                                "device = {}, connector = {}, encoder = {}, crtc = {}, mode = {}x{}",
                                 device,
                                 connectorId,
                                 encoderId,
