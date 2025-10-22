@@ -146,7 +146,7 @@ CpuTrace::CpuTrace(
 void
 CpuTrace::update(
     time_t now,
-    raspifb16::Interface565Font& font)
+    raspifb16::Interface565Font&)
 {
     const CpuStats currentStats;
     const CpuStats diff{currentStats - m_previousStats};

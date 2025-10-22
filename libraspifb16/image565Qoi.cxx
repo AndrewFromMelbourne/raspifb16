@@ -186,7 +186,7 @@ decodeQoi(
     auto d{data.begin()};
     int run{};
 
-    for (int i = 0 ; (i < pixels) and (d != data.end()) ; ++i)
+    for (auto i = 0U ; (i < pixels) and (d != data.end()) ; ++i)
     {
         if (run)
         {

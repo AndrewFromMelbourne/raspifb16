@@ -157,7 +157,7 @@ raspifb16::FrameBuffer565::hideCursor() noexcept
 
 //-------------------------------------------------------------------------
 
-size_t
+std::size_t
 raspifb16::FrameBuffer565::offset(
     const Interface565Point& p) const noexcept
 {

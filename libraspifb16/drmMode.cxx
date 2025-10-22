@@ -183,7 +183,7 @@ drm::drmGetPropertyValue(
 {
     auto properties{drmModeObjectGetProperties(fd, objectId, objectType)};
 
-    for (auto i = 0; i < properties->count_props; ++i)
+    for (auto i = 0U; i < properties->count_props; ++i)
     {
         auto property{drmModeGetProperty(fd, properties->props[i])};
 

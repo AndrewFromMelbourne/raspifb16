@@ -62,7 +62,7 @@ public:
 
     //---------------------------------------------------------------------
 
-    static constexpr size_t c_bytesPerPixel{2};
+    static constexpr std::size_t c_bytesPerPixel{2};
 
     //---------------------------------------------------------------------
 
@@ -94,9 +94,9 @@ public:
 
     [[nodiscard]] std::span<uint16_t> getBuffer() noexcept override;
     [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept override;
-    [[nodiscard]] size_t getBufferSize() const noexcept;
+    [[nodiscard]] std::size_t getBufferSize() const noexcept;
     [[nodiscard]] int getLineLengthPixels() const noexcept override;
-    [[nodiscard]] size_t offset(const Interface565Point& p) const noexcept override;
+    [[nodiscard]] std::size_t offset(const Interface565Point& p) const noexcept override;
 
     bool update() override;
 

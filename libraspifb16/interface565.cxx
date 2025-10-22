@@ -48,8 +48,6 @@ void
 raspifb16::Interface565::clear(uint16_t rgb)
 {
     auto buffer{getBufferStart()};
-    const auto length{getLineLengthPixels() * getHeight()};
-
     std::ranges::fill(buffer, rgb);
 }
 

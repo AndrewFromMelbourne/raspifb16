@@ -58,7 +58,7 @@ class FrameBuffer565
 {
 public:
 
-    static constexpr size_t c_bytesPerPixel{2};
+    static constexpr std::size_t c_bytesPerPixel{2};
 
     explicit FrameBuffer565(const std::string& device);
 
@@ -77,9 +77,9 @@ public:
 
     [[nodiscard]] std::span<uint16_t> getBuffer() noexcept override { return {m_fbp, getBufferSize()}; };
     [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept override { return {m_fbp, getBufferSize()}; }
-    [[nodiscard]] size_t getBufferSize() const noexcept { return m_lineLengthPixels * getHeight(); }
+    [[nodiscard]] std::size_t getBufferSize() const noexcept { return m_lineLengthPixels * getHeight(); }
     [[nodiscard]] int getLineLengthPixels() const noexcept override { return m_lineLengthPixels; }
-    [[nodiscard]] size_t offset(const Interface565Point& p) const noexcept override;
+    [[nodiscard]] std::size_t offset(const Interface565Point& p) const noexcept override;
 
 private:
 

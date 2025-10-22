@@ -92,6 +92,8 @@ public:
     [[nodiscard]] JoystickAxes getAxes(int joystickNumber) const;
 
     [[nodiscard]] int rawButton(int button) const;
+    [[nodiscard]] bool rawButtonPressed(int button);
+    [[nodiscard]] bool rawButtonDown(int button) const;
 
     void read();
 
@@ -110,6 +112,7 @@ private:
     int m_joystickCount;
 
     std::vector<ButtonState> m_buttons;
+    std::vector<ButtonState> m_rawButtons;
     std::vector<JoystickAxes> m_joysticks;
     std::vector<Buttons> m_buttonNumbers;
 };

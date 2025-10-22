@@ -109,17 +109,6 @@ findDrmResourcesForConnector(
 //-------------------------------------------------------------------------
 
 FoundDrmResource
-findDrmResourcesForConnector(
-    raspifb16::FileDescriptor& fd,
-    uint32_t connectorId) noexcept
-{
-    return findDrmResourcesForConnector(fd, connectorId, drm::drmModeGetResources(fd));
-}
-
-
-//-------------------------------------------------------------------------
-
-FoundDrmResource
 findDrmResources(
     raspifb16::FileDescriptor& fd,
     uint32_t connectorId) noexcept
@@ -362,7 +351,7 @@ raspifb16::DumbBuffer565::getBuffer() const noexcept
 
 //-------------------------------------------------------------------------
 
-size_t
+std::size_t
 raspifb16::DumbBuffer565::getBufferSize() const noexcept
 {
     return getLineLengthPixels() * m_height;
@@ -379,7 +368,7 @@ raspifb16::DumbBuffer565::getLineLengthPixels() const noexcept
 
 //-------------------------------------------------------------------------
 
-size_t
+std::size_t
 raspifb16::DumbBuffer565::offset(
     const Interface565Point& p) const noexcept
 {
@@ -426,16 +415,14 @@ raspifb16::DumbBuffer565::createDumbBuffer(
 {
     auto& db = m_dbs[index];
 
-    drm_mode_create_dumb dmcb =
-    {
-        .height = m_mode.vdisplay,
-        .width = m_mode.hdisplay,
-        .bpp = 16,
-        .flags = 0,
-        .handle = 0,
-        .pitch = 0,
-        .size = 0
-    };
+    drm_mode_create_dumb dmcb;
+    dmcb.height = m_mode.vdisplay;
+    dmcb.width = m_mode.hdisplay;
+    dmcb.bpp = 16;
+    dmcb.flags = 0;
+    dmcb.handle = 0;
+    dmcb.pitch = 0;
+    dmcb.size = 0;
 
     if (drmIoctl(m_fd.fd(), DRM_IOCTL_MODE_CREATE_DUMB, &dmcb) < 0)
     {
@@ -471,10 +458,8 @@ raspifb16::DumbBuffer565::createDumbBuffer(
 
     //---------------------------------------------------------------------
 
-    drm_mode_map_dumb dmmd =
-    {
-        .handle = db.m_fbHandle
-    };
+    drm_mode_map_dumb dmmd;
+    dmmd.handle = db.m_fbHandle;
 
     if (drmIoctl(m_fd.fd(), DRM_IOCTL_MODE_MAP_DUMB, &dmmd) < 0)
     {
@@ -511,10 +496,8 @@ raspifb16::DumbBuffer565::destroyDumbBuffer(
     ::munmap(db.m_fbp, db.m_length);
     drmModeRmFB(m_fd.fd(), db.m_fbId);
 
-    drm_mode_destroy_dumb dmdd =
-    {
-        .handle = db.m_fbHandle
-    };
+    drm_mode_destroy_dumb dmdd;
+    dmdd.handle = db.m_fbHandle;
 
     drmIoctl(m_fd.fd(), DRM_IOCTL_MODE_DESTROY_DUMB, &dmdd);
 }

@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(raspifb16 LANGUAGES CXX)
 
+add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+
 if (CMAKE_BUILD_TYPE STREQUAL "")
 set(CMAKE_BUILD_TYPE Release)
 endif()

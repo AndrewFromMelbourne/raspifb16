@@ -60,7 +60,7 @@ raspifb16::Image565::Image565(
     m_numberOfFrames{numberOfFrames},
     m_buffer{buffer}
 {
-    const size_t minBufferSize = width * height * numberOfFrames;
+    const std::size_t minBufferSize = width * height * numberOfFrames;
 
     if (m_buffer.size() < minBufferSize)
     {
@@ -83,7 +83,7 @@ raspifb16::Image565::Image565(
 {
     m_buffer.assign(buffer.begin(), buffer.end());
 
-    const size_t minBufferSize = width * height * numberOfFrames;
+    const std::size_t minBufferSize = width * height * numberOfFrames;
 
     if (m_buffer.size() < minBufferSize)
     {
@@ -123,7 +123,7 @@ raspifb16::Image565::getRow(
 
 //-------------------------------------------------------------------------
 
-size_t
+std::size_t
 raspifb16::Image565::offset(
     const Interface565Point& p) const noexcept
 {

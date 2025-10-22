@@ -62,7 +62,7 @@ TemperatureTrace::TemperatureTrace(
 void
 TemperatureTrace::update(
     time_t now,
-    raspifb16::Interface565Font& font)
+    raspifb16::Interface565Font&)
 {
     int temperature = raspinfo::getTemperature();
 

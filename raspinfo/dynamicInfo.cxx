@@ -223,7 +223,7 @@ DynamicInfo::DynamicInfo(
 
 void
 DynamicInfo::init(
-    raspifb16::Interface565Font& font)
+    raspifb16::Interface565Font&)
 {
 }
 

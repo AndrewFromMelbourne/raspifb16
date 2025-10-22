@@ -154,7 +154,7 @@ main(
         Joystick js(joystick, true);
         std::vector<std::string> configuration;
 
-        for (int i = 0 ; i < descriptions.size() ; ++i)
+        for (auto i = 0U ; i < descriptions.size() ; ++i)
         {
             if (descriptions[i].length() == 0)
             {
@@ -171,12 +171,12 @@ main(
 
                 for (int b = 0 ; b < js.numberOfButtons() ; ++b)
                 {
-                    if (js.buttonPressed(b))
+                    if (js.rawButtonPressed(b))
                     {
-                        const auto button = js.rawButton(b);
                         configuration.emplace_back(tokens[i] +
                                                    " = " +
-                                                   std::to_string(button));
+                                                   std::to_string(b));
+                        std::println("{} button is {}", descriptions[i], b);
                         found = true;
                     }
                 }
@@ -208,7 +208,7 @@ main(
 
             if (ofs)
             {
-                for (const auto entry : configuration)
+                for (const auto& entry : configuration)
                 {
                     std::println(ofs, "{}", entry);
                 }

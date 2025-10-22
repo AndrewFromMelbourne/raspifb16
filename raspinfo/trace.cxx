@@ -221,7 +221,7 @@ void
 TraceData::addData(
     int value)
 {
-    if (m_values.size() < m_width)
+    if (m_values.size() < static_cast<std::vector<int>::size_type>(m_width))
     {
         m_values.push_back(value);
     }

@@ -84,6 +84,7 @@ raspifb16::Joystick::Joystick(const std::string& device, bool blocking)
     m_buttonCount(0),
     m_joystickCount(0),
     m_buttons(),
+    m_rawButtons(),
     m_joysticks(),
     m_buttonNumbers{
         BUTTON_X,
@@ -175,6 +176,7 @@ raspifb16::Joystick::init()
     m_buttonCount = buttonCount;
 
     m_buttons.resize(m_buttonCount, ButtonState{ false, false });
+    m_rawButtons.resize(m_buttonCount, ButtonState{ false, false });
     m_joysticks.resize(m_joystickCount, JoystickAxes{ 0, 0 });
 
     readConfig();
@@ -219,10 +221,13 @@ raspifb16::Joystick::process(const js_event& event)
             {
                 m_buttons.at(number) = ButtonState{ .pressed = true,
                                                     .down = true };
+                m_rawButtons.at(event.number) = ButtonState{ .pressed = true,
+                                                             .down = true };
             }
             else
             {
                 m_buttons.at(number).down = false;
+                m_rawButtons.at(event.number).down = false;
             }
 
             break;
@@ -257,7 +262,7 @@ raspifb16::Joystick::process(const js_event& event)
 int
 raspifb16::Joystick::rawButton(int button) const
 {
-    for (int i = 0 ; i < m_buttonNumbers.size() ; ++i)
+    for (auto i = 0U ; i < m_buttonNumbers.size() ; ++i)
     {
         if (m_buttonNumbers[i] == button)
         {
@@ -266,6 +271,39 @@ raspifb16::Joystick::rawButton(int button) const
     }
 
     return m_buttonCount;
+}
+
+//-------------------------------------------------------------------------
+
+bool
+raspifb16::Joystick::rawButtonDown(int button) const
+{
+    if (not isValidButton(button))
+    {
+        return false;
+    }
+
+    return m_rawButtons.at(button).down;
+}
+
+//-------------------------------------------------------------------------
+
+bool
+raspifb16::Joystick::rawButtonPressed(int button)
+{
+    if (not isValidButton(button))
+    {
+        return false;
+    }
+
+    const auto pressed = m_rawButtons.at(button).pressed;
+
+    if (pressed)
+    {
+        m_rawButtons[button].pressed = false;
+    }
+
+    return pressed;
 }
 
 //-------------------------------------------------------------------------
@@ -327,9 +365,9 @@ readConfig()
                 if (std::regex_match(line, match, pattern))
                 {
                     const auto key = match[1].str();
-                    const auto value = std::stoi(match[2].str());
+                    const auto value = std::stoul(match[2].str());
 
-                    if ((value >= 0) and (value < m_buttonNumbers.size()))
+                    if (value < m_buttonNumbers.size())
                     {
                         const auto button = stringToButton.at(key);
                         m_buttonNumbers[value] = button;
