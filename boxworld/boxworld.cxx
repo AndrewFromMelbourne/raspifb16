@@ -26,6 +26,7 @@
 //-------------------------------------------------------------------------
 
 #include "image565Font8x8.h"
+#include "image565Process.h"
 
 #include "boxworld.h"
 #include "images.h"
@@ -36,7 +37,7 @@ using namespace raspifb16;
 
 //-------------------------------------------------------------------------
 
-Boxworld::Boxworld()
+Boxworld::Boxworld(bool fitToScreen)
 :
     m_level{0},
     m_levelSolved{false},
@@ -58,11 +59,13 @@ Boxworld::Boxworld()
         }),
     m_topTextImage{ 240, 8 },
     m_bottomTextImage{ 320, 16 },
+    m_image{ 320, 240 },
     m_textRGB(255, 255, 255),
     m_boldRGB(255, 255, 0),
     m_disabledRGB(170, 170, 170),
     m_solvedRGB(255, 0, 255),
-    m_backgroundRGB(0, 0, 0)
+    m_backgroundRGB(31, 47, 63),
+    m_fitToScreen{fitToScreen}
 {
 }
 
@@ -159,8 +162,36 @@ Boxworld::draw(
     Interface565& fb,
     Interface565Font& font)
 {
-    drawBoard(fb);
-    drawText(fb, font);
+    m_image.clear(m_backgroundRGB);
+    drawBoard(m_image);
+    drawText(m_image, font);
+
+    const auto imageWidth = m_image.getWidth();
+    const auto imageHeight = m_image.getHeight();
+
+    const auto fbWidth = fb.getWidth();
+    const auto fbHeight = fb.getHeight();
+
+    const auto zoom = std::min(fbWidth / imageWidth, fbHeight / imageHeight);
+
+    if ((zoom > 1) and m_fitToScreen)
+    {
+        auto zoomed = scaleUp(m_image, zoom);
+
+        const int xOffset = (fbWidth - zoomed.getWidth()) / 2;
+        const int yOffset = (fbHeight - zoomed.getHeight()) / 2;
+
+        const Interface565Point p{ xOffset, yOffset };
+        fb.putImage(p, zoomed);
+    }
+    else
+    {
+        const int xOffset = (fbWidth - imageWidth) / 2;
+        const int yOffset = (fbHeight - imageHeight) / 2;
+
+        const Interface565Point p{ xOffset, yOffset };
+        fb.putImage(p, m_image);
+    }
 }
 
 //-------------------------------------------------------------------------
@@ -168,8 +199,8 @@ Boxworld::draw(
 void
 Boxworld::drawBoard(Interface565& fb)
 {
-    const int xOffset = (fb.getWidth() - m_topTextImage.getWidth()) / 2;
-    const int yOffset = 8;
+    const int xOffset = 40;
+    const int yOffset = 11;
     static uint8_t frame = 0;
 
     for (int j = 0 ; j < Level::c_levelHeight ; ++j)
@@ -230,10 +261,11 @@ Boxworld::drawText(
                                    m_topTextImage);
     }
 
-    int xOffset = (fb.getWidth() - m_topTextImage.getWidth()) / 2;
-    fb.putImage(Interface565Point{ xOffset, 0 }, m_topTextImage);
+    fb.putImage(Interface565Point{ 0, 1 }, m_topTextImage);
 
     //---------------------------------------------------------------------
+
+    m_bottomTextImage.clear(m_backgroundRGB);
 
     position = Interface565Point{ 2, 0 };
     auto& undoRGB = ((m_canUndo) ? m_textRGB : m_disabledRGB);
@@ -260,7 +292,7 @@ Boxworld::drawText(
 
     const int halfWidth = 2 + (m_bottomTextImage.getWidth() / 2);
 
-    position = Interface565Point{ halfWidth, 2 };
+    position = Interface565Point{ halfWidth, 0 };
     auto& nextRGB = ((m_level < (Level::c_levelCount - 1))
                   ? m_textRGB
                   : m_disabledRGB);
@@ -288,8 +320,7 @@ Boxworld::drawText(
                                previousRGB,
                                m_bottomTextImage);
 
-    xOffset = (fb.getWidth() - m_bottomTextImage.getWidth()) / 2;
-    fb.putImage(Interface565Point{xOffset, 220}, m_bottomTextImage);
+    fb.putImage(Interface565Point{0, 223}, m_bottomTextImage);
 }
 
 //-------------------------------------------------------------------------

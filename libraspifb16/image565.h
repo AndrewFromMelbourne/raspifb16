@@ -72,9 +72,9 @@ public:
     ~Image565() override = default;
 
     Image565(const Image565&) = default;
-    Image565(Image565&&) = delete;
+    Image565(Image565&&) = default;
     Image565& operator=(const Image565&) = default;
-    Image565& operator=(Image565&&) = delete;
+    Image565& operator=(Image565&&) = default;
 
     [[nodiscard]] int getWidth() const noexcept override { return m_width; }
     [[nodiscard]] int getHeight() const noexcept override { return m_height; }

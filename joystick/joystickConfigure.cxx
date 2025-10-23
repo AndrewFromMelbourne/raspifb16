@@ -73,7 +73,7 @@ main(
     int argc,
     char *argv[])
 {
-    std::string program = basename(argv[0]);
+    const std::string program = basename(argv[0]);
     std::string joystick = defaultJoystick;
 
     //---------------------------------------------------------------------
@@ -161,7 +161,8 @@ main(
                 continue;
             }
 
-            std::println("Press and release {} button", descriptions[i]);
+            std::print("Press and release {} button", descriptions[i]);
+            std::cout.flush();
 
             bool found{false};
 
@@ -176,7 +177,7 @@ main(
                         configuration.emplace_back(tokens[i] +
                                                    " = " +
                                                    std::to_string(b));
-                        std::println("{} button is {}", descriptions[i], b);
+                        std::println(" is {}", b);
                         found = true;
                     }
                 }

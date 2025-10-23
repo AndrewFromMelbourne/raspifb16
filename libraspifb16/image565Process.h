@@ -2,7 +2,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Andrew Duncan
+// Copyright (c) 2025 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -29,48 +29,71 @@
 
 //-------------------------------------------------------------------------
 
-#include <array>
-#include <cstdint>
-
 #include "image565.h"
 #include "interface565.h"
-#include "joystick.h"
-
-#include "images.h"
+#include "rgb565.h"
+#include "point.h"
 
 //-------------------------------------------------------------------------
 
-class Puzzle
+namespace raspifb16
 {
-public:
 
-    struct Location
-    {
-        int x;
-        int y;
-    };
+//-------------------------------------------------------------------------
 
-    explicit Puzzle(bool fitToScreen);
+[[nodiscard]] Image565
+boxBlur(
+    const Interface565& input,
+    int radius);
 
-    void init();
-    bool update(raspifb16::Joystick& js);
-    void draw(raspifb16::Interface565& fb);
+[[nodiscard]] Image565
+enlighten(
+    const Interface565& input,
+    double strength);
 
-private:
+[[nodiscard]] Image565
+maxRGB(
+    const Interface565& input);
 
-    [[nodiscard]] int getInversionCount() const;
-    [[nodiscard]] bool isSolvable() const;
-    [[nodiscard]] bool isSolved() const;
+[[nodiscard]] Image565
+resizeBilinearInterpolation(
+    const Interface565& input,
+    int width,
+    int height);
 
-    static constexpr int c_puzzleWidth{4};
-    static constexpr int c_puzzleHeight{4};
-    static constexpr int c_boardSize{c_puzzleWidth * c_puzzleHeight};
+[[nodiscard]] Image565
+resizeLanczos3Interpolation(
+    const Interface565& input,
+    int width,
+    int height);
 
-    Location m_blankLocation;
-    std::array<uint8_t, c_boardSize> m_board;
-    bool m_fitToScreen;
-    raspifb16::Image565 m_image;
-    std::array<raspifb16::Image565, c_tileCount> m_tileBuffers;
-    raspifb16::Image565 m_tileSolved;
-};
+[[nodiscard]] Image565
+resizeNearestNeighbour(
+    const Interface565& input,
+    int width,
+    int height);
+
+Image565&
+resizeToBilinearInterpolation(
+    const Interface565& input,
+    Image565& output);
+
+Image565&
+resizeToLanczos3Interpolation(
+    const Interface565& input,
+    Image565& output);
+
+Image565&
+resizeToNearestNeighbour(
+    const Interface565& input,
+    Image565& output);
+
+[[nodiscard]] Image565
+scaleUp(
+    const Interface565& input,
+    uint8_t scale);
+
+//-------------------------------------------------------------------------
+
+} // namespace raspifb16
 

@@ -41,6 +41,7 @@ add_library(raspifb16 STATIC libraspifb16/fileDescriptor.cxx
                              libraspifb16/image565Font8x8.cxx
                              libraspifb16/image565Font8x16.cxx
                              libraspifb16/image565Graphics.cxx
+                             libraspifb16/image565Process.cxx
                              libraspifb16/image565Qoi.cxx
                              libraspifb16/interface565.cxx
                              libraspifb16/interface565Factory.cxx
@@ -150,6 +151,12 @@ target_link_libraries(testColourBlend raspifb16
 add_executable(testPutImage test/testPutImage.cxx)
 target_link_libraries(testPutImage raspifb16
                                    ${DRM_LIBRARIES})
+
+#--------------------------------------------------------------------------
+
+add_executable(testResize test/testResize.cxx)
+target_link_libraries(testResize raspifb16
+                                 ${DRM_LIBRARIES})
 
 #--------------------------------------------------------------------------
 

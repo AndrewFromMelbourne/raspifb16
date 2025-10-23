@@ -27,6 +27,9 @@
 
 #include <getopt.h>
 #include <libgen.h>
+#include <unistd.h>
+
+#include <fmt/format.h>
 
 #include <chrono>
 #include <iostream>
@@ -35,7 +38,9 @@
 #include <thread>
 
 #include "image565.h"
+#include "image565Font8x16.h"
 #include "image565Graphics.h"
+#include "image565Process.h"
 #include "interface565Factory.h"
 #include "point.h"
 
@@ -52,7 +57,7 @@ printUsage(
     const std::string& name)
 {
     std::println(stream, "");
-    std::println(stream, "Usage: {}", name);
+    std::println(stream, "Usage: {} <options>", name);
     std::println(stream, "");
     std::println(stream, "    --device,-d - device to use");
     std::println(stream, "    --help,-h - print usage and exit");
@@ -125,21 +130,59 @@ main(
 
         //-----------------------------------------------------------------
 
+        const RGB565 darkBlue{0, 0, 63};
         const RGB565 white{255, 255, 255};
 
+        constexpr int width{248};
+        constexpr int height{16};
+
+        Image565 image(width, height);
+        image.clear(darkBlue);
+
         //-----------------------------------------------------------------
 
-        circle(*fb, Interface565Point{60, 60}, 50, white);
-        circleFilled(*fb, Interface565Point{180, 60}, 50, white);
+        Image565Font8x16 font;
+
+        font.drawString(
+            Interface565Point{4, 0},
+            "Lorem ipsum dolor sit amet ...",
+            white,
+            image);
 
         //-----------------------------------------------------------------
+
+        constexpr int scale{3};
+        constexpr int swidth{scale * width};
+        constexpr int sheight{scale * height};
+        constexpr int imageOffset{200};
+        constexpr int yStep{sheight + 8};
+
+        auto imageSu = scaleUp(image, scale);
+        auto imageNn = resizeNearestNeighbour(image, swidth, sheight);
+        auto imageBi = resizeBilinearInterpolation(image, swidth, sheight);
+        auto imageLi = resizeLanczos3Interpolation(image, swidth, sheight);
+
+        Interface565Point t{0, 0};
+        Interface565Point p{ imageOffset, 0 };
+
+        auto show = [&](std::string_view title, Image565& image)
+        {
+            font.drawString(t, title, white, *fb);
+            fb->putImage(p, image);
+            t.incrY(yStep);
+            p.incrY(yStep);
+        };
+
+        show("Scale up:", imageSu);
+        show("Nearest neighbour:", imageNn);
+        show("Bilinear interpolation:", imageBi);
+        show("Lanczos3 interpolation:", imageLi);
 
         fb->update();
 
         //-----------------------------------------------------------------
 
         std::this_thread::sleep_for(10s);
-
         fb->clearBuffers();
     }
     catch (std::exception& error)
@@ -150,3 +193,4 @@ main(
 
     return 0;
 }
+

@@ -54,6 +54,7 @@ printUsage(
     std::println(stream, "");
     std::println(stream, "Usage: {}", name);
     std::println(stream, "");
+    std::println(stream, "    --character,-c - index character to draw");
     std::println(stream, "    --device,-d - device to use");
     std::println(stream, "    --font,-f - font file to use");
     std::println(stream, "    --help,-h - print usage and exit");
@@ -69,7 +70,7 @@ main(
     char *argv[])
 {
     std::string device{};
-    std::string program{basename(argv[0])};
+    const std::string program{basename(argv[0])};
     std::string font{};
     uint32_t c{'A'};
     auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
@@ -97,6 +98,7 @@ main(
             c = ::strtol(optarg, nullptr, 0);
 
             break;
+
         case 'd':
 
             device = optarg;

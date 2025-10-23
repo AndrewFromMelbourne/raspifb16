@@ -72,7 +72,7 @@ public:
 
     //---------------------------------------------------------------------
 
-    Boxworld();
+    explicit Boxworld(bool fitToScreen);
 
     void init();
     void update(raspifb16::Joystick& js);
@@ -102,11 +102,14 @@ private:
     std::array<raspifb16::Image565, c_tileCount> m_tileBuffers;
     raspifb16::Image565 m_topTextImage;
     raspifb16::Image565 m_bottomTextImage;
+    raspifb16::Image565 m_image;
 
     raspifb16::RGB565 m_textRGB;
     raspifb16::RGB565 m_boldRGB;
     raspifb16::RGB565 m_disabledRGB;
     raspifb16::RGB565 m_solvedRGB;
     raspifb16::RGB565 m_backgroundRGB;
+
+    bool m_fitToScreen;
 };
 

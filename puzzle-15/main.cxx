@@ -59,6 +59,7 @@ printUsage(
     std::println(stream, "Usage: {}", name);
     std::println(stream, "");
     std::println(stream, "    --device,-d - device to use");
+    std::println(stream, "    --fitToScreen,-f - fit puzzle to screen");
     std::println(stream, "    --help,-h - print usage and exit");
     std::println(stream, "    --joystick,-j - joystick device to use, default {}", defaultJoystick);
     std::println(stream, "    --kmsdrm,-k - use KMS/DRM dumb buffer");
@@ -73,16 +74,18 @@ main(
     char *argv[])
 {
     std::string device{};
-    std::string program{::basename(argv[0])};
+    bool fitToScreen{false};
+    const std::string program{::basename(argv[0])};
     std::string joystick{defaultJoystick};
     auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------
 
-    static const char* sopts = "d:hj:k";
+    static const char* sopts = "d:fhj:k";
     static option lopts[] =
     {
         { "device", required_argument, nullptr, 'd' },
+        { "fitToScreen", no_argument, nullptr, 'f' },
         { "help", no_argument, nullptr, 'h' },
         { "joystick", required_argument, nullptr, 'j' },
         { "kmsdrm", no_argument, nullptr, 'k' },
@@ -98,6 +101,12 @@ main(
         case 'd':
 
             device = optarg;
+
+            break;
+
+        case 'f':
+
+            fitToScreen = true;
 
             break;
 
@@ -138,7 +147,7 @@ main(
         auto fb{raspifb16::createInterface565(interfaceType, device)};
         fb->clearBuffers(RGB565{0, 0, 0});
 
-        Puzzle puzzle;
+        Puzzle puzzle{fitToScreen};
         puzzle.init();
         puzzle.draw(*fb);
         fb->update();

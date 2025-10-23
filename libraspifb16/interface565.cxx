@@ -47,8 +47,7 @@ raspifb16::Interface565::~Interface565()
 void
 raspifb16::Interface565::clear(uint16_t rgb)
 {
-    auto buffer{getBufferStart()};
-    std::ranges::fill(buffer, rgb);
+    std::ranges::fill(getBufferStart(), rgb);
 }
 
 //-------------------------------------------------------------------------

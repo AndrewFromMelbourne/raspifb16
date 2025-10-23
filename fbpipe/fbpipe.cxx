@@ -66,7 +66,7 @@ main(
     char *argv[])
 {
     std::string device{};
-    std::string program{basename(argv[0])};
+    const std::string program{basename(argv[0])};
     auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------

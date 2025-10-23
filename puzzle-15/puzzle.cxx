@@ -31,14 +31,17 @@
 #include "images.h"
 #include "puzzle.h"
 
+#include "image565Process.h"
+
 //-------------------------------------------------------------------------
 
 using namespace raspifb16;
 
 //-------------------------------------------------------------------------
 
-Puzzle::Puzzle()
+Puzzle::Puzzle(bool fitToScreen)
 :
+    m_blankLocation{ 3, 3 },
     m_board
     {
         0x01, 0x02, 0x03, 0x04,
@@ -46,6 +49,8 @@ Puzzle::Puzzle()
         0x09, 0x0A, 0x0B, 0x0C,
         0x0D, 0x0E, 0x0F, 0x00
     },
+    m_fitToScreen{fitToScreen},
+    m_image{ c_tileWidth * 4, c_tileHeight * 4 },
     m_tileBuffers(
         {
             { c_tileWidth, c_tileHeight, c_piece0 },
@@ -65,8 +70,7 @@ Puzzle::Puzzle()
             { c_tileWidth, c_tileHeight, c_piece14 },
             { c_tileWidth, c_tileHeight, c_piece15 },
         }),
-    m_tileSolved{ c_tileWidth, c_tileHeight, c_smiley },
-    m_blankLocation{ 3, 3 }
+    m_tileSolved{ c_tileWidth, c_tileHeight, c_smiley }
 {
 }
 
@@ -195,28 +199,51 @@ Puzzle::update(Joystick& js)
 void
 Puzzle::draw(Interface565& fb)
 {
-    constexpr int width = c_puzzleWidth * c_tileWidth;
-    constexpr int height = c_puzzleHeight * c_tileHeight;
-    const int xOffset = (fb.getWidth() - width) / 2;
-    const int yOffset = (fb.getHeight() - height) / 2;
-
     for (int j = 0 ; j < c_puzzleHeight ; ++j)
     {
         for (int i = 0 ; i < c_puzzleWidth ; ++i)
         {
-            const Interface565Point p{ xOffset + (i * c_tileWidth),
-                                       yOffset + (j * c_tileHeight) };
-            const int tile = m_board[i + (j * c_puzzleWidth)];
+           const Interface565Point p{ i * c_tileWidth,
+                                      j * c_tileHeight };
+           const auto tile = m_board[i + (j * c_puzzleWidth)];
 
-            if ((tile == 0) and isSolved())
-            {
-                fb.putImage(p, m_tileSolved);
-            }
-            else
-            {
-                fb.putImage(p, m_tileBuffers[tile]);
-            }
+           if ((tile == 0) and isSolved())
+           {
+               m_image.putImage(p, m_tileSolved);
+           }
+           else
+           {
+               m_image.putImage(p, m_tileBuffers[tile]);
+           }
         }
+    }
+
+    const auto imageWidth = m_image.getWidth();
+    const auto imageHeight = m_image.getHeight();
+
+    const auto fbWidth = fb.getWidth();
+    const auto fbHeight = fb.getHeight();
+
+    const auto zoom = std::min(fbWidth / imageWidth, fbHeight / imageHeight);
+
+    if ((zoom > 1) and m_fitToScreen)
+    {
+        auto zoomed = scaleUp(m_image, zoom);
+
+        const int xOffset = (fbWidth - zoomed.getWidth()) / 2;
+        const int yOffset = (fbHeight - zoomed.getHeight()) / 2;
+
+        const Interface565Point p{ xOffset, yOffset };
+
+        fb.putImage(p, zoomed);
+    }
+    else
+    {
+        const int xOffset = (fbWidth - imageWidth) / 2;
+        const int yOffset = (fbHeight - imageHeight) / 2;
+
+        const Interface565Point p{ xOffset, yOffset };
+        fb.putImage(p, m_image);
     }
 }
 
