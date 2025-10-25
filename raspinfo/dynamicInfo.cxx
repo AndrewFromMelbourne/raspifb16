@@ -32,6 +32,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/ioctl.h>
+#include <sys/sysinfo.h>
 #include <sys/types.h>
 
 #include <cmath>
@@ -166,15 +167,37 @@ getMemorySplit()
         return value;
     };
 
-    const int arm_mem{getValue("arm")};
-    const int gpu_mem{getValue("gpu")};
+    int armMem{getValue("arm")};
+    int gpuMem{};
 
-    if (not arm_mem or not gpu_mem)
+    // Fix for Raspberry Pi 5 returning wrong values for arm and gpu memory
+
+    struct sysinfo si{};
+
+    if (sysinfo(&si) == 0)
+    {
+        constexpr auto mb = 1024 * 1024;
+        const int totalMem = si.totalram / mb;
+
+        if (totalMem > armMem)
+        {
+            armMem = totalMem;
+            const int systemMem = 256 * static_cast<int>(std::ceil(totalMem / 256.0));
+            gpuMem = systemMem - totalMem;
+        }
+    }
+
+    if (gpuMem == 0)
+    {
+        gpuMem = getValue("gpu");
+    }
+
+    if (not armMem or not gpuMem)
     {
         return "";
     }
 
-    return std::to_string(gpu_mem) + "/" + std::to_string(arm_mem);
+    return std::to_string(gpuMem) + "/" + std::to_string(armMem);
 }
 
 //-------------------------------------------------------------------------
