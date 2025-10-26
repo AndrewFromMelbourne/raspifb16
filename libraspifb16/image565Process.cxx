@@ -51,16 +51,18 @@ public:
 
     void add(const raspifb16::RGB565& rgb) noexcept
     {
-        m_red += rgb.getRed();
-        m_green += rgb.getGreen();
-        m_blue += rgb.getBlue();
+        const auto rgb8 = rgb.getRGB8();
+        m_red += rgb8.red;
+        m_green += rgb8.green;
+        m_blue += rgb8.blue;
     }
 
     void subtract(const raspifb16::RGB565& rgb) noexcept
     {
-        m_red -= rgb.getRed();
-        m_green -= rgb.getGreen();
-        m_blue -= rgb.getBlue();
+        const auto rgb8 = rgb.getRGB8();
+        m_red -= rgb8.red;
+        m_green -= rgb8.green;
+        m_blue -= rgb8.blue;
     }
 
     [[nodiscard]] raspifb16::RGB565 average(int count) noexcept
@@ -216,8 +218,9 @@ raspifb16::enlighten(
 
     for (auto pixel : input.getBuffer())
     {
-        auto c = raspifb16::RGB565(pixel);
-        const auto max = raspifb16::RGB565(*(mbi++)).getRed();
+        raspifb16::RGB565 c{pixel};
+        const auto rgb8 = c.getRGB8();
+        const auto max = raspifb16::RGB8(*(mbi++)).red;
         const auto illumination = std::clamp(max / 255.0, minI, maxI);
 
         if (illumination < maxI)
@@ -225,9 +228,9 @@ raspifb16::enlighten(
             const auto r = illumination / maxI;
             const auto scale = (0.4 + (r * 0.6)) / r;
 
-            c.setRGB(scaled(c.getRed(), scale),
-                     scaled(c.getGreen(), scale),
-                     scaled(c.getBlue(), scale));
+            c.setRGB(scaled(rgb8.red, scale),
+                     scaled(rgb8.green, scale),
+                     scaled(rgb8.blue, scale));
         }
 
         *(outputi++) = c.get565();
@@ -247,9 +250,9 @@ raspifb16::maxRGB(
 
     for (const auto pixel : input.getBuffer())
     {
-        raspifb16::RGB565 rgb(pixel);
-        rgb.setGrey(std::max({rgb.getRed(), rgb.getGreen(), rgb.getBlue()}));
-        *(buffer++) = rgb.get565();
+       raspifb16::RGB8 rgb8(pixel);
+       const auto grey(std::max({rgb8.red, rgb8.green, rgb8.blue}));
+       *(buffer++) = raspifb16::RGB565::rgbTo565(grey, grey, grey);
     }
 
     return output;
@@ -340,31 +343,29 @@ rowsBilinearInterpolation(
             const auto xWeight = (xScale * i) - xLow;
             const auto yWeight = (yScale * j) - yLow;
 
-            auto a = *input.getPixelRGB(Point{xLow, yLow});
-            auto b = *input.getPixelRGB(Point{xHigh, yLow});
-            auto c = *input.getPixelRGB(Point{xLow, yHigh});
-            auto d = *input.getPixelRGB(Point{xHigh, yHigh});
+            auto a = *input.getPixelRGB8(Point{xLow, yLow});
+            auto b = *input.getPixelRGB8(Point{xHigh, yLow});
+            auto c = *input.getPixelRGB8(Point{xLow, yHigh});
+            auto d = *input.getPixelRGB8(Point{xHigh, yHigh});
 
             const auto aWeight = (1.0f - xWeight) * (1.0f - yWeight);
             const auto bWeight = xWeight * (1.0f - yWeight);
             const auto cWeight = (1.0f - xWeight) * yWeight;
             const auto dWeight = xWeight * yWeight;
 
-            typedef  uint8_t (raspifb16::RGB565::*RGB565MemFn)() const;
-
-            auto evaluate = [&](RGB565MemFn get) -> uint8_t
+            auto evaluate = [&](const uint8_t raspifb16::RGB8::* channel) -> uint8_t
             {
-                float value = std::invoke(get, a) * aWeight +
-                                std::invoke(get, b) * bWeight +
-                                std::invoke(get, c) * cWeight +
-                                std::invoke(get, d) * dWeight;
+                float value = a.*channel * aWeight
+                            + b.*channel * bWeight
+                            + c.*channel * cWeight
+                            + d.*channel * dWeight;
 
                 return static_cast<uint8_t>(std::clamp(value, 0.0f, 255.0f));
             };
 
-            raspifb16::RGB565 rgb{evaluate(&raspifb16::RGB565::getRed),
-                                evaluate(&raspifb16::RGB565::getGreen),
-                                evaluate(&raspifb16::RGB565::getBlue)};
+            raspifb16::RGB565 rgb{evaluate(&raspifb16::RGB8::red),
+                                  evaluate(&raspifb16::RGB8::green),
+                                  evaluate(&raspifb16::RGB8::blue)};
 
             output.setPixelRGB(Point{i, j}, rgb);
         }
@@ -449,9 +450,10 @@ rowsLanczos3Interpolation(
                     weightsSum += weight;
 
                     auto rgb = *input.getPixelRGB(Point{x, y});
-                    redSum += rgb.getRed() * weight;
-                    greenSum += rgb.getGreen() * weight;
-                    blueSum += rgb.getBlue() * weight;
+                    const auto rgb8 = rgb.getRGB8();
+                    redSum += rgb8.red * weight;
+                    greenSum += rgb8.green * weight;
+                    blueSum += rgb8.blue * weight;
                 }
             }
 
@@ -460,8 +462,8 @@ rowsLanczos3Interpolation(
             const auto blue = std::clamp(blueSum / weightsSum, 0.0f, 255.0f);
 
             raspifb16::RGB565 rgb{static_cast<uint8_t>(red),
-                                static_cast<uint8_t>(green),
-                                static_cast<uint8_t>(blue)};
+                                  static_cast<uint8_t>(green),
+                                  static_cast<uint8_t>(blue)};
 
             output.setPixelRGB(Point{i, j}, rgb);
         }

@@ -38,12 +38,45 @@ namespace raspifb16
 
 //-------------------------------------------------------------------------
 
+struct RGB8
+{
+    RGB8(uint8_t r, uint8_t g, uint8_t b)
+    :
+        red{r},
+        green{g},
+        blue{b}
+    {}
+
+    explicit RGB8(uint32_t rgb)
+    :
+        red{},
+        green{},
+        blue{}
+    {
+        const auto r5 = (rgb >> 11) & 0x1F;
+        red = (r5 << 3) | (r5 >> 2);
+
+        const auto g6 = (rgb >> 5) & 0x3F;
+        green = (g6 << 2) | (g6 >> 4);
+
+        const auto b5 = rgb & 0x1F;
+        blue = (b5 << 3) | (b5 >> 2);
+    }
+
+    uint8_t red{};
+    uint8_t green{};
+    uint8_t blue{};
+};
+
+//-------------------------------------------------------------------------
+
 class RGB565
 {
 public:
 
     RGB565(uint8_t red, uint8_t green, uint8_t blue) noexcept;
 
+    explicit RGB565(RGB8 rbg) noexcept;
     explicit RGB565(uint16_t rgb) noexcept;
 
     [[nodiscard]] RGB565 blend(uint8_t alpha, const RGB565& background) const noexcept;
@@ -51,6 +84,7 @@ public:
     [[nodiscard]] uint8_t getRed() const noexcept;
     [[nodiscard]] uint8_t getGreen() const noexcept;
     [[nodiscard]] uint8_t getBlue() const noexcept;
+    [[nodiscard]] RGB8 getRGB8() const noexcept;
     [[nodiscard]] uint16_t get565() const noexcept { return m_rgb; }
 
     [[nodiscard]] bool isGrey() const noexcept
@@ -60,9 +94,16 @@ public:
 
     void setGrey(uint8_t grey) noexcept { setRGB(grey, grey, grey); }
     void setRGB(uint8_t red, uint8_t green, uint8_t blue) noexcept;
+    void setRGB8(RGB8 rgb) noexcept;
     void set565(uint16_t rgb) noexcept { m_rgb = rgb; }
 
     [[nodiscard]] static RGB565 blend(uint8_t alpha, const RGB565& a, const RGB565& b) noexcept;
+
+    [[nodiscard]] static uint16_t rgbTo565(uint8_t red, uint8_t green, uint8_t blue) noexcept
+    {
+        return ((red >> 3) << 11) | ((green >> 2) << 5) | (blue >> 3);
+    }
+
 
 private:
 

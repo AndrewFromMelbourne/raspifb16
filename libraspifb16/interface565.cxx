@@ -96,6 +96,20 @@ raspifb16::Interface565::getPixelRGB(
 
 //-------------------------------------------------------------------------
 
+std::optional<raspifb16::RGB8>
+raspifb16::Interface565::getPixelRGB8(
+    const Interface565Point& p) const
+{
+    if (not validPixel(p))
+    {
+        return {};
+    }
+
+    return RGB8(*(getBuffer().data() + offset(p)));
+}
+
+//-------------------------------------------------------------------------
+
 std::optional<uint16_t>
 raspifb16::Interface565::getPixel(
     const Interface565Point& p) const
@@ -107,7 +121,6 @@ raspifb16::Interface565::getPixel(
 
     return *(getBuffer().data() + offset(p));
 }
-
 
 //-------------------------------------------------------------------------
 

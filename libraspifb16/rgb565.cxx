@@ -50,6 +50,16 @@ raspifb16::RGB565::RGB565(
 
 //-------------------------------------------------------------------------
 
+raspifb16::RGB565::RGB565(
+    RGB8 rgb) noexcept
+:
+    m_rgb{0}
+{
+    setRGB8(rgb);
+}
+
+//-------------------------------------------------------------------------
+
 raspifb16::RGB565
 raspifb16::RGB565::blend(
     uint8_t alpha,
@@ -90,13 +100,30 @@ raspifb16::RGB565::getBlue() const noexcept
 
 //-------------------------------------------------------------------------
 
+raspifb16::RGB8
+raspifb16::RGB565::getRGB8() const noexcept
+{
+    return RGB8{ getRed(), getGreen(), getBlue() };
+}
+
+//-------------------------------------------------------------------------
+
 void
 raspifb16::RGB565::setRGB(
     uint8_t red,
     uint8_t green,
     uint8_t blue) noexcept
 {
-    m_rgb = ((red >> 3) << 11) | ((green >> 2) << 5) | (blue >> 3);
+    m_rgb = rgbTo565(red, green, blue);
+}
+
+//-------------------------------------------------------------------------
+
+void
+raspifb16::RGB565::setRGB8(
+    RGB8 rgb8) noexcept
+{
+    m_rgb = rgbTo565(rgb8.red, rgb8.green, rgb8.blue);
 }
 
 //-------------------------------------------------------------------------

@@ -80,9 +80,18 @@ public:
         return setPixel(p, rgb.get565());
     }
 
+    bool
+    setPixelRGB8(
+        const Interface565Point& p,
+        RGB8 rgb)
+    {
+        return setPixel(p, RGB565(rgb).get565());
+    }
+
     bool setPixel(const Interface565Point& p, uint16_t rgb);
 
     [[nodiscard]] std::optional<RGB565> getPixelRGB(const Interface565Point& p) const;
+    [[nodiscard]] virtual std::optional<RGB8> getPixelRGB8(const Interface565Point& p) const;
     [[nodiscard]] std::optional<uint16_t> getPixel(const Interface565Point& p) const;
 
     bool putImage(const Interface565Point&, const Image565&);
