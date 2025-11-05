@@ -270,14 +270,15 @@ main(
 
     //---------------------------------------------------------------------
 
-    pidfh* pfh{};
+    using pidFile_ptr = std::unique_ptr<pidfh, decltype(&pidfile_remove)>;
+    pidFile_ptr pfh{nullptr, &pidfile_remove};
 
     if (isDaemon)
     {
         if (not pidfile.empty())
         {
             pid_t otherpid;
-            pfh = ::pidfile_open(pidfile.c_str(), 0600, &otherpid);
+            pfh.reset(::pidfile_open(pidfile.c_str(), 0600, &otherpid));
 
             if (not pfh)
             {
@@ -293,18 +294,12 @@ main(
         if (::daemon(0, 0) == -1)
         {
             std::println(std::cerr, "Cannot daemonize");
-
-            if (pfh)
-            {
-                ::pidfile_remove(pfh);
-            }
-
             ::exit(EXIT_FAILURE);
         }
 
         if (pfh)
         {
-            ::pidfile_write(pfh);
+            ::pidfile_write(pfh.get());
         }
 
         ::openlog(program.c_str(), LOG_PID, LOG_USER);
@@ -316,11 +311,6 @@ main(
     {
         if (std::signal(signal, signalHandler) == SIG_ERR)
         {
-            if (pfh)
-            {
-                ::pidfile_remove(pfh);
-            }
-
             std::println(
                 std::cerr,
                 "Error: installing {} signal handler : {}",
@@ -452,11 +442,6 @@ main(
     if (isDaemon)
     {
         ::closelog();
-    }
-
-    if (pfh)
-    {
-        ::pidfile_remove(pfh);
     }
 
     //---------------------------------------------------------------------
