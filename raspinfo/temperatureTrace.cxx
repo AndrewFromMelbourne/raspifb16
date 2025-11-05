@@ -52,7 +52,7 @@ TemperatureTrace::TemperatureTrace(
         yPosition,
         gridHeight,
         "Temperature",
-        std::vector<TraceConfiguration>{{"temperature", {102, 167, 225}}})
+        { TraceConfiguration{"temperature", {102, 167, 225}} })
 
 {
 }
@@ -66,6 +66,6 @@ TemperatureTrace::update(
 {
     int temperature = raspinfo::getTemperature();
 
-    Trace::addData(std::vector<int>{temperature}, now);
+    Trace::addData({temperature}, now);
 }
 

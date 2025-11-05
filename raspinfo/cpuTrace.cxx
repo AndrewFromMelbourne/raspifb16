@@ -133,10 +133,11 @@ CpuTrace::CpuTrace(
         yPosition,
         gridHeight,
         "CPU",
-        std::vector<TraceConfiguration>{
-            {"user", {4, 90, 141}},
-            {"nice", {116, 169, 207}},
-            {"system", {241, 238, 246}}}),
+        {
+            TraceConfiguration{"user", {4, 90, 141}},
+            TraceConfiguration{"nice", {116, 169, 207}},
+            TraceConfiguration{"system", {241, 238, 246}}
+        }),
     m_previousStats{}
 {
 }
@@ -157,7 +158,7 @@ CpuTrace::update(
     const int nice = (diff.nice() * m_traceScale) / totalCpu;
     const int system = (diff.system() * m_traceScale) / totalCpu;
 
-    Trace::addData(std::vector<int>{user, nice, system}, now);
+    Trace::addData({user, nice, system}, now);
 
     m_previousStats = currentStats;
 }

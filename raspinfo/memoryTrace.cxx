@@ -101,10 +101,11 @@ MemoryTrace::MemoryTrace(
         yPosition,
         gridHeight,
         "Memory",
-        std::vector<TraceConfiguration>{
-            {"used", {0, 109, 44}},
-            {"buffers", {102, 194, 164}},
-            {"cached", {237, 248, 251}}})
+        {
+            TraceConfiguration{"used", {0, 109, 44}},
+            TraceConfiguration{"buffers", {102, 194, 164}},
+            TraceConfiguration{"cached", {237, 248, 251}}
+        })
 {
 }
 
@@ -134,6 +135,6 @@ MemoryTrace::update(
                               memoryStats.total(),
                               m_traceScale);
 
-    Trace::addData(std::vector<int>{used, buffers, cached}, now);
+    Trace::addData({used, buffers, cached}, now);
 }
 

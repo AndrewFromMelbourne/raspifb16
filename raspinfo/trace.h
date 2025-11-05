@@ -30,6 +30,7 @@
 //-------------------------------------------------------------------------
 
 #include <cstdint>
+#include <initializer_list>
 #include <string>
 #include <vector>
 
@@ -108,14 +109,14 @@ public:
         int yPosition,
         int gridHeight,
         const std::string& title,
-        const std::vector<TraceConfiguration>& traces);
+        std::initializer_list<TraceConfiguration> traces);
 
     void init(raspifb16::Interface565Font& font) override;
     void update(time_t now, raspifb16::Interface565Font& font) override = 0;
 
 protected:
 
-    void addData(const std::vector<int>& data, time_t now);
+    void addData(std::initializer_list<int> data, time_t now);
     virtual void draw() = 0;
 
     int m_traceHeight;
@@ -137,7 +138,9 @@ protected:
 
 private:
 
-    void addDataPoint(const std::vector<int>& data, time_t now);
+    void addDataPoint(std::initializer_list<int> data, time_t now);
+    void emptyDataPoint(time_t now);
+    void storeTime(time_t now);
 };
 
 //-------------------------------------------------------------------------

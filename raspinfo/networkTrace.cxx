@@ -118,9 +118,10 @@ NetworkTrace::NetworkTrace(
         yPosition,
         gridHeight,
         "Network",
-        std::vector<TraceConfiguration>{
-            {"tx", {102, 167, 225}},
-            {"rx", {225, 225, 102}}}),
+        {
+            TraceConfiguration{"tx", {102, 167, 225}},
+            TraceConfiguration{"rx", {225, 225, 102}}
+        }),
     m_previousStats{}
 {
 }
@@ -139,7 +140,7 @@ NetworkTrace::update(
     const int tx = std::max(zero, diff.tx());
     const int rx = std::max(zero, diff.rx());
 
-    Trace::addData(std::vector<int>{tx, rx}, now);
+    Trace::addData({tx, rx}, now);
 
     m_previousStats = currentStats;
 }

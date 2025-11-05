@@ -51,7 +51,7 @@ public:
         int yPosition,
         int gridHeight,
         const std::string& title,
-        const std::vector<TraceConfiguration>& traces);
+        std::initializer_list<TraceConfiguration> traces);
 
     void update(time_t now, raspifb16::Interface565Font& font) override = 0;
 

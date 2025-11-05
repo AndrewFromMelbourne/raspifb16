@@ -44,7 +44,7 @@ TraceStack::TraceStack(
     int yPosition,
     int gridHeight,
     const std::string& title,
-    const std::vector<TraceConfiguration>& traces)
+    std::initializer_list<TraceConfiguration> traces)
 
 :
     Trace(

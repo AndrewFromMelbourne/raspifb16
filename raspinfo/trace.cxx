@@ -53,7 +53,7 @@ Trace::Trace(
     int yPosition,
     int gridHeight,
     const std::string& title,
-    const std::vector<TraceConfiguration>& traces)
+    std::initializer_list<TraceConfiguration> traces)
 :
     Panel(width, traceHeight + fontHeight + 4, yPosition),
     m_traceHeight{traceHeight},
@@ -148,21 +148,21 @@ Trace::init(
 
 void
 Trace::addData(
-    const std::vector<int>& data,
+    std::initializer_list<int> data,
     time_t now)
 {
     if (m_time.size())
     {
-        auto then = m_time.back() + 1;
+        const auto then = m_time.back() + 1;
 
         if (then > now)
         {
             return;
         }
 
-        while (then < now)
+        for (auto t{then} ; t < now ; ++t)
         {
-            addDataPoint(std::vector<int>(data.size()), then++);
+            emptyDataPoint(t);
         }
     }
 
@@ -194,7 +194,36 @@ Trace::addData(
 
 void
 Trace::addDataPoint(
-    const std::vector<int>& data,
+    std::initializer_list<int> data,
+    time_t now)
+{
+    storeTime(now);
+
+    auto value{data.begin()};
+    for (auto& trace : m_traceData)
+    {
+        trace.addData(*(value++));
+    }
+}
+
+//-------------------------------------------------------------------------
+
+void
+Trace::emptyDataPoint(
+    time_t now)
+{
+    storeTime(now);
+
+    for (auto& trace : m_traceData)
+    {
+        trace.addData(0);
+    }
+}
+
+//-------------------------------------------------------------------------
+
+void
+Trace::storeTime(
     time_t now)
 {
     if (m_columns < getImage().getWidth())
@@ -206,12 +235,6 @@ Trace::addDataPoint(
     {
         std::ranges::rotate(m_time, m_time.begin() + 1);
         m_time.back() = now;
-    }
-
-    auto value{data.cbegin()};
-    for (auto& trace : m_traceData)
-    {
-        trace.addData(*(value++));
     }
 }
 

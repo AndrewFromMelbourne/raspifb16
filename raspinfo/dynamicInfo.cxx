@@ -38,6 +38,7 @@
 #include <cmath>
 #include <cstdint>
 #include <cstring>
+#include <format>
 #include <regex>
 #include <sstream>
 #include <stdexcept>
@@ -197,7 +198,7 @@ getMemorySplit()
         return "";
     }
 
-    return std::to_string(gpuMem) + "/" + std::to_string(armMem);
+    return std::format("{}/{}", gpuMem, armMem);
 }
 
 //-------------------------------------------------------------------------
