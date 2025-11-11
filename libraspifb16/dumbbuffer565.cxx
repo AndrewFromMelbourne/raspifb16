@@ -50,219 +50,6 @@
 
 //=========================================================================
 
-namespace
-{
-
-//-------------------------------------------------------------------------
-
-struct FoundDrmResource
-{
-    bool m_found{false};
-    uint32_t m_connectorId{};
-    uint32_t m_crtcId{};
-    drmModeModeInfo m_mode{};
-};
-
-//-------------------------------------------------------------------------
-
-FoundDrmResource
-findDrmResourcesForConnector(
-    raspifb16::FileDescriptor& fd,
-    uint32_t connectorId,
-    const drm::drmModeRes_ptr& resources) noexcept
-{
-    const auto connector{drm::drmModeGetConnector(fd, connectorId)};
-    const bool connected{connector->connection == DRM_MODE_CONNECTED};
-
-    if (connected and (connector->count_modes > 0))
-    {
-        for (auto j = 0 ; j < connector->count_encoders ; ++j)
-        {
-            const auto encoderId = connector->encoders[j];
-            const auto encoder = drm::drmModeGetEncoder(fd, encoderId);
-
-            for (auto k = 0 ; k < resources->count_crtcs ; ++k)
-            {
-                const auto currentCrtc{1 << k};
-
-                if (encoder->possible_crtcs & currentCrtc)
-                {
-                    const auto currentCrtcId = resources->crtcs[k];
-                    const auto crtc{drm::drmModeGetCrtc(fd, currentCrtcId)};
-                    if ((crtc->mode.hdisplay > 0) and (crtc->mode.vdisplay > 0))
-                    {
-                        return FoundDrmResource{
-                            .m_found = true,
-                            .m_connectorId = connectorId,
-                            .m_crtcId = currentCrtcId,
-                            .m_mode = crtc->mode
-                        };
-                    }
-                }
-            }
-        }
-    }
-
-    return FoundDrmResource{ .m_found = false };
-}
-
-//-------------------------------------------------------------------------
-
-FoundDrmResource
-findDrmResources(
-    raspifb16::FileDescriptor& fd,
-    uint32_t connectorId) noexcept
-{
-    if (connectorId)
-    {
-        return findDrmResourcesForConnector(fd, connectorId, drm::drmModeGetResources(fd));
-    }
-
-    const auto resources = drm::drmModeGetResources(fd);
-
-    for (int i = 0 ; i < resources->count_connectors ; ++i)
-    {
-        connectorId = resources->connectors[i];
-        const auto resource{findDrmResourcesForConnector(fd, connectorId, resources)};
-
-        if (resource.m_found)
-        {
-            return resource;
-        }
-    }
-
-    return FoundDrmResource{ .m_found = false };
-}
-
-//-------------------------------------------------------------------------
-
-int
-getModeCount(const std::string& card)
-{
-    raspifb16::FileDescriptor fd{::open(card.c_str(), O_RDWR)};
-    int modes{0};
-
-    const auto resources = drm::drmModeGetResources(fd);
-
-    for (auto i = 0 ; i < resources->count_connectors ; ++i)
-    {
-        const auto connectorId = resources->connectors[i];
-        const auto connector = drm::drmModeGetConnector(fd, connectorId);
-        const bool connected{connector->connection == DRM_MODE_CONNECTED};
-
-        if (connected)
-        {
-            modes += connector->count_modes;
-        }
-    }
-
-    return modes;
-}
-
-//-------------------------------------------------------------------------
-
-std::string
-findDrmDevice()
-{
-    drm::DrmDevices devices;
-
-    if (devices.getDeviceCount() < 0)
-    {
-        return "";
-    }
-
-    for (auto i = 0 ; i < devices.getDeviceCount() ; ++i)
-    {
-        const auto device = devices.getDevice(i);
-
-        if ((device->available_nodes & (1 << DRM_NODE_PRIMARY)) and
-            drm::drmDeviceHasDumbBuffer(device->nodes[DRM_NODE_PRIMARY]))
-        {
-            std::string card = device->nodes[DRM_NODE_PRIMARY];
-
-            if (getModeCount(card) > 0)
-            {
-                return card;
-            }
-        }
-    }
-
-    return "";
-}
-
-//-------------------------------------------------------------------------
-
-std::string
-findDrmDeviceWithConnector(
-    uint32_t connectorId)
-{
-    drm::DrmDevices devices;
-
-    if (devices.getDeviceCount() < 0)
-    {
-        return "";
-    }
-
-    for (auto i = 0 ; i < devices.getDeviceCount() ; ++i)
-    {
-        const auto device = devices.getDevice(i);
-
-        if ((device->available_nodes & (1 << DRM_NODE_PRIMARY)) and
-            drm::drmDeviceHasDumbBuffer(device->nodes[DRM_NODE_PRIMARY]))
-        {
-            const auto card{device->nodes[DRM_NODE_PRIMARY]};
-            auto fd = raspifb16::FileDescriptor{::open(card, O_RDWR)};
-            const auto resources = drm::drmModeGetResources(fd);
-
-            for (int i = 0 ; i < resources->count_connectors ; ++i)
-            {
-                if (connectorId == resources->connectors[i])
-                {
-                    return card;
-                }
-            }
-        }
-    }
-
-    return "";
-}
-
-//-------------------------------------------------------------------------
-
-std::string
-findDrmDevice(
-    uint32_t connectorId)
-{
-    std::string device = (connectorId) ?
-                         findDrmDeviceWithConnector(connectorId) :
-                         findDrmDevice();
-    if (device.empty())
-    {
-        if (connectorId)
-        {
-            throw std::system_error{errno,
-                                    std::system_category(),
-                                    "cannot find dri device for connnector " +
-                                    std::to_string(connectorId)};
-
-        }
-        else
-        {
-            throw std::system_error{errno,
-                                    std::system_category(),
-                                    "cannot find a dri device "};
-        }
-    }
-
-    return device;
-}
-
-//-------------------------------------------------------------------------
-
-}
-
-//=========================================================================
-
 raspifb16::DumbBuffer565::DumbBuffer565(
     const std::string& device,
     uint32_t connectorId)
@@ -273,8 +60,13 @@ raspifb16::DumbBuffer565::DumbBuffer565(
     m_dbs{},
     m_dbFront{0},
     m_dbBack{1},
+    m_hasAtomic{false},
+    m_hasUniversalPlanes{false},
+    m_atomicProperties{},
+    m_blobId{0},
     m_connectorId{connectorId},
     m_crtcId{0},
+    m_planeId{0},
     m_mode{},
     m_originalCrtc(nullptr, [](drmModeCrtc*){})
 {
@@ -282,7 +74,7 @@ raspifb16::DumbBuffer565::DumbBuffer565(
 
     if (card.empty())
     {
-        card = findDrmDevice(connectorId);
+        card = drm::findDrmDevice(connectorId);
     }
 
     m_fd = FileDescriptor{::open(card.c_str(), O_RDWR)};
@@ -298,14 +90,34 @@ raspifb16::DumbBuffer565::DumbBuffer565(
 
     //---------------------------------------------------------------------
 
+    m_hasUniversalPlanes = drm::setUniversalPlanes(m_fd);
+    m_hasAtomic = drm::setAtomicModeSetting(m_fd);
+
     findResources(connectorId);
     drmSetMaster(m_fd.fd());
+
+    if (useAtomic())
+    {
+        if (drmModeCreatePropertyBlob(
+                m_fd.fd(),
+                &m_mode,
+                sizeof(m_mode),
+                &m_blobId) != 0)
+        {
+            throw std::system_error{errno,
+                                    std::system_category(),
+                                    "cannot create property blob"};
+        }
+
+        createAtomicRequests();
+    }
 
     //---------------------------------------------------------------------
 
     createDumbBuffer(m_dbFront);
     createDumbBuffer(m_dbBack);
 
+    setDumbBuffer(m_dbFront);
     update();
 }
 
@@ -313,6 +125,11 @@ raspifb16::DumbBuffer565::DumbBuffer565(
 
 raspifb16::DumbBuffer565::~DumbBuffer565()
 {
+    if (useAtomic())
+    {
+        drmModeDestroyPropertyBlob(m_fd.fd(), m_blobId);
+    }
+
     destroyDumbBuffer(m_dbBack);
     destroyDumbBuffer(m_dbFront);
 
@@ -382,27 +199,41 @@ bool
 raspifb16::DumbBuffer565::update()
 {
     std::swap(m_dbFront, m_dbBack);
-    auto& dbf = m_dbs[m_dbFront];
+    const auto& dbf = m_dbs[m_dbFront];
 
-    drmVBlank vbl;
-    vbl.request.type = DRM_VBLANK_RELATIVE;
-    vbl.request.sequence = 1;
-    drmWaitVBlank(m_fd.fd(), &vbl);
-
-    auto setCrtcResult = drmModeSetCrtc(m_fd.fd(),
-                                        m_crtcId,
-                                        dbf.m_fbId,
-                                        0,
-                                        0,
-                                        &m_connectorId,
-                                        1,
-                                        &m_mode);
-    if (setCrtcResult < 0)
+    if (useAtomic())
     {
-        throw std::system_error(errno,
-                                std::system_category(),
-                                "unable to set crtc with frame buffer");
+        auto atomicReq = drm::drmModeAtomicAlloc();
+        addAtomicProperties(atomicReq, dbf.m_fbId);
+        constexpr uint32_t flags = DRM_MODE_PAGE_FLIP_EVENT | DRM_MODE_ATOMIC_NONBLOCK;
+        auto result =  drm::drmModeAtomicCommit(m_fd, atomicReq, flags, nullptr);
+
+        if (result < 0)
+        {
+            throw std::system_error(errno,
+                                    std::system_category(),
+                                    "unable to flip using atomic");
+        }
     }
+    else
+    {
+
+        drmModePageFlip(m_fd.fd(),
+                        m_crtcId,
+                        dbf.m_fbId,
+                        DRM_MODE_PAGE_FLIP_EVENT,
+                        nullptr);
+    }
+
+    drmEventContext ev{
+        .version = DRM_EVENT_CONTEXT_VERSION,
+        .vblank_handler = nullptr,
+        .page_flip_handler = nullptr,
+        .page_flip_handler2 = nullptr,
+        .sequence_handler = nullptr
+    };
+
+    drmHandleEvent(m_fd.fd(), &ev);
 
     return true;
 }
@@ -491,7 +322,7 @@ void
 raspifb16::DumbBuffer565::destroyDumbBuffer(
     int index)
 {
-    auto& db = m_dbs[index];
+    const auto& db = m_dbs[index];
 
     ::munmap(db.m_fbp, db.m_length);
     drmModeRmFB(m_fd.fd(), db.m_fbId);
@@ -500,6 +331,131 @@ raspifb16::DumbBuffer565::destroyDumbBuffer(
     dmdd.handle = db.m_fbHandle;
 
     drmIoctl(m_fd.fd(), DRM_IOCTL_MODE_DESTROY_DUMB, &dmdd);
+}
+
+
+//-------------------------------------------------------------------------
+
+void
+raspifb16::DumbBuffer565::setDumbBuffer(
+    int index)
+{
+    const auto& db = m_dbs[index];
+
+    if (useAtomic())
+    {
+        auto atomicReq = drm::drmModeAtomicAlloc();
+        addAtomicProperties(atomicReq, db.m_fbId);
+        constexpr uint32_t flags = DRM_MODE_ATOMIC_ALLOW_MODESET | DRM_MODE_PAGE_FLIP_EVENT;
+        const auto result = drm::drmModeAtomicCommit(m_fd, atomicReq, flags, nullptr);
+
+        if (result < 0)
+        {
+            throw std::system_error(errno,
+                                    std::system_category(),
+                                    "unable to set crtc with dumb buffer using atomic");
+        }
+
+        drmEventContext ev{
+            .version = DRM_EVENT_CONTEXT_VERSION,
+            .vblank_handler = nullptr,
+            .page_flip_handler = nullptr,
+            .page_flip_handler2 = nullptr,
+            .sequence_handler = nullptr
+        };
+
+        drmHandleEvent(m_fd.fd(), &ev);
+    }
+    else
+    {
+        auto setCrtcResult = drmModeSetCrtc(m_fd.fd(),
+                                            m_crtcId,
+                                            db.m_fbId,
+                                            0,
+                                            0,
+                                            &m_connectorId,
+                                            1,
+                                            &m_mode);
+
+        if (setCrtcResult < 0)
+        {
+            throw std::system_error(errno,
+                                    std::system_category(),
+                                    "unable to set crtc with frame buffer");
+        }
+    }
+}
+
+//-------------------------------------------------------------------------
+
+void
+raspifb16::DumbBuffer565::addAtomicRequest(
+    uint32_t objectId,
+    uint32_t objectType,
+    const std::string& propertyName,
+    uint64_t value)
+{
+    auto propertyId{
+        drm::findDrmPropertyId(
+            m_fd,
+            objectId,
+            objectType,
+            propertyName)};
+
+    if (propertyId)
+    {
+        m_atomicProperties.push_back(
+            AtomicProperty{
+                .m_objectId = objectId,
+                .m_objectType = objectType,
+                .m_propertyId = propertyId,
+                .m_propertyName = propertyName,
+                .m_value = value });
+    }
+}
+
+//-------------------------------------------------------------------------
+
+void
+raspifb16::DumbBuffer565::addAtomicProperties(
+    drm::drmModeAtomicReq_ptr& atomicRequest,
+    uint32_t fbId)
+{
+    for (auto prop : m_atomicProperties)
+    {
+        if (prop.m_propertyName == "FB_ID")
+        {
+            prop.m_value = fbId;
+        }
+
+        drm::drmModeAtomicAddProperty(
+            atomicRequest,
+            prop.m_objectId,
+            prop.m_propertyId,
+            prop.m_value);
+    }
+}
+
+//-------------------------------------------------------------------------
+
+void
+raspifb16::DumbBuffer565::createAtomicRequests()
+{
+    addAtomicRequest(m_connectorId, DRM_MODE_OBJECT_CONNECTOR, "CRTC_ID", m_crtcId);
+
+    addAtomicRequest(m_crtcId, DRM_MODE_OBJECT_CRTC, "MODE_ID", m_blobId);
+    addAtomicRequest(m_crtcId, DRM_MODE_OBJECT_CRTC, "ACTIVE", 1);
+
+    addAtomicRequest(m_planeId, DRM_MODE_OBJECT_PLANE, "FB_ID", 0);
+    addAtomicRequest(m_planeId, DRM_MODE_OBJECT_PLANE, "CRTC_ID", m_crtcId);
+    addAtomicRequest(m_planeId, DRM_MODE_OBJECT_PLANE, "SRC_X", 0);
+    addAtomicRequest(m_planeId, DRM_MODE_OBJECT_PLANE, "SRC_Y", 0);
+    addAtomicRequest(m_planeId, DRM_MODE_OBJECT_PLANE, "SRC_W", static_cast<uint64_t>(m_mode.hdisplay) << 16);
+    addAtomicRequest(m_planeId, DRM_MODE_OBJECT_PLANE, "SRC_H", static_cast<uint64_t>(m_mode.vdisplay) << 16);
+    addAtomicRequest(m_planeId, DRM_MODE_OBJECT_PLANE, "CRTC_X", 0);
+    addAtomicRequest(m_planeId, DRM_MODE_OBJECT_PLANE, "CRTC_Y", 0);
+    addAtomicRequest(m_planeId, DRM_MODE_OBJECT_PLANE, "CRTC_W", m_mode.hdisplay);
+    addAtomicRequest(m_planeId, DRM_MODE_OBJECT_PLANE, "CRTC_H", m_mode.vdisplay);
 }
 
 //-------------------------------------------------------------------------
@@ -518,7 +474,7 @@ raspifb16::DumbBuffer565::findResources(
 
     //---------------------------------------------------------------------
 
-    const auto resource{findDrmResources(m_fd, connectorId)};
+    const auto resource{drm::findDrmResources(m_fd, connectorId)};
 
     if (not resource.m_found)
     {
@@ -539,6 +495,7 @@ raspifb16::DumbBuffer565::findResources(
 
     m_connectorId = resource.m_connectorId;
     m_crtcId = resource.m_crtcId;
+    m_planeId = resource.m_planeId;
     m_originalCrtc = drm::drmModeGetCrtc(m_fd, resource.m_crtcId);
 }
 

@@ -142,9 +142,9 @@ target_link_libraries(testColour raspifb16
 
 #--------------------------------------------------------------------------
 
-add_executable(testColourBlend test/testColourBlend.cxx)
-target_link_libraries(testColourBlend raspifb16
-                                      ${DRM_LIBRARIES})
+add_executable(testDoubleBuffer test/testDoubleBuffer.cxx)
+target_link_libraries(testDoubleBuffer raspifb16
+                                       ${DRM_LIBRARIES})
 
 #--------------------------------------------------------------------------
 

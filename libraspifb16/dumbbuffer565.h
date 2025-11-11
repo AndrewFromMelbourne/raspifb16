@@ -77,6 +77,17 @@ public:
 
     //---------------------------------------------------------------------
 
+    struct AtomicProperty
+    {
+        uint32_t m_objectId;
+        uint32_t m_objectType;
+        uint32_t m_propertyId;
+        std::string m_propertyName;
+        uint64_t m_value;
+    };
+
+    //---------------------------------------------------------------------
+
     explicit DumbBuffer565(
         const std::string& device = "",
         uint32_t connectorId = 0);
@@ -95,7 +106,10 @@ public:
     [[nodiscard]] std::span<uint16_t> getBuffer() noexcept override;
     [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept override;
     [[nodiscard]] std::size_t getBufferSize() const noexcept;
+    [[nodiscard]] drm::drmVersion_ptr getDrmVersion() noexcept { return drm::drmGetVersion(m_fd); }
     [[nodiscard]] int getLineLengthPixels() const noexcept override;
+    [[nodiscard]] bool hasAtomic() const noexcept { return m_hasAtomic; }
+    [[nodiscard]] bool hasUniversalPlanes() const noexcept { return m_hasUniversalPlanes; }
     [[nodiscard]] std::size_t offset(const Interface565Point& p) const noexcept override;
 
     bool update() override;
@@ -104,8 +118,23 @@ private:
 
     void createDumbBuffer(int index);
     void destroyDumbBuffer(int index);
+    void setDumbBuffer(int index);
+
+    void
+    addAtomicProperties(
+        drm::drmModeAtomicReq_ptr& atomicRequest,
+        uint32_t fbId);
+    void
+    addAtomicRequest(
+        uint32_t objectId,
+        uint32_t objectType,
+        const std::string& propertyName,
+        uint64_t value);
+    void createAtomicRequests();
 
     void findResources(uint32_t connectorId);
+
+    [[nodiscard]] bool useAtomic() const noexcept { return m_hasAtomic and m_hasUniversalPlanes; }
 
     int m_width;
     int m_height;
@@ -116,8 +145,13 @@ private:
     int m_dbFront;
     int m_dbBack;
 
+    bool m_hasAtomic;
+    bool m_hasUniversalPlanes;
+    std::vector<AtomicProperty> m_atomicProperties;
+    uint32_t m_blobId;
     uint32_t m_connectorId;
     uint32_t m_crtcId;
+    uint32_t m_planeId;
     drmModeModeInfo m_mode;
     drm::drmModeCrtc_ptr m_originalCrtc;
 };

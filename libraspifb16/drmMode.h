@@ -46,14 +46,17 @@ namespace drm
 
 //-------------------------------------------------------------------------
 
+using drmModeAtomicReq_ptr = std::unique_ptr<drmModeAtomicReq, decltype(&drmModeAtomicFree)>;
 using drmModeConnector_ptr = std::unique_ptr<drmModeConnector, decltype(&drmModeFreeConnector)>;
 using drmModeCrtc_ptr = std::unique_ptr<drmModeCrtc, decltype(&drmModeFreeCrtc)>;
 using drmModeEncoder_ptr = std::unique_ptr<drmModeEncoder, decltype(&drmModeFreeEncoder)>;
 using drmModeObjectProperties_ptr = std::unique_ptr<drmModeObjectProperties, decltype(&drmModeFreeObjectProperties)>;
 using drmModePlane_ptr = std::unique_ptr<drmModePlane, decltype(&drmModeFreePlane)>;
 using drmModePlaneRes_ptr = std::unique_ptr<drmModePlaneRes, decltype(&drmModeFreePlaneResources)>;
+using drmModePropertyBlobRes_ptr = std::unique_ptr<drmModePropertyBlobRes, decltype(&drmModeFreePropertyBlob)>;
 using drmModePropertyRes_ptr = std::unique_ptr<drmModePropertyRes, decltype(&drmModeFreeProperty)>;
 using drmModeRes_ptr = std::unique_ptr<drmModeRes, decltype(&drmModeFreeResources)>;
+using drmVersion_ptr = std::unique_ptr<drmVersion, decltype(&drmFreeVersion)>;
 
  //-------------------------------------------------------------------------
 
@@ -86,6 +89,20 @@ private:
 
 //-------------------------------------------------------------------------
 
+struct FoundDrmResource
+{
+    bool m_found{false};
+    uint32_t m_connectorId{};
+    uint32_t m_crtcId{};
+    uint32_t m_planeId{};
+    drmModeModeInfo m_mode{};
+};
+
+//-------------------------------------------------------------------------
+
+drmModeAtomicReq_ptr drmModeAtomicAlloc() noexcept;
+uint64_t drmGetPropertyValue(raspifb16::FileDescriptor& fd, uint32_t objectId, uint32_t objectType, const std::string& name) noexcept;
+drmVersion_ptr drmGetVersion(raspifb16::FileDescriptor& fd) noexcept;
 drmModeConnector_ptr drmModeGetConnector(raspifb16::FileDescriptor& fd, uint32_t connId) noexcept;
 drmModeCrtc_ptr drmModeGetCrtc(raspifb16::FileDescriptor& fd, uint32_t crtcId) noexcept;
 drmModeEncoder_ptr drmModeGetEncoder(raspifb16::FileDescriptor& fd, uint32_t encoderId) noexcept;
@@ -93,9 +110,35 @@ drmModeObjectProperties_ptr drmModeObjectGetProperties(raspifb16::FileDescriptor
 drmModePlane_ptr drmModeGetPlane(raspifb16::FileDescriptor& fd, uint32_t planeId) noexcept;
 drmModePlaneRes_ptr drmModeGetPlaneResources(raspifb16::FileDescriptor& fd) noexcept;
 drmModePropertyRes_ptr drmModeGetProperty(raspifb16::FileDescriptor& fd, uint32_t propertyId) noexcept;
+drmModePropertyBlobRes_ptr drmModeGetPropertyBlob(raspifb16::FileDescriptor& fd, uint32_t blobId) noexcept;
 drmModeRes_ptr drmModeGetResources(raspifb16::FileDescriptor& fd) noexcept;
-uint64_t drmGetPropertyValue(raspifb16::FileDescriptor& fd, uint32_t objectId, uint32_t objectType, const std::string& name) noexcept;
+
+//-------------------------------------------------------------------------
+
+bool
+addDrmPropertyToAtomicRequest(
+    drmModeAtomicReq_ptr& atomicReq,
+    raspifb16::FileDescriptor& fd,
+    uint32_t objectId,
+    uint32_t objectType,
+    const std::string& propertyName,
+    uint64_t value) noexcept;
+
+int drmModeAtomicCommit(raspifb16::FileDescriptor& fd, drmModeAtomicReq_ptr& req, uint32_t flags, void* user_data);
+int drmModeAtomicAddProperty(drmModeAtomicReq_ptr& atomicReq, uint32_t object_id, uint32_t property_id, uint64_t value) noexcept;
+std::string findDrmDevice() noexcept;
+std::string findDrmDeviceWithConnector(uint32_t connectorId) noexcept;
+std::string findDrmDevice(uint32_t connectorId);
+uint32_t findDrmPrimaryPlaneId(raspifb16::FileDescriptor& fd, uint32_t crtcMask) noexcept;
+uint32_t findDrmPropertyId(raspifb16::FileDescriptor& fd, uint32_t objectId, uint32_t objectType, const std::string& name) noexcept;
+FoundDrmResource findDrmResourcesForConnector(raspifb16::FileDescriptor& fd, uint32_t connectorId, const drm::drmModeRes_ptr& resources) noexcept;
+FoundDrmResource findDrmResources(raspifb16::FileDescriptor& fd, uint32_t connectorId) noexcept;
+int getModeCount(const std::string& card) noexcept;
+bool setClientCap(raspifb16::FileDescriptor& m_fd, uint64_t capability, uint64_t value) noexcept;
+bool setAtomicModeSetting(raspifb16::FileDescriptor& m_fd) noexcept;
+bool setUniversalPlanes(raspifb16::FileDescriptor& m_fd) noexcept;
 
 //-------------------------------------------------------------------------
 
 }
+
