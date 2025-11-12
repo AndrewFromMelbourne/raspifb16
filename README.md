@@ -35,7 +35,7 @@ Tests programs for truetype fonts (Requires Freetype2).
 Test putImage function overlapping screen edge.
 
 ## testResize
-Test image resizing using scale-upi, nearest neighbour, bilinear interpolation and Lanczos3 interpolation.
+Test image resizing using scale-up, nearest neighbour, bilinear interpolation and Lanczos3 interpolation.
 
 # boxworld
 A version of Boxworld or Sokoban (Requires a joystick).
