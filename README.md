@@ -20,13 +20,13 @@ A very simple test program that displays text and simple graphics
 Test circle drawing functions
 
 ## testColour
-Displays a hues at different brightness and saturation.
+Displays hues at different brightness and saturation.
 
 ## testColourBlend
 Test blending a blue background with a red foreground at alpha value from 0 to 255.
 
 ## testDoubleBuffer
-Test double buffering by displaying one red and one greem buffer. WARNING: causes a strobing effect.
+Test DRM/KMS double buffering by displaying one red and one greem buffer. **WARNING:** causes a strobing effect.
 
 ## testft and testft2
 Tests programs for truetype fonts (Requires Freetype2).
