@@ -118,13 +118,20 @@ raspifb16::DumbBuffer565::DumbBuffer565(
     createDumbBuffer(m_dbBack);
 
     setDumbBuffer(m_dbFront);
+
+    clear();
     update();
+    clear();
 }
 
 //-------------------------------------------------------------------------
 
 raspifb16::DumbBuffer565::~DumbBuffer565()
 {
+    clear();
+    update();
+    clear();
+
     if (useAtomic())
     {
         drmModeDestroyPropertyBlob(m_fd.fd(), m_blobId);
