@@ -153,7 +153,7 @@ raspifb16::DumbBuffer565::~DumbBuffer565()
 std::span<uint16_t>
 raspifb16::DumbBuffer565::getBuffer() noexcept
 {
-    auto& dbb = m_dbs[m_dbBack];
+    const auto& dbb = m_dbs[m_dbBack];
     return {dbb.m_fbp, getBufferSize()};
 }
 
@@ -162,7 +162,7 @@ raspifb16::DumbBuffer565::getBuffer() noexcept
 std::span<const uint16_t>
 raspifb16::DumbBuffer565::getBuffer() const noexcept
 {
-    auto& dbb = m_dbs[m_dbBack];
+    const auto& dbb = m_dbs[m_dbBack];
     return {dbb.m_fbp, getBufferSize()};
 }
 
@@ -179,7 +179,7 @@ raspifb16::DumbBuffer565::getBufferSize() const noexcept
 int
 raspifb16::DumbBuffer565::getLineLengthPixels() const noexcept
 {
-    auto& dbb = m_dbs[m_dbBack];
+    const auto& dbb = m_dbs[m_dbBack];
     return dbb.m_lineLengthPixels;
 }
 
@@ -189,7 +189,7 @@ std::size_t
 raspifb16::DumbBuffer565::offset(
     const Interface565Point& p) const noexcept
 {
-    auto& dbb = m_dbs[m_dbBack];
+    const auto& dbb = m_dbs[m_dbBack];
     return p.x() + p.y() * dbb.m_lineLengthPixels;
 }
 
