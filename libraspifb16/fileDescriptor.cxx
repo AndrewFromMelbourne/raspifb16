@@ -31,7 +31,7 @@
 
 //-------------------------------------------------------------------------
 
-raspifb16::FileDescriptor::FileDescriptor(
+fd::FileDescriptor::FileDescriptor(
     int fd,
     CloseIfFunction close_if)
 :
@@ -42,15 +42,15 @@ raspifb16::FileDescriptor::FileDescriptor(
 
 //-------------------------------------------------------------------------
 
-raspifb16::FileDescriptor::~FileDescriptor()
+fd::FileDescriptor::~FileDescriptor()
 {
     closeFd();
 }
 
 //-------------------------------------------------------------------------
 
-raspifb16::FileDescriptor::FileDescriptor(
-    raspifb16::FileDescriptor&& rhs)
+fd::FileDescriptor::FileDescriptor(
+    fd::FileDescriptor&& rhs)
 :
     m_fd{rhs.m_fd},
     m_close_if{std::move(rhs.m_close_if)}
@@ -61,9 +61,9 @@ raspifb16::FileDescriptor::FileDescriptor(
 
 //-------------------------------------------------------------------------
 
-raspifb16::FileDescriptor&
-raspifb16::FileDescriptor::operator= (
-    raspifb16::FileDescriptor&& rhs)
+fd::FileDescriptor&
+fd::FileDescriptor::operator= (
+    fd::FileDescriptor&& rhs)
 {
     if (this != &rhs)
     {
@@ -82,7 +82,7 @@ raspifb16::FileDescriptor::operator= (
 //-------------------------------------------------------------------------
 
 void
-raspifb16::FileDescriptor::closeFd() noexcept
+fd::FileDescriptor::closeFd() noexcept
 {
     if (m_close_if(m_fd))
     {

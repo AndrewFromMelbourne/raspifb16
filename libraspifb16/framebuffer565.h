@@ -83,7 +83,7 @@ public:
 
 private:
 
-    FileDescriptor m_consolefd;
+    fd::FileDescriptor m_consolefd;
 
     struct fb_fix_screeninfo m_finfo;
     struct fb_var_screeninfo m_vinfo;

@@ -123,8 +123,6 @@ main(
         const RGB565 white{255, 255, 255};
         auto fb{raspifb16::createInterface565(interfaceType, device)};
 
-        fb->clearBuffers(black);
-
         const int columns = fb->getWidth() / font.getPixelWidth();
         const int rows = fb->getHeight() / font.getPixelHeight();
 

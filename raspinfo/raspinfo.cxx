@@ -327,8 +327,6 @@ main(
     {
         auto fb{raspifb16::createInterface565(interfaceType, device)};
 
-        fb->clearBuffers(raspifb16::RGB565{0, 0, 0});
-
         //-----------------------------------------------------------------
 
         std::unique_ptr<raspifb16::Interface565Font> ft{std::make_unique<raspifb16::Image565Font8x16>()};
@@ -426,8 +424,6 @@ main(
             const auto nextSecond = std::chrono::round<std::chrono::seconds>(now) + 1s;
             std::this_thread::sleep_until(nextSecond);
         }
-
-        fb->clearBuffers();
     }
     catch (std::exception& error)
     {

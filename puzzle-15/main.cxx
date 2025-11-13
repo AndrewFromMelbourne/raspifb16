@@ -145,7 +145,6 @@ main(
         constexpr bool block{true};
         Joystick js(joystick, block);
         auto fb{raspifb16::createInterface565(interfaceType, device)};
-        fb->clearBuffers(RGB565{0, 0, 0});
 
         Puzzle puzzle{fitToScreen};
         puzzle.init();
@@ -168,8 +167,6 @@ main(
                 fb->update();
             }
         }
-
-        fb->clearBuffers();
     }
     catch (std::exception& error)
     {

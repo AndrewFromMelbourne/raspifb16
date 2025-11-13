@@ -69,8 +69,8 @@ public:
     void clear(const RGB565& rgb) { clear(rgb.get565()); }
     void clear(uint16_t rgb = 0);
 
-    void clearBuffers(const RGB565& rgb) { clear(rgb.get565()); }
-    void clearBuffers(uint16_t rgb = 0);
+    void clearBuffers(const RGB565& rgb) { clearBuffers(rgb.get565()); }
+    virtual void clearBuffers(uint16_t rgb = 0);
 
     bool
     setPixelRGB(

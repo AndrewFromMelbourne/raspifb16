@@ -141,8 +141,6 @@ main(
         const RGB565 white{255, 255, 255};
         auto fb{raspifb16::createInterface565(interfaceType, device)};
 
-        fb->clearBuffers(black);
-
         Image565 image(fb->getWidth(), fb->getHeight());
         image.clear(black);
 
@@ -159,8 +157,6 @@ main(
         //-----------------------------------------------------------------
 
         std::this_thread::sleep_for(10s);
-        fb->clearBuffers();
-
     }
     catch (std::exception& error)
     {

@@ -53,7 +53,7 @@ raspifb16::FrameBuffer565::FrameBuffer565(
     m_lineLengthPixels{0},
     m_fbp{nullptr}
 {
-    FileDescriptor fbfd{::open(device.c_str(), O_RDWR)};
+    fd::FileDescriptor fbfd{::open(device.c_str(), O_RDWR)};
 
     if (fbfd.fd() == -1)
     {
@@ -105,12 +105,17 @@ raspifb16::FrameBuffer565::FrameBuffer565(
     }
 
     m_fbp = static_cast<uint16_t*>(fbp);
+
+    //---------------------------------------------------------------------
+
+    clear();
 }
 
 //-------------------------------------------------------------------------
 
 raspifb16::FrameBuffer565::~FrameBuffer565()
 {
+    clear();
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     ::munmap(m_fbp, m_finfo.smem_len);
 
@@ -132,8 +137,8 @@ raspifb16::FrameBuffer565::hideCursor() noexcept
     {
         static const std::string consoleDevice{"/dev/console"};
 
-        m_consolefd = FileDescriptor{::open(consoleDevice.c_str(),
-                                            O_NONBLOCK)};
+        m_consolefd = fd::FileDescriptor{::open(consoleDevice.c_str(),
+                                         O_NONBLOCK)};
 
         if (m_consolefd.fd() == -1)
         {
@@ -144,7 +149,7 @@ raspifb16::FrameBuffer565::hideCursor() noexcept
     {
         auto closeIf = [](int) -> bool { return false; };
 
-        m_consolefd = FileDescriptor{0, closeIf};
+        m_consolefd = fd::FileDescriptor{0, closeIf};
     }
 
     if (m_consolefd.fd() != -1)

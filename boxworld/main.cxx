@@ -149,7 +149,6 @@ main(
         Image565Font8x8 font;
         Joystick js{joystick};
         auto fb{raspifb16::createInterface565(interfaceType, device)};
-        fb->clearBuffers(RGB565{0, 0, 0});
 
         Boxworld boxworld{fitToScreen};
         boxworld.init();
@@ -174,8 +173,6 @@ main(
 
             std::this_thread::sleep_for(250ms);
         }
-
-        fb->clearBuffers();
     }
     catch (std::exception& error)
     {

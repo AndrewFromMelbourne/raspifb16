@@ -100,6 +100,8 @@ public:
     DumbBuffer565(DumbBuffer565&& fb) = delete;
     DumbBuffer565& operator=(DumbBuffer565&& fb) = delete;
 
+    void clearBuffers(uint16_t rgb = 0) override;
+
     [[nodiscard]] int getWidth() const noexcept override { return m_width; }
     [[nodiscard]] int getHeight() const noexcept override { return m_height; }
 
@@ -139,7 +141,7 @@ private:
     int m_width;
     int m_height;
 
-    FileDescriptor m_fd;
+    fd::FileDescriptor m_fd;
 
     std::array<DumbBuffer, 2> m_dbs;
     int m_dbFront;

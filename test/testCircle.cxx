@@ -121,7 +121,6 @@ main(
     try
     {
         auto fb{raspifb16::createInterface565(interfaceType, device)};
-        fb->clearBuffers();
 
         //-----------------------------------------------------------------
 
@@ -139,8 +138,6 @@ main(
         //-----------------------------------------------------------------
 
         std::this_thread::sleep_for(10s);
-
-        fb->clearBuffers();
     }
     catch (std::exception& error)
     {

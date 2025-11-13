@@ -104,7 +104,7 @@ private:
     void process(const struct js_event& event);
     void readConfig();
 
-    FileDescriptor m_joystickFd;
+    fd::FileDescriptor m_joystickFd;
 
     bool m_blocking;
 

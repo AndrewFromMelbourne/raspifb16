@@ -148,10 +148,6 @@ main(
         {
             fb.update();
         }
-
-        //-----------------------------------------------------------------
-
-        fb.clearBuffers();
     }
     catch (std::exception& error)
     {
