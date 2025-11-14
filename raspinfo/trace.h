@@ -132,9 +132,9 @@ protected:
     std::vector<TraceData> m_traceData;
     std::vector<time_t> m_time;
 
-    static const raspifb16::RGB565 sc_foreground;
-    static const raspifb16::RGB565 sc_background;
-    static const raspifb16::RGB565 sc_gridColour;
+    static constexpr raspifb16::RGB565 sc_foreground{255, 255, 255};
+    static constexpr raspifb16::RGB565 sc_background{0, 0, 0};
+    static constexpr raspifb16::RGB565 sc_gridColour{48, 48, 48};
 
 private:
 

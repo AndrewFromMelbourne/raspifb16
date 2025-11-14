@@ -134,8 +134,8 @@ main(
 
         //-----------------------------------------------------------------
 
-        const RGB565 red{255, 0, 0};
-        const RGB565 green{0, 255, 0};
+        constexpr RGB565 red{255, 0, 0};
+        constexpr RGB565 green{0, 255, 0};
 
         fb.clear(red);
         fb.update();
@@ -143,11 +143,16 @@ main(
 
         //-----------------------------------------------------------------
 
+        int count = 0;
         const auto start = std::chrono::steady_clock::now();
+
         while (std::chrono::steady_clock::now() - start < 10s)
         {
+            ++count;
             fb.update();
         }
+
+        std::println("FPS: {}", count / 10.0);
     }
     catch (std::exception& error)
     {

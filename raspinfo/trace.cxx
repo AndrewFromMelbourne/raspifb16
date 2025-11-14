@@ -39,12 +39,6 @@
 
 //-------------------------------------------------------------------------
 
-const raspifb16::RGB565 Trace::sc_foreground{255, 255, 255};
-const raspifb16::RGB565 Trace::sc_background{0, 0, 0};
-const raspifb16::RGB565 Trace::sc_gridColour{48, 48, 48};
-
-//-------------------------------------------------------------------------
-
 Trace::Trace(
     int width,
     int traceHeight,

@@ -142,8 +142,8 @@ main(
 
         //-----------------------------------------------------------------
 
-        const RGB565 red{255, 0, 0};
-        const RGB565 green{0, 255, 0};
+        constexpr RGB565 red{255, 0, 0};
+        constexpr RGB565 green{0, 255, 0};
 
         //-----------------------------------------------------------------
 
@@ -171,8 +171,8 @@ main(
 
         //-----------------------------------------------------------------
 
-        const RGB565 darkBlue{0, 0, 63};
-        const RGB565 white{255, 255, 255};
+        constexpr RGB565 darkBlue{0, 0, 63};
+        constexpr RGB565 white{255, 255, 255};
 
         Image565 textImage(168, 16);
         textImage.clear(darkBlue);

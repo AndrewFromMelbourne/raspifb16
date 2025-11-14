@@ -40,14 +40,16 @@ namespace raspifb16
 
 struct RGB8
 {
-    RGB8(uint8_t r, uint8_t g, uint8_t b)
+    constexpr RGB8(uint8_t r, uint8_t g, uint8_t b)
     :
         red{r},
         green{g},
         blue{b}
     {}
 
-    explicit RGB8(uint32_t rgb)
+    //---------------------------------------------------------------------
+
+    explicit constexpr RGB8(uint32_t rgb)
     :
         red{},
         green{},
@@ -63,6 +65,8 @@ struct RGB8
         blue = (b5 << 3) | (b5 >> 2);
     }
 
+    //---------------------------------------------------------------------
+
     uint8_t red{};
     uint8_t green{};
     uint8_t blue{};
@@ -74,36 +78,90 @@ class RGB565
 {
 public:
 
-    RGB565(uint8_t red, uint8_t green, uint8_t blue) noexcept;
+    constexpr RGB565(uint8_t red, uint8_t green, uint8_t blue) noexcept
+    :
+        m_rgb{rgbTo565(red, green, blue)}
+    {
+    }
+
+    //---------------------------------------------------------------------
 
     explicit RGB565(RGB8 rbg) noexcept;
-    explicit RGB565(uint16_t rgb) noexcept;
+
+    //---------------------------------------------------------------------
+
+    explicit constexpr RGB565(uint16_t rgb) noexcept
+    :
+        m_rgb{rgb}
+    {
+    }
+
+    //---------------------------------------------------------------------
 
     [[nodiscard]] RGB565 blend(uint8_t alpha, const RGB565& background) const noexcept;
 
-    [[nodiscard]] uint8_t getRed() const noexcept;
-    [[nodiscard]] uint8_t getGreen() const noexcept;
-    [[nodiscard]] uint8_t getBlue() const noexcept;
-    [[nodiscard]] RGB8 getRGB8() const noexcept;
-    [[nodiscard]] uint16_t get565() const noexcept { return m_rgb; }
+    //---------------------------------------------------------------------
 
-    [[nodiscard]] bool isGrey() const noexcept
+    [[nodiscard]] constexpr uint8_t getRed() const noexcept
+    {
+        const auto r5 = (m_rgb >> 11) & 0x1F;
+        return (r5 << 3) | (r5 >> 2);
+    }
+
+    //---------------------------------------------------------------------
+
+    [[nodiscard]] constexpr uint8_t getGreen() const noexcept
+    {
+        const auto g6 = (m_rgb >> 5) & 0x3F;
+        return (g6 << 2) | (g6 >> 4);
+    }
+
+    //---------------------------------------------------------------------
+
+    [[nodiscard]] constexpr uint8_t getBlue() const noexcept
+    {
+        const auto b5 = m_rgb & 0x1F;
+        return (b5 << 3) | (b5 >> 2);
+    }
+
+    //---------------------------------------------------------------------
+
+    [[nodiscard]] RGB8 getRGB8() const noexcept;
+    [[nodiscard]] constexpr uint16_t get565() const noexcept { return m_rgb; }
+
+    //---------------------------------------------------------------------
+
+    [[nodiscard]] constexpr bool isGrey() const noexcept
     {
         return (getRed() == getGreen()) and (getGreen() == getBlue());
     }
 
+    //---------------------------------------------------------------------
+
     void setGrey(uint8_t grey) noexcept { setRGB(grey, grey, grey); }
-    void setRGB(uint8_t red, uint8_t green, uint8_t blue) noexcept;
+
+    //---------------------------------------------------------------------
+
+    constexpr void setRGB(uint8_t red, uint8_t green, uint8_t blue) noexcept
+    {
+        m_rgb = rgbTo565(red, green, blue);
+    }
+
+    //---------------------------------------------------------------------
+
     void setRGB8(RGB8 rgb) noexcept;
-    void set565(uint16_t rgb) noexcept { m_rgb = rgb; }
+    constexpr void set565(uint16_t rgb) noexcept { m_rgb = rgb; }
 
     [[nodiscard]] static RGB565 blend(uint8_t alpha, const RGB565& a, const RGB565& b) noexcept;
 
-    [[nodiscard]] static uint16_t rgbTo565(uint8_t red, uint8_t green, uint8_t blue) noexcept
+    //---------------------------------------------------------------------
+
+    [[nodiscard]] constexpr static uint16_t rgbTo565(uint8_t red, uint8_t green, uint8_t blue) noexcept
     {
         return ((red >> 3) << 11) | ((green >> 2) << 5) | (blue >> 3);
     }
 
+    //---------------------------------------------------------------------
 
 private:
 

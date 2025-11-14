@@ -63,7 +63,7 @@ uint8_t alpha32(int alpha)
 
 void fadeFromBlack(Image565& image, int x, int y, const RGB565& rgb)
 {
-    const RGB565 black{0, 0, 0};
+    constexpr RGB565 black{0, 0, 0};
 
     for (int i = 0 ; i < 32 ; ++i)
     {
@@ -76,7 +76,7 @@ void fadeFromBlack(Image565& image, int x, int y, const RGB565& rgb)
 
 void fadeToWhite(Image565& image, int x, int y, const RGB565& rgb)
 {
-    const RGB565 white{255, 255, 255};
+    constexpr RGB565 white{255, 255, 255};
 
     for (int i = 0 ; i < 32 ; ++i)
     {

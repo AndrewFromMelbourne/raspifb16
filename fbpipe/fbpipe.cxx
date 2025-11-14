@@ -119,8 +119,8 @@ main(
     try
     {
         Image565Font8x16 font;
-        const RGB565 black{0, 0, 0};
-        const RGB565 white{255, 255, 255};
+        constexpr RGB565 black{0, 0, 0};
+        constexpr RGB565 white{255, 255, 255};
         auto fb{raspifb16::createInterface565(interfaceType, device)};
 
         const int columns = fb->getWidth() / font.getPixelWidth();

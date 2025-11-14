@@ -129,8 +129,8 @@ main(
 
         //-----------------------------------------------------------------
 
-        const RGB565 darkBlue{0, 0, 63};
-        const RGB565 white{255, 255, 255};
+        constexpr RGB565 darkBlue{0, 0, 63};
+        constexpr RGB565 white{255, 255, 255};
 
         constexpr int width{248};
         constexpr int height{16};

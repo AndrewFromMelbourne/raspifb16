@@ -408,7 +408,7 @@ main(
 
                 image.clear(RGB565{0, 0, 0});
                 Interface565Point position{0, 0};
-                const RGB565 white{255, 255, 255};
+                constexpr RGB565 white{255, 255, 255};
 
                 for (const auto& entry : cells)
                 {

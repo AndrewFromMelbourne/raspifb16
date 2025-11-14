@@ -129,8 +129,8 @@ main(
 
     try
     {
-        const RGB565 black{0, 0, 0};
-        const RGB565 white{255, 255, 255};
+        constexpr RGB565 black{0, 0, 0};
+        constexpr RGB565 white{255, 255, 255};
         auto fb{raspifb16::createInterface565(interfaceType, device)};
 
         Image565 image(fb->getWidth(), fb->getHeight());

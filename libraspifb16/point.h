@@ -39,7 +39,7 @@ class Point
 {
 public:
 
-    Point(
+    constexpr Point(
         T x,
         T y) noexcept
     :
@@ -48,10 +48,10 @@ public:
     {
     }
 
-    [[nodiscard]] T x() const  noexcept{ return m_x; }
-    [[nodiscard]] T y() const  noexcept{ return m_y; }
+    [[nodiscard]] constexpr T x() const  noexcept{ return m_x; }
+    [[nodiscard]] constexpr T y() const  noexcept{ return m_y; }
 
-    void
+    constexpr void
     set(
         T x,
         T y) noexcept
@@ -60,7 +60,7 @@ public:
         m_y = y;
     }
 
-    void
+    constexpr void
     incr(
         T dx,
         T dy) noexcept
@@ -69,27 +69,27 @@ public:
         m_y += dy;
     }
 
-    void
+    constexpr void
     incrX(
         T dx) noexcept
     {
         m_x += dx;
     }
 
-    void
+    constexpr void
     incrY(
         T dy) noexcept
     {
         m_y += dy;
     }
 
-    void setX(
+    constexpr void setX(
         T x) noexcept
     {
         m_x = x;
     }
 
-    void setY(
+    constexpr void setY(
         T y) noexcept
     {
         m_y = y;
