@@ -152,7 +152,10 @@ main(
             fb.update();
         }
 
-        std::println("FPS: {}", count / 10.0);
+        const auto end = std::chrono::steady_clock::now();
+        const auto duration = std::chrono::duration<double>(end - start);
+
+        std::println("FPS: {:.1f}", count / duration.count());
     }
     catch (std::exception& error)
     {
