@@ -81,6 +81,42 @@ private:
 
 //-------------------------------------------------------------------------
 
+void
+rowsRotate(
+    raspifb16::Image565& image,
+    raspifb16::Image565& output,
+    double sinAngle,
+    double cosAngle,
+    int jStart,
+    int jEnd)
+{
+    const auto inputHeight = image.getHeight();
+    const auto outputWidth = output.getWidth();
+
+    const auto y00 = inputHeight * cosAngle;
+
+    for (int j = jStart ; j < jEnd ; ++j)
+    {
+        const auto b = y00 - j;
+
+        for (int i = 0 ; i < outputWidth ; ++i)
+        {
+
+            const auto x = static_cast<int>(floor(i * cosAngle) - (b * sinAngle));
+            const auto y = static_cast<int>(floor((i * sinAngle) + (b * cosAngle)));
+
+            const auto pixel = image.getPixel(Point{x, image.getHeight() - 1 - y});
+
+            if (pixel.has_value())
+            {
+                output.setPixel(Point{i, j}, pixel.value());
+            }
+        }
+    }
+}
+
+//-------------------------------------------------------------------------
+
 }
 
 //=========================================================================
@@ -522,6 +558,180 @@ raspifb16::resizeToNearestNeighbour(
     raspifb16::Image565& output)
 {
     rowsNearestNeighbour(input, output, 0, output.getHeight());
+    return output;
+}
+
+//-------------------------------------------------------------------------
+
+raspifb16::Image565
+raspifb16::rotate(
+    const raspifb16::Interface565& input,
+    uint32_t background,
+    double angle)
+{
+    if (angle >= 360.0)
+    {
+        angle = fmod(angle, 360.0);
+    }
+    else if (angle < 0.0)
+    {
+        angle = 360.0 + fmod(angle, 360.0);
+    }
+
+    // rotate so angle is in the range 0 to 90
+
+    Image565 image;
+
+    if (angle >= 270.0)
+    {
+        image = rotate270(input);
+        angle -= 270.0;
+    }
+    else if (angle >= 180.0)
+    {
+        image = rotate180(input);
+        angle -= 180.0;
+    }
+    else if (angle >= 90.0)
+    {
+        image = rotate90(input);
+        angle -= 90.0;
+    }
+    else
+    {
+        image = Image565(input.getWidth(), input.getHeight(), input.getBuffer());
+    }
+
+    // now angle is in the range 0 to 90
+    if (std::min(angle, 90.0 - angle) < 0.01)
+    {
+        return image;
+    }
+
+    //---------------------------------------------------------------------
+    //
+    // (x0,y0) +-------+ (x1,y0)
+    //         |       |
+    //         |       |
+    //         |       |
+    // (x0,y1) +-------+ (x1,y1)
+    //
+    // x' =  x * cos(angle) + y * sin(angle)
+    // y' = -x * sin(angle) + y * cos(angle)
+    //
+    // x = x' * cos(angle) - y' * sin(angle)
+    // y = x' * sin(angle) + y' * cos(angle)
+    //
+    //---------------------------------------------------------------------
+
+    const auto radians = angle * (std::numbers::pi_v<double> / 180.0);
+    const auto cosAngle = std::cos(radians);
+    const auto sinAngle = std::sin(radians);
+
+    const auto inputWidth = image.getWidth();
+    const auto inputHeight = image.getHeight();
+
+    const auto x10 = (inputWidth * cosAngle) + (inputHeight * sinAngle);
+    const auto y00 = inputHeight * cosAngle;
+    const auto y11 = -(inputWidth * sinAngle);
+
+    const auto outputWidth = static_cast<int>(std::ceil(x10));
+    const auto outputHeight = static_cast<int>(std::ceil(y00 - y11 + 1.0));
+
+    Image565 output{outputWidth, outputHeight};
+    output.clear(background);
+
+#ifdef WITH_BS_THREAD_POOL
+    auto& tPool = threadPool();
+    auto iterateRows = [&image, &output, sinAngle, cosAngle](int start, int end)
+    {
+        rowsRotate(image, output, sinAngle, cosAngle, start, end);
+    };
+
+    tPool.detach_blocks<int>(0, output.getHeight(), iterateRows);
+    tPool.wait();
+#else
+    rowsRotate(image, output, sinAngle, cosAngle, 0, output.getHeight());
+#endif
+
+    return output;
+}
+
+//-------------------------------------------------------------------------
+
+raspifb16::Image565
+raspifb16::rotate90(
+    const raspifb16::Interface565& input)
+{
+    const auto width = input.getWidth();
+    const auto height = input.getHeight();
+    Image565 output{height, width};
+
+    for (auto j = 0 ; j < height ; ++j)
+    {
+        for (auto i = 0 ; i < width ; ++i)
+        {
+            const auto pixel{input.getPixel(Point{i, j})};
+
+            if (pixel.has_value())
+            {
+                output.setPixel(Point{height - j - 1, i}, pixel.value());
+            }
+        }
+    }
+
+    return output;
+}
+
+//-------------------------------------------------------------------------
+
+raspifb16::Image565
+raspifb16::rotate180(
+    const raspifb16::Interface565& input)
+{
+    const auto width = input.getWidth();
+    const auto height = input.getHeight();
+    Image565 output{width, height};
+
+    for (auto j = 0 ; j < height ; ++j)
+    {
+        for (auto i = 0 ; i < width ; ++i)
+        {
+            const auto pixel{input.getPixel(Point{i, j})};
+
+            if (pixel.has_value())
+            {
+                output.setPixel(Point{width - i - 1, height - j - 1}, pixel.value());
+            }
+        }
+    }
+
+    return output;
+}
+
+//-------------------------------------------------------------------------
+
+raspifb16::Image565
+raspifb16::rotate270(
+    const raspifb16::Interface565& input)
+{
+    const auto width = input.getWidth();
+    const auto height = input.getHeight();
+    Image565 output{height, width};
+
+    for (auto j = 0 ; j < height ; ++j)
+    {
+        for (auto i = 0 ; i < width ; ++i)
+        {
+            const auto pixel{input.getPixel(Point{i, j})};
+
+            if (pixel.has_value())
+            {
+                output.setPixel(Point{j, width - i - 1}, pixel.value());
+            }
+        }
+    }
+
     return output;
 }
 

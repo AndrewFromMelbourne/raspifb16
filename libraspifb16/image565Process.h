@@ -89,6 +89,41 @@ resizeToNearestNeighbour(
     Image565& output);
 
 [[nodiscard]] Image565
+rotate(
+    const Interface565& input,
+    uint32_t background,
+    double angle);
+
+[[nodiscard]] inline Image565
+rotate(
+    const Interface565& input,
+    const RGB565& background,
+    double angle)
+{
+    return rotate(input, background.get565(), angle);
+}
+
+[[nodiscard]] inline Image565
+rotate(
+    const Interface565& input,
+    double angle)
+{
+    return rotate(input, 0, angle);
+}
+
+[[nodiscard]] Image565
+rotate90(
+    const Interface565& input);
+
+[[nodiscard]] Image565
+rotate180(
+    const Interface565& input);
+
+[[nodiscard]] Image565
+rotate270(
+    const Interface565& input);
+
+[[nodiscard]] Image565
 scaleUp(
     const Interface565& input,
     uint8_t scale);

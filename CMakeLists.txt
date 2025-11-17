@@ -160,6 +160,12 @@ target_link_libraries(testResize raspifb16
 
 #--------------------------------------------------------------------------
 
+add_executable(testRotate test/testRotate.cxx)
+target_link_libraries(testRotate raspifb16
+                                 ${DRM_LIBRARIES})
+
+#--------------------------------------------------------------------------
+
 if (FREETYPE_FOUND)
 add_executable(testft test/testft.cxx)
 target_link_libraries(testft raspifb16
