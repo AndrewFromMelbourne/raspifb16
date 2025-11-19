@@ -176,8 +176,21 @@ main(
                 (fb->getHeight() - rotated.getHeight()) / 2
             };
 
+            const auto start = std::chrono::steady_clock::now();
             fb->putImage(p, rotated);
-            fb->update();
+            if (not fb->update())
+            {
+                // No Vsync, so add a fake vsync time
+
+                constexpr auto frametime = 10ms;
+                const auto end = std::chrono::steady_clock::now();
+                const auto duration = end - start;
+
+                if (duration < frametime)
+                {
+                    std::this_thread::sleep_for(frametime - duration );
+                }
+            }
         }
     }
     catch (std::exception& error)
