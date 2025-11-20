@@ -32,6 +32,7 @@
 #include <fmt/format.h>
 
 #include <chrono>
+#include <csignal>
 #include <iostream>
 #include <print>
 #include <system_error>
@@ -48,6 +49,29 @@
 
 using namespace raspifb16;
 using namespace std::chrono_literals;
+
+//-------------------------------------------------------------------------
+
+namespace
+{
+volatile static std::sig_atomic_t run = 1;
+}
+
+//-------------------------------------------------------------------------
+
+static void
+signalHandler(
+    int signalNumber)
+{
+    switch (signalNumber)
+    {
+    case SIGINT:
+    case SIGTERM:
+
+        run = 0;
+        break;
+    };
+}
 
 //-------------------------------------------------------------------------
 
@@ -123,6 +147,22 @@ main(
 
     //---------------------------------------------------------------------
 
+    for (auto signal : { SIGINT, SIGTERM })
+    {
+        if (std::signal(signal, signalHandler) == SIG_ERR)
+        {
+            std::println(
+                std::cerr,
+                "Error: installing {} signal handler : {}",
+                strsignal(signal),
+                strerror(errno));
+
+            ::exit(EXIT_FAILURE);
+        }
+    }
+
+    //---------------------------------------------------------------------
+
     try
     {
         auto fb{raspifb16::createInterface565(interfaceType, device)};
@@ -159,7 +199,7 @@ main(
 
         auto degreeChar = font.getCharacterCode(Interface565Font::CharacterCode::DEGREE_SYMBOL).value_or(' ');
 
-        for (int angle = 0; angle < 3600; ++angle)
+        for (int angle = 0; (angle < 3600) and run; ++angle)
         {
             fb->clear(darkGrey);
 
