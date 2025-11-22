@@ -58,6 +58,7 @@ public:
 
     Image565FreeType() = default;
     Image565FreeType(const std::string& fontFile, int pixelSize);
+    explicit Image565FreeType(const FontConfig& fontConfig);
     ~Image565FreeType() override;
 
     Image565FreeType(const Image565FreeType&) = delete;

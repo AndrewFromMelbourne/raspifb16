@@ -56,7 +56,7 @@ printUsage(
     std::println(stream, "");
     std::println(stream, "    --character,-c - index character to draw");
     std::println(stream, "    --device,-d - device to use");
-    std::println(stream, "    --font,-f - font file to use");
+    std::println(stream, "    --font,-f - font file to use[:pixel height]");
     std::println(stream, "    --help,-h - print usage and exit");
     std::println(stream, "    --kmsdrm,-k - use KMS/DRM dumb buffer");
     std::println(stream, "");
@@ -71,7 +71,7 @@ main(
 {
     std::string device{};
     const std::string program{basename(argv[0])};
-    std::string font{};
+    FontConfig fontConfig{};
     uint32_t c{'A'};
     auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
 
@@ -107,7 +107,7 @@ main(
 
         case 'f':
 
-            font = optarg;
+            fontConfig = raspifb16::parseFontConfig(optarg, 32);
 
             break;
 
@@ -135,6 +135,14 @@ main(
 
     //---------------------------------------------------------------------
 
+    if (fontConfig.m_fontFile.empty())
+    {
+        std::println(std::cerr, "Error: Font file must be specfied");
+        exit(EXIT_FAILURE);
+    }
+
+    //---------------------------------------------------------------------
+
     try
     {
         constexpr RGB565 black{0, 0, 0};
@@ -146,7 +154,7 @@ main(
 
         //-----------------------------------------------------------------
 
-        Image565FreeType ft{font, 32};
+        Image565FreeType ft{fontConfig};
         ft.drawWideChar(Interface565Point{0, 0}, c, white, image);
 
         //-----------------------------------------------------------------

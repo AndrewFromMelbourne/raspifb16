@@ -46,4 +46,39 @@ Interface565Font::~Interface565Font()
 
 //-------------------------------------------------------------------------
 
+FontConfig
+parseFontConfig(
+    const std::string_view fontConfigStr,
+    int defaultPixelHeight) noexcept
+{
+    FontConfig config;
+    config.m_pixelHeight = defaultPixelHeight;
+
+    size_t separatorPos = fontConfigStr.find(':');
+
+    if (separatorPos == std::string_view::npos)
+    {
+        config.m_fontFile = std::string(fontConfigStr);
+    }
+    else
+    {
+        config.m_fontFile = std::string(fontConfigStr.substr(0, separatorPos));
+
+        std::string_view pixelHeightStr = fontConfigStr.substr(separatorPos + 1);
+
+        try
+        {
+            config.m_pixelHeight = std::stoi(std::string(pixelHeightStr));
+        }
+        catch (const std::exception&)
+        {
+            // Ignore errors and use default pixel height
+        }
+    }
+
+    return config;
+}
+
+//-------------------------------------------------------------------------
+
 } // namespace raspifb16

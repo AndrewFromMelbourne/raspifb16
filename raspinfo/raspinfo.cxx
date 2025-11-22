@@ -147,7 +147,7 @@ printUsage(
     std::println(stream, "");
     std::println(stream, "    --daemon,-D - start in the background as a daemon");
     std::println(stream, "    --device,-d - device to use");
-    std::println(stream, "    --font,-f - font file to use");
+    std::println(stream, "    --font,-f - font file to use[:pixel height]");
     std::println(stream, "    --help,-h - print usage and exit");
     std::println(stream, "    --kmsdrm,-k - use KMS/DRM dumb buffer");
     std::println(stream, "    --off,-o - do not display at start");
@@ -193,7 +193,7 @@ main(
     std::string pidfile{};
     bool isDaemon{false};
     auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
-    std::string font{};
+    raspifb16::FontConfig fontConfig{};
 
     //---------------------------------------------------------------------
 
@@ -224,7 +224,7 @@ main(
 
         case 'f':
 
-            font = optarg;
+            fontConfig = raspifb16::parseFontConfig(optarg, 16);
 
             break;
 
@@ -331,11 +331,11 @@ main(
 
         std::unique_ptr<raspifb16::Interface565Font> ft{std::make_unique<raspifb16::Image565Font8x16>()};
 
-        if (not font.empty())
+        if (not fontConfig.m_fontFile.empty())
         {
             try
             {
-                ft = std::make_unique<raspifb16::Image565FreeType>(font, 16);
+                ft = std::make_unique<raspifb16::Image565FreeType>(fontConfig);
             }
             catch (std::exception& error)
             {

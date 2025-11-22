@@ -58,6 +58,15 @@ Image565FreeType::Image565FreeType(
 
 //-------------------------------------------------------------------------
 
+Image565FreeType::Image565FreeType(
+    const FontConfig& fontConfig)
+:
+    Image565FreeType(fontConfig.m_fontFile, fontConfig.m_pixelHeight)
+{
+}
+
+//-------------------------------------------------------------------------
+
 Image565FreeType::~Image565FreeType()
 {
     FT_Done_FreeType(m_library);
