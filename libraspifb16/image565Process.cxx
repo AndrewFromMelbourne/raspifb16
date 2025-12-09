@@ -98,14 +98,15 @@ rowsRotate(
     for (int j = jStart ; j < jEnd ; ++j)
     {
         const auto b = y00 - j;
+        const auto bSinAngle = b * sinAngle;
+        const auto bCosAngle = b * cosAngle;
 
         for (int i = 0 ; i < outputWidth ; ++i)
         {
+            const auto x = static_cast<int>(floor(i * cosAngle) - bSinAngle);
+            const auto y = static_cast<int>(floor((i * sinAngle) + bCosAngle));
 
-            const auto x = static_cast<int>(floor(i * cosAngle) - (b * sinAngle));
-            const auto y = static_cast<int>(floor((i * sinAngle) + (b * cosAngle)));
-
-            const auto pixel = image.getPixel(Point{x, image.getHeight() - 1 - y});
+            const auto pixel = image.getPixel(Point{x, inputHeight - 1 - y});
 
             if (pixel.has_value())
             {
