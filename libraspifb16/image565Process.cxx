@@ -68,8 +68,8 @@ public:
     [[nodiscard]] raspifb16::RGB565 average(int count) noexcept
     {
         return raspifb16::RGB565{static_cast<uint8_t>(m_red / count),
-                             static_cast<uint8_t>(m_green / count),
-                             static_cast<uint8_t>(m_blue / count)};
+                                 static_cast<uint8_t>(m_green / count),
+                                 static_cast<uint8_t>(m_blue / count)};
     }
 
 private:
@@ -103,14 +103,48 @@ rowsRotate(
 
         for (int i = 0 ; i < outputWidth ; ++i)
         {
-            const auto x = static_cast<int>(floor(i * cosAngle) - bSinAngle);
-            const auto y = static_cast<int>(floor((i * sinAngle) + bCosAngle));
+            const auto x = (i * cosAngle) - bSinAngle;
+            const auto y = (i * sinAngle) + bCosAngle;
 
-            const auto pixel = image.getPixel(Point{x, inputHeight - 1 - y});
+            const auto x0 = static_cast<int>(floor(x));
+            const auto y0 = static_cast<int>(floor(y));
 
-            if (pixel.has_value())
+            const auto x1 = static_cast<int>(ceil(x));
+            const auto y1 = static_cast<int>(ceil(y));
+
+            const auto pixel00 = image.getPixel(Point{x0, inputHeight - 1 - y0});
+            const auto pixel01 = image.getPixel(Point{x0, inputHeight - 1 - y1});
+            const auto pixel10 = image.getPixel(Point{x1, inputHeight - 1 - y0});
+            const auto pixel11 = image.getPixel(Point{x1, inputHeight - 1 - y1});
+
+            if (pixel00.has_value() and
+                pixel01.has_value() and
+                pixel10.has_value() and
+                pixel11.has_value())
             {
-                output.setPixel(Point{i, j}, pixel.value());
+                const auto xWeight = x - x0;
+                const auto yWeight = y - y0;
+
+                const auto aWeight = (1.0 - xWeight) * (1.0 - yWeight);
+                const auto bWeight = (1.0 - xWeight) * yWeight;
+                const auto cWeight = xWeight * (1.0 - yWeight);
+                const auto dWeight = xWeight * yWeight;
+
+                auto evaluate = [&](const uint8_t raspifb16::RGB8::* channel) -> uint8_t
+                {
+                    double value = raspifb16::RGB8(pixel00.value()).*channel * aWeight
+                                 + raspifb16::RGB8(pixel01.value()).*channel * bWeight
+                                 + raspifb16::RGB8(pixel10.value()).*channel * cWeight
+                                 + raspifb16::RGB8(pixel11.value()).*channel * dWeight;
+
+                    return static_cast<uint8_t>(std::clamp(value, 0.0, 255.0));
+                };
+
+                raspifb16::RGB565 rgb{evaluate(&raspifb16::RGB8::red),
+                                      evaluate(&raspifb16::RGB8::green),
+                                      evaluate(&raspifb16::RGB8::blue)};
+
+                output.setPixel(Point{i, j}, rgb.get565());
             }
         }
     }
