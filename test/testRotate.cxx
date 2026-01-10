@@ -29,10 +29,9 @@
 #include <libgen.h>
 #include <unistd.h>
 
-#include <fmt/format.h>
-
 #include <chrono>
 #include <csignal>
+#include <cstring>
 #include <iostream>
 #include <print>
 #include <system_error>
