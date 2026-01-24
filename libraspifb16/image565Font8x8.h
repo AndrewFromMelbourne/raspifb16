@@ -72,28 +72,28 @@ public:
 
     Interface565Point
     drawChar(
-        const Interface565Point& p,
+        const Interface565Point p,
         uint8_t c,
         const RGB565& rgb,
         Interface565& image) override;
 
     Interface565Point
     drawChar(
-        const Interface565Point& p,
+        const Interface565Point p,
         uint8_t c,
         uint16_t rgb,
         Interface565& image) override;
 
     Interface565Point
     drawString(
-        const Interface565Point& p,
+        const Interface565Point p,
         std::string_view sv,
         const RGB565& rgb,
         Interface565& image) override;
 
     Interface565Point
     drawString(
-        const Interface565Point& p,
+        const Interface565Point p,
         std::string_view sv,
         uint16_t rgb,
         Interface565& image) override;

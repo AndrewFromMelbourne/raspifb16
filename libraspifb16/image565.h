@@ -83,12 +83,10 @@ public:
     [[nodiscard]] uint8_t getNumberOfFrames() const noexcept { return m_numberOfFrames; }
     void setFrame(uint8_t frame) noexcept;
 
-    [[nodiscard]] std::span<const uint16_t> getRow(int y) const noexcept;
-
     [[nodiscard]] std::span<uint16_t> getBuffer() noexcept override { return m_buffer; };
     [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept override { return m_buffer; };
     [[nodiscard]] int getLineLengthPixels() const noexcept override { return m_width; };
-    [[nodiscard]] std::size_t offset(const Interface565Point& p) const noexcept override;
+    [[nodiscard]] std::size_t offset(const Interface565Point p) const noexcept override;
 
 private:
 

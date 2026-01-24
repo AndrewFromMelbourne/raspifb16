@@ -26,13 +26,20 @@ Displays hues at different brightness and saturation.
 Test blending a blue background with a red foreground at alpha value from 0 to 255.
 
 ## testDoubleBuffer
-Test DRM/KMS double buffering by displaying one red and one greem buffer. **WARNING:** causes a strobing effect.
+Test DRM/KMS double buffering by displaying one red and one greem buffer.  
+**WARNING:** causes a strobing effect.
 
 ## testft and testft2
 Tests programs for truetype fonts (Requires Freetype2).
 
+## testLines
+Test line drawing at different angles.
+
 ## testPutimage
 Test putImage function overlapping screen edge.
+
+## testPolygon
+Test polygon drawing functions
 
 ## testResize
 Test image resizing using scale-up, nearest neighbour, bilinear interpolation and Lanczos3 interpolation.

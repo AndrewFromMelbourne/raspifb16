@@ -166,8 +166,8 @@ main(
         {
             font.drawString(t, title, white, *fb);
             fb->putImage(p, image);
-            t.incrY(yStep);
-            p.incrY(yStep);
+            t.translateY(yStep);
+            p.translateY(yStep);
         };
 
         show("Scale up:", imageSu);

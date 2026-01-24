@@ -2,7 +2,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2025 Andrew Duncan
+// Copyright (c) 2026 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -27,9 +27,13 @@
 
 #include <getopt.h>
 #include <libgen.h>
+#include <unistd.h>
 
+#include <array>
 #include <chrono>
+#include <cmath>
 #include <iostream>
+#include <numbers>
 #include <print>
 #include <system_error>
 #include <thread>
@@ -37,6 +41,7 @@
 #include "image565.h"
 #include "image565Graphics.h"
 #include "interface565Factory.h"
+#include "point.h"
 
 //-------------------------------------------------------------------------
 
@@ -121,42 +126,66 @@ main(
     {
         auto fb{raspifb16::createInterface565(interfaceType, device)};
 
-        //-----------------------------------------------------------------
+        const int fheight = fb->getHeight();
+        const int fwidth = fb->getWidth();
 
-        constexpr RGB565 red{255, 0, 0};
+        constexpr RGB565 white{255, 255, 255};
+        constexpr RGB565 grey(192, 192, 192);
         constexpr RGB565 black{0, 0, 0};
-        constexpr RGB565 blue{0, 0, 255};
+
+        fb->clearBuffers(grey);
 
         //-----------------------------------------------------------------
 
-        const auto side = std::min(fb->getWidth(), fb->getHeight());
-        const auto boxSide = (side - 15) / 16;
-        const auto dimension = (boxSide * 16) + 15;
+        const int diameter = std::min(fwidth, fheight) / 4;
+        const int radius = (diameter / 2) - 5;
 
-        Image565 image{dimension, dimension};
-        image.clear(black);
+        //-----------------------------------------------------------------
 
-        uint8_t alpha{0};
-
-        for (int j = 0 ; j < 16 ; ++j)
+        auto starVertex = [](int i, int r, int x, int y) -> Interface565Point
         {
-            const auto y = j * (boxSide + 1);
-            for (int i = 0 ; i < 16 ; ++i)
+            constexpr auto pi = std::numbers::pi;
+            constexpr auto phi = std::numbers::phi;
+            const auto sinValue = std::sin((i * pi) / 5.0);
+            const auto cosValue = std::cos((i * pi) / 5.0);
+            const auto radius = (i % 2 == 0) ? r : (r * (2 - phi));
+            return Interface565Point{
+                x + static_cast<int>(std::round(radius * sinValue)),
+                y - static_cast<int>(std::round(radius * cosValue))
+            };
+        };
+
+        //-----------------------------------------------------------------
+
+        const int jIncrement = fheight / 4;
+        const int iIncrement = fwidth / 4;
+
+        for (int j = 0; j <= fheight; j += jIncrement)
+        {
+            const int index = j / jIncrement;
+            const int startI = (index % 2 == 0) ? 0 : (iIncrement / 2);
+            for (int i = startI; i <= fwidth; i += iIncrement)
             {
-                const auto x = i * (boxSide + 1);
-                const Interface565Point p1{x, y};
-                const Interface565Point p2{x + boxSide - 1,
-                                           y + boxSide - 1};
+                const std::array<Interface565Point, 10> starVertices{
+                    starVertex(0, radius, i, j),
+                    starVertex(1, radius, i, j),
+                    starVertex(2, radius, i, j),
+                    starVertex(3, radius, i, j),
+                    starVertex(4, radius, i, j),
+                    starVertex(5, radius, i, j),
+                    starVertex(6, radius, i, j),
+                    starVertex(7, radius, i, j),
+                    starVertex(8, radius, i, j),
+                    starVertex(9, radius, i, j)
+                };
 
-                boxFilled(image, p1, p2, red.blend(alpha, blue));
-
-                ++alpha;
+                polygonFilled(*fb, starVertices, white);
+                polygon(*fb, starVertices, black);
             }
         }
 
         //-----------------------------------------------------------------
 
-        fb->putImage(center(*fb, image), image);
         fb->update();
 
         //-----------------------------------------------------------------
@@ -171,4 +200,3 @@ main(
 
     return 0;
 }
-

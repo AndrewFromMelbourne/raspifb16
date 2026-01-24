@@ -4693,7 +4693,7 @@ Image565Font8x16::getCharacterCode(Interface565Font::CharacterCode code) const n
 
 Interface565Point
 Image565Font8x16::drawChar(
-    const Interface565Point& p,
+    const Interface565Point p,
     uint8_t c,
     const RGB565& rgb,
     Interface565& image)
@@ -4705,7 +4705,7 @@ Image565Font8x16::drawChar(
 
 Interface565Point
 Image565Font8x16::drawChar(
-    const Interface565Point& p,
+    const Interface565Point p,
     uint8_t c,
     uint16_t rgb,
     Interface565& image)
@@ -4737,7 +4737,7 @@ Image565Font8x16::drawChar(
 
 Interface565Point
 Image565Font8x16::drawString(
-    const Interface565Point& p,
+    const Interface565Point p,
     std::string_view sv,
     const RGB565& rgb,
     Interface565& image)
@@ -4749,7 +4749,7 @@ Image565Font8x16::drawString(
 
 Interface565Point
 Image565Font8x16::drawString(
-    const Interface565Point& p,
+    const Interface565Point p,
     std::string_view sv,
     uint16_t rgb,
     Interface565& image)

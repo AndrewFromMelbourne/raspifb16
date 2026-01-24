@@ -30,6 +30,7 @@
 //-------------------------------------------------------------------------
 
 #include <cstdint>
+#include <span>
 
 #include "image565.h"
 #include "point.h"
@@ -44,83 +45,83 @@ namespace raspifb16
 
 void
 box(
-    Interface565& image,
-    const Interface565Point& p1,
-    const Interface565Point& p2,
+    Interface565& iface,
+    Interface565Point p1,
+    Interface565Point p2,
     uint16_t rgb);
 
 inline void
 box(
-    Interface565& image,
-    const Interface565Point& p1,
-    const Interface565Point& p2,
+    Interface565& iface,
+    Interface565Point p1,
+    Interface565Point p2,
     const RGB565& rgb)
 {
-    box(image, p1, p2, rgb.get565());
+    box(iface, p1, p2, rgb.get565());
 }
 
 //-------------------------------------------------------------------------
 
 void
 boxFilled(
-    Interface565& image,
-    const Interface565Point& p1,
-    const Interface565Point& p2,
+    Interface565& iface,
+    Interface565Point p1,
+    Interface565Point p2,
     uint16_t rgb);
 
 inline void
 boxFilled(
-    Interface565& image,
-    const Interface565Point& p1,
-    const Interface565Point& p2,
+    Interface565& iface,
+    Interface565Point p1,
+    Interface565Point p2,
     const RGB565& rgb)
 {
-    boxFilled(image, p1, p2, rgb.get565());
+    boxFilled(iface, p1, p2, rgb.get565());
 }
 
 void
 boxFilled(
-    Interface565& image,
-    const Interface565Point& p1,
-    const Interface565Point& p2,
+    Interface565& iface,
+    Interface565Point p1,
+    Interface565Point p2,
     const RGB565& rgb,
     uint8_t alpha);
 
 inline void
 boxFilled(
-        Interface565& image,
-        const Interface565Point& p1,
-        const Interface565Point& p2,
+        Interface565& iface,
+        Interface565Point p1,
+        Interface565Point p2,
         uint16_t rgb,
         uint8_t alpha)
 {
-    boxFilled(image, p1, p2, RGB565{rgb}, alpha);
+    boxFilled(iface, p1, p2, RGB565{rgb}, alpha);
 }
 
 //-------------------------------------------------------------------------
 
 void
 line(
-    Interface565& image,
-    const Interface565Point& p1,
-    const Interface565Point& p2,
+    Interface565& iface,
+    Interface565Point p1,
+    Interface565Point p2,
     uint16_t rgb);
 
 inline void
 line(
-    Interface565& image,
-    const Interface565Point& p1,
-    const Interface565Point& p2,
+    Interface565& iface,
+    Interface565Point p1,
+    Interface565Point p2,
     const RGB565& rgb)
 {
-    line(image, p1, p2, rgb.get565());
+    line(iface, p1, p2, rgb.get565());
 }
 
 //-------------------------------------------------------------------------
 
 void
 horizontalLine(
-    Interface565& image,
+    Interface565& iface,
     int x1,
     int x2,
     int y,
@@ -128,20 +129,20 @@ horizontalLine(
 
 inline void
 horizontalLine(
-    Interface565& image,
+    Interface565& iface,
     int x1,
     int x2,
     int y,
     const RGB565& rgb)
 {
-    horizontalLine(image, x1, x2, y, rgb.get565());
+    horizontalLine(iface, x1, x2, y, rgb.get565());
 }
 
 //-------------------------------------------------------------------------
 
 void
 verticalLine(
-    Interface565& image,
+    Interface565& iface,
     int x,
     int y1,
     int y2,
@@ -149,56 +150,105 @@ verticalLine(
 
 inline void
 verticalLine(
-    Interface565& image,
+    Interface565& iface,
     int x,
     int y1,
     int y2,
     const RGB565& rgb)
 {
-    verticalLine(image, x, y1, y2, rgb.get565());
+    verticalLine(iface, x, y1, y2, rgb.get565());
 }
 
 //-------------------------------------------------------------------------
 
 void
 circle(
-    Interface565& image,
-    const Interface565Point& p,
+    Interface565& iface,
+    Interface565Point p,
     int r,
     uint16_t rgb);
 
 inline void
 circle(
-    Interface565& image,
-    const Interface565Point& p,
+    Interface565& iface,
+    Interface565Point p,
     int r,
     const RGB565& rgb)
 {
-    circle(image, p, r, rgb.get565());
+    circle(iface, p, r, rgb.get565());
 }
 
 //-------------------------------------------------------------------------
 
 void
 circleFilled(
-    Interface565& image,
-    const Interface565Point& p,
+    Interface565& iface,
+    Interface565Point p,
     int r,
     uint16_t rgb);
 
 inline void
 circleFilled(
-    Interface565& image,
-    const Interface565Point& p,
+    Interface565& iface,
+    Interface565Point p,
     int r,
     const RGB565& rgb)
 {
-    circleFilled(image, p, r, rgb.get565());
+    circleFilled(iface, p, r, rgb.get565());
+}
+
+//-------------------------------------------------------------------------
+
+void
+polygon(
+    Interface565& iface,
+    std::span<const Interface565Point> vertices,
+    uint16_t rgb);
+
+inline void
+polygon(
+    Interface565& iface,
+    std::span<const Interface565Point> vertices,
+    const RGB565& rgb)
+{
+    polygon(iface, vertices, rgb.get565());
+}
+
+//-------------------------------------------------------------------------
+
+void
+polygonFilled(
+    Interface565& iface,
+    std::span<const Interface565Point> vertices,
+    uint16_t rgb);
+
+inline void
+polygonFilled(
+    Interface565& iface,
+    std::span<const Interface565Point> vertices,
+    const RGB565& rgb)
+{
+    polygonFilled(iface, vertices, rgb.get565());
+}
+
+//-------------------------------------------------------------------------
+
+void
+polyline(
+    Interface565& iface,
+    std::span<const Interface565Point> vertices,
+    uint16_t rgb);
+
+inline void
+polyline(
+    Interface565& iface,
+    std::span<const Interface565Point> vertices,
+    const RGB565& rgb)
+{
+    polyline(iface, vertices, rgb.get565());
 }
 
 //-------------------------------------------------------------------------
 
 } // namespace raspifb16
-
-//-------------------------------------------------------------------------
 

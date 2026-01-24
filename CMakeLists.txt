@@ -142,6 +142,12 @@ target_link_libraries(testColour raspifb16
 
 #--------------------------------------------------------------------------
 
+add_executable(testColourBlend test/testColourBlend.cxx)
+target_link_libraries(testColourBlend raspifb16
+                                      ${DRM_LIBRARIES})
+
+#--------------------------------------------------------------------------
+
 add_executable(testDoubleBuffer test/testDoubleBuffer.cxx)
 target_link_libraries(testDoubleBuffer raspifb16
                                        ${DRM_LIBRARIES})
@@ -151,6 +157,18 @@ target_link_libraries(testDoubleBuffer raspifb16
 add_executable(testPutImage test/testPutImage.cxx)
 target_link_libraries(testPutImage raspifb16
                                    ${DRM_LIBRARIES})
+
+#--------------------------------------------------------------------------
+
+add_executable(testLines test/testLines.cxx)
+target_link_libraries(testLines raspifb16
+                                ${DRM_LIBRARIES})
+
+#--------------------------------------------------------------------------
+
+add_executable(testPolygon test/testPolygon.cxx)
+target_link_libraries(testPolygon raspifb16
+                                  ${DRM_LIBRARIES})
 
 #--------------------------------------------------------------------------
 

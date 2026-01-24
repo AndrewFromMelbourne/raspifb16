@@ -79,7 +79,7 @@ public:
     [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept override { return {m_fbp, getBufferSize()}; }
     [[nodiscard]] std::size_t getBufferSize() const noexcept { return m_lineLengthPixels * getHeight(); }
     [[nodiscard]] int getLineLengthPixels() const noexcept override { return m_lineLengthPixels; }
-    [[nodiscard]] std::size_t offset(const Interface565Point& p) const noexcept override;
+    [[nodiscard]] std::size_t offset(const Interface565Point p) const noexcept override;
 
 private:
 

@@ -61,7 +61,7 @@ public:
     }
 
     constexpr void
-    incr(
+    translate(
         T dx,
         T dy) noexcept
     {
@@ -70,14 +70,14 @@ public:
     }
 
     constexpr void
-    incrX(
+    translateX(
         T dx) noexcept
     {
         m_x += dx;
     }
 
     constexpr void
-    incrY(
+    translateY(
         T dy) noexcept
     {
         m_y += dy;

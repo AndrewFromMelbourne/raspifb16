@@ -204,7 +204,7 @@ raspifb16::DumbBuffer565::getLineLengthPixels() const noexcept
 
 std::size_t
 raspifb16::DumbBuffer565::offset(
-    const Interface565Point& p) const noexcept
+    const Interface565Point p) const noexcept
 {
     const auto& dbb = m_dbs[m_dbBack];
     return p.x() + p.y() * dbb.m_lineLengthPixels;

@@ -2,7 +2,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2025 Andrew Duncan
+// Copyright (c) 2024 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -29,6 +29,7 @@
 #include <libgen.h>
 
 #include <chrono>
+#include <cmath>
 #include <iostream>
 #include <print>
 #include <system_error>
@@ -37,6 +38,7 @@
 #include "image565.h"
 #include "image565Graphics.h"
 #include "interface565Factory.h"
+#include "point.h"
 
 //-------------------------------------------------------------------------
 
@@ -123,40 +125,41 @@ main(
 
         //-----------------------------------------------------------------
 
-        constexpr RGB565 red{255, 0, 0};
-        constexpr RGB565 black{0, 0, 0};
-        constexpr RGB565 blue{0, 0, 255};
+        constexpr RGB565 white{255, 255, 255};
+
+        const auto halfWidth = fb->getWidth() / 2;
+        const auto halfHeight = fb->getHeight() / 2;
+
+        const auto outerRadius = static_cast<int>(std::hypot(halfWidth,
+                                                             halfHeight));
+        constexpr auto innerRadius = 25;
 
         //-----------------------------------------------------------------
 
-        const auto side = std::min(fb->getWidth(), fb->getHeight());
-        const auto boxSide = (side - 15) / 16;
-        const auto dimension = (boxSide * 16) + 15;
+        constexpr auto lines = 32;
 
-        Image565 image{dimension, dimension};
-        image.clear(black);
-
-        uint8_t alpha{0};
-
-        for (int j = 0 ; j < 16 ; ++j)
+        for (auto i = 0; i < lines; ++i)
         {
-            const auto y = j * (boxSide + 1);
-            for (int i = 0 ; i < 16 ; ++i)
-            {
-                const auto x = i * (boxSide + 1);
-                const Interface565Point p1{x, y};
-                const Interface565Point p2{x + boxSide - 1,
-                                           y + boxSide - 1};
+            const raspifb16::Interface565Point center{ halfWidth, halfHeight };
 
-                boxFilled(image, p1, p2, red.blend(alpha, blue));
+            const auto sinValue = std::sin((i * 2.0 * M_PI) / lines);
+            const auto cosValue = std::cos((i * 2.0 * M_PI) / lines);
 
-                ++alpha;
-            }
+            raspifb16::Interface565Point inner{
+                center.x() + static_cast<int>(innerRadius * sinValue),
+                center.y() - static_cast<int>(innerRadius * cosValue)
+            };
+
+            raspifb16::Interface565Point outer{
+                center.x() + static_cast<int>(outerRadius * sinValue),
+                center.y() - static_cast<int>(outerRadius * cosValue)
+            };
+
+            raspifb16::line(*fb, inner, outer, white);
         }
 
         //-----------------------------------------------------------------
 
-        fb->putImage(center(*fb, image), image);
         fb->update();
 
         //-----------------------------------------------------------------
@@ -171,4 +174,3 @@ main(
 
     return 0;
 }
-

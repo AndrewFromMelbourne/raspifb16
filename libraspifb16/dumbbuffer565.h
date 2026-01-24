@@ -112,7 +112,7 @@ public:
     [[nodiscard]] int getLineLengthPixels() const noexcept override;
     [[nodiscard]] bool hasAtomic() const noexcept { return m_hasAtomic; }
     [[nodiscard]] bool hasUniversalPlanes() const noexcept { return m_hasUniversalPlanes; }
-    [[nodiscard]] std::size_t offset(const Interface565Point& p) const noexcept override;
+    [[nodiscard]] std::size_t offset(const Interface565Point p) const noexcept override;
 
     bool update() override;
 

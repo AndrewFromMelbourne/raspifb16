@@ -105,27 +105,9 @@ raspifb16::Image565::setFrame(
 
 //-------------------------------------------------------------------------
 
-std::span<const uint16_t>
-raspifb16::Image565::getRow(
-    int y) const noexcept
-{
-    const Interface565Point p{0, y};
-
-    if (validPixel(p))
-    {
-        return  getBuffer().subspan(offset(p), m_width);
-    }
-    else
-    {
-        return {};
-    }
-}
-
-//-------------------------------------------------------------------------
-
 std::size_t
 raspifb16::Image565::offset(
-    const Interface565Point& p) const noexcept
+    const Interface565Point p) const noexcept
 {
     return p.x() + (p.y() * m_width) + (m_frame * m_width * m_height);
 }

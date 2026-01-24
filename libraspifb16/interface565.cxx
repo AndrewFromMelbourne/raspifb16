@@ -67,7 +67,7 @@ raspifb16::Interface565::clearBuffers(uint16_t rgb)
 
 bool
 raspifb16::Interface565::setPixel(
-    const Interface565Point& p,
+    const Interface565Point p,
     uint16_t rgb)
 {
     bool isValid{validPixel(p)};
@@ -84,7 +84,7 @@ raspifb16::Interface565::setPixel(
 
 std::optional<raspifb16::RGB565>
 raspifb16::Interface565::getPixelRGB(
-    const Interface565Point& p) const
+    const Interface565Point p) const
 {
     if (not validPixel(p))
     {
@@ -98,7 +98,7 @@ raspifb16::Interface565::getPixelRGB(
 
 std::optional<raspifb16::RGB8>
 raspifb16::Interface565::getPixelRGB8(
-    const Interface565Point& p) const
+    const Interface565Point p) const
 {
     if (not validPixel(p))
     {
@@ -112,7 +112,7 @@ raspifb16::Interface565::getPixelRGB8(
 
 std::optional<uint16_t>
 raspifb16::Interface565::getPixel(
-    const Interface565Point& p) const
+    const Interface565Point p) const
 {
     if (not validPixel(p))
     {
@@ -121,12 +121,47 @@ raspifb16::Interface565::getPixel(
 
     return *(getBuffer().data() + offset(p));
 }
+//-------------------------------------------------------------------------
+
+std::span<uint16_t>
+raspifb16::Interface565::getRow(
+    int y)
+{
+    const Interface565Point p{0, y};
+
+    if (validPixel(p))
+    {
+        return  getBuffer().subspan(offset(p), getWidth());
+    }
+    else
+    {
+        return {};
+    }
+}
+
+//-------------------------------------------------------------------------
+
+std::span<const uint16_t>
+raspifb16::Interface565::getRow(
+    int y) const
+{
+    const Interface565Point p{0, y};
+
+    if (validPixel(p))
+    {
+        return  getBuffer().subspan(offset(p), getWidth());
+    }
+    else
+    {
+        return {};
+    }
+}
 
 //-------------------------------------------------------------------------
 
 bool
 raspifb16::Interface565::putImage(
-    const Interface565Point& p,
+    const Interface565Point p,
     const Image565& image)
 {
     if ((p.x() < 0) or
@@ -156,7 +191,7 @@ raspifb16::Interface565::putImage(
 
 bool
 raspifb16::Interface565::putImagePartial(
-    const Interface565Point& p,
+    const Interface565Point p,
     const Image565& image)
 {
     auto x = p.x();
