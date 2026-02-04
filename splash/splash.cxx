@@ -72,7 +72,7 @@ main(
     int argc,
     char *argv[])
 {
-    std::string device{};
+    std::string device{defaultDevice};
     const std::string program{basename(argv[0])};
     std::string qoi{};
     auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};

@@ -60,10 +60,10 @@ public:
     Image565Font8x16() = default;
     ~Image565Font8x16() override = default;
 
-    Image565Font8x16(const Image565Font8x16&) = default;
-    Image565Font8x16(Image565Font8x16&&) = default;
-    Image565Font8x16& operator=(const Image565Font8x16&) = default;
-    Image565Font8x16& operator=(Image565Font8x16&&) = default;
+    Image565Font8x16(const Image565Font8x16&) = delete;
+    Image565Font8x16(Image565Font8x16&&) = delete;
+    Image565Font8x16& operator=(const Image565Font8x16&) = delete;
+    Image565Font8x16& operator=(Image565Font8x16&&) = delete;
 
     [[nodiscard]] int getPixelHeight() const noexcept override;
     [[nodiscard]] int getPixelWidth() const noexcept override;

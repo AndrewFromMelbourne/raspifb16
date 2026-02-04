@@ -57,12 +57,6 @@ public:
     Interface565();
     virtual ~Interface565() = 0;
 
-    Interface565(const Interface565&) = default;
-    Interface565(Interface565&&) = delete;
-
-    Interface565& operator=(const Interface565&) = default;
-    Interface565& operator=(Interface565&&) = delete;
-
     [[nodiscard]] virtual int getWidth() const noexcept = 0;
     [[nodiscard]] virtual int getHeight() const noexcept = 0;
 
