@@ -44,6 +44,7 @@
 #include <cstring>
 #include <exception>
 #include <iostream>
+#include <map>
 #include <memory>
 #include <print>
 #include <thread>
@@ -85,39 +86,32 @@ messageLog(
     }
     else
     {
-        std::println(std::cerr, "{}[{}]:", name, getpid());
+        const auto now = floor<std::chrono::seconds>(std::chrono::system_clock::now());
+        const auto localTime = std::chrono::current_zone()->to_local(now);
 
-        switch (priority)
+        std::print(std::cerr, "{:%b %e %T} ", localTime);
+        std::print(std::cerr, "{} ", "localhost");
+        std::print(std::cerr, "{}[{}]:", name, getpid());
+
+        const static std::map<int, std::string> priorityMap
         {
-        case LOG_DEBUG:
+            { LOG_EMERG, "emergency" },
+            { LOG_ALERT, "alert" },
+            { LOG_CRIT, "critical" },
+            { LOG_ERR, "error" },
+            { LOG_WARNING, "warning" },
+            { LOG_NOTICE, "notice" },
+            { LOG_INFO, "info" },
+            { LOG_DEBUG, "debug" }
+        };
 
-            std::println(std::cerr, "debug");
-            break;
-
-        case LOG_INFO:
-
-            std::println(std::cerr, "info");
-            break;
-
-        case LOG_NOTICE:
-
-            std::println(std::cerr, "notice");
-            break;
-
-        case LOG_WARNING:
-
-            std::println(std::cerr, "warning");
-            break;
-
-        case LOG_ERR:
-
-            std::println(std::cerr, "error");
-            break;
-
-        default:
-
-            std::println(std::cerr, "unknown({})", priority);
-            break;
+        if (const auto it = priorityMap.find(priority); it != priorityMap.end())
+        {
+            std::print(std::cerr, "{}", it->second);
+        }
+        else
+        {
+            std::print(std::cerr, "unknown({})", priority);
         }
 
         std::println(std::cerr, ":{}", message);
@@ -151,7 +145,7 @@ printUsage(
     std::println(stream, "    --help,-h - print usage and exit");
     std::println(stream, "    --kmsdrm,-k - use KMS/DRM dumb buffer");
     std::println(stream, "    --off,-o - do not display at start");
-    std::println(stream, "    --pidstream,-p <pidfile> - create and lock PID file");
+    std::println(stream, "    --pidfile,-p <pidfile> - create and lock PID file");
     std::println(stream, "");
 }
 
