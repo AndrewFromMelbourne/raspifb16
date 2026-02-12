@@ -32,6 +32,7 @@ find_package(Freetype)
 find_package(Libiw)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(DRM QUIET libdrm)
+pkg_check_modules(BSD REQUIRED libbsd)
 
 #--------------------------------------------------------------------------
 
@@ -96,6 +97,7 @@ target_link_libraries(puzzle-15 raspifb16
 
 #--------------------------------------------------------------------------
 
+if (BSD_FOUND AND FREETYPE_FOUND)
 add_executable(raspinfo raspinfo/raspinfo.cxx
                         raspinfo/cpuTrace.cxx
                         raspinfo/dynamicInfo.cxx
@@ -109,12 +111,13 @@ add_executable(raspinfo raspinfo/raspinfo.cxx
                         raspinfo/traceStack.cxx)
 
 target_link_libraries(raspinfo raspifb16
-                               -lbsd
+                               ${BSD_LIBRARIES}
                                ${FREETYPE_LIBRARIES}
                                ${DRM_LIBRARIES})
 
 set_property(TARGET raspinfo PROPERTY SKIP_BUILD_RPATH TRUE)
 install (TARGETS raspinfo RUNTIME DESTINATION bin)
+endif()
 
 #--------------------------------------------------------------------------
 
