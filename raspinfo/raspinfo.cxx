@@ -43,10 +43,12 @@
 #include <cstdint>
 #include <cstring>
 #include <exception>
+#include <filesystem>
 #include <iostream>
 #include <map>
 #include <memory>
 #include <print>
+#include <string>
 #include <thread>
 #include <vector>
 
@@ -58,6 +60,7 @@
 #include "interface565Factory.h"
 #include "memoryTrace.h"
 #include "networkTrace.h"
+#include "raspinfo.h"
 
 //-------------------------------------------------------------------------
 
@@ -65,24 +68,143 @@ using namespace std::chrono_literals;
 
 //-------------------------------------------------------------------------
 
-namespace
+RaspInfo::RaspInfo(
+    std::atomic<bool>* display,
+    std::atomic<bool>* run)
+:
+    m_device{},
+    m_display{display},
+    m_fb{nullptr},
+    m_font{nullptr},
+    m_fontConfig{},
+    m_hostname{},
+    m_isDaemon{false},
+    m_interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565},
+    m_panels{},
+    m_pidFile{},
+    m_programName{},
+    m_run{run}
 {
-volatile static std::sig_atomic_t run{1};
-volatile static std::sig_atomic_t display{1};
+}
+
+//-------------------------------------------------------------------------
+
+pidFile_ptr
+RaspInfo::daemonize()
+{
+    pidFile_ptr pfh{nullptr, &pidfile_remove};
+
+    if (not m_pidFile.empty())
+    {
+        pid_t otherpid;
+        pfh.reset(::pidfile_open(m_pidFile.c_str(), 0600, &otherpid));
+
+        if (not pfh)
+        {
+            messageLog(
+                LOG_ERR,
+                std::format(
+                    "{} is already running with pid {}",
+                    m_programName,
+                    otherpid));
+            ::exit(EXIT_FAILURE);
+        }
+    }
+
+    if (::daemon(0, 0) == -1)
+    {
+        messageLog(LOG_ERR, "Cannot daemonize");
+        ::exit(EXIT_FAILURE);
+    }
+
+    if (pfh)
+    {
+        ::pidfile_write(pfh.get());
+    }
+
+    return pfh;
+}
+
+//-------------------------------------------------------------------------
+
+std::string
+RaspInfo::getHostname()
+{
+    char hostname[256];
+    if (::gethostname(hostname, sizeof(hostname)) == 0)
+    {
+        return hostname;
+    }
+    else
+    {
+        perrorLog("Error getting hostname");
+        return "localhost";
+    }
 }
 
 //-------------------------------------------------------------------------
 
 void
-messageLog(
-    bool isDaemon,
-    const std::string& name,
-    int priority,
-    const std::string& message)
+RaspInfo::init()
 {
-    if (isDaemon)
+    setFontConfig();
+
+    m_fb = raspifb16::createInterface565(m_interfaceType, m_device);
+    m_fb->clearBuffers();
+
+    //---------------------------------------------------------------------
+
+    const int traceHeight = (m_fb->getHeight() == 240) ? 80 : 100;
+    const int gridHeight = traceHeight / 5;
+
+    m_panels.push_back(
+        std::make_unique<DynamicInfo>(m_fb->getWidth(),
+                                      m_font->getPixelHeight(),
+                                      panelTop()));
+
+    m_panels.push_back(
+        std::make_unique<CpuTrace>(m_fb->getWidth(),
+                                   traceHeight,
+                                   m_font->getPixelHeight(),
+                                   panelTop(),
+                                   gridHeight));
+
+    m_panels.push_back(
+        std::make_unique<MemoryTrace>(m_fb->getWidth(),
+                                       traceHeight,
+                                       m_font->getPixelHeight(),
+                                       panelTop(),
+                                       gridHeight));
+
+    if (m_fb->getHeight() >= 400)
     {
-        ::syslog(LOG_MAKEPRI(LOG_USER, priority), "%s", message.c_str());
+        m_panels.push_back(
+            std::make_unique<NetworkTrace>(m_fb->getWidth(),
+                                           traceHeight,
+                                           m_font->getPixelHeight(),
+                                           panelTop(),
+                                           gridHeight));
+    }
+
+    //-----------------------------------------------------------------
+
+    for (auto& panel : m_panels)
+    {
+        panel->init(*m_font);
+    }
+}
+
+//-------------------------------------------------------------------------
+
+void
+RaspInfo::messageLog(
+    int priority,
+    std::string_view message)
+{
+    if (m_isDaemon)
+    {
+        std::string messageStr{message};
+        ::syslog(LOG_MAKEPRI(LOG_USER, priority), "%s", messageStr.c_str());
     }
     else
     {
@@ -90,8 +212,8 @@ messageLog(
         const auto localTime = std::chrono::current_zone()->to_local(now);
 
         std::print(std::cerr, "{:%b %e %T} ", localTime);
-        std::print(std::cerr, "{} ", "localhost");
-        std::print(std::cerr, "{}[{}]:", name, getpid());
+        std::print(std::cerr, "{} ", m_hostname);
+        std::print(std::cerr, "{}[{}]:", m_programName, getpid());
 
         const static std::map<int, std::string> priorityMap
         {
@@ -120,77 +242,26 @@ messageLog(
 
 //-------------------------------------------------------------------------
 
-void
-perrorLog(
-    bool isDaemon,
-    const std::string& name,
-    const std::string& s)
-{
-    messageLog(isDaemon, name, LOG_ERR, s + " - " + ::strerror(errno));
-}
-
-//-------------------------------------------------------------------------
-
-void
-printUsage(
-    std::ostream& stream,
-    const std::string& name)
-{
-    std::println(stream, "");
-    std::println(stream, "Usage: {}", name);
-    std::println(stream, "");
-    std::println(stream, "    --daemon,-D - start in the background as a daemon");
-    std::println(stream, "    --device,-d - device to use");
-    std::println(stream, "    --font,-f - font file to use[:pixel height]");
-    std::println(stream, "    --help,-h - print usage and exit");
-    std::println(stream, "    --kmsdrm,-k - use KMS/DRM dumb buffer");
-    std::println(stream, "    --off,-o - do not display at start");
-    std::println(stream, "    --pidfile,-p <pidfile> - create and lock PID file");
-    std::println(stream, "");
-}
-
-//-------------------------------------------------------------------------
-
-static void
-signalHandler(
-    int signalNumber) noexcept
-{
-    switch (signalNumber)
-    {
-    case SIGINT:
-    case SIGTERM:
-
-        run = 0;
-        break;
-
-    case SIGUSR1:
-
-        display = 0;
-        break;
-
-    case SIGUSR2:
-
-        display = 1;
-        break;
-    };
-}
-
-//-------------------------------------------------------------------------
-
 int
-main(
-    int argc,
-    char *argv[])
+RaspInfo::panelTop() const
 {
-    std::string device{};
-    const std::string program{basename(argv[0])};
-    std::string pidfile{};
-    bool isDaemon{false};
-    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
-    raspifb16::FontConfig fontConfig{};
+    if (m_panels.empty())
+    {
+        return 0;
+    }
+    else
+    {
+        return m_panels.back()->getBottom();
+    }
+}
 
-    //---------------------------------------------------------------------
+//-------------------------------------------------------------------------
 
+std::optional<int>
+RaspInfo::parseCommandLine(
+    int argc,
+    char* argv[])
+{
     static const char* sopts = "d:f:hp:kD";
     static option lopts[] =
     {
@@ -212,230 +283,153 @@ main(
         {
         case 'd':
 
-            device = optarg;
-
+            m_device = optarg;
             break;
 
         case 'f':
 
-            fontConfig = raspifb16::parseFontConfig(optarg, 16);
-
+            m_fontConfig = raspifb16::parseFontConfig(optarg, 16);
             break;
 
         case 'h':
 
-            printUsage(std::cout, program);
-            ::exit(EXIT_SUCCESS);
-
-            break;
+            printUsage(std::cout);
+            return EXIT_SUCCESS;
 
         case 'k':
 
-            interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
-
+            m_interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
             break;
 
         case 'o':
 
-            display = 0;
-
+            *m_display = false;
             break;
 
         case 'p':
 
-            pidfile = optarg;
-
+            m_pidFile = optarg;
             break;
 
         case 'D':
 
-            isDaemon = true;
-
+            m_isDaemon = true;
             break;
 
         default:
 
-            printUsage(std::cerr, program);
-            ::exit(EXIT_FAILURE);
-
-            break;
+            printUsage(std::cerr);
+            return EXIT_FAILURE;
         }
     }
 
-    //---------------------------------------------------------------------
+    return std::nullopt;
+}
 
-    using pidFile_ptr = std::unique_ptr<pidfh, decltype(&pidfile_remove)>;
-    pidFile_ptr pfh{nullptr, &pidfile_remove};
+//-------------------------------------------------------------------------
 
-    if (isDaemon)
+void
+RaspInfo::perrorLog(
+    std::string_view s)
+{
+    messageLog(LOG_ERR, std::string{s} + " - " + ::strerror(errno));
+}
+
+//-------------------------------------------------------------------------
+
+void
+RaspInfo::printUsage(
+    std::ostream& stream)
+{
+    std::println(stream, "");
+    std::println(stream, "Usage: {}", m_programName);
+    std::println(stream, "");
+    std::println(stream, "    --daemon,-D - start in the background as a daemon");
+    std::println(stream, "    --device,-d - device to use");
+    std::println(stream, "    --font,-f - font file to use[:pixel height]");
+    std::println(stream, "    --help,-h - print usage and exit");
+    std::println(stream, "    --kmsdrm,-k - use KMS/DRM dumb buffer");
+    std::println(stream, "    --off,-o - do not display at start");
+    std::println(stream, "    --pidfile,-p <pidfile> - create and lock PID file");
+    std::println(stream, "");
+}
+
+//-------------------------------------------------------------------------
+
+void
+RaspInfo::run()
+{
+    init();
+
+    std::this_thread::sleep_for(1s);
+    messageLog(LOG_INFO, "starting");
+
+    while (*m_run)
     {
-        if (not pidfile.empty())
-        {
-            pid_t otherpid;
-            pfh.reset(::pidfile_open(pidfile.c_str(), 0600, &otherpid));
+        const auto now = std::chrono::system_clock::now();
+        const auto now_t = std::chrono::system_clock::to_time_t(now);
 
-            if (not pfh)
+        if (m_fb->ownable())
+        {
+            if (*m_display)
             {
-                std::println(
-                    std::cerr,
-                    "{} is already running with pid {}",
-                    program,
-                    otherpid);
-                ::exit(EXIT_FAILURE);
-            }
-        }
+                if (m_fb->ownable() and not m_fb->owned())
+                {
+                    m_fb->own();
+                    messageLog(LOG_INFO, "display enabled");
+                }
 
-        if (::daemon(0, 0) == -1)
-        {
-            std::println(std::cerr, "Cannot daemonize");
-            ::exit(EXIT_FAILURE);
-        }
+                for (auto& panel : m_panels)
+                {
+                    panel->update(now_t, *m_font);
+                    panel->show(*m_fb);
+                }
 
-        if (pfh)
-        {
-            ::pidfile_write(pfh.get());
-        }
-
-        ::openlog(program.c_str(), LOG_PID, LOG_USER);
-    }
-
-    //---------------------------------------------------------------------
-
-    for (auto signal : { SIGINT, SIGTERM, SIGUSR1, SIGUSR2 })
-    {
-        if (std::signal(signal, signalHandler) == SIG_ERR)
-        {
-            std::println(
-                std::cerr,
-                "Error: installing {} signal handler : {}",
-                strsignal(signal),
-                strerror(errno));
-
-            ::exit(EXIT_FAILURE);
-        }
-    }
-
-    //---------------------------------------------------------------------
-
-    try
-    {
-        auto fb{raspifb16::createInterface565(interfaceType, device)};
-
-        //-----------------------------------------------------------------
-
-        std::unique_ptr<raspifb16::Interface565Font> ft{std::make_unique<raspifb16::Image565Font8x16>()};
-
-        if (not fontConfig.m_fontFile.empty())
-        {
-            try
-            {
-                ft = std::make_unique<raspifb16::Image565FreeType>(fontConfig);
-            }
-            catch (std::exception& error)
-            {
-                std::println(std::cerr, "Warning: {}", error.what());
-            }
-        }
-
-        //-----------------------------------------------------------------
-
-        const int traceHeight = (fb->getHeight() == 240) ? 80 : 100;
-        const int gridHeight = traceHeight / 5;
-
-        using Panels = std::vector<std::unique_ptr<Panel>>;
-
-        Panels panels;
-
-        auto panelTop = [](const Panels& panels) -> int
-        {
-            if (panels.empty())
-            {
-                return 0;
+                m_fb->update();
             }
             else
             {
-                return panels.back()->getBottom();
-            }
-        };
-
-        panels.push_back(
-            std::make_unique<DynamicInfo>(fb->getWidth(),
-                                          ft->getPixelHeight(),
-                                          panelTop(panels)));
-
-        panels.push_back(
-            std::make_unique<CpuTrace>(fb->getWidth(),
-                                       traceHeight,
-                                       ft->getPixelHeight(),
-                                       panelTop(panels),
-                                       gridHeight));
-
-        panels.push_back(
-            std::make_unique<MemoryTrace>(fb->getWidth(),
-                                          traceHeight,
-                                          ft->getPixelHeight(),
-                                          panelTop(panels),
-                                          gridHeight));
-
-        if (fb->getHeight() >= 400)
-        {
-            panels.push_back(
-                std::make_unique<NetworkTrace>(fb->getWidth(),
-                                               traceHeight,
-                                               ft->getPixelHeight(),
-                                               panelTop(panels),
-                                               gridHeight));
-        }
-
-        //-----------------------------------------------------------------
-
-        for (auto& panel : panels)
-        {
-            panel->init(*ft);
-        }
-
-        //-----------------------------------------------------------------
-
-        std::this_thread::sleep_for(1s);
-
-        while (run)
-        {
-            const auto now = std::chrono::system_clock::now();
-            const auto now_t = std::chrono::system_clock::to_time_t(now);
-
-            for (auto& panel : panels)
-            {
-                panel->update(now_t, *ft);
-
-                if (display)
+                if (m_fb->ownable() and m_fb->owned())
                 {
-                    panel->show(*fb);
+                    m_fb->disown();
+                    messageLog(LOG_INFO, "display disabled");
                 }
+
+                for (auto& panel : m_panels)
+                {
+                    panel->update(now_t, *m_font);                    }
             }
-
-            fb->update();
-
-            const auto nextSecond = std::chrono::round<std::chrono::seconds>(now) + 1s;
-            std::this_thread::sleep_until(nextSecond);
         }
     }
-    catch (std::exception& error)
+
+    messageLog(LOG_INFO, "exiting");
+}
+
+//-------------------------------------------------------------------------
+
+void
+RaspInfo::setFontConfig() noexcept
+{
+    if (not m_fontConfig.m_fontFile.empty())
     {
-        std::println(std::cerr, "Error: {}", error.what());
-        exit(EXIT_FAILURE);
+        try
+        {
+            m_font = std::make_unique<raspifb16::Image565FreeType>(m_fontConfig);
+        }
+        catch (std::exception& error)
+        {
+            messageLog(
+                LOG_WARNING,
+                std::format(
+                    "Error: loading font {} : {}",
+                    m_fontConfig.m_fontFile,
+                    error.what()));
+        }
     }
 
-    //---------------------------------------------------------------------
-
-    messageLog(isDaemon, program, LOG_INFO, "exiting");
-
-    if (isDaemon)
+    if (not m_font)
     {
-        ::closelog();
+        m_font = std::make_unique<raspifb16::Image565Font8x16>();
     }
-
-    //---------------------------------------------------------------------
-
-    return 0 ;
 }
 

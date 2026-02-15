@@ -114,6 +114,12 @@ public:
     [[nodiscard]] bool hasUniversalPlanes() const noexcept { return m_hasUniversalPlanes; }
     [[nodiscard]] std::size_t offset(const Interface565Point p) const noexcept override;
 
+    [[nodiscard]] bool ownable() const noexcept override { return true; }
+    [[nodiscard]] bool owned() noexcept override;
+    void own() noexcept override;
+    void disown() noexcept override;
+
+
     bool update() override;
 
 private:

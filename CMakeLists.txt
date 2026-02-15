@@ -101,6 +101,7 @@ if (BSD_FOUND AND FREETYPE_FOUND)
 add_executable(raspinfo raspinfo/raspinfo.cxx
                         raspinfo/cpuTrace.cxx
                         raspinfo/dynamicInfo.cxx
+                        raspinfo/main.cxx
                         raspinfo/memoryTrace.cxx
                         raspinfo/networkTrace.cxx
                         raspinfo/panel.cxx

@@ -213,6 +213,30 @@ raspifb16::DumbBuffer565::offset(
 //-------------------------------------------------------------------------
 
 bool
+raspifb16::DumbBuffer565::owned() noexcept
+{
+    return drm::drmIsMaster(m_fd);
+}
+
+//-------------------------------------------------------------------------
+
+void
+raspifb16::DumbBuffer565::own() noexcept
+{
+    drm::drmSetMaster(m_fd);
+}
+
+//-------------------------------------------------------------------------
+
+void
+raspifb16::DumbBuffer565::disown() noexcept
+{
+    drm::drmDropMaster(m_fd);
+}
+
+//-------------------------------------------------------------------------
+
+bool
 raspifb16::DumbBuffer565::update()
 {
     std::swap(m_dbFront, m_dbBack);

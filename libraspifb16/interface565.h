@@ -107,6 +107,11 @@ public:
     [[nodiscard]] virtual int getLineLengthPixels() const noexcept = 0;
     [[nodiscard]] virtual size_t offset(const Interface565Point p) const noexcept = 0;
 
+    [[nodiscard]] virtual bool ownable() const noexcept { return false; }
+    [[nodiscard]] virtual bool owned() noexcept { return false; }
+    virtual void own() noexcept {}
+    virtual void disown() noexcept {}
+
     virtual bool update() { return false; }
 
 private:
