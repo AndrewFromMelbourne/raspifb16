@@ -145,7 +145,8 @@ main(
         fb->putImage(center(*fb, image), image);
         fb->update();
 
-        do {
+        do
+        {
             js.read();
         }
         while (not js.buttonPressed(Joystick::BUTTON_START));
