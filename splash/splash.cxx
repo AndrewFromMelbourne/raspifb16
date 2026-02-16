@@ -43,13 +43,6 @@ using namespace raspifb16;
 
 //-------------------------------------------------------------------------
 
-namespace
-{
-const std::string defaultDevice{"/dev/fb1"};
-}
-
-//-------------------------------------------------------------------------
-
 void
 printUsage(
     std::ostream& stream,
@@ -72,7 +65,7 @@ main(
     int argc,
     char *argv[])
 {
-    std::string device{defaultDevice};
+    std::string device{};
     const std::string program{basename(argv[0])};
     std::string qoi{};
     auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
