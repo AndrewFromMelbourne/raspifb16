@@ -217,7 +217,7 @@ RaspInfo::parseCommandLine(
     int argc,
     char* argv[])
 {
-    static const char* sopts = "d:f:hk";
+    static const char* sopts = "d:f:hko";
     static option lopts[] =
     {
         { "device", required_argument, nullptr, 'd' },
