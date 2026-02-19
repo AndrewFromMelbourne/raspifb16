@@ -117,7 +117,7 @@ target_link_libraries(puzzle-15 raspifb16
 
 #--------------------------------------------------------------------------
 
-if (BSD_FOUND AND FREETYPE_FOUND)
+if (SYSTEMD_FOUND AND FREETYPE_FOUND)
 add_executable(raspinfo raspinfo/raspinfo.cxx
                         raspinfo/cpuTrace.cxx
                         raspinfo/dynamicInfo.cxx
