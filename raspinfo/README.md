@@ -4,13 +4,11 @@ framebuffer.
 # usage
 	raspinfo <options>
 
-	--daemon,-D - start in the background as a daemon
 	--device,-d - device to use
 	--font,-f - font file to use
 	--help,-h - print usage and exit
 	--kmsdrm,-k - use KMS/DRM dumb buffer
     --off,-o - do not display at start
-	--pidfile,-p <pidfile> - create and lock PID file (if being run as a daemon)
 # build
     see main readme.
 # install

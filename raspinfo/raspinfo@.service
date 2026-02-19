@@ -2,9 +2,8 @@
 Description=Display Raspberry Pi specific system information directly on the framebuffer.
 
 [Service]
-Type=forking
-PIDFile=/run/raspinfo%i.pid
-ExecStart=/usr/local/bin/raspinfo --daemon --device /dev/fb%i --pidfile /run/raspinfo%i.pid
+Type=simple
+ExecStart=/usr/local/bin/raspinfo --device /dev/fb%i
 Restart=on-failure
 RestartSec=5
 

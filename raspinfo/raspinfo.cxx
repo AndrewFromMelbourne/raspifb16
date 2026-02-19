@@ -26,21 +26,14 @@
 //-------------------------------------------------------------------------
 
 #include <errno.h>
-#include <fcntl.h>
 #include <getopt.h>
 #include <syslog.h>
 #include <unistd.h>
 
-#include <bsd/libutil.h>
-
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/types.h>
+#include <systemd/sd-journal.h>
 
 #include <array>
 #include <chrono>
-#include <csignal>
-#include <cstdint>
 #include <cstring>
 #include <exception>
 #include <filesystem>
@@ -51,6 +44,8 @@
 #include <string>
 #include <thread>
 #include <vector>
+
+#include "config.h"
 
 #include "image565Font8x16.h"
 #include "image565FreeType.h"
@@ -78,10 +73,8 @@ RaspInfo::RaspInfo(
     m_font{nullptr},
     m_fontConfig{},
     m_hostname{},
-    m_isDaemon{false},
     m_interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565},
     m_panels{},
-    m_pidFile{},
     m_programName{},
     m_run{run}
 {
@@ -89,46 +82,8 @@ RaspInfo::RaspInfo(
 
 //-------------------------------------------------------------------------
 
-pidFile_ptr
-RaspInfo::daemonize()
-{
-    pidFile_ptr pfh{nullptr, &pidfile_remove};
-
-    if (not m_pidFile.empty())
-    {
-        pid_t otherpid;
-        pfh.reset(::pidfile_open(m_pidFile.c_str(), 0600, &otherpid));
-
-        if (not pfh)
-        {
-            messageLog(
-                LOG_ERR,
-                std::format(
-                    "{} is already running with pid {}",
-                    m_programName,
-                    otherpid));
-            ::exit(EXIT_FAILURE);
-        }
-    }
-
-    if (::daemon(0, 0) == -1)
-    {
-        messageLog(LOG_ERR, "Cannot daemonize");
-        ::exit(EXIT_FAILURE);
-    }
-
-    if (pfh)
-    {
-        ::pidfile_write(pfh.get());
-    }
-
-    return pfh;
-}
-
-//-------------------------------------------------------------------------
-
 std::string
-RaspInfo::getHostname()
+RaspInfo::getHostname() const
 {
     char hostname[256];
     if (::gethostname(hostname, sizeof(hostname)) == 0)
@@ -199,12 +154,12 @@ RaspInfo::init()
 void
 RaspInfo::messageLog(
     int priority,
-    std::string_view message)
+    std::string_view message) const
 {
-    if (m_isDaemon)
+    if (getenv("JOURNAL_STREAM") != nullptr)
     {
         std::string messageStr{message};
-        ::syslog(LOG_MAKEPRI(LOG_USER, priority), "%s", messageStr.c_str());
+        sd_journal_print(priority, "%s", messageStr.c_str());
     }
     else
     {
@@ -262,16 +217,14 @@ RaspInfo::parseCommandLine(
     int argc,
     char* argv[])
 {
-    static const char* sopts = "d:f:hp:kD";
+    static const char* sopts = "d:f:hk";
     static option lopts[] =
     {
-        { "daemon", no_argument, nullptr, 'D' },
         { "device", required_argument, nullptr, 'd' },
         { "font", required_argument, nullptr, 'f' },
         { "help", no_argument, nullptr, 'h' },
         { "kmsdrm", no_argument, nullptr, 'k' },
         { "off", no_argument, nullptr, 'o' },
-        { "pidfile", required_argument, nullptr, 'p' },
         { nullptr, no_argument, nullptr, 0 }
     };
 
@@ -306,16 +259,6 @@ RaspInfo::parseCommandLine(
             *m_display = false;
             break;
 
-        case 'p':
-
-            m_pidFile = optarg;
-            break;
-
-        case 'D':
-
-            m_isDaemon = true;
-            break;
-
         default:
 
             printUsage(std::cerr);
@@ -330,9 +273,16 @@ RaspInfo::parseCommandLine(
 
 void
 RaspInfo::perrorLog(
-    std::string_view s)
+    std::string_view s) const
 {
-    messageLog(LOG_ERR, std::string{s} + " - " + ::strerror(errno));
+    if (getenv("JOURNAL_STREAM") != nullptr)
+    {
+        sd_journal_perror(std::string(s).c_str());
+    }
+    else
+    {
+        messageLog(LOG_ERR, std::string{s} + " - " + ::strerror(errno));
+    }
 }
 
 //-------------------------------------------------------------------------
@@ -344,13 +294,14 @@ RaspInfo::printUsage(
     std::println(stream, "");
     std::println(stream, "Usage: {}", m_programName);
     std::println(stream, "");
-    std::println(stream, "    --daemon,-D - start in the background as a daemon");
     std::println(stream, "    --device,-d - device to use");
     std::println(stream, "    --font,-f - font file to use[:pixel height]");
     std::println(stream, "    --help,-h - print usage and exit");
     std::println(stream, "    --kmsdrm,-k - use KMS/DRM dumb buffer");
     std::println(stream, "    --off,-o - do not display at start");
-    std::println(stream, "    --pidfile,-p <pidfile> - create and lock PID file");
+    std::println(stream, "");
+    std::println(stream, "Version: {}", c_projectVersion);
+    std::println(stream, "Git commit hash: {}", c_gitCommitHash);
     std::println(stream, "");
 }
 

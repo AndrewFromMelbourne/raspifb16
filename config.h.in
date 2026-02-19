@@ -1,0 +1,6 @@
+#pragma once
+
+const char* c_projectName{"@CMAKE_PROJECT_NAME@"};
+const char* c_projectVersion{"@CMAKE_PROJECT_VERSION@"};
+const char* c_gitCommitHash{"@GIT_COMMIT_HASH@"};
+

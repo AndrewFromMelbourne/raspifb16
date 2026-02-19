@@ -26,19 +26,14 @@
 //-------------------------------------------------------------------------
 
 #include <syslog.h>
-#include <unistd.h>
-
-#include <bsd/libutil.h>
 
 #include <atomic>
 #include <csignal>
-#include <cstdint>
 #include <cstring>
 #include <exception>
 #include <format>
 
 #include "raspinfo.h"
-
 
 //-------------------------------------------------------------------------
 
@@ -116,16 +111,6 @@ main(
 
     //---------------------------------------------------------------------
 
-    pidFile_ptr pfh{nullptr, &pidfile_remove};
-
-    if (info.isDaemon())
-    {
-        ::openlog(info.programName().c_str(), LOG_PID, LOG_USER);
-        pfh = info.daemonize();
-    }
-
-    //---------------------------------------------------------------------
-
     setSignalHandler(info);
 
     //---------------------------------------------------------------------
@@ -138,13 +123,6 @@ main(
     {
         info.messageLog(LOG_ERR, std::format("Error: {}", error.what()));
         ::exit(EXIT_FAILURE);
-    }
-
-    //---------------------------------------------------------------------
-
-    if (info.isDaemon())
-    {
-        ::closelog();
     }
 }
 

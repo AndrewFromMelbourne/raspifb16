@@ -56,17 +56,15 @@ public:
         std::atomic<bool>* display,
         std::atomic<bool>* run);
 
-    pidFile_ptr daemonize();
-    [[nodiscard]] bool isDaemon() const noexcept { return m_isDaemon; }
-    void messageLog(int priority, std::string_view message);
+    void messageLog(int priority, std::string_view message) const;
     std::optional<int> parseCommandLine(int argc, char* argv[]);
-    void perrorLog(std::string_view s);
+    void perrorLog(std::string_view s) const;
     [[nodiscard]] std::string programName() const noexcept { return m_programName; }
     void run();
 
 private:
 
-    std::string getHostname();
+    std::string getHostname() const;
     void init();
     int panelTop() const;
     void printUsage(std::ostream& stream);
@@ -78,10 +76,8 @@ private:
     std::unique_ptr<raspifb16::Interface565Font> m_font{nullptr};
     raspifb16::FontConfig m_fontConfig;
     std::string m_hostname{};
-    bool m_isDaemon{false};
     raspifb16::InterfaceType565 m_interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
     std::vector<std::unique_ptr<Panel>> m_panels{};
-    std::string m_pidFile{};
     std::string m_programName{};
     std::atomic<bool>* m_run{nullptr};
 };

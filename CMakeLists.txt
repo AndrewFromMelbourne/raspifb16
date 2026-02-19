@@ -1,7 +1,14 @@
 cmake_minimum_required(VERSION 3.10)
-project(raspifb16 LANGUAGES CXX)
+project(raspifb16 VERSION 1.0.0 LANGUAGES CXX)
+
+#--------------------------------------------------------------------------
 
 add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+set(CMAKE_CXX_STANDARD 23)
+SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wno-psabi")
+set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
+
+#--------------------------------------------------------------------------
 
 if (CMAKE_BUILD_TYPE STREQUAL "")
 set(CMAKE_BUILD_TYPE Release)
@@ -9,9 +16,22 @@ endif()
 
 message("Build type ${CMAKE_BUILD_TYPE}")
 
-set(CMAKE_CXX_STANDARD 23)
-SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wno-psabi")
-set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
+#--------------------------------------------------------------------------
+
+execute_process(
+    COMMAND git log -1 --format=%h
+    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+    OUTPUT_VARIABLE GIT_COMMIT_HASH
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+#--------------------------------------------------------------------------
+
+configure_file(
+    "${CMAKE_SOURCE_DIR}/config.h.in"
+    "${CMAKE_BINARY_DIR}/config.h"
+    @ONLY)
+
+#--------------------------------------------------------------------------
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
@@ -32,7 +52,7 @@ find_package(Freetype)
 find_package(Libiw)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(DRM QUIET libdrm)
-pkg_check_modules(BSD REQUIRED libbsd)
+pkg_check_modules(SYSTEMD REQUIRED libsystemd)
 
 #--------------------------------------------------------------------------
 
@@ -111,10 +131,11 @@ add_executable(raspinfo raspinfo/raspinfo.cxx
                         raspinfo/traceGraph.cxx
                         raspinfo/traceStack.cxx)
 
+target_include_directories(raspinfo PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 target_link_libraries(raspinfo raspifb16
-                               ${BSD_LIBRARIES}
                                ${FREETYPE_LIBRARIES}
-                               ${DRM_LIBRARIES})
+                               ${DRM_LIBRARIES}
+                               ${SYSTEMD_LIBRARIES})
 
 set_property(TARGET raspinfo PROPERTY SKIP_BUILD_RPATH TRUE)
 install (TARGETS raspinfo RUNTIME DESTINATION bin)
