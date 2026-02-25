@@ -41,6 +41,9 @@ Test putImage function overlapping screen edge.
 ## testPolygon
 Test polygon drawing functions
 
+## testPolygonSeam
+Test drawing adjacent polygons fit together.
+
 ## testResize
 Test image resizing using scale-up, nearest neighbour, bilinear interpolation and Lanczos3 interpolation.
 

@@ -67,6 +67,7 @@ add_library(raspifb16 STATIC libraspifb16/fileDescriptor.cxx
                              libraspifb16/interface565.cxx
                              libraspifb16/interface565Factory.cxx
                              libraspifb16/interface565Font.cxx
+                             libraspifb16/interface565Menu.cxx
                              libraspifb16/joystick.cxx
                              libraspifb16/rgb565.cxx)
 
@@ -179,12 +180,6 @@ target_link_libraries(testDoubleBuffer raspifb16
 
 #--------------------------------------------------------------------------
 
-add_executable(testPutImage test/testPutImage.cxx)
-target_link_libraries(testPutImage raspifb16
-                                   ${DRM_LIBRARIES})
-
-#--------------------------------------------------------------------------
-
 add_executable(testLines test/testLines.cxx)
 target_link_libraries(testLines raspifb16
                                 ${DRM_LIBRARIES})
@@ -194,6 +189,18 @@ target_link_libraries(testLines raspifb16
 add_executable(testPolygon test/testPolygon.cxx)
 target_link_libraries(testPolygon raspifb16
                                   ${DRM_LIBRARIES})
+
+#--------------------------------------------------------------------------
+
+add_executable(testPolygonSeam test/testPolygonSeam.cxx)
+target_link_libraries(testPolygonSeam raspifb16
+                                      ${DRM_LIBRARIES})
+
+#--------------------------------------------------------------------------
+
+add_executable(testPutImage test/testPutImage.cxx)
+target_link_libraries(testPutImage raspifb16
+                                   ${DRM_LIBRARIES})
 
 #--------------------------------------------------------------------------
 
