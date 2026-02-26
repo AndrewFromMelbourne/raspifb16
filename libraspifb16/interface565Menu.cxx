@@ -109,26 +109,26 @@ Interface565Menu::draw(
 
     boxFilled(
         fb,
-        raspifb16::Interface565Point(0, 0),
-        raspifb16::Interface565Point(
+        raspifb16::Point565(0, 0),
+        raspifb16::Point565(
             width + (padding * 2),
             (m_items.size() * font.getPixelHeight()) + (padding * 2)),
             m_backgroundColour);
 
     box(
         fb,
-        raspifb16::Interface565Point(0, 0),
-        raspifb16::Interface565Point(
+        raspifb16::Point565(0, 0),
+        raspifb16::Point565(
             width + (padding * 2),
             (m_items.size() * font.getPixelHeight()) + (padding * 2)),
             m_selectionColour);
 
     boxFilled(
         fb,
-        raspifb16::Interface565Point(
+        raspifb16::Point565(
             padding,
             (m_selected * font.getPixelHeight()) + padding),
-        raspifb16::Interface565Point(
+        raspifb16::Point565(
             width + padding,
             ((m_selected + 1) * font.getPixelHeight()) + padding),
             m_selectionColour);
@@ -137,7 +137,7 @@ Interface565Menu::draw(
     for (const auto& item : m_items)
     {
         font.drawString(
-            raspifb16::Interface565Point(padding, yOffset + padding),
+            raspifb16::Point565(padding, yOffset + padding),
             std::format(
                 " {0:<{1}} : {2}",
                 item.m_title,

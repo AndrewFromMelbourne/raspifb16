@@ -107,7 +107,7 @@ raspifb16::Image565::setFrame(
 
 std::size_t
 raspifb16::Image565::offset(
-    const Interface565Point p) const noexcept
+    const Point565 p) const noexcept
 {
     return p.x() + (p.y() * m_width) + (m_frame * m_width * m_height);
 }

@@ -140,17 +140,17 @@ main(
 
         for (auto i = 0; i < lines; ++i)
         {
-            const raspifb16::Interface565Point center{ halfWidth, halfHeight };
+            const raspifb16::Point565 center{ halfWidth, halfHeight };
 
             const auto sinValue = std::sin((i * 2.0 * M_PI) / lines);
             const auto cosValue = std::cos((i * 2.0 * M_PI) / lines);
 
-            raspifb16::Interface565Point inner{
+            raspifb16::Point565 inner{
                 center.x() + static_cast<int>(innerRadius * sinValue),
                 center.y() - static_cast<int>(innerRadius * cosValue)
             };
 
-            raspifb16::Interface565Point outer{
+            raspifb16::Point565 outer{
                 center.x() + static_cast<int>(outerRadius * sinValue),
                 center.y() - static_cast<int>(outerRadius * cosValue)
             };

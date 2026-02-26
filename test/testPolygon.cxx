@@ -142,14 +142,14 @@ main(
 
         //-----------------------------------------------------------------
 
-        auto starVertex = [](int i, int r, int x, int y) -> Interface565Point
+        auto starVertex = [](int i, int r, int x, int y) -> Point565
         {
             constexpr auto pi = std::numbers::pi;
             constexpr auto phi = std::numbers::phi;
             const auto sinValue = std::sin((i * pi) / 5.0);
             const auto cosValue = std::cos((i * pi) / 5.0);
             const auto radius = (i % 2 == 0) ? r : (r * (2 - phi));
-            return Interface565Point{
+            return Point565{
                 x + static_cast<int>(std::round(radius * sinValue)),
                 y - static_cast<int>(std::round(radius * cosValue))
             };
@@ -166,7 +166,7 @@ main(
             const int startI = (index % 2 == 0) ? 0 : (iIncrement / 2);
             for (int i = startI; i <= fwidth; i += iIncrement)
             {
-                const std::array<Interface565Point, 10> starVertices{
+                const std::array<Point565, 10> starVertices{
                     starVertex(0, radius, i, j),
                     starVertex(1, radius, i, j),
                     starVertex(2, radius, i, j),

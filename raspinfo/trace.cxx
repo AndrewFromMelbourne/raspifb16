@@ -81,10 +81,10 @@ Trace::init(
 {
     getImage().clear(sc_background);
 
-    raspifb16::Interface565Point position(0, m_traceHeight + 2);
+    raspifb16::Point565 position(0, m_traceHeight + 2);
 
     position = font.drawString(
-                   raspifb16::Interface565Point(0, m_traceHeight + 2),
+                   raspifb16::Point565(0, m_traceHeight + 2),
                    m_title + " (",
                    sc_foreground,
                    getImage());
@@ -114,9 +114,9 @@ Trace::init(
         const auto width = font.getPixelWidth();
         const auto height = font.getPixelHeight();
 
-        const raspifb16::Interface565Point p1{position.x() + width / 4,
+        const raspifb16::Point565 p1{position.x() + width / 4,
                                               position.y() + height / 4};
-        const raspifb16::Interface565Point p2{position.x() + (3 * width) / 4,
+        const raspifb16::Point565 p2{position.x() + (3 * width) / 4,
                                               position.y() + (3 * height) / 4};
 
         boxFilled(getImage(), p1, p2, trace.traceColour());

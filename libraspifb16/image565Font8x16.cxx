@@ -4691,9 +4691,9 @@ Image565Font8x16::getCharacterCode(Interface565Font::CharacterCode code) const n
 
 //-------------------------------------------------------------------------
 
-Interface565Point
+Point565
 Image565Font8x16::drawChar(
-    const Interface565Point p,
+    const Point565 p,
     uint8_t c,
     const RGB565& rgb,
     Interface565& image)
@@ -4703,9 +4703,9 @@ Image565Font8x16::drawChar(
 
 //-------------------------------------------------------------------------
 
-Interface565Point
+Point565
 Image565Font8x16::drawChar(
-    const Interface565Point p,
+    const Point565 p,
     uint8_t c,
     uint16_t rgb,
     Interface565& image)
@@ -4723,21 +4723,21 @@ Image565Font8x16::drawChar(
                 if ((byte >> (width - i - 1)) & 1)
                 {
                     image.setPixel(
-                        Interface565Point(p.x() + i, p.y() + j),
+                        Point565(p.x() + i, p.y() + j),
                         rgb);
                 }
             }
         }
     }
 
-    return Interface565Point(p.x() + width, p.y());
+    return Point565(p.x() + width, p.y());
 }
 
 //-------------------------------------------------------------------------
 
-Interface565Point
+Point565
 Image565Font8x16::drawString(
-    const Interface565Point p,
+    const Point565 p,
     std::string_view sv,
     const RGB565& rgb,
     Interface565& image)
@@ -4747,15 +4747,15 @@ Image565Font8x16::drawString(
 
 //-------------------------------------------------------------------------
 
-Interface565Point
+Point565
 Image565Font8x16::drawString(
-    const Interface565Point p,
+    const Point565 p,
     std::string_view sv,
     uint16_t rgb,
     Interface565& image)
 {
-    Interface565Point position{p};
-    const Interface565Point start{p};
+    Point565 position{p};
+    const Point565 start{p};
 
     for (const auto c : sv)
     {

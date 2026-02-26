@@ -148,7 +148,7 @@ main(
             for (const auto& l : lines)
             {
                 font.drawString(
-                    Interface565Point{0, y},
+                    Point565{0, y},
                     l,
                     white,
                     image);
@@ -156,7 +156,7 @@ main(
                 y += font.getPixelHeight();
             }
 
-            fb->putImage(Interface565Point{0, 0}, image);
+            fb->putImage(Point565{0, 0}, image);
             fb->update();
         }
     }

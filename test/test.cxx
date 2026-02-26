@@ -150,14 +150,14 @@ main(
         Image565 image{48, 48};
         image.clear(red);
 
-        auto rgb = image.getPixelRGB(Interface565Point(0,0));
+        auto rgb = image.getPixelRGB(Point565(0,0));
 
         test(rgb.has_value(), "Image565::getPixelRGB()");
         test((*rgb == red), "Image565::getPixelRGB()");
 
         line(image,
-             Interface565Point(0,0),
-             Interface565Point(47,47),
+             Point565(0,0),
+             Point565(47,47),
              green);
 
         auto imageLocation = center(*fb, image);
@@ -178,12 +178,12 @@ main(
         textImage.clear(darkBlue);
 
         font.drawString(
-            Interface565Point{0, 0},
+            Point565{0, 0},
             "This is a test string",
             white,
             textImage);
 
-        const Interface565Point textLocation
+        const Point565 textLocation
         {
             (fb->getWidth() - textImage.getWidth()) / 2,
             (fb->getHeight() - textImage.getHeight()) / 3

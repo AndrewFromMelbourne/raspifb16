@@ -67,7 +67,7 @@ raspifb16::Interface565::clearBuffers(uint16_t rgb)
 
 bool
 raspifb16::Interface565::setPixel(
-    const Interface565Point p,
+    const Point565 p,
     uint16_t rgb)
 {
     bool isValid{validPixel(p)};
@@ -84,7 +84,7 @@ raspifb16::Interface565::setPixel(
 
 std::optional<raspifb16::RGB565>
 raspifb16::Interface565::getPixelRGB(
-    const Interface565Point p) const
+    const Point565 p) const
 {
     if (not validPixel(p))
     {
@@ -98,7 +98,7 @@ raspifb16::Interface565::getPixelRGB(
 
 std::optional<raspifb16::RGB8>
 raspifb16::Interface565::getPixelRGB8(
-    const Interface565Point p) const
+    const Point565 p) const
 {
     if (not validPixel(p))
     {
@@ -112,7 +112,7 @@ raspifb16::Interface565::getPixelRGB8(
 
 std::optional<uint16_t>
 raspifb16::Interface565::getPixel(
-    const Interface565Point p) const
+    const Point565 p) const
 {
     if (not validPixel(p))
     {
@@ -127,7 +127,7 @@ std::span<uint16_t>
 raspifb16::Interface565::getRow(
     int y)
 {
-    const Interface565Point p{0, y};
+    const Point565 p{0, y};
 
     if (validPixel(p))
     {
@@ -145,7 +145,7 @@ std::span<const uint16_t>
 raspifb16::Interface565::getRow(
     int y) const
 {
-    const Interface565Point p{0, y};
+    const Point565 p{0, y};
 
     if (validPixel(p))
     {
@@ -161,7 +161,7 @@ raspifb16::Interface565::getRow(
 
 bool
 raspifb16::Interface565::putImage(
-    const Interface565Point p,
+    const Point565 p,
     const Image565& image)
 {
     if ((p.x() < 0) or
@@ -179,7 +179,7 @@ raspifb16::Interface565::putImage(
     for (int j = 0 ; j < image.getHeight() ; ++j)
     {
         auto row = image.getRow(j);
-        const auto ost = offset(Interface565Point{p.x(), j + p.y()});
+        const auto ost = offset(Point565{p.x(), j + p.y()});
 
         std::ranges::copy(row, getBuffer().subspan(ost).begin());
     }
@@ -191,7 +191,7 @@ raspifb16::Interface565::putImage(
 
 bool
 raspifb16::Interface565::putImagePartial(
-    const Interface565Point p,
+    const Point565 p,
     const Image565& image)
 {
     auto x = p.x();
@@ -239,7 +239,7 @@ raspifb16::Interface565::putImagePartial(
     for (auto j = yStart ; j <= yEnd ; ++j)
     {
         auto row = image.getRow(j).subspan(xStart, xLength);
-        const auto ost = offset(Interface565Point{x, j - yStart + y});
+        const auto ost = offset(Point565{x, j - yStart + y});
 
         std::ranges::copy(row, getBuffer().subspan(ost).begin());
     }
@@ -252,13 +252,13 @@ raspifb16::Interface565::putImagePartial(
 std::span<uint16_t>
 raspifb16::Interface565::getBufferStart() noexcept
 {
-    return getBuffer().subspan(offset(Interface565Point{0, 0}),
+    return getBuffer().subspan(offset(Point565{0, 0}),
                                getLineLengthPixels() * getHeight());
 }
 
 //-------------------------------------------------------------------------
 
-raspifb16::Interface565Point
+raspifb16::Point565
 raspifb16::center(
     const raspifb16::Interface565& frame,
     const raspifb16::Interface565& image) noexcept

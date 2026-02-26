@@ -407,7 +407,7 @@ main(
                 std::ranges::sort(cells, std::greater<ScanEntry>());
 
                 image.clear(RGB565{0, 0, 0});
-                Interface565Point position{0, 0};
+                Point565 position{0, 0};
                 constexpr RGB565 white{255, 255, 255};
 
                 for (const auto& entry : cells)
@@ -420,7 +420,7 @@ main(
                     position.set(0, position.y() + font.getPixelHeight());
                 }
 
-                fb->putImage(Interface565Point{0, 0}, image);
+                fb->putImage(Point565{0, 0}, image);
                 fb->update();
             }
         }

@@ -43,7 +43,7 @@ namespace raspifb16
 
 //-------------------------------------------------------------------------
 
-using Interface565Point = Point<int>;
+using Point565 = Point<int>;
 
 //-------------------------------------------------------------------------
 
@@ -70,30 +70,30 @@ public:
 
     [[nodiscard]] std::optional<char> getCharacterCode(CharacterCode code) const noexcept override;
 
-    Interface565Point
+    Point565
     drawChar(
-        const Interface565Point p,
+        const Point565 p,
         uint8_t c,
         const RGB565& rgb,
         Interface565& image) override;
 
-    Interface565Point
+    Point565
     drawChar(
-        const Interface565Point p,
+        const Point565 p,
         uint8_t c,
         uint16_t rgb,
         Interface565& image) override;
 
-    Interface565Point
+    Point565
     drawString(
-        const Interface565Point p,
+        const Point565 p,
         std::string_view sv,
         const RGB565& rgb,
         Interface565& image) override;
 
-    Interface565Point
+    Point565
     drawString(
-        const Interface565Point p,
+        const Point565 p,
         std::string_view sv,
         uint16_t rgb,
         Interface565& image) override;

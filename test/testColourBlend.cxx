@@ -144,8 +144,8 @@ main(
             for (int i = 0 ; i < 16 ; ++i)
             {
                 const auto x = i * (boxSide + 1);
-                const Interface565Point p1{x, y};
-                const Interface565Point p2{x + boxSide - 1,
+                const Point565 p1{x, y};
+                const Point565 p2{x + boxSide - 1,
                                            y + boxSide - 1};
 
                 boxFilled(image, p1, p2, red.blend(alpha, blue));

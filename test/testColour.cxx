@@ -67,7 +67,7 @@ void fadeFromBlack(Image565& image, int x, int y, const RGB565& rgb)
 
     for (int i = 0 ; i < 32 ; ++i)
     {
-        image.setPixelRGB(Interface565Point(x, y + i),
+        image.setPixelRGB(Point565(x, y + i),
                           RGB565::blend(alpha32(i), rgb, black));
     }
 }
@@ -80,7 +80,7 @@ void fadeToWhite(Image565& image, int x, int y, const RGB565& rgb)
 
     for (int i = 0 ; i < 32 ; ++i)
     {
-        image.setPixelRGB(Interface565Point(x, y + i),
+        image.setPixelRGB(Point565(x, y + i),
                           RGB565::blend(alpha32(i), white, rgb));
     }
 }

@@ -262,7 +262,7 @@ DynamicInfo::update(
 
     //---------------------------------------------------------------------
 
-    raspifb16::Interface565Point position = { 0, 0 };
+    raspifb16::Point565 position = { 0, 0 };
 
     position = font.drawString(position,
                           "ip(",

@@ -230,7 +230,7 @@ main(
         {
             for (auto x : { -ihwidth, (fwidth / 2) - ihwidth, fwidth - ihwidth })
             {
-                fb->putImage(Interface565Point{x, y}, image);
+                fb->putImage(Point565{x, y}, image);
             }
         }
 

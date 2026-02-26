@@ -145,18 +145,18 @@ main(
         polygonFilled(
             *fb,
             {{
-                Interface565Point{xOffset, yOffset},
-                Interface565Point{width + xOffset, yOffset},
-                Interface565Point{width + xOffset, width + yOffset}
+                Point565{xOffset, yOffset},
+                Point565{width + xOffset, yOffset},
+                Point565{width + xOffset, width + yOffset}
             }},
             white);
 
         polygonFilled(
             *fb,
             {{
-                Interface565Point{xOffset, yOffset},
-                Interface565Point{xOffset, width + yOffset},
-                Interface565Point{width + xOffset, width + yOffset}
+                Point565{xOffset, yOffset},
+                Point565{xOffset, width + yOffset},
+                Point565{width + xOffset, width + yOffset}
             }},
             white);
 

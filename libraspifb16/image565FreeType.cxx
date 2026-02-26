@@ -145,9 +145,9 @@ Image565FreeType::setPixelSize(
 
 //-------------------------------------------------------------------------
 
-Interface565Point
+Point565
 Image565FreeType::drawChar(
-    const Interface565Point p,
+    const Point565 p,
     uint8_t c,
     const RGB565& rgb,
     Interface565& image)
@@ -157,9 +157,9 @@ Image565FreeType::drawChar(
 
 //-------------------------------------------------------------------------
 
-Interface565Point
+Point565
 Image565FreeType::drawChar(
-    const Interface565Point p,
+    const Point565 p,
     uint8_t c,
     uint16_t rgb,
     Interface565& image)
@@ -169,14 +169,14 @@ Image565FreeType::drawChar(
 
 //-------------------------------------------------------------------------
 
-Interface565Point
+Point565
 Image565FreeType::drawWideChar(
-    const Interface565Point p,
+    const Point565 p,
     uint32_t c,
     const RGB565& rgb,
     Interface565& image)
 {
-    Interface565Point position{p};
+    Point565 position{p};
     position.translateY(m_face->size->metrics.ascender >> 6);
     const auto glyph_index{FT_Get_Char_Index(m_face, c)};
 
@@ -199,14 +199,14 @@ Image565FreeType::drawWideChar(
 
 //-------------------------------------------------------------------------
 
-Interface565Point
+Point565
 Image565FreeType::drawString(
-    const Interface565Point p,
+    const Point565 p,
     std::string_view sv,
     const RGB565& rgb,
     Interface565& image)
 {
-    Interface565Point position{p};
+    Point565 position{p};
     position.translateY(m_face->size->metrics.ascender >> 6);
 
     const auto slot{m_face->glyph};
@@ -268,9 +268,9 @@ Image565FreeType::drawString(
 
 //-------------------------------------------------------------------------
 
-Interface565Point
+Point565
 Image565FreeType::drawString(
-    const Interface565Point p,
+    const Point565 p,
     std::string_view sv,
     uint16_t rgb,
     Interface565& image)
@@ -296,7 +296,7 @@ Image565FreeType::drawChar(
         {
             if (row[i])
             {
-                const Interface565Point p{static_cast<int>(i + xOffset),
+                const Point565 p{static_cast<int>(i + xOffset),
                                       static_cast<int>(j + yOffset)};
                 auto background{image.getPixelRGB(p)};
 

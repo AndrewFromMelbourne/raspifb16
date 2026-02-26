@@ -141,7 +141,7 @@ main(
         Image565Font8x16 font;
 
         font.drawString(
-            Interface565Point{4, 0},
+            Point565{4, 0},
             "Lorem ipsum dolor sit amet ...",
             white,
             image);
@@ -159,8 +159,8 @@ main(
         auto imageBi = resizeBilinearInterpolation(image, swidth, sheight);
         auto imageLi = resizeLanczos3Interpolation(image, swidth, sheight);
 
-        Interface565Point t{0, 0};
-        Interface565Point p{ imageOffset, 0 };
+        Point565 t{0, 0};
+        Point565 p{ imageOffset, 0 };
 
         auto show = [&](std::string_view title, Image565& image)
         {

@@ -147,7 +147,7 @@ main(
         //-----------------------------------------------------------------
 
         Image565FreeType ft{fontConfig};
-        Interface565Point p{0, 0};
+        Point565 p{0, 0};
 
         p = ft.drawString(p, "abcdefghijklmnopqrstuvwxyz ", white, image);
         p = ft.drawString(p, "0123456789", white, image);
@@ -176,7 +176,7 @@ main(
 
         //-----------------------------------------------------------------
 
-        fb->putImage(Interface565Point{0, 0}, image);
+        fb->putImage(Point565{0, 0}, image);
         fb->update();
         std::this_thread::sleep_for(10s);
     }

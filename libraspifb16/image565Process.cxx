@@ -37,7 +37,7 @@
 //-------------------------------------------------------------------------
 
 using size_type = std::vector<uint32_t>::size_type;
-using Point = raspifb16::Interface565Point;
+using Point = raspifb16::Point565;
 
 //=========================================================================
 

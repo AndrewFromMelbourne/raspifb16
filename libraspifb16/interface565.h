@@ -43,7 +43,7 @@ namespace raspifb16
 
 //-------------------------------------------------------------------------
 
-using Interface565Point = Point<int>;
+using Point565 = Point<int>;
 class Image565;
 
 //-------------------------------------------------------------------------
@@ -68,7 +68,7 @@ public:
 
     bool
     setPixelRGB(
-        const Interface565Point p,
+        const Point565 p,
         const RGB565& rgb)
     {
         return setPixel(p, rgb.get565());
@@ -76,25 +76,25 @@ public:
 
     bool
     setPixelRGB8(
-        const Interface565Point p,
+        const Point565 p,
         RGB8 rgb)
     {
         return setPixel(p, RGB565(rgb).get565());
     }
 
-    bool setPixel(const Interface565Point p, uint16_t rgb);
+    bool setPixel(const Point565 p, uint16_t rgb);
 
-    [[nodiscard]] std::optional<RGB565> getPixelRGB(const Interface565Point p) const;
-    [[nodiscard]] virtual std::optional<RGB8> getPixelRGB8(const Interface565Point p) const;
-    [[nodiscard]] std::optional<uint16_t> getPixel(const Interface565Point p) const;
+    [[nodiscard]] std::optional<RGB565> getPixelRGB(const Point565 p) const;
+    [[nodiscard]] virtual std::optional<RGB8> getPixelRGB8(const Point565 p) const;
+    [[nodiscard]] std::optional<uint16_t> getPixel(const Point565 p) const;
 
     [[nodiscard]] std::span<uint16_t> getRow(int y);
     [[nodiscard]] std::span<const uint16_t> getRow(int y) const;
 
-    bool putImage(const Interface565Point, const Image565&);
+    bool putImage(const Point565, const Image565&);
 
     [[nodiscard]] bool
-    validPixel(const Interface565Point p) const
+    validPixel(const Point565 p) const
     {
         return (p.x() >= 0) and
                (p.y() >= 0) and
@@ -105,7 +105,7 @@ public:
     [[nodiscard]] virtual std::span<uint16_t> getBuffer() noexcept = 0;
     [[nodiscard]] virtual std::span<const uint16_t> getBuffer() const noexcept = 0;
     [[nodiscard]] virtual int getLineLengthPixels() const noexcept = 0;
-    [[nodiscard]] virtual size_t offset(const Interface565Point p) const noexcept = 0;
+    [[nodiscard]] virtual size_t offset(const Point565 p) const noexcept = 0;
 
     [[nodiscard]] virtual bool ownable() const noexcept { return false; }
     [[nodiscard]] virtual bool owned() noexcept { return false; }
@@ -118,7 +118,7 @@ private:
 
     bool
     putImagePartial(
-        const Interface565Point p,
+        const Point565 p,
         const Image565& image);
 
     std::span<uint16_t> getBufferStart() noexcept;
@@ -126,7 +126,7 @@ private:
 
 //-------------------------------------------------------------------------
 
-Interface565Point
+Point565
 center(
     const Interface565& frame,
     const Interface565& image) noexcept;

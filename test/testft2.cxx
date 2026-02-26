@@ -155,11 +155,11 @@ main(
         //-----------------------------------------------------------------
 
         Image565FreeType ft{fontConfig};
-        ft.drawWideChar(Interface565Point{0, 0}, c, white, image);
+        ft.drawWideChar(Point565{0, 0}, c, white, image);
 
         //-----------------------------------------------------------------
 
-        fb->putImage(Interface565Point{0, 0}, image);
+        fb->putImage(Point565{0, 0}, image);
         fb->update();
 
         //-----------------------------------------------------------------

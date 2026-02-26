@@ -44,8 +44,8 @@ namespace
 void
 trim(
     const raspifb16::Interface565& iface,
-    raspifb16::Interface565Point& p1,
-    raspifb16::Interface565Point& p2)
+    raspifb16::Point565& p1,
+    raspifb16::Point565& p2)
 {
     if ((p1.x() == p2.x()) or (p1.y() == p2.y()))
     {
@@ -124,8 +124,8 @@ namespace raspifb16
 void
 box(
     Interface565& iface,
-    Interface565Point p1,
-    Interface565Point p2,
+    Point565 p1,
+    Point565 p2,
     uint16_t rgb)
 {
     trim(iface, p1, p2);
@@ -140,8 +140,8 @@ box(
 void
 boxFilled(
     Interface565& iface,
-    Interface565Point p1,
-    Interface565Point p2,
+    Point565 p1,
+    Point565 p2,
     uint16_t rgb)
 {
     trim(iface, p1, p2);
@@ -162,15 +162,15 @@ boxFilled(
 void
 boxFilled(
     Interface565& iface,
-    Interface565Point p1,
-    Interface565Point p2,
+    Point565 p1,
+    Point565 p2,
     const RGB565& rgb,
     uint8_t alpha)
 {
     trim(iface, p1, p2);
 
-    Interface565Point pa{std::min(p1.x(), p2.x()), std::min(p1.y(), p2.y())};
-    Interface565Point pb{std::max(p1.x(), p2.x()), std::max(p1.y(), p2.y())};
+    Point565 pa{std::min(p1.x(), p2.x()), std::min(p1.y(), p2.y())};
+    Point565 pb{std::max(p1.x(), p2.x()), std::max(p1.y(), p2.y())};
 
     for (auto j = pa.y() ; j <= pb.y() ; ++j)
     {
@@ -192,8 +192,8 @@ boxFilled(
 void
 line(
     Interface565& iface,
-    Interface565Point p1,
-    Interface565Point p2,
+    Point565 p1,
+    Point565 p2,
     uint16_t rgb)
 {
     trim(iface, p1, p2);
@@ -408,7 +408,7 @@ circlePoints(
 void
 circle(
     Interface565& iface,
-    Interface565Point p,
+    Point565 p,
     int r,
     uint16_t rgb)
 {
@@ -441,7 +441,7 @@ circle(
 void
 circleFilled(
     Interface565& iface,
-    Interface565Point p,
+    Point565 p,
     int r,
     uint16_t rgb)
 {
@@ -489,7 +489,7 @@ circleFilled(
 void
 polygon(
     Interface565& iface,
-    std::span<const Interface565Point> vertices,
+    std::span<const Point565> vertices,
     uint16_t rgb)
 {
     if (vertices.size() == 0)
@@ -517,7 +517,7 @@ polygon(
 void
 polygonFilled(
     Interface565& iface,
-    std::span<const Interface565Point> vertices,
+    std::span<const Point565> vertices,
     uint16_t rgb)
 {
     if (vertices.size() == 0)
@@ -531,8 +531,8 @@ polygonFilled(
         return;
     }
 
-    auto xIntersection = [](const Interface565Point& p1,
-                            const Interface565Point& p2,
+    auto xIntersection = [](const Point565& p1,
+                            const Point565& p2,
                             int y) -> std::optional<int>
     {
         const auto minY = std::min(p1.y(), p2.y());
@@ -594,7 +594,7 @@ polygonFilled(
 void
 polyline(
     Interface565& iface,
-    std::span<const Interface565Point> vertices,
+    std::span<const Point565> vertices,
     uint16_t rgb)
 {
     if (vertices.size() == 0)

@@ -128,8 +128,8 @@ main(
 
         //-----------------------------------------------------------------
 
-        circle(*fb, Interface565Point{60, 60}, 50, white);
-        circleFilled(*fb, Interface565Point{180, 60}, 50, white);
+        circle(*fb, Point565{60, 60}, 50, white);
+        circleFilled(*fb, Point565{180, 60}, 50, white);
 
         //-----------------------------------------------------------------
 

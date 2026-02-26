@@ -209,7 +209,7 @@ Puzzle::draw(Interface565& fb)
     {
         for (int i = 0 ; i < c_puzzleWidth ; ++i)
         {
-           const Interface565Point p{ i * c_tileWidth,
+           const Point565 p{ i * c_tileWidth,
                                       j * c_tileHeight };
            const auto tile = m_board[i + (j * c_puzzleWidth)];
 
@@ -239,7 +239,7 @@ Puzzle::draw(Interface565& fb)
         const int xOffset = (fbWidth - zoomed.getWidth()) / 2;
         const int yOffset = (fbHeight - zoomed.getHeight()) / 2;
 
-        const Interface565Point p{ xOffset, yOffset };
+        const Point565 p{ xOffset, yOffset };
 
         fb.putImage(p, zoomed);
     }
@@ -248,7 +248,7 @@ Puzzle::draw(Interface565& fb)
         const int xOffset = (fbWidth - imageWidth) / 2;
         const int yOffset = (fbHeight - imageHeight) / 2;
 
-        const Interface565Point p{ xOffset, yOffset };
+        const Point565 p{ xOffset, yOffset };
         fb.putImage(p, m_image);
     }
 }
