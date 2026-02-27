@@ -354,6 +354,9 @@ RaspInfo::run()
                     panel->update(now_t, *m_font);                    }
             }
         }
+
+        const auto nextSecond = std::chrono::round<std::chrono::seconds>(now) + 1s;
+        std::this_thread::sleep_until(nextSecond);
     }
 
     messageLog(LOG_INFO, "exiting");
