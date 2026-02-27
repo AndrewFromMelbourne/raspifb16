@@ -323,36 +323,33 @@ RaspInfo::run()
         const auto now = std::chrono::system_clock::now();
         const auto now_t = std::chrono::system_clock::to_time_t(now);
 
-        if (m_fb->ownable())
+        if (*m_display)
         {
-            if (*m_display)
+            if (m_fb->ownable() and not m_fb->owned())
             {
-                if (m_fb->ownable() and not m_fb->owned())
-                {
-                    m_fb->own();
-                    messageLog(LOG_INFO, "display enabled");
-                }
-
-                for (auto& panel : m_panels)
-                {
-                    panel->update(now_t, *m_font);
-                    panel->show(*m_fb);
-                }
-
-                m_fb->update();
+                m_fb->own();
+                messageLog(LOG_INFO, "display enabled");
             }
-            else
-            {
-                if (m_fb->ownable() and m_fb->owned())
-                {
-                    m_fb->disown();
-                    messageLog(LOG_INFO, "display disabled");
-                }
 
-                for (auto& panel : m_panels)
-                {
-                    panel->update(now_t, *m_font);
-                }
+            for (auto& panel : m_panels)
+            {
+                panel->update(now_t, *m_font);
+                panel->show(*m_fb);
+            }
+
+            m_fb->update();
+        }
+        else
+        {
+            if (m_fb->ownable() and m_fb->owned())
+            {
+                m_fb->disown();
+                messageLog(LOG_INFO, "display disabled");
+            }
+
+            for (auto& panel : m_panels)
+            {
+                panel->update(now_t, *m_font);
             }
         }
 
