@@ -351,7 +351,8 @@ RaspInfo::run()
 
                 for (auto& panel : m_panels)
                 {
-                    panel->update(now_t, *m_font);                    }
+                    panel->update(now_t, *m_font);
+                }
             }
         }
 
