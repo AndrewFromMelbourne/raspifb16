@@ -1,4 +1,4 @@
-# raspifb16
+# fb16
 This repository contains a C++ convenience library for directly manipulating
 the Linux Framebuffer. It was written specifically to access the 16 bit per
 pixel framebuffers found on the accessory LCD displays on the Raspberry Pi.
@@ -68,7 +68,7 @@ A wifi access point scanner.
 
 # build
 
-	cd raspifb16
+	cd fb16
 	mkdir build
 	cd build
 	cmake ..

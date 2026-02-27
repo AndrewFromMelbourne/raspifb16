@@ -44,30 +44,29 @@ class Panel
 public:
 
     Panel(
-        int width,
-        int height,
+        fb16::Dimensions565 d,
         int yPosition)
     :
         m_yPosition{yPosition},
-        m_image{width, height}
+        m_image{d}
     { }
 
 
     virtual ~Panel() = default;
 
-    [[nodiscard]] int getBottom() const noexcept { return m_yPosition + m_image.getHeight(); }
+    [[nodiscard]] int getBottom() const noexcept { return m_yPosition + m_image.getDimensions().height(); }
 
-    [[nodiscard]] raspifb16::Image565& getImage() noexcept { return m_image; }
-    [[nodiscard]] const raspifb16::Image565& getImage() const noexcept { return m_image; }
+    [[nodiscard]] fb16::Image565& getImage() noexcept { return m_image; }
+    [[nodiscard]] const fb16::Image565& getImage() const noexcept { return m_image; }
 
-    void show(raspifb16::Interface565& fb) const;
-    virtual void init(raspifb16::Interface565Font& font) = 0;
-    virtual void update(time_t now, raspifb16::Interface565Font& font) = 0;
+    void show(fb16::Interface565& fb) const;
+    virtual void init(fb16::Interface565Font& font) = 0;
+    virtual void update(time_t now, fb16::Interface565Font& font) = 0;
 
 private:
 
     int m_yPosition;
-    raspifb16::Image565 m_image;
+    fb16::Image565 m_image;
 };
 
 //-------------------------------------------------------------------------

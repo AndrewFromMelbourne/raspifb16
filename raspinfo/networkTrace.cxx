@@ -131,7 +131,7 @@ NetworkTrace::NetworkTrace(
 void
 NetworkTrace::update(
     time_t now,
-    raspifb16::Interface565Font&)
+    fb16::Interface565Font&)
 {
     const NetworkStats currentStats;
     const NetworkStats diff{currentStats - m_previousStats};

@@ -27,40 +27,33 @@
 
 #include "image565.h"
 
+#include <algorithm>
+#include <ranges>
+
 //-------------------------------------------------------------------------
 
 using size_type = std::vector<uint16_t>::size_type;
 
 //-------------------------------------------------------------------------
 
-raspifb16::Image565::Image565(
-    int width,
-    int height,
-    uint8_t numberOfFrames)
+fb16::Image565::Image565(
+    fb16::Dimensions565 d)
 :
-    m_width{width},
-    m_height{height},
-    m_frame{0},
-    m_numberOfFrames{numberOfFrames},
-    m_buffer(width * height * numberOfFrames)
+    m_dimensions{d},
+    m_buffer(d.area())
 {
 }
 
 //-------------------------------------------------------------------------
 
-raspifb16::Image565::Image565(
-    int width,
-    int height,
-    std::initializer_list<uint16_t> buffer,
-    uint8_t numberOfFrames)
+fb16::Image565::Image565(
+    fb16::Dimensions565 d,
+    std::initializer_list<uint16_t> buffer)
 :
-    m_width{width},
-    m_height{height},
-    m_frame{0},
-    m_numberOfFrames{numberOfFrames},
+    m_dimensions{d},
     m_buffer{buffer}
 {
-    const std::size_t minBufferSize = width * height * numberOfFrames;
+    const std::size_t minBufferSize = d.area();
 
     if (m_buffer.size() < minBufferSize)
     {
@@ -69,46 +62,71 @@ raspifb16::Image565::Image565(
 }
 
 //-------------------------------------------------------------------------
-raspifb16::Image565::Image565(
-    int width,
-    int height,
-    std::span<const uint16_t> buffer,
-    uint8_t numberOfFrames)
+fb16::Image565::Image565(
+    fb16::Dimensions565 d,
+    std::span<const uint16_t> buffer)
 :
-    m_width{width},
-    m_height{height},
-    m_frame{0},
-    m_numberOfFrames{numberOfFrames},
+    m_dimensions{d},
     m_buffer{}
 {
     m_buffer.assign(buffer.begin(), buffer.end());
 
-    const std::size_t minBufferSize = width * height * numberOfFrames;
+    const std::size_t minBufferSize = d.area();
 
     if (m_buffer.size() < minBufferSize)
     {
         m_buffer.resize(minBufferSize);
     }
+}
+
+//-------------------------------------------------------------------------
+
+fb16::Image565::Image565(
+    const Interface565& i)
+:
+    m_dimensions{i.getDimensions()},
+    m_buffer(i.getDimensions().area())
+{
+    copy(i);
+}
+
+//-------------------------------------------------------------------------
+
+fb16::Image565&
+fb16::Image565::operator=(
+    const fb16::Interface565& i)
+{
+    if (&i != this)
+    {
+        copy(i);
+    }
+
+    return *this;
 }
 
 //-------------------------------------------------------------------------
 
 void
-raspifb16::Image565::setFrame(
-    uint8_t frame) noexcept
+fb16::Image565::copy(
+    const fb16::Interface565& i)
 {
-    if (frame < m_numberOfFrames)
+    m_dimensions = i.getDimensions();
+    m_buffer.resize(m_dimensions.area());
+
+    for (auto y = 0 ; y < m_dimensions.height() ; ++y)
     {
-        m_frame = frame;
+        auto destination = getRow(y);
+        auto source = i.getRow(y).subspan(0, m_dimensions.width());
+        std::ranges::copy(source, begin(destination));
     }
 }
 
 //-------------------------------------------------------------------------
 
 std::size_t
-raspifb16::Image565::offset(
+fb16::Image565::offset(
     const Point565 p) const noexcept
 {
-    return p.x() + (p.y() * m_width) + (m_frame * m_width * m_height);
+    return p.x() + (p.y() * m_dimensions.width());
 }
 

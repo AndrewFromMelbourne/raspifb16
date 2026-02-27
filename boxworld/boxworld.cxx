@@ -33,7 +33,7 @@
 
 //-------------------------------------------------------------------------
 
-using namespace raspifb16;
+using namespace fb16;
 
 //-------------------------------------------------------------------------
 
@@ -48,18 +48,18 @@ Boxworld::Boxworld(bool fitToScreen)
     m_levels(),
     m_tileBuffers(
         {
-            { c_tileWidth, c_tileHeight, c_emptyImage },
-            { c_tileWidth, c_tileHeight, c_passageImage },
-            { c_tileWidth, c_tileHeight, c_boxImage },
-            { c_tileWidth, c_tileHeight, c_playerImage, 2 },
-            { c_tileWidth, c_tileHeight, c_wallImage },
-            { c_tileWidth, c_tileHeight, c_passageWithTargetImage },
-            { c_tileWidth, c_tileHeight, c_boxOnTargetImage },
-            { c_tileWidth, c_tileHeight, c_playerOnTargetImage, 2 }
+            { c_tileDimensions, c_emptyImage },
+            { c_tileDimensions, c_passageImage },
+            { c_tileDimensions, c_boxImage },
+            { c_tileDimensions, c_playerImage, 2 },
+            { c_tileDimensions, c_wallImage },
+            { c_tileDimensions, c_passageWithTargetImage },
+            { c_tileDimensions, c_boxOnTargetImage },
+            { c_tileDimensions, c_playerOnTargetImage, 2 }
         }),
-    m_topTextImage{ 240, 8 },
-    m_bottomTextImage{ 320, 16 },
-    m_image{ 320, 240 },
+    m_topTextImage{fb16::Dimensions565{240, 8}},
+    m_bottomTextImage{fb16::Dimensions565{320, 16}},
+    m_image{fb16::Dimensions565{320, 240}},
     m_textRGB(255, 255, 255),
     m_boldRGB(255, 255, 0),
     m_disabledRGB(170, 170, 170),
@@ -172,28 +172,26 @@ Boxworld::draw(
     drawBoard(m_image);
     drawText(m_image, font);
 
-    const auto imageWidth = m_image.getWidth();
-    const auto imageHeight = m_image.getHeight();
+    const auto id = m_image.getDimensions();
+    const auto fbd =  fb.getDimensions();
 
-    const auto fbWidth = fb.getWidth();
-    const auto fbHeight = fb.getHeight();
-
-    const auto zoom = std::min(fbWidth / imageWidth, fbHeight / imageHeight);
+    const auto zoom = std::min(fbd.width() / id.width(), fbd.height() / id.height());
 
     if ((zoom > 1) and m_fitToScreen)
     {
         auto zoomed = scaleUp(m_image, zoom);
+        const auto zd = zoomed.getDimensions();
 
-        const int xOffset = (fbWidth - zoomed.getWidth()) / 2;
-        const int yOffset = (fbHeight - zoomed.getHeight()) / 2;
+        const int xOffset = (fbd.width() - zd.width()) / 2;
+        const int yOffset = (fbd.height() - zd.height()) / 2;
 
         const Point565 p{ xOffset, yOffset };
         fb.putImage(p, zoomed);
     }
     else
     {
-        const int xOffset = (fbWidth - imageWidth) / 2;
-        const int yOffset = (fbHeight - imageHeight) / 2;
+        const int xOffset = (fbd.width() - id.width()) / 2;
+        const int yOffset = (fbd.height() - id.height()) / 2;
 
         const Point565 p{ xOffset, yOffset };
         fb.putImage(p, m_image);
@@ -296,7 +294,7 @@ Boxworld::drawText(
                                m_textRGB,
                                m_bottomTextImage);
 
-    const int halfWidth = 2 + (m_bottomTextImage.getWidth() / 2);
+    const int halfWidth = 2 + (m_bottomTextImage.getDimensions().width() / 2);
 
     position = Point565{ halfWidth, 0 };
     auto& nextRGB = ((m_level < (Level::c_levelCount - 1))

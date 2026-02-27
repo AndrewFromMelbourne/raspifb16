@@ -34,7 +34,7 @@
 
 //-------------------------------------------------------------------------
 
-namespace raspifb16
+namespace fb16
 {
 
 //-------------------------------------------------------------------------
@@ -99,45 +99,46 @@ Interface565Menu::Interface565Menu(
 
 void
 Interface565Menu::draw(
-    raspifb16::FrameBuffer565& fb,
+    fb16::FrameBuffer565& fb,
     Interface565Font& font) const
 {
     constexpr auto characterPadding{5};
     constexpr auto padding{4};
+    const auto d = font.getPixelDimensions();
     const auto characters = m_titleMaximum + m_valueMaximum + characterPadding;
-    const auto width = characters * font.getPixelWidth();
+    const auto width = characters * d.width();
 
     boxFilled(
         fb,
-        raspifb16::Point565(0, 0),
-        raspifb16::Point565(
+        fb16::Point565(0, 0),
+        fb16::Point565(
             width + (padding * 2),
-            (m_items.size() * font.getPixelHeight()) + (padding * 2)),
+            (m_items.size() * d.height()) + (padding * 2)),
             m_backgroundColour);
 
     box(
         fb,
-        raspifb16::Point565(0, 0),
-        raspifb16::Point565(
+        fb16::Point565(0, 0),
+        fb16::Point565(
             width + (padding * 2),
-            (m_items.size() * font.getPixelHeight()) + (padding * 2)),
+            (m_items.size() * d.height()) + (padding * 2)),
             m_selectionColour);
 
     boxFilled(
         fb,
-        raspifb16::Point565(
+        fb16::Point565(
             padding,
-            (m_selected * font.getPixelHeight()) + padding),
-        raspifb16::Point565(
+            (m_selected * d.height()) + padding),
+        fb16::Point565(
             width + padding,
-            ((m_selected + 1) * font.getPixelHeight()) + padding),
+            ((m_selected + 1) * d.height()) + padding),
             m_selectionColour);
 
     int yOffset = 0;
     for (const auto& item : m_items)
     {
         font.drawString(
-            raspifb16::Point565(padding, yOffset + padding),
+            fb16::Point565(padding, yOffset + padding),
             std::format(
                 " {0:<{1}} : {2}",
                 item.m_title,
@@ -145,7 +146,7 @@ Interface565Menu::draw(
                 item.m_values[item.m_value]),
             m_foregroundColour,
             fb);
-        yOffset += font.getPixelHeight();
+        yOffset += d.height();
     }
 }
 
@@ -179,16 +180,16 @@ Interface565Menu::getValue(
 
 Interface565Menu::Update
 Interface565Menu::update(
-    raspifb16::Joystick& js)
+    fb16::Joystick& js)
 {
-    if (js.buttonPressed(raspifb16::Joystick::BUTTON_Y))
+    if (js.buttonPressed(fb16::Joystick::BUTTON_Y))
     {
         if (m_items[m_selected].decrementValue())
         {
             return VALUE_UPDATE;
         }
     }
-    if (js.buttonPressed(raspifb16::Joystick::BUTTON_A))
+    if (js.buttonPressed(fb16::Joystick::BUTTON_A))
     {
        if (m_items[m_selected].incrementValue())
         {
@@ -196,13 +197,13 @@ Interface565Menu::update(
         }
     }
 
-    if (js.buttonPressed(raspifb16::Joystick::BUTTON_X))
+    if (js.buttonPressed(fb16::Joystick::BUTTON_X))
     {
         decrementSelected();
         return MENU_UPDATE;
     }
 
-    if (js.buttonPressed(raspifb16::Joystick::BUTTON_B))
+    if (js.buttonPressed(fb16::Joystick::BUTTON_B))
     {
         incrementSelected();
         return MENU_UPDATE;
@@ -317,4 +318,4 @@ Interface565Menu::incrementSelected() noexcept
 
 //-------------------------------------------------------------------------
 
-} // namespace raspifb16
+} // namespace fb16

@@ -41,7 +41,7 @@
 
 //-------------------------------------------------------------------------
 
-using namespace raspifb16;
+using namespace fb16;
 using namespace std::chrono_literals;
 
 //-------------------------------------------------------------------------
@@ -71,7 +71,7 @@ main(
     std::string device{};
     const std::string program{basename(argv[0])};
     FontConfig fontConfig{};
-    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
+    auto interfaceType{fb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------
 
@@ -94,33 +94,28 @@ main(
         case 'd':
 
             device = optarg;
-
             break;
 
         case 'f':
 
-            fontConfig = raspifb16::parseFontConfig(optarg, 32);
-
+            fontConfig = fb16::parseFontConfig(optarg, 32);
             break;
 
         case 'h':
 
             printUsage(std::cout, program);
             ::exit(EXIT_SUCCESS);
-
             break;
 
         case 'k':
 
-            interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
-
+            interfaceType = fb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
             break;
 
         default:
 
             printUsage(std::cerr, program);
             ::exit(EXIT_FAILURE);
-
             break;
         }
     }
@@ -139,39 +134,41 @@ main(
     {
         constexpr RGB565 black{0, 0, 0};
         constexpr RGB565 white{255, 255, 255};
-        auto fb{raspifb16::createInterface565(interfaceType, device)};
+        auto fb{fb16::createInterface565(interfaceType, device)};
+        const auto fbd = fb->getDimensions();
 
-        Image565 image(fb->getWidth(), fb->getHeight());
+        Image565 image(fbd);
         image.clear(black);
 
         //-----------------------------------------------------------------
 
         Image565FreeType ft{fontConfig};
+        const auto ftd = ft.getPixelDimensions();
         Point565 p{0, 0};
 
         p = ft.drawString(p, "abcdefghijklmnopqrstuvwxyz ", white, image);
         p = ft.drawString(p, "0123456789", white, image);
 
-        p.set(0, p.y() + ft.getPixelHeight());
+        p.set(0, p.y() + ftd.height());
 
         p = ft.drawString(p, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", white, image);
 
-        p.set(0, p.y() + ft.getPixelHeight());
+        p.set(0, p.y() + ftd.height());
 
         p = ft.drawChar(p, '@', white, image);
 
-        p.set(0, p.y() + ft.getPixelHeight());
+        p.set(0, p.y() + ftd.height());
 
         for (int j = 0 ; j < 16 ; ++j)
         {
             for (auto i = 0 ; i < 16 ; ++i)
             {
                 auto c = static_cast<uint8_t>(i + (j * 16));
-                p.setX(i * ft.getPixelWidth());
+                p.setX(i * ftd.width());
                 ft.drawChar(p, c, white, image);
             }
 
-            p.setY(p.y() + ft.getPixelHeight());
+            p.setY(p.y() + ftd.height());
         }
 
         //-----------------------------------------------------------------
@@ -185,9 +182,5 @@ main(
         std::println(std::cerr, "Error: {}", error.what());
         exit(EXIT_FAILURE);
     }
-
-    //---------------------------------------------------------------------
-
-    return 0 ;
 }
 

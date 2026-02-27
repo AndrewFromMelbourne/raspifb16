@@ -40,7 +40,7 @@
 
 //-------------------------------------------------------------------------
 
-using namespace raspifb16;
+using namespace fb16;
 using namespace std::chrono_literals;
 
 //-------------------------------------------------------------------------
@@ -68,7 +68,7 @@ main(
 {
     std::string device{};
     const std::string program{basename(argv[0])};
-    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
+    auto interfaceType{fb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------
 
@@ -90,27 +90,23 @@ main(
         case 'd':
 
             device = optarg;
-
             break;
 
         case 'h':
 
             printUsage(std::cout, program);
             ::exit(EXIT_SUCCESS);
-
             break;
 
         case 'k':
 
-            interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
-
+            interfaceType = fb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
             break;
 
         default:
 
             printUsage(std::cerr, program);
             ::exit(EXIT_FAILURE);
-
             break;
         }
     }
@@ -119,19 +115,17 @@ main(
 
     try
     {
-        auto fb{raspifb16::createInterface565(interfaceType, device)};
+        auto fb{fb16::createInterface565(interfaceType, device)};
+        const auto fbd = fb->getDimensions();
 
         //-----------------------------------------------------------------
 
         constexpr int iwidth{30};
         constexpr int ihwidth{iwidth/2};
-        const auto fwidth{fb->getWidth()};
-        const auto fheight{fb->getHeight()};
 
         Image565 image
         {
-            iwidth,
-            iwidth,
+            fb16::Dimensions565{iwidth, iwidth},
             {
                 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
                 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -226,9 +220,9 @@ main(
             }
         };
 
-        for (auto y : { -ihwidth, (fheight / 2) - ihwidth, fheight - ihwidth })
+        for (auto y : { -ihwidth, (fbd.height() / 2) - ihwidth, fbd.height() - ihwidth })
         {
-            for (auto x : { -ihwidth, (fwidth / 2) - ihwidth, fwidth - ihwidth })
+            for (auto x : { -ihwidth, (fbd.width() / 2) - ihwidth, fbd.width() - ihwidth })
             {
                 fb->putImage(Point565{x, y}, image);
             }
@@ -247,6 +241,4 @@ main(
         std::println(std::cerr, "Error: {}", error.what());
         exit(EXIT_FAILURE);
     }
-
-    return 0;
 }

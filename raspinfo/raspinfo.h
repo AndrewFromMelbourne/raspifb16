@@ -72,11 +72,11 @@ private:
 
     std::string m_device{};
     std::atomic<bool>* m_display{nullptr};
-    std::unique_ptr<raspifb16::Interface565> m_fb{nullptr};
-    std::unique_ptr<raspifb16::Interface565Font> m_font{nullptr};
-    raspifb16::FontConfig m_fontConfig;
+    std::unique_ptr<fb16::Interface565> m_fb{nullptr};
+    std::unique_ptr<fb16::Interface565Font> m_font{nullptr};
+    fb16::FontConfig m_fontConfig;
     std::string m_hostname{};
-    raspifb16::InterfaceType565 m_interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
+    fb16::InterfaceType565 m_interfaceType{fb16::InterfaceType565::FRAME_BUFFER_565};
     std::vector<std::unique_ptr<Panel>> m_panels{};
     std::string m_programName{};
     std::atomic<bool>* m_run{nullptr};

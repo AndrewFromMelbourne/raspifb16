@@ -47,14 +47,14 @@ public:
                 int fontHeight,
                 int yPosition);
 
-    void init(raspifb16::Interface565Font& font) override;
-    void update(time_t now, raspifb16::Interface565Font& font) override;
+    void init(fb16::Interface565Font& font) override;
+    void update(time_t now, fb16::Interface565Font& font) override;
 
 private:
 
-    raspifb16::RGB565 m_heading;
-    raspifb16::RGB565 m_foreground;
-    raspifb16::RGB565 m_background;
+    fb16::RGB565 m_heading;
+    fb16::RGB565 m_foreground;
+    fb16::RGB565 m_background;
 
     std::string m_memorySplit;
 };

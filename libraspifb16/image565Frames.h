@@ -29,17 +29,17 @@
 
 //-------------------------------------------------------------------------
 
+#include <cstddef>
 #include <cstdint>
+#include <initializer_list>
 #include <optional>
-#include <string>
-#include <utility>
+#include <span>
+#include <vector>
 
-#include <linux/fb.h>
-
-#include "fileDescriptor.h"
+#include "dimensions.h"
+#include "rgb565.h"
 #include "interface565.h"
 #include "point.h"
-#include "rgb565.h"
 
 //-------------------------------------------------------------------------
 
@@ -48,48 +48,52 @@ namespace fb16
 
 //-------------------------------------------------------------------------
 
-class Image565;
-
-//-------------------------------------------------------------------------
-
-class FrameBuffer565
+class Image565Frames
 :
     public Interface565
 {
 public:
 
-    static constexpr std::size_t c_bytesPerPixel{2};
+    Image565Frames() = default;
 
-    explicit FrameBuffer565(const std::string& device);
+    explicit
+    Image565Frames(Dimensions565 d,
+             uint8_t numberOfFrames = 1);
 
-    ~FrameBuffer565();
+    Image565Frames(Dimensions565 d,
+             std::initializer_list<uint16_t> buffer,
+             uint8_t numberOfFrames = 1);
 
-    FrameBuffer565(const FrameBuffer565& fb) = delete;
-    FrameBuffer565& operator=(const FrameBuffer565& fb) = delete;
+    Image565Frames(Dimensions565 d,
+             std::span<const uint16_t> buffer,
+             uint8_t numberOfFrames = 1);
 
-    FrameBuffer565(FrameBuffer565&& fb) = delete;
-    FrameBuffer565& operator=(FrameBuffer565&& fb) = delete;
+    ~Image565Frames() override = default;
 
-    [[nodiscard]] Dimensions565 getDimensions() const noexcept override;
+    Image565Frames(const Image565Frames&) = default;
+    Image565Frames(Image565Frames&&) = default;
+    Image565Frames& operator=(const Image565Frames&) = default;
+    Image565Frames& operator=(Image565Frames&&) = default;
 
-    bool hideCursor() noexcept;
+    [[nodiscard]] Dimensions565 getDimensions() const noexcept override { return m_dimensions; }
 
-    [[nodiscard]] std::span<uint16_t> getBuffer() noexcept override { return {m_fbp, getBufferSize()}; };
-    [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept override { return {m_fbp, getBufferSize()}; }
-    [[nodiscard]] std::size_t getBufferSize() const noexcept { return m_lineLengthPixels * getDimensions().height(); }
-    [[nodiscard]] int getLineLengthPixels() const noexcept override { return m_lineLengthPixels; }
+    [[nodiscard]] uint8_t getFrame() const noexcept { return m_frame; }
+    [[nodiscard]] uint8_t getNumberOfFrames() const noexcept { return m_numberOfFrames; }
+    void setFrame(uint8_t frame) noexcept;
+
+    [[nodiscard]] std::span<uint16_t> getBuffer() noexcept override { return m_buffer; };
+    [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept override { return m_buffer; };
+    [[nodiscard]] int getLineLengthPixels() const noexcept override { return m_dimensions.width(); };
     [[nodiscard]] std::size_t offset(const Point565 p) const noexcept override;
 
 private:
 
-    fd::FileDescriptor m_consolefd;
+    Dimensions565 m_dimensions;
 
-    struct fb_fix_screeninfo m_finfo;
-    struct fb_var_screeninfo m_vinfo;
+    uint8_t m_frame{};
+    uint8_t m_numberOfFrames{};
 
-    int32_t m_lineLengthPixels;
-
-    uint16_t* m_fbp;
+    std::vector<uint16_t> m_buffer{};
 };
 
 //-------------------------------------------------------------------------

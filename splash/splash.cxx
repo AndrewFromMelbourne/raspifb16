@@ -39,7 +39,7 @@
 
 //-------------------------------------------------------------------------
 
-using namespace raspifb16;
+using namespace fb16;
 
 //-------------------------------------------------------------------------
 
@@ -68,7 +68,7 @@ main(
     std::string device{};
     const std::string program{basename(argv[0])};
     std::string qoi{};
-    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
+    auto interfaceType{fb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------
 
@@ -103,7 +103,7 @@ main(
 
         case 'k':
 
-            interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
+            interfaceType = fb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
 
             break;
 
@@ -128,11 +128,13 @@ main(
         ::exit(EXIT_FAILURE);
     }
 
+   //---------------------------------------------------------------------
+
     try
     {
         constexpr bool block{true};
         Joystick js{block};
-        auto fb{raspifb16::createInterface565(interfaceType, device)};
+        auto fb{fb16::createInterface565(interfaceType, device)};
 
         const auto image = readQoi(qoi);
         fb->putImage(center(*fb, image), image);
@@ -149,7 +151,5 @@ main(
         std::println(std::cerr, "Error: {}", error.what());
         exit(EXIT_FAILURE);
     }
-
-    return 0;
 }
 

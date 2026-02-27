@@ -30,6 +30,7 @@
 //-------------------------------------------------------------------------
 
 #include "image565.h"
+#include "image565Frames.h"
 #include "interface565Font.h"
 #include "joystick.h"
 
@@ -75,18 +76,18 @@ public:
     explicit Boxworld(bool fitToScreen);
 
     void init();
-    void update(raspifb16::Joystick& js);
-    void draw(raspifb16::Interface565& fb,
-              raspifb16::Interface565Font& font);
+    void update(fb16::Joystick& js);
+    void draw(fb16::Interface565& fb,
+              fb16::Interface565Font& font);
 
 private:
 
     void findPlayer();
     void swapPieces(const Location& location1, const Location& location2);
     void isLevelSolved();
-    void drawBoard(raspifb16::Interface565& fb);
-    void drawText(raspifb16::Interface565& fb,
-                  raspifb16::Interface565Font& font);
+    void drawBoard(fb16::Interface565& fb);
+    void drawText(fb16::Interface565& fb,
+                  fb16::Interface565Font& font);
 
     //---------------------------------------------------------------------
 
@@ -99,16 +100,16 @@ private:
     Level::LevelType m_boardPrevious;
     const Levels m_levels;
 
-    std::array<raspifb16::Image565, c_tileCount> m_tileBuffers;
-    raspifb16::Image565 m_topTextImage;
-    raspifb16::Image565 m_bottomTextImage;
-    raspifb16::Image565 m_image;
+    std::array<fb16::Image565Frames, c_tileCount> m_tileBuffers;
+    fb16::Image565 m_topTextImage;
+    fb16::Image565 m_bottomTextImage;
+    fb16::Image565 m_image;
 
-    raspifb16::RGB565 m_textRGB;
-    raspifb16::RGB565 m_boldRGB;
-    raspifb16::RGB565 m_disabledRGB;
-    raspifb16::RGB565 m_solvedRGB;
-    raspifb16::RGB565 m_backgroundRGB;
+    fb16::RGB565 m_textRGB;
+    fb16::RGB565 m_boldRGB;
+    fb16::RGB565 m_disabledRGB;
+    fb16::RGB565 m_solvedRGB;
+    fb16::RGB565 m_backgroundRGB;
 
     bool m_fitToScreen;
 };

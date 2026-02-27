@@ -164,14 +164,19 @@ int rgbaHashQoi(const QoiRGBA& rgba) noexcept
 
 //-------------------------------------------------------------------------
 
-raspifb16::Image565
+fb16::Image565
 decodeQoi(
     const QoiHeader& header,
     const std::vector<uint8_t>& data,
-    const raspifb16::RGB565& background)
+    const fb16::RGB565& background)
 {
+    const fb16::Dimensions565 id
+    {
+        static_cast<int>(header.getWidth()),
+        static_cast<int>(header.getHeight())
+    };
 
-    raspifb16::Image565 image(header.getWidth(), header.getHeight());
+    fb16::Image565 image(id);
 
     QoiRGBA currentRGBA{ .r = 0, .g = 0, .b = 0, .a = 255 };
 
@@ -259,13 +264,13 @@ decodeQoi(
 
         const int x = i % header.getWidth();
         const int y = i / header.getWidth();
-        const raspifb16::RGB565 rgb{currentRGBA.r, currentRGBA.g, currentRGBA.b};
+        const fb16::RGB565 rgb{currentRGBA.r, currentRGBA.g, currentRGBA.b};
 
-        image.setPixelRGB(raspifb16::Point565{x, y},
+        image.setPixelRGB(fb16::Point565{x, y},
                           rgb.blend(currentRGBA.a, background));
     }
 
-    return raspifb16::Image565(image);
+    return fb16::Image565(image);
 }
 
 //-------------------------------------------------------------------------
@@ -274,7 +279,7 @@ decodeQoi(
 
 //=========================================================================
 
-namespace raspifb16
+namespace fb16
 {
 
 //-------------------------------------------------------------------------

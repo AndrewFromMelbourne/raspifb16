@@ -50,12 +50,11 @@
 
 //=========================================================================
 
-raspifb16::DumbBuffer565::DumbBuffer565(
+fb16::DumbBuffer565::DumbBuffer565(
     const std::string& device,
     uint32_t connectorId)
 :
-    m_width{0},
-    m_height{0},
+    m_dimensions{},
     m_fd{},
     m_dbs{},
     m_dbFront{0},
@@ -125,7 +124,7 @@ raspifb16::DumbBuffer565::DumbBuffer565(
 
 //-------------------------------------------------------------------------
 
-raspifb16::DumbBuffer565::~DumbBuffer565()
+fb16::DumbBuffer565::~DumbBuffer565()
 {
     clear();
     update();
@@ -157,7 +156,7 @@ raspifb16::DumbBuffer565::~DumbBuffer565()
 //-------------------------------------------------------------------------
 
 void
-raspifb16::DumbBuffer565::clearBuffers(
+fb16::DumbBuffer565::clearBuffers(
     uint16_t rgb)
 {
     clear(rgb);
@@ -168,7 +167,7 @@ raspifb16::DumbBuffer565::clearBuffers(
 //-------------------------------------------------------------------------
 
 std::span<uint16_t>
-raspifb16::DumbBuffer565::getBuffer() noexcept
+fb16::DumbBuffer565::getBuffer() noexcept
 {
     const auto& dbb = m_dbs[m_dbBack];
     return {dbb.m_fbp, getBufferSize()};
@@ -177,7 +176,7 @@ raspifb16::DumbBuffer565::getBuffer() noexcept
 //-------------------------------------------------------------------------
 
 std::span<const uint16_t>
-raspifb16::DumbBuffer565::getBuffer() const noexcept
+fb16::DumbBuffer565::getBuffer() const noexcept
 {
     const auto& dbb = m_dbs[m_dbBack];
     return {dbb.m_fbp, getBufferSize()};
@@ -186,15 +185,15 @@ raspifb16::DumbBuffer565::getBuffer() const noexcept
 //-------------------------------------------------------------------------
 
 std::size_t
-raspifb16::DumbBuffer565::getBufferSize() const noexcept
+fb16::DumbBuffer565::getBufferSize() const noexcept
 {
-    return getLineLengthPixels() * m_height;
+    return getLineLengthPixels() * m_dimensions.height();
 }
 
 //-------------------------------------------------------------------------
 
 int
-raspifb16::DumbBuffer565::getLineLengthPixels() const noexcept
+fb16::DumbBuffer565::getLineLengthPixels() const noexcept
 {
     const auto& dbb = m_dbs[m_dbBack];
     return dbb.m_lineLengthPixels;
@@ -203,7 +202,7 @@ raspifb16::DumbBuffer565::getLineLengthPixels() const noexcept
 //-------------------------------------------------------------------------
 
 std::size_t
-raspifb16::DumbBuffer565::offset(
+fb16::DumbBuffer565::offset(
     const Point565 p) const noexcept
 {
     const auto& dbb = m_dbs[m_dbBack];
@@ -213,7 +212,7 @@ raspifb16::DumbBuffer565::offset(
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::DumbBuffer565::owned() noexcept
+fb16::DumbBuffer565::owned() noexcept
 {
     return drm::drmIsMaster(m_fd);
 }
@@ -221,7 +220,7 @@ raspifb16::DumbBuffer565::owned() noexcept
 //-------------------------------------------------------------------------
 
 void
-raspifb16::DumbBuffer565::own() noexcept
+fb16::DumbBuffer565::own() noexcept
 {
     drm::drmSetMaster(m_fd);
 }
@@ -229,7 +228,7 @@ raspifb16::DumbBuffer565::own() noexcept
 //-------------------------------------------------------------------------
 
 void
-raspifb16::DumbBuffer565::disown() noexcept
+fb16::DumbBuffer565::disown() noexcept
 {
     drm::drmDropMaster(m_fd);
 }
@@ -237,7 +236,7 @@ raspifb16::DumbBuffer565::disown() noexcept
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::DumbBuffer565::update()
+fb16::DumbBuffer565::update()
 {
     std::swap(m_dbFront, m_dbBack);
     const auto& dbf = m_dbs[m_dbFront];
@@ -282,7 +281,7 @@ raspifb16::DumbBuffer565::update()
 //-------------------------------------------------------------------------
 
 void
-raspifb16::DumbBuffer565::createDumbBuffer(
+fb16::DumbBuffer565::createDumbBuffer(
     int index)
 {
     auto& db = m_dbs[index];
@@ -361,7 +360,7 @@ raspifb16::DumbBuffer565::createDumbBuffer(
 //-------------------------------------------------------------------------
 
 void
-raspifb16::DumbBuffer565::destroyDumbBuffer(
+fb16::DumbBuffer565::destroyDumbBuffer(
     int index)
 {
     const auto& db = m_dbs[index];
@@ -379,7 +378,7 @@ raspifb16::DumbBuffer565::destroyDumbBuffer(
 //-------------------------------------------------------------------------
 
 void
-raspifb16::DumbBuffer565::setDumbBuffer(
+fb16::DumbBuffer565::setDumbBuffer(
     int index)
 {
     const auto& db = m_dbs[index];
@@ -431,7 +430,7 @@ raspifb16::DumbBuffer565::setDumbBuffer(
 //-------------------------------------------------------------------------
 
 void
-raspifb16::DumbBuffer565::addAtomicRequest(
+fb16::DumbBuffer565::addAtomicRequest(
     uint32_t objectId,
     uint32_t objectType,
     const std::string& propertyName,
@@ -459,7 +458,7 @@ raspifb16::DumbBuffer565::addAtomicRequest(
 //-------------------------------------------------------------------------
 
 void
-raspifb16::DumbBuffer565::addAtomicProperties(
+fb16::DumbBuffer565::addAtomicProperties(
     drm::drmModeAtomicReq_ptr& atomicRequest,
     uint32_t fbId)
 {
@@ -481,7 +480,7 @@ raspifb16::DumbBuffer565::addAtomicProperties(
 //-------------------------------------------------------------------------
 
 void
-raspifb16::DumbBuffer565::createAtomicRequests()
+fb16::DumbBuffer565::createAtomicRequests()
 {
     addAtomicRequest(m_connectorId, DRM_MODE_OBJECT_CONNECTOR, "CRTC_ID", m_crtcId);
 
@@ -503,7 +502,7 @@ raspifb16::DumbBuffer565::createAtomicRequests()
 //-------------------------------------------------------------------------
 
 void
-raspifb16::DumbBuffer565::findResources(
+fb16::DumbBuffer565::findResources(
     uint32_t connectorId)
 {
     uint64_t hasDumb;
@@ -532,8 +531,8 @@ raspifb16::DumbBuffer565::findResources(
     //---------------------------------------------------------------------
 
     m_mode = resource.m_mode;
-    m_width = m_mode.hdisplay;
-    m_height = m_mode.vdisplay;
+
+    m_dimensions.set(m_mode.hdisplay, m_mode.vdisplay);
 
     m_connectorId = resource.m_connectorId;
     m_crtcId = resource.m_crtcId;

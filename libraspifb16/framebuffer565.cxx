@@ -44,7 +44,7 @@
 
 //-------------------------------------------------------------------------
 
-raspifb16::FrameBuffer565::FrameBuffer565(
+fb16::FrameBuffer565::FrameBuffer565(
     const std::string& device)
 :
     m_consolefd{-1},
@@ -113,7 +113,7 @@ raspifb16::FrameBuffer565::FrameBuffer565(
 
 //-------------------------------------------------------------------------
 
-raspifb16::FrameBuffer565::~FrameBuffer565()
+fb16::FrameBuffer565::~FrameBuffer565()
 {
     clear();
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -127,8 +127,16 @@ raspifb16::FrameBuffer565::~FrameBuffer565()
 
 //-------------------------------------------------------------------------
 
+fb16::Dimensions565
+fb16::FrameBuffer565::getDimensions() const noexcept
+{
+    return {static_cast<int>(m_vinfo.xres), static_cast<int>(m_vinfo.yres)};
+}
+
+//-------------------------------------------------------------------------
+
 bool
-raspifb16::FrameBuffer565::hideCursor() noexcept
+fb16::FrameBuffer565::hideCursor() noexcept
 {
     std::string name{::ttyname(0)};
     bool result = true;
@@ -163,7 +171,7 @@ raspifb16::FrameBuffer565::hideCursor() noexcept
 //-------------------------------------------------------------------------
 
 std::size_t
-raspifb16::FrameBuffer565::offset(
+fb16::FrameBuffer565::offset(
     const Point565 p) const noexcept
 {
     return p.x() + p.y() * m_lineLengthPixels;

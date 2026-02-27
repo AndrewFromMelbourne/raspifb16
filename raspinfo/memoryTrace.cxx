@@ -114,7 +114,7 @@ MemoryTrace::MemoryTrace(
 void
 MemoryTrace::update(
     time_t now,
-    raspifb16::Interface565Font&)
+    fb16::Interface565Font&)
 {
     auto scale = [](int value, int total, int scale) -> int
     {

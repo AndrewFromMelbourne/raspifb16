@@ -29,6 +29,7 @@
 #include <libgen.h>
 #include <unistd.h>
 
+#include <atomic>
 #include <chrono>
 #include <csignal>
 #include <cstring>
@@ -46,14 +47,14 @@
 
 //-------------------------------------------------------------------------
 
-using namespace raspifb16;
+using namespace fb16;
 using namespace std::chrono_literals;
 
 //-------------------------------------------------------------------------
 
 namespace
 {
-volatile static std::sig_atomic_t run = 1;
+std::atomic<bool> run{true};
 }
 
 //-------------------------------------------------------------------------
@@ -67,7 +68,7 @@ signalHandler(
     case SIGINT:
     case SIGTERM:
 
-        run = 0;
+        run = false;
         break;
     };
 }
@@ -97,7 +98,7 @@ main(
 {
     std::string device{};
     const std::string program{basename(argv[0])};
-    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
+    auto interfaceType{fb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------
 
@@ -119,27 +120,23 @@ main(
         case 'd':
 
             device = optarg;
-
             break;
 
         case 'h':
 
             printUsage(std::cout, program);
             ::exit(EXIT_SUCCESS);
-
             break;
 
         case 'k':
 
-            interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
-
+            interfaceType = fb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
             break;
 
         default:
 
             printUsage(std::cerr, program);
             ::exit(EXIT_FAILURE);
-
             break;
         }
     }
@@ -164,7 +161,8 @@ main(
 
     try
     {
-        auto fb{raspifb16::createInterface565(interfaceType, device)};
+        auto fb{fb16::createInterface565(interfaceType, device)};
+        const auto fbd = fb->getDimensions();
 
         //-----------------------------------------------------------------
 
@@ -174,10 +172,9 @@ main(
 
         fb->clearBuffers(darkGrey);
 
-        constexpr int width{72};
-        constexpr int height{16};
+        const fb16::Dimensions565 id{72, 18};
 
-        Image565 image(width, height);
+        Image565 image(id);
         image.clear(darkBlue);
 
         //-----------------------------------------------------------------
@@ -209,10 +206,11 @@ main(
                 *fb);
 
             const auto rotated = rotate(image, darkGrey, angle / 10.0);
+            const auto rd = rotated.getDimensions();
             const Point565 p
             {
-                (fb->getWidth() - rotated.getWidth()) / 2,
-                (fb->getHeight() - rotated.getHeight()) / 2
+                (fbd.width() - rd.width()) / 2,
+                (fbd.height() - rd.height()) / 2
             };
 
             const auto start = std::chrono::steady_clock::now();
@@ -237,7 +235,5 @@ main(
         std::println(std::cerr, "Error: {}", error.what());
         exit(EXIT_FAILURE);
     }
-
-    return 0;
 }
 

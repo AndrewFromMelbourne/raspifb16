@@ -42,7 +42,7 @@
 
 //-------------------------------------------------------------------------
 
-using namespace raspifb16;
+using namespace fb16;
 using namespace std::chrono_literals;
 
 //-------------------------------------------------------------------------
@@ -86,7 +86,7 @@ main(
 {
     std::string device{};
     const std::string program{basename(argv[0])};
-    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
+    auto interfaceType{fb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------
 
@@ -108,27 +108,23 @@ main(
         case 'd':
 
             device = optarg;
-
             break;
 
         case 'h':
 
             printUsage(std::cout, program);
             ::exit(EXIT_SUCCESS);
-
             break;
 
         case 'k':
 
-            interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
-
+            interfaceType = fb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
             break;
 
         default:
 
             printUsage(std::cerr, program);
             ::exit(EXIT_FAILURE);
-
             break;
         }
     }
@@ -138,7 +134,8 @@ main(
     try
     {
         Image565Font8x16 font;
-        auto fb{raspifb16::createInterface565(interfaceType, device)};
+        auto fb{fb16::createInterface565(interfaceType, device)};
+        const auto fbd = fb->getDimensions();
 
         //-----------------------------------------------------------------
 
@@ -147,7 +144,7 @@ main(
 
         //-----------------------------------------------------------------
 
-        Image565 image{48, 48};
+        Image565 image{fb16::Dimensions565{48, 48}};
         image.clear(red);
 
         auto rgb = image.getPixelRGB(Point565(0,0));
@@ -174,7 +171,8 @@ main(
         constexpr RGB565 darkBlue{0, 0, 63};
         constexpr RGB565 white{255, 255, 255};
 
-        Image565 textImage(168, 16);
+        Image565 textImage(fb16::Dimensions565{168, 16});
+        const auto tid = textImage.getDimensions();
         textImage.clear(darkBlue);
 
         font.drawString(
@@ -185,8 +183,8 @@ main(
 
         const Point565 textLocation
         {
-            (fb->getWidth() - textImage.getWidth()) / 2,
-            (fb->getHeight() - textImage.getHeight()) / 3
+            (fbd.width() - tid.width()) / 2,
+            (fbd.height() - tid.height()) / 3
         };
 
         fb->putImage(textLocation, textImage);
@@ -201,7 +199,5 @@ main(
         std::println(std::cerr, "Error: {}", error.what());
         exit(EXIT_FAILURE);
     }
-
-    return 0;
 }
 

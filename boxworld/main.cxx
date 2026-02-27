@@ -28,7 +28,9 @@
 #include <getopt.h>
 #include <libgen.h>
 
+#include <atomic>
 #include <csignal>
+#include <cstring>
 #include <iostream>
 #include <print>
 #include <thread>
@@ -42,14 +44,30 @@
 //-------------------------------------------------------------------------
 
 using namespace std::chrono_literals;
-using namespace raspifb16;
+using namespace fb16;
 
 //-------------------------------------------------------------------------
 
 namespace
 {
-volatile static std::sig_atomic_t run{1};
+std::atomic<bool> run{true};
 const std::string defaultJoystick{"/dev/input/js0"};
+}
+
+//-------------------------------------------------------------------------
+
+static void
+signalHandler(
+    int signalNumber)
+{
+    switch (signalNumber)
+    {
+    case SIGINT:
+    case SIGTERM:
+
+        run = false;
+        break;
+    };
 }
 
 //-------------------------------------------------------------------------
@@ -81,7 +99,7 @@ main(
     bool fitToScreen{false};
     const std::string program{basename(argv[0])};
     std::string joystick{defaultJoystick};
-    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
+    auto interfaceType{fb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------
 
@@ -129,7 +147,7 @@ main(
 
         case 'k':
 
-            interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
+            interfaceType = fb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
 
             break;
 
@@ -144,11 +162,27 @@ main(
 
     //---------------------------------------------------------------------
 
+    for (auto signal : { SIGINT, SIGTERM })
+    {
+        if (std::signal(signal, signalHandler) == SIG_ERR)
+        {
+            std::println(
+                std::cerr,
+                "Error: installing {} signal handler : {}",
+                strsignal(signal),
+                strerror(errno));
+
+            ::exit(EXIT_FAILURE);
+        }
+    }
+
+    //---------------------------------------------------------------------
+
     try
     {
         Image565Font8x8 font;
         Joystick js{joystick};
-        auto fb{raspifb16::createInterface565(interfaceType, device)};
+        auto fb{fb16::createInterface565(interfaceType, device)};
 
         Boxworld boxworld{fitToScreen};
         boxworld.init();
@@ -179,9 +213,5 @@ main(
         std::println(std::cerr, "Error: {}", error.what());
         exit(EXIT_FAILURE);
     }
-
-    //---------------------------------------------------------------------
-
-    return 0 ;
 }
 

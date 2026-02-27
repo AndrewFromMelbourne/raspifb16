@@ -42,7 +42,7 @@
 
 //-------------------------------------------------------------------------
 
-namespace raspifb16
+namespace fb16
 {
 
 class Interface565Menu
@@ -98,9 +98,9 @@ public:
         RGB565 selectionColour,
         std::initializer_list<MenuItem> items);
 
-    void draw(raspifb16::FrameBuffer565& fb, Interface565Font& font) const;
+    void draw(fb16::FrameBuffer565& fb, Interface565Font& font) const;
     std::size_t getValue(std::size_t id) const;
-    Update update(raspifb16::Joystick& js);
+    Update update(fb16::Joystick& js);
     bool setValue(std::size_t id, std::size_t value);
 
 private:
@@ -119,7 +119,7 @@ private:
 
 //-------------------------------------------------------------------------
 
-} // namespace raspifb16
+} // namespace fb16
 
 //-------------------------------------------------------------------------
 

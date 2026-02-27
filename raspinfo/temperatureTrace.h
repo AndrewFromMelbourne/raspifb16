@@ -50,7 +50,7 @@ public:
         int yPosition,
         int gridHeight = 20);
 
-    void update(time_t now, raspifb16::Interface565Font& font) override;
+    void update(time_t now, fb16::Interface565Font& font) override;
 };
 
 //-------------------------------------------------------------------------

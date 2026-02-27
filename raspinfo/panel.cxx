@@ -31,8 +31,8 @@
 
 void
 Panel::show(
-    raspifb16::Interface565& fb) const
+    fb16::Interface565& fb) const
 {
-    fb.putImage(raspifb16::Point565(0, m_yPosition), m_image);
+    fb.putImage(fb16::Point565(0, m_yPosition), m_image);
 }
 

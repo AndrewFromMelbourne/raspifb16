@@ -28,7 +28,9 @@
 #include <getopt.h>
 #include <libgen.h>
 
+#include <atomic>
 #include <csignal>
+#include <cstring>
 #include <iostream>
 #include <print>
 
@@ -38,14 +40,30 @@
 
 //-------------------------------------------------------------------------
 
-using namespace raspifb16;
+using namespace fb16;
 
 //-------------------------------------------------------------------------
 
 namespace
 {
-volatile static std::sig_atomic_t run{1};
+std::atomic<bool> run{true};
 const std::string defaultJoystick{"/dev/input/js0"};
+}
+
+//-------------------------------------------------------------------------
+
+static void
+signalHandler(
+    int signalNumber)
+{
+    switch (signalNumber)
+    {
+    case SIGINT:
+    case SIGTERM:
+
+        run = false;
+        break;
+    };
 }
 
 //-------------------------------------------------------------------------
@@ -77,7 +95,7 @@ main(
     bool fitToScreen{false};
     const std::string program{::basename(argv[0])};
     std::string joystick{defaultJoystick};
-    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
+    auto interfaceType{fb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------
 
@@ -101,40 +119,50 @@ main(
         case 'd':
 
             device = optarg;
-
             break;
 
         case 'f':
 
             fitToScreen = true;
-
             break;
 
         case 'h':
 
             printUsage(std::cout, program);
             ::exit(EXIT_SUCCESS);
-
             break;
 
         case 'j':
 
             joystick = optarg;
-
             break;
 
         case 'k':
 
-            interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
-
+            interfaceType = fb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
             break;
 
         default:
 
             printUsage(std::cerr, program);
             ::exit(EXIT_FAILURE);
-
             break;
+        }
+    }
+
+    //---------------------------------------------------------------------
+
+    for (auto signal : { SIGINT, SIGTERM })
+    {
+        if (std::signal(signal, signalHandler) == SIG_ERR)
+        {
+            std::println(
+                std::cerr,
+                "Error: installing {} signal handler : {}",
+                strsignal(signal),
+                strerror(errno));
+
+            ::exit(EXIT_FAILURE);
         }
     }
 
@@ -144,7 +172,7 @@ main(
     {
         constexpr bool block{true};
         Joystick js(joystick, block);
-        auto fb{raspifb16::createInterface565(interfaceType, device)};
+        auto fb{fb16::createInterface565(interfaceType, device)};
 
         Puzzle puzzle{fitToScreen};
         puzzle.init();
@@ -173,9 +201,5 @@ main(
         std::println(std::cerr, "Error: {}", error.what());
         exit(EXIT_FAILURE);
     }
-
-    //---------------------------------------------------------------------
-
-    return 0 ;
 }
 

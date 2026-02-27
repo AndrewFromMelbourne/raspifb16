@@ -68,8 +68,8 @@ TraceGraph::draw()
 {
     boxFilled(
         getImage(),
-        raspifb16::Point565(0, 0),
-        raspifb16::Point565(getImage().getWidth() - 1, m_traceHeight),
+        fb16::Point565(0, 0),
+        fb16::Point565(getImage().getDimensions().width() - 1, m_traceHeight),
         sc_background);
 
     //---------------------------------------------------------------------
@@ -79,7 +79,7 @@ TraceGraph::draw()
         horizontalLine(
             getImage(),
             0,
-            getImage().getWidth() - 1,
+            getImage().getDimensions().width() - 1,
             j,
             sc_gridColour);
     }
@@ -110,8 +110,8 @@ TraceGraph::draw()
 
             line(
                 getImage(),
-                raspifb16::Point565(i1, m_traceHeight - y1),
-                raspifb16::Point565(i2, m_traceHeight - y2),
+                fb16::Point565(i1, m_traceHeight - y1),
+                fb16::Point565(i2, m_traceHeight - y2),
                 trace.traceColour());
         }
     }

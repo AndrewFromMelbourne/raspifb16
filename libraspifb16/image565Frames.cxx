@@ -2,7 +2,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Andrew Duncan
+// Copyright (c) 2026 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -25,76 +25,85 @@
 //
 //-------------------------------------------------------------------------
 
-#pragma once
+#include "image565Frames.h"
 
 //-------------------------------------------------------------------------
 
-#include <cstdint>
-#include <optional>
-#include <string>
-#include <utility>
-
-#include <linux/fb.h>
-
-#include "fileDescriptor.h"
-#include "interface565.h"
-#include "point.h"
-#include "rgb565.h"
+using size_type = std::vector<uint16_t>::size_type;
 
 //-------------------------------------------------------------------------
 
-namespace fb16
-{
-
-//-------------------------------------------------------------------------
-
-class Image565;
-
-//-------------------------------------------------------------------------
-
-class FrameBuffer565
+fb16::Image565Frames::Image565Frames(
+    fb16::Dimensions565 d,
+    uint8_t numberOfFrames)
 :
-    public Interface565
+    m_dimensions{d},
+    m_frame{0},
+    m_numberOfFrames{numberOfFrames},
+    m_buffer(d.width() * d.height() * numberOfFrames)
 {
-public:
-
-    static constexpr std::size_t c_bytesPerPixel{2};
-
-    explicit FrameBuffer565(const std::string& device);
-
-    ~FrameBuffer565();
-
-    FrameBuffer565(const FrameBuffer565& fb) = delete;
-    FrameBuffer565& operator=(const FrameBuffer565& fb) = delete;
-
-    FrameBuffer565(FrameBuffer565&& fb) = delete;
-    FrameBuffer565& operator=(FrameBuffer565&& fb) = delete;
-
-    [[nodiscard]] Dimensions565 getDimensions() const noexcept override;
-
-    bool hideCursor() noexcept;
-
-    [[nodiscard]] std::span<uint16_t> getBuffer() noexcept override { return {m_fbp, getBufferSize()}; };
-    [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept override { return {m_fbp, getBufferSize()}; }
-    [[nodiscard]] std::size_t getBufferSize() const noexcept { return m_lineLengthPixels * getDimensions().height(); }
-    [[nodiscard]] int getLineLengthPixels() const noexcept override { return m_lineLengthPixels; }
-    [[nodiscard]] std::size_t offset(const Point565 p) const noexcept override;
-
-private:
-
-    fd::FileDescriptor m_consolefd;
-
-    struct fb_fix_screeninfo m_finfo;
-    struct fb_var_screeninfo m_vinfo;
-
-    int32_t m_lineLengthPixels;
-
-    uint16_t* m_fbp;
-};
+}
 
 //-------------------------------------------------------------------------
 
-} // namespace fb16
+fb16::Image565Frames::Image565Frames(
+    fb16::Dimensions565 d,
+    std::initializer_list<uint16_t> buffer,
+    uint8_t numberOfFrames)
+:
+    m_dimensions{d},
+    m_frame{0},
+    m_numberOfFrames{numberOfFrames},
+    m_buffer{buffer}
+{
+    const std::size_t minBufferSize = d.width() * d.height() * numberOfFrames;
+
+    if (m_buffer.size() < minBufferSize)
+    {
+        m_buffer.resize(minBufferSize);
+    }
+}
 
 //-------------------------------------------------------------------------
+fb16::Image565Frames::Image565Frames(
+    fb16::Dimensions565 d,
+    std::span<const uint16_t> buffer,
+    uint8_t numberOfFrames)
+:
+    m_dimensions{d},
+    m_frame{0},
+    m_numberOfFrames{numberOfFrames},
+    m_buffer{}
+{
+    m_buffer.assign(buffer.begin(), buffer.end());
+
+    const std::size_t minBufferSize = d.width() * d.height() * numberOfFrames;
+
+    if (m_buffer.size() < minBufferSize)
+    {
+        m_buffer.resize(minBufferSize);
+    }
+}
+
+//-------------------------------------------------------------------------
+
+void
+fb16::Image565Frames::setFrame(
+    uint8_t frame) noexcept
+{
+    if (frame < m_numberOfFrames)
+    {
+        m_frame = frame;
+    }
+}
+
+//-------------------------------------------------------------------------
+
+std::size_t
+fb16::Image565Frames::offset(
+    const Point565 p) const noexcept
+{
+    return p.x() + (p.y() * m_dimensions.width()) +
+                    (m_frame * m_dimensions.width() * m_dimensions.height());
+}
 

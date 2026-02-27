@@ -34,13 +34,14 @@
 
 //-------------------------------------------------------------------------
 
-namespace raspifb16
+namespace fb16
 {
 
 //-------------------------------------------------------------------------
 
 constexpr int sc_fontWidth{8};
 constexpr int sc_fontHeight{16};
+constexpr Dimensions565 sc_fontDimensions{sc_fontWidth, sc_fontHeight};
 
 //-------------------------------------------------------------------------
 
@@ -4658,18 +4659,10 @@ constexpr uint8_t font[256][sc_fontHeight] =
 
 //-------------------------------------------------------------------------
 
-int
-Image565Font8x16::getPixelHeight() const noexcept
+fb16::Dimensions565
+Image565Font8x16::getPixelDimensions() const noexcept
 {
-    return sc_fontHeight;
-}
-
-//-------------------------------------------------------------------------
-
-int
-Image565Font8x16::getPixelWidth() const noexcept
-{
-    return sc_fontWidth;
+    return sc_fontDimensions;
 }
 
 //-------------------------------------------------------------------------
@@ -4710,9 +4703,10 @@ Image565Font8x16::drawChar(
     uint16_t rgb,
     Interface565& image)
 {
-    const auto width = getPixelWidth();
+    const auto d = getPixelDimensions();
+    const auto width = d.width();
 
-    for (auto j = 0 ; j < getPixelHeight() ; ++j)
+    for (auto j = 0 ; j < d.height() ; ++j)
     {
         const auto byte = font[c][j];
 
@@ -4754,6 +4748,7 @@ Image565Font8x16::drawString(
     uint16_t rgb,
     Interface565& image)
 {
+    const auto d = getPixelDimensions();
     Point565 position{p};
     const Point565 start{p};
 
@@ -4763,14 +4758,14 @@ Image565Font8x16::drawString(
         {
             position.set(
                 start.x(),
-                position.y() + getPixelHeight());
+                position.y() + d.height());
         }
         else
         {
             drawChar(position, c, rgb, image);
 
             position.set(
-                position.x() + getPixelWidth(),
+                position.x() + d.width(),
                 position.y());
         }
     }
@@ -4780,4 +4775,4 @@ Image565Font8x16::drawString(
 
 //-------------------------------------------------------------------------
 
-} // namespace raspifb16
+} // namespace fb16

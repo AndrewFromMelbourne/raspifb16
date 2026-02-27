@@ -73,7 +73,7 @@ RaspInfo::RaspInfo(
     m_font{nullptr},
     m_fontConfig{},
     m_hostname{},
-    m_interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565},
+    m_interfaceType{fb16::InterfaceType565::FRAME_BUFFER_565},
     m_panels{},
     m_programName{},
     m_run{run}
@@ -104,39 +104,42 @@ RaspInfo::init()
 {
     setFontConfig();
 
-    m_fb = raspifb16::createInterface565(m_interfaceType, m_device);
+    m_fb = fb16::createInterface565(m_interfaceType, m_device);
     m_fb->clearBuffers();
+
+    const auto fbd = m_fb->getDimensions();
+    const auto ftd = m_font->getPixelDimensions();
 
     //---------------------------------------------------------------------
 
-    const int traceHeight = (m_fb->getHeight() == 240) ? 80 : 100;
+    const int traceHeight = (fbd.height() == 240) ? 80 : 100;
     const int gridHeight = traceHeight / 5;
 
     m_panels.push_back(
-        std::make_unique<DynamicInfo>(m_fb->getWidth(),
-                                      m_font->getPixelHeight(),
+        std::make_unique<DynamicInfo>(fbd.width(),
+                                      ftd.height(),
                                       panelTop()));
 
     m_panels.push_back(
-        std::make_unique<CpuTrace>(m_fb->getWidth(),
+        std::make_unique<CpuTrace>(fbd.width(),
                                    traceHeight,
-                                   m_font->getPixelHeight(),
+                                   ftd.height(),
                                    panelTop(),
                                    gridHeight));
 
     m_panels.push_back(
-        std::make_unique<MemoryTrace>(m_fb->getWidth(),
+        std::make_unique<MemoryTrace>(fbd.width(),
                                        traceHeight,
-                                       m_font->getPixelHeight(),
+                                       ftd.height(),
                                        panelTop(),
                                        gridHeight));
 
-    if (m_fb->getHeight() >= 400)
+    if (fbd.height() >= 400)
     {
         m_panels.push_back(
-            std::make_unique<NetworkTrace>(m_fb->getWidth(),
+            std::make_unique<NetworkTrace>(fbd.width(),
                                            traceHeight,
-                                           m_font->getPixelHeight(),
+                                           ftd.height(),
                                            panelTop(),
                                            gridHeight));
     }
@@ -241,7 +244,7 @@ RaspInfo::parseCommandLine(
 
         case 'f':
 
-            m_fontConfig = raspifb16::parseFontConfig(optarg, 16);
+            m_fontConfig = fb16::parseFontConfig(optarg, 16);
             break;
 
         case 'h':
@@ -251,7 +254,7 @@ RaspInfo::parseCommandLine(
 
         case 'k':
 
-            m_interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
+            m_interfaceType = fb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
             break;
 
         case 'o':
@@ -365,7 +368,7 @@ RaspInfo::setFontConfig() noexcept
     {
         try
         {
-            m_font = std::make_unique<raspifb16::Image565FreeType>(m_fontConfig);
+            m_font = std::make_unique<fb16::Image565FreeType>(m_fontConfig);
         }
         catch (std::exception& error)
         {
@@ -380,7 +383,7 @@ RaspInfo::setFontConfig() noexcept
 
     if (not m_font)
     {
-        m_font = std::make_unique<raspifb16::Image565Font8x16>();
+        m_font = std::make_unique<fb16::Image565Font8x16>();
     }
 }
 

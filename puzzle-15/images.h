@@ -32,10 +32,13 @@
 #include <array>
 #include <cstdint>
 
+#include "interface565.h"
+
 //-------------------------------------------------------------------------
 
 static constexpr int c_tileWidth{60};
 static constexpr int c_tileHeight{60};
+static constexpr fb16::Dimensions565 c_tileDimensions{c_tileWidth, c_tileHeight};
 static constexpr int c_tileCount{16};
 
 //-------------------------------------------------------------------------

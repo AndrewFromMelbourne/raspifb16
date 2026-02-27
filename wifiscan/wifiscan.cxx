@@ -40,6 +40,7 @@
 #include <sys/types.h>
 
 #include <algorithm>
+#include <atomic>
 #include <chrono>
 #include <csignal>
 #include <cstring>
@@ -56,14 +57,14 @@
 
 //-------------------------------------------------------------------------
 
-using namespace raspifb16;
+using namespace fb16;
 using namespace std::chrono_literals;
 
 //-------------------------------------------------------------------------
 
 namespace
 {
-volatile static std::sig_atomic_t run{1};
+std::atomic<bool> run{true};
 }
 
 //-------------------------------------------------------------------------
@@ -77,7 +78,7 @@ signalHandler(
     case SIGINT:
     case SIGTERM:
 
-        run = 0;
+        run = false;
         break;
     };
 }
@@ -109,7 +110,7 @@ main(
 {
     std::string device{};
     const std::string program{basename(argv[0])};
-    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
+    auto interfaceType{fb16::InterfaceType565::FRAME_BUFFER_565};
     int iwScanType{IW_SCAN_TYPE_PASSIVE};
     std::string interfaceName{"wlan0"};
 
@@ -135,7 +136,6 @@ main(
         case 'a':
 
             iwScanType = IW_SCAN_TYPE_ACTIVE;
-
             break;
 
         case 'd':
@@ -148,19 +148,16 @@ main(
 
             printUsage(std::cout, program);
             ::exit(EXIT_SUCCESS);
-
             break;
 
         case 'i':
 
             interfaceName = optarg;
-
             break;
 
         case 'k':
 
-            interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
-
+            interfaceType = fb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
             break;
 
         default:
@@ -214,8 +211,8 @@ main(
         //-----------------------------------------------------------------
 
         Image565Font8x16 font;
-        auto fb{raspifb16::createInterface565(interfaceType, device)};
-        Image565 image{fb->getWidth(), fb->getHeight()};
+        auto fb{fb16::createInterface565(interfaceType, device)};
+        Image565 image{fb->getDimensions()};
 
         //-----------------------------------------------------------------
 
@@ -417,7 +414,7 @@ main(
                                                white,
                                                image);
 
-                    position.set(0, position.y() + font.getPixelHeight());
+                    position.set(0, position.y() + font.getPixelDimensions().height());
                 }
 
                 fb->putImage(Point565{0, 0}, image);
@@ -432,6 +429,4 @@ main(
         std::println(std::cerr, "Error: {}", error.what());
         exit(EXIT_FAILURE);
     }
-
-    return 0;
 }

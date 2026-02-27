@@ -32,20 +32,20 @@
 
 //-------------------------------------------------------------------------
 
-raspifb16::Interface565::Interface565()
+fb16::Interface565::Interface565()
 {
 }
 
 //-------------------------------------------------------------------------
 
-raspifb16::Interface565::~Interface565()
+fb16::Interface565::~Interface565()
 {
 }
 
 //-------------------------------------------------------------------------
 
 void
-raspifb16::Interface565::clear(uint16_t rgb)
+fb16::Interface565::clear(uint16_t rgb)
 {
     std::ranges::fill(getBufferStart(), rgb);
 }
@@ -53,7 +53,7 @@ raspifb16::Interface565::clear(uint16_t rgb)
 //-------------------------------------------------------------------------
 
 void
-raspifb16::Interface565::clearBuffers(uint16_t rgb)
+fb16::Interface565::clearBuffers(uint16_t rgb)
 {
     clear(rgb);
 
@@ -66,7 +66,7 @@ raspifb16::Interface565::clearBuffers(uint16_t rgb)
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::Interface565::setPixel(
+fb16::Interface565::setPixel(
     const Point565 p,
     uint16_t rgb)
 {
@@ -82,8 +82,8 @@ raspifb16::Interface565::setPixel(
 
 //-------------------------------------------------------------------------
 
-std::optional<raspifb16::RGB565>
-raspifb16::Interface565::getPixelRGB(
+std::optional<fb16::RGB565>
+fb16::Interface565::getPixelRGB(
     const Point565 p) const
 {
     if (not validPixel(p))
@@ -96,8 +96,8 @@ raspifb16::Interface565::getPixelRGB(
 
 //-------------------------------------------------------------------------
 
-std::optional<raspifb16::RGB8>
-raspifb16::Interface565::getPixelRGB8(
+std::optional<fb16::RGB8>
+fb16::Interface565::getPixelRGB8(
     const Point565 p) const
 {
     if (not validPixel(p))
@@ -111,7 +111,7 @@ raspifb16::Interface565::getPixelRGB8(
 //-------------------------------------------------------------------------
 
 std::optional<uint16_t>
-raspifb16::Interface565::getPixel(
+fb16::Interface565::getPixel(
     const Point565 p) const
 {
     if (not validPixel(p))
@@ -124,14 +124,14 @@ raspifb16::Interface565::getPixel(
 //-------------------------------------------------------------------------
 
 std::span<uint16_t>
-raspifb16::Interface565::getRow(
+fb16::Interface565::getRow(
     int y)
 {
     const Point565 p{0, y};
 
     if (validPixel(p))
     {
-        return  getBuffer().subspan(offset(p), getWidth());
+        return  getBuffer().subspan(offset(p), getDimensions().width());
     }
     else
     {
@@ -142,14 +142,14 @@ raspifb16::Interface565::getRow(
 //-------------------------------------------------------------------------
 
 std::span<const uint16_t>
-raspifb16::Interface565::getRow(
+fb16::Interface565::getRow(
     int y) const
 {
     const Point565 p{0, y};
 
     if (validPixel(p))
     {
-        return  getBuffer().subspan(offset(p), getWidth());
+        return  getBuffer().subspan(offset(p), getDimensions().width());
     }
     else
     {
@@ -160,23 +160,26 @@ raspifb16::Interface565::getRow(
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::Interface565::putImage(
+fb16::Interface565::putImage(
     const Point565 p,
-    const Image565& image)
+    const Interface565& image)
 {
+    const auto id = image.getDimensions();
+    const auto d = getDimensions();
+
     if ((p.x() < 0) or
-        ((p.x() + image.getWidth()) > getWidth()))
+        ((p.x() + id.width()) > d.width()))
     {
         return putImagePartial(p, image);
     }
 
     if ((p.y() < 0) or
-        ((p.y() + image.getHeight()) > getHeight()))
+        ((p.y() + id.height()) > d.height()))
     {
         return putImagePartial(p, image);
     }
 
-    for (int j = 0 ; j < image.getHeight() ; ++j)
+    for (int j = 0 ; j < id.height() ; ++j)
     {
         auto row = image.getRow(j);
         const auto ost = offset(Point565{p.x(), j + p.y()});
@@ -190,17 +193,20 @@ raspifb16::Interface565::putImage(
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::Interface565::putImagePartial(
+fb16::Interface565::putImagePartial(
     const Point565 p,
-    const Image565& image)
+    const Interface565& image)
 {
+    const auto id = image.getDimensions();
+    const auto d = getDimensions();
+
     auto x = p.x();
     auto xStart = 0;
-    auto xEnd = image.getWidth() - 1;
+    auto xEnd = id.width() - 1;
 
     auto y = p.y();
     auto yStart = 0;
-    auto yEnd = image.getHeight() - 1;
+    auto yEnd = id.height() - 1;
 
     if (x < 0)
     {
@@ -208,9 +214,9 @@ raspifb16::Interface565::putImagePartial(
         x = 0;
     }
 
-    if ((x - xStart + image.getWidth()) > getWidth())
+    if ((x - xStart + id.width()) > d.width())
     {
-        xEnd = getWidth() - 1 - (x - xStart);
+        xEnd = d.width() - 1 - (x - xStart);
     }
 
     if (y < 0)
@@ -219,9 +225,9 @@ raspifb16::Interface565::putImagePartial(
         y = 0;
     }
 
-    if ((y - yStart + image.getHeight()) > getHeight())
+    if ((y - yStart + id.height()) > d.height())
     {
-        yEnd = getHeight() - 1 - (y - yStart);
+        yEnd = d.height() - 1 - (y - yStart);
     }
 
     if ((xEnd - xStart) <= 0)
@@ -250,20 +256,23 @@ raspifb16::Interface565::putImagePartial(
 //-------------------------------------------------------------------------
 
 std::span<uint16_t>
-raspifb16::Interface565::getBufferStart() noexcept
+fb16::Interface565::getBufferStart() noexcept
 {
     return getBuffer().subspan(offset(Point565{0, 0}),
-                               getLineLengthPixels() * getHeight());
+                               getLineLengthPixels() * getDimensions().height());
 }
 
 //-------------------------------------------------------------------------
 
-raspifb16::Point565
-raspifb16::center(
-    const raspifb16::Interface565& frame,
-    const raspifb16::Interface565& image) noexcept
+fb16::Point565
+fb16::center(
+    const fb16::Interface565& frame,
+    const fb16::Interface565& image) noexcept
 {
-    return {(frame.getWidth() - image.getWidth()) / 2,
-            (frame.getHeight() - image.getHeight()) / 2};
+    const auto fd = frame.getDimensions();
+    const auto id = image.getDimensions();
+
+    return {(fd.width() - id.width()) / 2,
+            (fd.height() - id.height()) / 2};
 }
 

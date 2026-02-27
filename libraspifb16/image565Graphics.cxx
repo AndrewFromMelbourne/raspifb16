@@ -43,14 +43,16 @@ namespace
 
 void
 trim(
-    const raspifb16::Interface565& iface,
-    raspifb16::Point565& p1,
-    raspifb16::Point565& p2)
+    const fb16::Interface565& iface,
+    fb16::Point565& p1,
+    fb16::Point565& p2)
 {
     if ((p1.x() == p2.x()) or (p1.y() == p2.y()))
     {
         return;
     }
+
+    const auto id = iface.getDimensions();
 
     const auto minX = std::min(p1.x(), p2.x());
     const auto maxX = std::max(p1.x(), p2.x());
@@ -59,9 +61,9 @@ trim(
     const auto maxY = std::max(p1.y(), p2.y());
 
     if ((minX > 0) and
-        (maxX < iface.getWidth()) and
+        (maxX < id.width()) and
         (minY > 0) and
-        (maxY < iface.getHeight()))
+        (maxY < id.height()))
     {
         return;
     }
@@ -81,9 +83,9 @@ trim(
         p1.setX((p1.y() - c) * run / rise);
     }
 
-    if (p2.y() >= iface.getHeight())
+    if (p2.y() >= id.height())
     {
-        p2.setY(iface.getHeight() - 1);
+        p2.setY(id.height() - 1);
         p2.setX((p2.y() - c) * run / rise);
     }
 
@@ -103,9 +105,9 @@ trim(
         p1.setY((rise * p1.x()) / run + c);
     }
 
-    if (p2.x() >= iface.getWidth())
+    if (p2.x() >= id.width())
     {
-        p2.setX(iface.getWidth() - 1);
+        p2.setX(id.width() - 1);
         p2.setY((rise * p2.x()) / run + c);
     }
 }
@@ -116,7 +118,7 @@ trim(
 
 //=========================================================================
 
-namespace raspifb16
+namespace fb16
 {
 
 //-------------------------------------------------------------------------
@@ -198,10 +200,11 @@ line(
 {
     trim(iface, p1, p2);
 
+    const auto id = iface.getDimensions();
     const auto minX = std::min(p1.x(), p2.x());
     const auto maxX = std::max(p1.x(), p2.x());
 
-    if ((maxX < 0) or (minX >= iface.getWidth()))
+    if ((maxX < 0) or (minX >= id.width()))
     {
         return;
     }
@@ -209,7 +212,7 @@ line(
     const auto minY = std::min(p1.y(), p2.y());
     const auto maxY = std::max(p1.y(), p2.y());
 
-    if ((maxY < 0) or (minY >= iface.getHeight()))
+    if ((maxY < 0) or (minY >= id.height()))
     {
         return;
     }
@@ -307,7 +310,9 @@ horizontalLine(
     int y,
     uint16_t rgb)
 {
-    if ((y < 0) or (y >= iface.getHeight()))
+    const auto id = iface.getDimensions();
+
+    if ((y < 0) or (y >= id.height()))
     {
         return;
     }
@@ -318,9 +323,9 @@ horizontalLine(
     }
 
     x1 = std::max(x1, 0);
-    x2 = std::min(x2, iface.getWidth() - 1);
+    x2 = std::min(x2, id.width() - 1);
 
-    if ((x1 >= iface.getWidth()) or (x2 < 0))
+    if ((x1 >= id.width()) or (x2 < 0))
     {
         return;
     }
@@ -339,7 +344,9 @@ verticalLine(
     int y2,
     uint16_t rgb)
 {
-    if (x < 0 or x >= iface.getWidth())
+    const auto id = iface.getDimensions();
+
+    if (x < 0 or x >= id.width())
     {
         return;
     }
@@ -350,9 +357,9 @@ verticalLine(
     }
 
     y1 = std::max(y1, 0);
-    y2 = std::min(y2, iface.getHeight() - 1);
+    y2 = std::min(y2, id.height() - 1);
 
-    if ((y1 >= iface.getHeight()) or (y2 < 0))
+    if ((y1 >= id.height()) or (y2 < 0))
     {
         return;
     }
@@ -576,12 +583,14 @@ polygonFilled(
 
         std::ranges::sort(intersects);
 
+        const auto id = iface.getDimensions();
+
         for (std::size_t i = 0; i + 1 < intersects.size(); i += 2)
         {
             const auto x1 = intersects[i];
             const auto x2 = intersects[i + 1];
 
-            if (x2 >= 0 and x1 < iface.getWidth())
+            if (x2 >= 0 and x1 < id.width())
             {
                 horizontalLine(iface, x1, x2, y, rgb);
             }
@@ -619,4 +628,4 @@ polyline(
 
 //=========================================================================
 
-} // namespace raspifb16
+} // namespace fb16

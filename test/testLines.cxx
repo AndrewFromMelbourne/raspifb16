@@ -42,7 +42,7 @@
 
 //-------------------------------------------------------------------------
 
-using namespace raspifb16;
+using namespace fb16;
 using namespace std::chrono_literals;
 
 //-------------------------------------------------------------------------
@@ -70,7 +70,7 @@ main(
 {
     std::string device{};
     const std::string program{basename(argv[0])};
-    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
+    auto interfaceType{fb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------
 
@@ -92,27 +92,23 @@ main(
         case 'd':
 
             device = optarg;
-
             break;
 
         case 'h':
 
             printUsage(std::cout, program);
             ::exit(EXIT_SUCCESS);
-
             break;
 
         case 'k':
 
-            interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
-
+            interfaceType = fb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
             break;
 
         default:
 
             printUsage(std::cerr, program);
             ::exit(EXIT_FAILURE);
-
             break;
         }
     }
@@ -121,14 +117,15 @@ main(
 
     try
     {
-        auto fb{raspifb16::createInterface565(interfaceType, device)};
+        auto fb{fb16::createInterface565(interfaceType, device)};
+        const auto fbd = fb->getDimensions();
 
         //-----------------------------------------------------------------
 
         constexpr RGB565 white{255, 255, 255};
 
-        const auto halfWidth = fb->getWidth() / 2;
-        const auto halfHeight = fb->getHeight() / 2;
+        const auto halfWidth = fbd.width() / 2;
+        const auto halfHeight = fbd.height() / 2;
 
         const auto outerRadius = static_cast<int>(std::hypot(halfWidth,
                                                              halfHeight));
@@ -140,22 +137,22 @@ main(
 
         for (auto i = 0; i < lines; ++i)
         {
-            const raspifb16::Point565 center{ halfWidth, halfHeight };
+            const fb16::Point565 center{ halfWidth, halfHeight };
 
             const auto sinValue = std::sin((i * 2.0 * M_PI) / lines);
             const auto cosValue = std::cos((i * 2.0 * M_PI) / lines);
 
-            raspifb16::Point565 inner{
+            fb16::Point565 inner{
                 center.x() + static_cast<int>(innerRadius * sinValue),
                 center.y() - static_cast<int>(innerRadius * cosValue)
             };
 
-            raspifb16::Point565 outer{
+            fb16::Point565 outer{
                 center.x() + static_cast<int>(outerRadius * sinValue),
                 center.y() - static_cast<int>(outerRadius * cosValue)
             };
 
-            raspifb16::line(*fb, inner, outer, white);
+            fb16::line(*fb, inner, outer, white);
         }
 
         //-----------------------------------------------------------------
@@ -171,6 +168,4 @@ main(
         std::println(std::cerr, "Error: {}", error.what());
         exit(EXIT_FAILURE);
     }
-
-    return 0;
 }

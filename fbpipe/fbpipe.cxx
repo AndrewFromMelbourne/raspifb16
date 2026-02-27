@@ -40,7 +40,7 @@
 
 //-------------------------------------------------------------------------
 
-using namespace raspifb16;
+using namespace fb16;
 
 //-------------------------------------------------------------------------
 
@@ -67,7 +67,7 @@ main(
 {
     std::string device{};
     const std::string program{basename(argv[0])};
-    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
+    auto interfaceType{fb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------
 
@@ -101,7 +101,7 @@ main(
 
         case 'k':
 
-            interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
+            interfaceType = fb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
 
             break;
 
@@ -121,12 +121,15 @@ main(
         Image565Font8x16 font;
         constexpr RGB565 black{0, 0, 0};
         constexpr RGB565 white{255, 255, 255};
-        auto fb{raspifb16::createInterface565(interfaceType, device)};
+        auto fb{fb16::createInterface565(interfaceType, device)};
 
-        const int columns = fb->getWidth() / font.getPixelWidth();
-        const int rows = fb->getHeight() / font.getPixelHeight();
+        const auto fbd = fb->getDimensions();
+        const auto ftd = font.getPixelDimensions();
 
-        Image565 image{fb->getWidth(), fb->getHeight()};
+        const int columns = fbd.width() / ftd.width();
+        const int rows = fbd.height() / ftd.height();
+
+        Image565 image{fbd};
         image.clear(black);
 
         //-----------------------------------------------------------------
@@ -153,7 +156,7 @@ main(
                     white,
                     image);
 
-                y += font.getPixelHeight();
+                y += ftd.height();
             }
 
             fb->putImage(Point565{0, 0}, image);
@@ -165,9 +168,5 @@ main(
         std::println(std::cerr, "Error: {}", error.what());
         exit(EXIT_FAILURE);
     }
-
-    //---------------------------------------------------------------------
-
-    return 0 ;
 }
 

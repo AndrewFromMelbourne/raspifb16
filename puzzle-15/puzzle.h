@@ -53,8 +53,8 @@ public:
     explicit Puzzle(bool fitToScreen);
 
     void init();
-    bool update(raspifb16::Joystick& js);
-    void draw(raspifb16::Interface565& fb);
+    bool update(fb16::Joystick& js);
+    void draw(fb16::Interface565& fb);
 
 private:
 
@@ -69,8 +69,8 @@ private:
     Location m_blankLocation;
     std::array<uint8_t, c_boardSize> m_board;
     bool m_fitToScreen;
-    raspifb16::Image565 m_image;
-    std::array<raspifb16::Image565, c_tileCount> m_tileBuffers;
-    raspifb16::Image565 m_tileSolved;
+    fb16::Image565 m_image;
+    std::array<fb16::Image565, c_tileCount> m_tileBuffers;
+    fb16::Image565 m_tileSolved;
 };
 

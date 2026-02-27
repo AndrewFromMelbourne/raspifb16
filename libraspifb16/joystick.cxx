@@ -69,7 +69,7 @@ readJoystickEvent(
 //=========================================================================
 
 
-raspifb16::Joystick::Joystick(bool blocking)
+fb16::Joystick::Joystick(bool blocking)
 :
     Joystick("/dev/input/js0", blocking)
 {
@@ -77,7 +77,7 @@ raspifb16::Joystick::Joystick(bool blocking)
 
 //-------------------------------------------------------------------------
 
-raspifb16::Joystick::Joystick(const std::string& device, bool blocking)
+fb16::Joystick::Joystick(const std::string& device, bool blocking)
 :
     m_joystickFd{::open(device.c_str(), O_RDONLY | ((blocking) ? 0 : O_NONBLOCK))},
     m_blocking(blocking),
@@ -107,7 +107,7 @@ raspifb16::Joystick::Joystick(const std::string& device, bool blocking)
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::Joystick::buttonDown(int button) const
+fb16::Joystick::buttonDown(int button) const
 {
     if (not isValidButton(button))
     {
@@ -120,7 +120,7 @@ raspifb16::Joystick::buttonDown(int button) const
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::Joystick::buttonPressed(int button)
+fb16::Joystick::buttonPressed(int button)
 {
     if (not isValidButton(button))
     {
@@ -139,8 +139,8 @@ raspifb16::Joystick::buttonPressed(int button)
 
 //-------------------------------------------------------------------------
 
-raspifb16::JoystickAxes
-raspifb16::Joystick::getAxes(int joystickNumber) const
+fb16::JoystickAxes
+fb16::Joystick::getAxes(int joystickNumber) const
 {
     return m_joysticks.at(joystickNumber);
 }
@@ -148,7 +148,7 @@ raspifb16::Joystick::getAxes(int joystickNumber) const
 //-------------------------------------------------------------------------
 
 void
-raspifb16::Joystick::init()
+fb16::Joystick::init()
 {
     if (m_joystickFd.fd() == -1)
     {
@@ -185,7 +185,7 @@ raspifb16::Joystick::init()
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::Joystick::isValidButton(int button) const noexcept
+fb16::Joystick::isValidButton(int button) const noexcept
 {
     return (button >= 0) and (button < numberOfButtons());
 }
@@ -193,7 +193,7 @@ raspifb16::Joystick::isValidButton(int button) const noexcept
 //-------------------------------------------------------------------------
 
 int
-raspifb16::Joystick::numberOfButtons() const noexcept
+fb16::Joystick::numberOfButtons() const noexcept
 {
     return m_buttonCount;
 }
@@ -201,7 +201,7 @@ raspifb16::Joystick::numberOfButtons() const noexcept
 //-------------------------------------------------------------------------
 
 int
-raspifb16::Joystick::numberOfAxes() const noexcept
+fb16::Joystick::numberOfAxes() const noexcept
 {
     return m_joystickCount;
 }
@@ -209,7 +209,7 @@ raspifb16::Joystick::numberOfAxes() const noexcept
 //-------------------------------------------------------------------------
 
 void
-raspifb16::Joystick::process(const js_event& event)
+fb16::Joystick::process(const js_event& event)
 {
     switch (event.type)
     {
@@ -260,7 +260,7 @@ raspifb16::Joystick::process(const js_event& event)
 //-------------------------------------------------------------------------
 
 int
-raspifb16::Joystick::rawButton(int button) const
+fb16::Joystick::rawButton(int button) const
 {
     for (auto i = 0U ; i < m_buttonNumbers.size() ; ++i)
     {
@@ -276,7 +276,7 @@ raspifb16::Joystick::rawButton(int button) const
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::Joystick::rawButtonDown(int button) const
+fb16::Joystick::rawButtonDown(int button) const
 {
     if (not isValidButton(button))
     {
@@ -289,7 +289,7 @@ raspifb16::Joystick::rawButtonDown(int button) const
 //-------------------------------------------------------------------------
 
 bool
-raspifb16::Joystick::rawButtonPressed(int button)
+fb16::Joystick::rawButtonPressed(int button)
 {
     if (not isValidButton(button))
     {
@@ -309,7 +309,7 @@ raspifb16::Joystick::rawButtonPressed(int button)
 //-------------------------------------------------------------------------
 
 void
-raspifb16::Joystick::read()
+fb16::Joystick::read()
 {
     if (m_blocking)
     {
@@ -331,7 +331,7 @@ raspifb16::Joystick::read()
 //-------------------------------------------------------------------------
 
 void
-raspifb16::Joystick::
+fb16::Joystick::
 readConfig()
 {
     std::map<std::string, Buttons> stringToButton =
@@ -347,7 +347,7 @@ readConfig()
     };
 
     std::string configFile{std::getenv("HOME") +
-                           std::string{"/.config/raspifb16/joystickButtons"}};
+                           std::string{"/.config/fb16/joystickButtons"}};
 
     std::ifstream ifs{configFile.c_str()};
 

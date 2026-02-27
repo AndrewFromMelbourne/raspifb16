@@ -37,7 +37,7 @@
 
 //-------------------------------------------------------------------------
 
-namespace raspifb16
+namespace fb16
 {
 
 //-------------------------------------------------------------------------
@@ -71,8 +71,7 @@ public:
     Interface565Font& operator=(const Interface565Font&) = delete;
     Interface565Font& operator=(Interface565Font&&) = delete;
 
-    [[nodiscard]] virtual int getPixelHeight() const noexcept = 0;
-    [[nodiscard]] virtual int getPixelWidth() const noexcept = 0;
+    [[nodiscard]] virtual Dimensions565 getPixelDimensions() const noexcept = 0;
 
     [[nodiscard]] virtual std::optional<char> getCharacterCode(CharacterCode code) const noexcept = 0;
 
@@ -114,7 +113,7 @@ parseFontConfig(
 
 //-------------------------------------------------------------------------
 
-} // namespace raspifb16
+} // namespace fb16
 
 //-------------------------------------------------------------------------
 

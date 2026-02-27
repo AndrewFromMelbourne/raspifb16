@@ -49,7 +49,7 @@ Trace::Trace(
     const std::string& title,
     std::initializer_list<TraceConfiguration> traces)
 :
-    Panel(width, traceHeight + fontHeight + 4, yPosition),
+    Panel(fb16::Dimensions565{width, traceHeight + fontHeight + 4}, yPosition),
     m_traceHeight{traceHeight},
     m_fontHeight{fontHeight},
     m_traceScale{traceScale},
@@ -77,14 +77,14 @@ Trace::Trace(
 
 void
 Trace::init(
-    raspifb16::Interface565Font& font)
+    fb16::Interface565Font& font)
 {
     getImage().clear(sc_background);
 
-    raspifb16::Point565 position(0, m_traceHeight + 2);
+    fb16::Point565 position(0, m_traceHeight + 2);
 
     position = font.drawString(
-                   raspifb16::Point565(0, m_traceHeight + 2),
+                   fb16::Point565(0, m_traceHeight + 2),
                    m_title + " (",
                    sc_foreground,
                    getImage());
@@ -111,16 +111,15 @@ Trace::init(
 
         // draw small box
 
-        const auto width = font.getPixelWidth();
-        const auto height = font.getPixelHeight();
+        const auto ftd = font.getPixelDimensions();
 
-        const raspifb16::Point565 p1{position.x() + width / 4,
-                                              position.y() + height / 4};
-        const raspifb16::Point565 p2{position.x() + (3 * width) / 4,
-                                              position.y() + (3 * height) / 4};
+        const fb16::Point565 p1{position.x() + ftd.width() / 4,
+                                position.y() + ftd.height() / 4};
+        const fb16::Point565 p2{position.x() + (3 * ftd.width()) / 4,
+                                position.y() + (3 * ftd.height()) / 4};
 
         boxFilled(getImage(), p1, p2, trace.traceColour());
-        position.setX(position.x() + font.getPixelWidth());
+        position.setX(position.x() + ftd.width());
     }
 
     position = font.drawString(position,
@@ -132,7 +131,7 @@ Trace::init(
     {
         horizontalLine(getImage(),
                        0,
-                       getImage().getWidth() - 1,
+                       getImage().getDimensions().width() - 1,
                        j,
                        sc_gridColour);
     }
@@ -220,7 +219,7 @@ void
 Trace::storeTime(
     time_t now)
 {
-    if (m_columns < getImage().getWidth())
+    if (m_columns < getImage().getDimensions().width())
     {
         ++m_columns;
         m_time.push_back(now);

@@ -53,7 +53,7 @@ public:
         const std::string& title,
         std::initializer_list<TraceConfiguration> traces);
 
-    void update(time_t now, raspifb16::Interface565Font& font) override = 0;
+    void update(time_t now, fb16::Interface565Font& font) override = 0;
 
 protected:
 

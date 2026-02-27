@@ -45,7 +45,7 @@
 
 //-------------------------------------------------------------------------
 
-using namespace raspifb16;
+using namespace fb16;
 using namespace std::chrono_literals;
 
 //-------------------------------------------------------------------------
@@ -73,7 +73,7 @@ main(
 {
     std::string device{};
     const std::string program{basename(argv[0])};
-    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
+    auto interfaceType{fb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------
 
@@ -95,27 +95,23 @@ main(
         case 'd':
 
             device = optarg;
-
             break;
 
         case 'h':
 
             printUsage(std::cout, program);
             ::exit(EXIT_SUCCESS);
-
             break;
 
         case 'k':
 
-            interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
-
+            interfaceType = fb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
             break;
 
         default:
 
             printUsage(std::cerr, program);
             ::exit(EXIT_FAILURE);
-
             break;
         }
     }
@@ -124,16 +120,15 @@ main(
 
     try
     {
-        auto fb{raspifb16::createInterface565(interfaceType, device)};
+        auto fb{fb16::createInterface565(interfaceType, device)};
+        const auto fbd = fb->getDimensions();
 
         //-----------------------------------------------------------------
 
-        const auto fwidth = fb->getWidth();
-        const auto fheight = fb->getHeight();
         constexpr auto offset{10};
-        const auto width = std::min(fwidth, fheight) - (2 * offset);
-        const auto xOffset = (fwidth - width) / 2;
-        const auto yOffset = (fheight - width) / 2;
+        const auto width = std::min(fbd.width(), fbd.height()) - (2 * offset);
+        const auto xOffset = (fbd.width() - width) / 2;
+        const auto yOffset = (fbd.height() - width) / 2;
 
         constexpr RGB565 white{255, 255, 255};
         constexpr RGB565 black{0, 0, 0};
@@ -171,6 +166,4 @@ main(
         std::println(std::cerr, "Error: {}", error.what());
         exit(EXIT_FAILURE);
     }
-
-    return 0;
 }

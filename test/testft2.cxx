@@ -41,7 +41,7 @@
 
 //-------------------------------------------------------------------------
 
-using namespace raspifb16;
+using namespace fb16;
 using namespace std::chrono_literals;
 
 //-------------------------------------------------------------------------
@@ -73,7 +73,7 @@ main(
     const std::string program{basename(argv[0])};
     FontConfig fontConfig{};
     uint32_t c{'A'};
-    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
+    auto interfaceType{fb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------
 
@@ -96,39 +96,33 @@ main(
         case 'c':
 
             c = ::strtol(optarg, nullptr, 0);
-
             break;
 
         case 'd':
 
             device = optarg;
-
             break;
 
         case 'f':
 
-            fontConfig = raspifb16::parseFontConfig(optarg, 32);
-
+            fontConfig = fb16::parseFontConfig(optarg, 32);
             break;
 
         case 'h':
 
             printUsage(std::cout, program);
             ::exit(EXIT_SUCCESS);
-
             break;
 
         case 'k':
 
-            interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
-
+            interfaceType = fb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
             break;
 
         default:
 
             printUsage(std::cerr, program);
             ::exit(EXIT_FAILURE);
-
             break;
         }
     }
@@ -147,9 +141,9 @@ main(
     {
         constexpr RGB565 black{0, 0, 0};
         constexpr RGB565 white{255, 255, 255};
-        auto fb{raspifb16::createInterface565(interfaceType, device)};
+        auto fb{fb16::createInterface565(interfaceType, device)};
 
-        Image565 image(fb->getWidth(), fb->getHeight());
+        Image565 image(fb->getDimensions());
         image.clear(black);
 
         //-----------------------------------------------------------------
@@ -171,9 +165,5 @@ main(
         std::println(std::cerr, "Error: {}", error.what());
         exit(EXIT_FAILURE);
     }
-
-    //---------------------------------------------------------------------
-
-    return 0 ;
 }
 

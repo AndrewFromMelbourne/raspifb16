@@ -37,7 +37,7 @@
 //-------------------------------------------------------------------------
 
 using size_type = std::vector<uint32_t>::size_type;
-using Point = raspifb16::Point565;
+using Point = fb16::Point565;
 
 //=========================================================================
 
@@ -49,7 +49,7 @@ class AccumulateRGB565
 {
 public:
 
-    void add(const raspifb16::RGB565& rgb) noexcept
+    void add(const fb16::RGB565& rgb) noexcept
     {
         const auto rgb8 = rgb.getRGB8();
         m_red += rgb8.red;
@@ -57,7 +57,7 @@ public:
         m_blue += rgb8.blue;
     }
 
-    void subtract(const raspifb16::RGB565& rgb) noexcept
+    void subtract(const fb16::RGB565& rgb) noexcept
     {
         const auto rgb8 = rgb.getRGB8();
         m_red -= rgb8.red;
@@ -65,9 +65,9 @@ public:
         m_blue -= rgb8.blue;
     }
 
-    [[nodiscard]] raspifb16::RGB565 average(int count) noexcept
+    [[nodiscard]] fb16::RGB565 average(int count) noexcept
     {
-        return raspifb16::RGB565{static_cast<uint8_t>(m_red / count),
+        return fb16::RGB565{static_cast<uint8_t>(m_red / count),
                                  static_cast<uint8_t>(m_green / count),
                                  static_cast<uint8_t>(m_blue / count)};
     }
@@ -83,17 +83,17 @@ private:
 
 void
 rowsRotate(
-    raspifb16::Image565& image,
-    raspifb16::Image565& output,
+    fb16::Image565& image,
+    fb16::Image565& output,
     double sinAngle,
     double cosAngle,
     int jStart,
     int jEnd)
 {
-    const auto inputHeight = image.getHeight();
-    const auto outputWidth = output.getWidth();
+    const auto id = image.getDimensions();
+    const auto od = output.getDimensions();
 
-    const auto y00 = inputHeight * cosAngle;
+    const auto y00 = id.height() * cosAngle;
 
     for (int j = jStart ; j < jEnd ; ++j)
     {
@@ -101,7 +101,7 @@ rowsRotate(
         const auto bSinAngle = b * sinAngle;
         const auto bCosAngle = b * cosAngle;
 
-        for (int i = 0 ; i < outputWidth ; ++i)
+        for (int i = 0 ; i < od.width() ; ++i)
         {
             const auto x = (i * cosAngle) - bSinAngle;
             const auto y = (i * sinAngle) + bCosAngle;
@@ -112,10 +112,10 @@ rowsRotate(
             const auto x1 = static_cast<int>(ceil(x));
             const auto y1 = static_cast<int>(ceil(y));
 
-            const auto pixel00 = image.getPixel(Point{x0, inputHeight - 1 - y0});
-            const auto pixel01 = image.getPixel(Point{x0, inputHeight - 1 - y1});
-            const auto pixel10 = image.getPixel(Point{x1, inputHeight - 1 - y0});
-            const auto pixel11 = image.getPixel(Point{x1, inputHeight - 1 - y1});
+            const auto pixel00 = image.getPixel(Point{x0, id.height() - 1 - y0});
+            const auto pixel01 = image.getPixel(Point{x0, id.height() - 1 - y1});
+            const auto pixel10 = image.getPixel(Point{x1, id.height() - 1 - y0});
+            const auto pixel11 = image.getPixel(Point{x1, id.height() - 1 - y1});
 
             if (pixel00.has_value() and
                 pixel01.has_value() and
@@ -130,19 +130,19 @@ rowsRotate(
                 const auto cWeight = xWeight * (1.0 - yWeight);
                 const auto dWeight = xWeight * yWeight;
 
-                auto evaluate = [&](const uint8_t raspifb16::RGB8::* channel) -> uint8_t
+                auto evaluate = [&](const uint8_t fb16::RGB8::* channel) -> uint8_t
                 {
-                    double value = raspifb16::RGB8(pixel00.value()).*channel * aWeight
-                                 + raspifb16::RGB8(pixel01.value()).*channel * bWeight
-                                 + raspifb16::RGB8(pixel10.value()).*channel * cWeight
-                                 + raspifb16::RGB8(pixel11.value()).*channel * dWeight;
+                    double value = fb16::RGB8(pixel00.value()).*channel * aWeight
+                                 + fb16::RGB8(pixel01.value()).*channel * bWeight
+                                 + fb16::RGB8(pixel10.value()).*channel * cWeight
+                                 + fb16::RGB8(pixel11.value()).*channel * dWeight;
 
                     return static_cast<uint8_t>(std::clamp(value, 0.0, 255.0));
                 };
 
-                raspifb16::RGB565 rgb{evaluate(&raspifb16::RGB8::red),
-                                      evaluate(&raspifb16::RGB8::green),
-                                      evaluate(&raspifb16::RGB8::blue)};
+                fb16::RGB565 rgb{evaluate(&fb16::RGB8::red),
+                                      evaluate(&fb16::RGB8::green),
+                                      evaluate(&fb16::RGB8::blue)};
 
                 output.setPixel(Point{i, j}, rgb.get565());
             }
@@ -158,8 +158,8 @@ rowsRotate(
 
 void
 boxBlurRows(
-    const raspifb16::Interface565& input,
-    raspifb16::Image565& rb,
+    const fb16::Interface565& input,
+    fb16::Image565& rb,
     int radius,
     int jStart,
     int jEnd)
@@ -170,7 +170,7 @@ boxBlurRows(
     };
 
     const auto diameter = 2 * radius + 1;
-    const auto width = input.getWidth();
+    const auto width = input.getDimensions().width();
     auto inputi = input.getBuffer().data();
     auto rbi = rb.getBuffer().data();
 
@@ -181,16 +181,16 @@ boxBlurRows(
         for (auto k = -radius - 1 ; k < radius ; ++k)
         {
             const Point p{clamp(k, width), j};
-            argb.add(raspifb16::RGB565(*(inputi + input.offset(p))));
+            argb.add(fb16::RGB565(*(inputi + input.offset(p))));
         }
 
         for (auto i = 0 ; i < width ; ++i)
         {
             Point p{clamp(i + radius, width), j};
-            argb.add(raspifb16::RGB565(*(inputi + input.offset(p))));
+            argb.add(fb16::RGB565(*(inputi + input.offset(p))));
 
             p = Point(clamp(i - radius - 1, width), j);
-            argb.subtract(raspifb16::RGB565(*(inputi + input.offset(p))));
+            argb.subtract(fb16::RGB565(*(inputi + input.offset(p))));
 
             p = Point(i, j);
             *(rbi + rb.offset(p)) = argb.average(diameter).get565();
@@ -200,8 +200,8 @@ boxBlurRows(
 
 void
 boxBlurColumns(
-    const raspifb16::Image565& rb,
-    raspifb16::Image565& output,
+    const fb16::Image565& rb,
+    fb16::Image565& output,
     int radius,
     int iStart,
     int iEnd)
@@ -212,7 +212,7 @@ boxBlurColumns(
     };
 
     const auto diameter = 2 * radius + 1;
-    const auto height = rb.getHeight();
+    const auto height = rb.getDimensions().height();
     const auto rbi = rb.getBuffer().data();
     auto outputi = output.getBuffer().data();
 
@@ -223,16 +223,16 @@ boxBlurColumns(
         for (auto k = -radius - 1 ; k < radius ; ++k)
         {
             const Point p{i, clamp(k, height)};
-            argb.add(raspifb16::RGB565(*(rbi + rb.offset(p))));
+            argb.add(fb16::RGB565(*(rbi + rb.offset(p))));
         }
 
         for (auto j = 0 ; j < height ; ++j)
         {
             Point p{i, clamp(j + radius, height)};
-            argb.add(raspifb16::RGB565(*(rbi + rb.offset(p))));
+            argb.add(fb16::RGB565(*(rbi + rb.offset(p))));
 
             p = Point(i, clamp(j - radius - 1, height));
-            argb.subtract(raspifb16::RGB565(*(rbi + rb.offset(p))));
+            argb.subtract(fb16::RGB565(*(rbi + rb.offset(p))));
 
             p = Point(i, j);
             *(outputi + output.offset(p)) = argb.average(diameter).get565();
@@ -242,28 +242,27 @@ boxBlurColumns(
 
 //-------------------------------------------------------------------------
 
-raspifb16::Image565
-raspifb16::boxBlur(
-    const raspifb16::Interface565& input,
+fb16::Image565
+fb16::boxBlur(
+    const fb16::Interface565& input,
     int radius)
 {
-    const auto width = input.getWidth();
-    const auto height = input.getHeight();
+    const auto d = input.getDimensions();
 
-    raspifb16::Image565 rb{width, height};
-    raspifb16::Image565 output{width, height};
+    fb16::Image565 rb{d};
+    fb16::Image565 output{d};
 
-    boxBlurRows(input, rb, radius, 0, height);
-    boxBlurColumns(rb, output, radius, 0, width);
+    boxBlurRows(input, rb, radius, 0, d.height());
+    boxBlurColumns(rb, output, radius, 0, d.width());
 
     return output;
 }
 
 //-------------------------------------------------------------------------
 
-raspifb16::Image565
-raspifb16::enlighten(
-    const raspifb16::Interface565& input,
+fb16::Image565
+fb16::enlighten(
+    const fb16::Interface565& input,
     double strength)
 {
     auto flerp = [](double value1, double value2, double alpha)->double
@@ -276,9 +275,9 @@ raspifb16::enlighten(
         return static_cast<uint8_t>(std::clamp(channel * scale, 0.0, 255.0));
     };
 
-    const auto mb = raspifb16::boxBlur(raspifb16::maxRGB(input), 12);
+    const auto mb = fb16::boxBlur(fb16::maxRGB(input), 12);
 
-    raspifb16::Image565 output{input.getWidth(), input.getHeight()};
+    fb16::Image565 output{input.getDimensions()};
 
     const auto strength2 = strength * strength;
     const auto minI = 1.0 / flerp(1.0, 10.0, strength2);
@@ -289,9 +288,9 @@ raspifb16::enlighten(
 
     for (auto pixel : input.getBuffer())
     {
-        raspifb16::RGB565 c{pixel};
+        fb16::RGB565 c{pixel};
         const auto rgb8 = c.getRGB8();
-        const auto max = raspifb16::RGB8(*(mbi++)).red;
+        const auto max = fb16::RGB8(*(mbi++)).red;
         const auto illumination = std::clamp(max / 255.0, minI, maxI);
 
         if (illumination < maxI)
@@ -312,18 +311,18 @@ raspifb16::enlighten(
 
 //-------------------------------------------------------------------------
 
-raspifb16::Image565
-raspifb16::maxRGB(
-    const raspifb16::Interface565& input)
+fb16::Image565
+fb16::maxRGB(
+    const fb16::Interface565& input)
 {
-    raspifb16::Image565 output{input.getWidth(), input.getHeight()};
+    fb16::Image565 output{input.getDimensions()};
     auto* buffer = output.getBuffer().data();
 
     for (const auto pixel : input.getBuffer())
     {
-       raspifb16::RGB8 rgb8(pixel);
+       fb16::RGB8 rgb8(pixel);
        const auto grey(std::max({rgb8.red, rgb8.green, rgb8.blue}));
-       *(buffer++) = raspifb16::RGB565::rgbTo565(grey, grey, grey);
+       *(buffer++) = fb16::RGB565::rgbTo565(grey, grey, grey);
     }
 
     return output;
@@ -331,18 +330,17 @@ raspifb16::maxRGB(
 
 //-------------------------------------------------------------------------
 
-raspifb16::Image565
-raspifb16::resizeBilinearInterpolation(
-    const raspifb16::Interface565& input,
-    int width,
-    int height)
+fb16::Image565
+fb16::resizeBilinearInterpolation(
+    const fb16::Interface565& input,
+    fb16::Dimensions565 d)
 {
-    if ((width <= 0) or (height <= 0))
+    if ((d.width() <= 0) or (d.height() <= 0))
     {
         throw std::invalid_argument("width and height must be greater than zero");
     }
 
-    raspifb16::Image565 output{width, height};
+    fb16::Image565 output{d};
     resizeToBilinearInterpolation(input, output);
 
     return output;
@@ -350,18 +348,17 @@ raspifb16::resizeBilinearInterpolation(
 
 //-------------------------------------------------------------------------
 
-raspifb16::Image565
-raspifb16::resizeLanczos3Interpolation(
-    const raspifb16::Interface565& input,
-    int width,
-    int height)
+fb16::Image565
+fb16::resizeLanczos3Interpolation(
+    const fb16::Interface565& input,
+    fb16::Dimensions565 d)
 {
-    if ((width <= 0) or (height <= 0))
+    if ((d.width() <= 0) or (d.height() <= 0))
     {
         throw std::invalid_argument("width and height must be greater than zero");
     }
 
-    raspifb16::Image565 output{width, height};
+    fb16::Image565 output{d};
     resizeToLanczos3Interpolation(input, output);
 
     return output;
@@ -369,18 +366,17 @@ raspifb16::resizeLanczos3Interpolation(
 
 //-------------------------------------------------------------------------
 
-raspifb16::Image565
-raspifb16::resizeNearestNeighbour(
-    const raspifb16::Interface565& input,
-    int width,
-    int height)
+fb16::Image565
+fb16::resizeNearestNeighbour(
+    const fb16::Interface565& input,
+    fb16::Dimensions565 d)
 {
-    if ((width <= 0) or (height <= 0))
+    if ((d.width() <= 0) or (d.height() <= 0))
     {
         throw std::invalid_argument("width and height must be greater than zero");
     }
 
-    raspifb16::Image565 output{width, height};
+    fb16::Image565 output{d};
     resizeToNearestNeighbour(input, output);
 
     return output;
@@ -390,21 +386,24 @@ raspifb16::resizeNearestNeighbour(
 
 void
 rowsBilinearInterpolation(
-    const raspifb16::Interface565& input,
-    raspifb16::Image565& output,
+    const fb16::Interface565& input,
+    fb16::Image565& output,
     int jStart,
     int jEnd)
 {
-    const auto xScale = (output.getWidth() > 1)
-                      ? (input.getWidth() - 1.0f) / (output.getWidth() - 1.0f)
+    const auto id = input.getDimensions();
+    const auto od = output.getDimensions();
+
+    const auto xScale = (od.width() > 1)
+                      ? (id.width() - 1.0f) / (od.width() - 1.0f)
                       : 0.0f;
-    const auto yScale = (output.getHeight() > 1)
-                      ? (input.getHeight() - 1.0f) / (output.getHeight() - 1.0f)
+    const auto yScale = (od.height() > 1)
+                      ? (id.height() - 1.0f) / (od.height() - 1.0f)
                       : 0.0f;
 
     for (int j = jStart; j < jEnd; ++j)
     {
-        for (int i = 0; i < output.getWidth(); ++i)
+        for (int i = 0; i < od.width(); ++i)
         {
             int xLow = static_cast<int>(std::floor(xScale * i));
             int yLow = static_cast<int>(std::floor(yScale * j));
@@ -424,7 +423,7 @@ rowsBilinearInterpolation(
             const auto cWeight = (1.0f - xWeight) * yWeight;
             const auto dWeight = xWeight * yWeight;
 
-            auto evaluate = [&](const uint8_t raspifb16::RGB8::* channel) -> uint8_t
+            auto evaluate = [&](const uint8_t fb16::RGB8::* channel) -> uint8_t
             {
                 float value = a.*channel * aWeight
                             + b.*channel * bWeight
@@ -434,9 +433,9 @@ rowsBilinearInterpolation(
                 return static_cast<uint8_t>(std::clamp(value, 0.0f, 255.0f));
             };
 
-            raspifb16::RGB565 rgb{evaluate(&raspifb16::RGB8::red),
-                                  evaluate(&raspifb16::RGB8::green),
-                                  evaluate(&raspifb16::RGB8::blue)};
+            fb16::RGB565 rgb{evaluate(&fb16::RGB8::red),
+                                  evaluate(&fb16::RGB8::green),
+                                  evaluate(&fb16::RGB8::blue)};
 
             output.setPixelRGB(Point{i, j}, rgb);
         }
@@ -445,12 +444,12 @@ rowsBilinearInterpolation(
 
 //-------------------------------------------------------------------------
 
-raspifb16::Image565&
-raspifb16::resizeToBilinearInterpolation(
-    const raspifb16::Interface565& input,
-    raspifb16::Image565& output)
+fb16::Image565&
+fb16::resizeToBilinearInterpolation(
+    const fb16::Interface565& input,
+    fb16::Image565& output)
 {
-    rowsBilinearInterpolation(input, output, 0, output.getHeight());
+    rowsBilinearInterpolation(input, output, 0, output.getDimensions().height());
     return output;
 }
 
@@ -479,30 +478,34 @@ lanczosKernel(float x, int a)
 
 void
 rowsLanczos3Interpolation(
-    const raspifb16::Interface565& input,
-    raspifb16::Image565& output,
+    const fb16::Interface565& input,
+    fb16::Image565& output,
     int jStart,
     int jEnd)
 {
     constexpr int a{3};
-    const auto xScale = (output.getWidth() > 1)
-                      ? (input.getWidth() - 1.0f) / (output.getWidth() - 1.0f)
+
+    const auto id = input.getDimensions();
+    const auto od = output.getDimensions();
+
+    const auto xScale = (od.width() > 1)
+                      ? (id.width() - 1.0f) / (od.width() - 1.0f)
                       : 0.0f;
-    const auto yScale = (output.getHeight() > 1)
-                      ? (input.getHeight() - 1.0f) / (output.getHeight() - 1.0f)
+    const auto yScale = (od.height() > 1)
+                      ? (id.height() - 1.0f) / (od.height() - 1.0f)
                       : 0.0f;
 
     for (int j = jStart; j < jEnd; ++j)
     {
-        for (int i = 0; i < output.getWidth(); ++i)
+        for (int i = 0; i < od.width(); ++i)
         {
             const auto xMid = i * xScale;
             const auto yMid = j * yScale;
 
             const auto xLow = std::max(0, static_cast<int>(std::floor(xMid)) - a + 1);
-            const auto xHigh = std::min(input.getWidth() - 1, static_cast<int>(std::floor(xMid)) + a);
+            const auto xHigh = std::min(id.width() - 1, static_cast<int>(std::floor(xMid)) + a);
             const auto yLow = std::max(0, static_cast<int>(std::floor(yMid)) - a + 1);
-            const auto yHigh = std::min(input.getHeight() - 1, static_cast<int>(std::floor(yMid)) + a);
+            const auto yHigh = std::min(id.height() - 1, static_cast<int>(std::floor(yMid)) + a);
 
             float weightsSum{};
             float redSum{};
@@ -532,7 +535,7 @@ rowsLanczos3Interpolation(
             const auto green = std::clamp(greenSum / weightsSum, 0.0f, 255.0f);
             const auto blue = std::clamp(blueSum / weightsSum, 0.0f, 255.0f);
 
-            raspifb16::RGB565 rgb{static_cast<uint8_t>(red),
+            fb16::RGB565 rgb{static_cast<uint8_t>(red),
                                   static_cast<uint8_t>(green),
                                   static_cast<uint8_t>(blue)};
 
@@ -543,12 +546,12 @@ rowsLanczos3Interpolation(
 
 //-------------------------------------------------------------------------
 
-raspifb16::Image565&
-raspifb16::resizeToLanczos3Interpolation(
-    const raspifb16::Interface565& input,
-    raspifb16::Image565& output)
+fb16::Image565&
+fb16::resizeToLanczos3Interpolation(
+    const fb16::Interface565& input,
+    fb16::Image565& output)
 {
-    rowsLanczos3Interpolation(input, output, 0, output.getHeight());
+    rowsLanczos3Interpolation(input, output, 0, output.getDimensions().height());
     return output;
 }
 
@@ -556,25 +559,23 @@ raspifb16::resizeToLanczos3Interpolation(
 
 void
 rowsNearestNeighbour(
-    const raspifb16::Interface565& input,
-    raspifb16::Image565& output,
+    const fb16::Interface565& input,
+    fb16::Image565& output,
     int jStart,
     int jEnd)
 {
-    const auto inputWidth = input.getWidth();
-    const auto inputHeight = input.getHeight();
-    const auto outputWidth = output.getWidth();
-    const auto outputHeight = output.getHeight();
+    const auto id = input.getDimensions();
+    const auto od = output.getDimensions();
 
-    const int a = (outputWidth > inputWidth) ? 0 : 1;
-    const int b = (output.getHeight() > inputHeight) ? 0 : 1;
+    const int a = (od.width() > id.width()) ? 0 : 1;
+    const int b = (od.height() > id.height()) ? 0 : 1;
 
     for (int j = jStart ; j < jEnd ; ++j)
     {
-        const int y = (j * (inputHeight - b)) / (outputHeight - b);
-        for (int i = 0 ; i < outputWidth ; ++i)
+        const int y = (j * (id.height() - b)) / (od.height() - b);
+        for (int i = 0 ; i < od.width() ; ++i)
         {
-            const int x = (i * (inputWidth - a)) / (outputWidth - a);
+            const int x = (i * (id.width() - a)) / (od.width() - a);
             auto pixel{input.getPixel(Point{x, y})};
 
             if (pixel.has_value())
@@ -587,20 +588,20 @@ rowsNearestNeighbour(
 
 //-------------------------------------------------------------------------
 
-raspifb16::Image565&
-raspifb16::resizeToNearestNeighbour(
-    const raspifb16::Interface565& input,
-    raspifb16::Image565& output)
+fb16::Image565&
+fb16::resizeToNearestNeighbour(
+    const fb16::Interface565& input,
+    fb16::Image565& output)
 {
-    rowsNearestNeighbour(input, output, 0, output.getHeight());
+    rowsNearestNeighbour(input, output, 0, output.getDimensions().height());
     return output;
 }
 
 //-------------------------------------------------------------------------
 
-raspifb16::Image565
-raspifb16::rotate(
-    const raspifb16::Interface565& input,
+fb16::Image565
+fb16::rotate(
+    const fb16::Interface565& input,
     uint32_t background,
     double angle)
 {
@@ -634,7 +635,7 @@ raspifb16::rotate(
     }
     else
     {
-        image = Image565(input.getWidth(), input.getHeight(), input.getBuffer());
+        image = input;
     }
 
     // now angle is in the range 0 to 90
@@ -663,54 +664,45 @@ raspifb16::rotate(
     const auto cosAngle = std::cos(radians);
     const auto sinAngle = std::sin(radians);
 
-    const auto inputWidth = image.getWidth();
-    const auto inputHeight = image.getHeight();
+    const auto id = image.getDimensions();
 
-    const auto x10 = (inputWidth * cosAngle) + (inputHeight * sinAngle);
-    const auto y00 = inputHeight * cosAngle;
-    const auto y11 = -(inputWidth * sinAngle);
+    const auto x10 = (id.width() * cosAngle) + (id.height() * sinAngle);
+    const auto y00 = id.height() * cosAngle;
+    const auto y11 = -(id.width() * sinAngle);
 
-    const auto outputWidth = static_cast<int>(std::ceil(x10));
-    const auto outputHeight = static_cast<int>(std::ceil(y00 - y11 + 1.0));
-
-    Image565 output{outputWidth, outputHeight};
-    output.clear(background);
-
-#ifdef WITH_BS_THREAD_POOL
-    auto& tPool = threadPool();
-    auto iterateRows = [&image, &output, sinAngle, cosAngle](int start, int end)
+    const Dimensions565 od
     {
-        rowsRotate(image, output, sinAngle, cosAngle, start, end);
+        static_cast<int>(std::ceil(x10)),
+        static_cast<int>(std::ceil(y00 - y11 + 1.0))
     };
 
-    tPool.detach_blocks<int>(0, output.getHeight(), iterateRows);
-    tPool.wait();
-#else
-    rowsRotate(image, output, sinAngle, cosAngle, 0, output.getHeight());
-#endif
+    Image565 output{od};
+    output.clear(background);
+
+    rowsRotate(image, output, sinAngle, cosAngle, 0, output.getDimensions().height());
 
     return output;
 }
 
 //-------------------------------------------------------------------------
 
-raspifb16::Image565
-raspifb16::rotate90(
-    const raspifb16::Interface565& input)
+fb16::Image565
+fb16::rotate90(
+    const fb16::Interface565& input)
 {
-    const auto width = input.getWidth();
-    const auto height = input.getHeight();
-    Image565 output{height, width};
+    const auto id = input.getDimensions();
+    const Dimensions565 od{ id.height(), id.width()};
+    Image565 output{od};
 
-    for (auto j = 0 ; j < height ; ++j)
+    for (auto j = 0 ; j < id.height() ; ++j)
     {
-        for (auto i = 0 ; i < width ; ++i)
+        for (auto i = 0 ; i < id.width() ; ++i)
         {
             const auto pixel{input.getPixel(Point{i, j})};
 
             if (pixel.has_value())
             {
-                output.setPixel(Point{height - j - 1, i}, pixel.value());
+                output.setPixel(Point{id.height() - j - 1, i}, pixel.value());
             }
         }
     }
@@ -720,23 +712,22 @@ raspifb16::rotate90(
 
 //-------------------------------------------------------------------------
 
-raspifb16::Image565
-raspifb16::rotate180(
-    const raspifb16::Interface565& input)
+fb16::Image565
+fb16::rotate180(
+    const fb16::Interface565& input)
 {
-    const auto width = input.getWidth();
-    const auto height = input.getHeight();
-    Image565 output{width, height};
+    const auto d = input.getDimensions();
+    Image565 output{d};
 
-    for (auto j = 0 ; j < height ; ++j)
+    for (auto j = 0 ; j < d.height() ; ++j)
     {
-        for (auto i = 0 ; i < width ; ++i)
+        for (auto i = 0 ; i < d.width() ; ++i)
         {
             const auto pixel{input.getPixel(Point{i, j})};
 
             if (pixel.has_value())
             {
-                output.setPixel(Point{width - i - 1, height - j - 1}, pixel.value());
+                output.setPixel(Point{d.width() - i - 1, d.height() - j - 1}, pixel.value());
             }
         }
     }
@@ -746,23 +737,23 @@ raspifb16::rotate180(
 
 //-------------------------------------------------------------------------
 
-raspifb16::Image565
-raspifb16::rotate270(
-    const raspifb16::Interface565& input)
+fb16::Image565
+fb16::rotate270(
+    const fb16::Interface565& input)
 {
-    const auto width = input.getWidth();
-    const auto height = input.getHeight();
-    Image565 output{height, width};
+    const auto id = input.getDimensions();
+    const Dimensions565 od{ id.height(), id.width()};
+    Image565 output{od};
 
-    for (auto j = 0 ; j < height ; ++j)
+    for (auto j = 0 ; j < id.height() ; ++j)
     {
-        for (auto i = 0 ; i < width ; ++i)
+        for (auto i = 0 ; i < id.width() ; ++i)
         {
             const auto pixel{input.getPixel(Point{i, j})};
 
             if (pixel.has_value())
             {
-                output.setPixel(Point{j, width - i - 1}, pixel.value());
+                output.setPixel(Point{j, id.width() - i - 1}, pixel.value());
             }
         }
     }
@@ -772,19 +763,19 @@ raspifb16::rotate270(
 
 //-------------------------------------------------------------------------
 
-raspifb16::Image565
-raspifb16::scaleUp(
-    const raspifb16::Interface565& input,
+fb16::Image565
+fb16::scaleUp(
+    const fb16::Interface565& input,
     uint8_t scale)
 {
-    const auto width = input.getWidth();
-    const auto height = input.getHeight();
+    const auto id = input.getDimensions();
+    const Dimensions565 od{id.width() * scale, id.height() * scale};
     auto inputi = input.getBuffer().data();
-    raspifb16::Image565 output{width * scale, height * scale};
+    fb16::Image565 output{od};
 
-    for (int j = 0 ; j < height ; ++j)
+    for (int j = 0 ; j < id.height() ; ++j)
     {
-        for (int i = 0 ; i < width ; ++i)
+        for (int i = 0 ; i < id.width() ; ++i)
         {
             auto pixel = *(inputi++);
             for (int b = 0 ; b < scale ; ++b)

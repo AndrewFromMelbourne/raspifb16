@@ -44,7 +44,7 @@
 
 //-------------------------------------------------------------------------
 
-using namespace raspifb16;
+using namespace fb16;
 using namespace std::chrono_literals;
 
 //-------------------------------------------------------------------------
@@ -72,7 +72,7 @@ main(
 {
     std::string device{};
     const std::string program{basename(argv[0])};
-    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
+    auto interfaceType{fb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------
 
@@ -94,27 +94,23 @@ main(
         case 'd':
 
             device = optarg;
-
             break;
 
         case 'h':
 
             printUsage(std::cout, program);
             ::exit(EXIT_SUCCESS);
-
             break;
 
         case 'k':
 
-            interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
-
+            interfaceType = fb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
             break;
 
         default:
 
             printUsage(std::cerr, program);
             ::exit(EXIT_FAILURE);
-
             break;
         }
     }
@@ -123,7 +119,7 @@ main(
 
     try
     {
-        auto fb{raspifb16::createInterface565(interfaceType, device)};
+        auto fb{fb16::createInterface565(interfaceType, device)};
 
         //-----------------------------------------------------------------
 
@@ -133,7 +129,7 @@ main(
         constexpr int width{248};
         constexpr int height{16};
 
-        Image565 image(width, height);
+        Image565 image{fb16::Dimensions565{width, height}};
         image.clear(darkBlue);
 
         //-----------------------------------------------------------------
@@ -149,15 +145,14 @@ main(
         //-----------------------------------------------------------------
 
         constexpr int scale{3};
-        constexpr int swidth{scale * width};
-        constexpr int sheight{scale * height};
+        constexpr fb16::Dimensions565 sd{scale * width, scale * height};
         constexpr int imageOffset{200};
-        constexpr int yStep{sheight + 8};
+        constexpr int yStep{sd.height() + 8};
 
         auto imageSu = scaleUp(image, scale);
-        auto imageNn = resizeNearestNeighbour(image, swidth, sheight);
-        auto imageBi = resizeBilinearInterpolation(image, swidth, sheight);
-        auto imageLi = resizeLanczos3Interpolation(image, swidth, sheight);
+        auto imageNn = resizeNearestNeighbour(image, sd);
+        auto imageBi = resizeBilinearInterpolation(image, sd);
+        auto imageLi = resizeLanczos3Interpolation(image, sd);
 
         Point565 t{0, 0};
         Point565 p{ imageOffset, 0 };
@@ -186,7 +181,5 @@ main(
         std::println(std::cerr, "Error: {}", error.what());
         exit(EXIT_FAILURE);
     }
-
-    return 0;
 }
 

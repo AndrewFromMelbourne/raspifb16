@@ -35,7 +35,7 @@
 
 //-------------------------------------------------------------------------
 
-using namespace raspifb16;
+using namespace fb16;
 
 //-------------------------------------------------------------------------
 
@@ -50,27 +50,27 @@ Puzzle::Puzzle(bool fitToScreen)
         0x0D, 0x0E, 0x0F, 0x00
     },
     m_fitToScreen{fitToScreen},
-    m_image{ c_tileWidth * 4, c_tileHeight * 4 },
+    m_image{ fb16::Dimensions565{c_tileWidth * 4, c_tileHeight * 4}},
     m_tileBuffers(
         {
-            { c_tileWidth, c_tileHeight, c_piece0 },
-            { c_tileWidth, c_tileHeight, c_piece1 },
-            { c_tileWidth, c_tileHeight, c_piece2 },
-            { c_tileWidth, c_tileHeight, c_piece3 },
-            { c_tileWidth, c_tileHeight, c_piece4 },
-            { c_tileWidth, c_tileHeight, c_piece5 },
-            { c_tileWidth, c_tileHeight, c_piece6 },
-            { c_tileWidth, c_tileHeight, c_piece7 },
-            { c_tileWidth, c_tileHeight, c_piece8 },
-            { c_tileWidth, c_tileHeight, c_piece9 },
-            { c_tileWidth, c_tileHeight, c_piece10 },
-            { c_tileWidth, c_tileHeight, c_piece11 },
-            { c_tileWidth, c_tileHeight, c_piece12 },
-            { c_tileWidth, c_tileHeight, c_piece13 },
-            { c_tileWidth, c_tileHeight, c_piece14 },
-            { c_tileWidth, c_tileHeight, c_piece15 },
+            { c_tileDimensions, c_piece0 },
+            { c_tileDimensions, c_piece1 },
+            { c_tileDimensions, c_piece2 },
+            { c_tileDimensions, c_piece3 },
+            { c_tileDimensions, c_piece4 },
+            { c_tileDimensions, c_piece5 },
+            { c_tileDimensions, c_piece6 },
+            { c_tileDimensions, c_piece7 },
+            { c_tileDimensions, c_piece8 },
+            { c_tileDimensions, c_piece9 },
+            { c_tileDimensions, c_piece10 },
+            { c_tileDimensions, c_piece11 },
+            { c_tileDimensions, c_piece12 },
+            { c_tileDimensions, c_piece13 },
+            { c_tileDimensions, c_piece14 },
+            { c_tileDimensions, c_piece15 },
         }),
-    m_tileSolved{ c_tileWidth, c_tileHeight, c_smiley }
+    m_tileSolved{ c_tileDimensions, c_smiley }
 {
 }
 
@@ -176,7 +176,7 @@ Puzzle::update(Joystick& js)
     {
         // Diagonal movement is not allowed.
         return false;
-    }   
+    }
 
     const auto dx = (value.x) ? (value.x / std::abs(value.x)) : 0;
     const auto dy = (value.y) ? (value.y / std::abs(value.y)) : 0;
@@ -224,20 +224,18 @@ Puzzle::draw(Interface565& fb)
         }
     }
 
-    const auto imageWidth = m_image.getWidth();
-    const auto imageHeight = m_image.getHeight();
+    const auto id = m_image.getDimensions();
+    const auto fbd = fb.getDimensions();
 
-    const auto fbWidth = fb.getWidth();
-    const auto fbHeight = fb.getHeight();
-
-    const auto zoom = std::min(fbWidth / imageWidth, fbHeight / imageHeight);
+    const auto zoom = std::min(fbd.width() / id.width(), fbd.height() / id.height());
 
     if ((zoom > 1) and m_fitToScreen)
     {
-        auto zoomed = scaleUp(m_image, zoom);
+        const auto zoomed = scaleUp(m_image, zoom);
+        const auto zd = zoomed.getDimensions();
 
-        const int xOffset = (fbWidth - zoomed.getWidth()) / 2;
-        const int yOffset = (fbHeight - zoomed.getHeight()) / 2;
+        const int xOffset = (fbd.width() - zd.width()) / 2;
+        const int yOffset = (fbd.height() - zd.height()) / 2;
 
         const Point565 p{ xOffset, yOffset };
 
@@ -245,8 +243,8 @@ Puzzle::draw(Interface565& fb)
     }
     else
     {
-        const int xOffset = (fbWidth - imageWidth) / 2;
-        const int yOffset = (fbHeight - imageHeight) / 2;
+        const int xOffset = (fbd.width() - id.width()) / 2;
+        const int yOffset = (fbd.height() - id.height()) / 2;
 
         const Point565 p{ xOffset, yOffset };
         fb.putImage(p, m_image);

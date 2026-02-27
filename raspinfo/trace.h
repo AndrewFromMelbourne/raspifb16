@@ -42,7 +42,7 @@
 
 //-------------------------------------------------------------------------
 
-namespace raspifb16
+namespace fb16
 {
 class FrameBuffer565;
 }
@@ -55,8 +55,8 @@ public:
 
     TraceData(
         const std::string& name,
-        raspifb16::RGB565 traceColour,
-        raspifb16::RGB565 gridColour,
+        fb16::RGB565 traceColour,
+        fb16::RGB565 gridColour,
         int width)
     :
         m_name{name},
@@ -69,8 +69,8 @@ public:
     }
 
     [[nodiscard]] const std::string& name() const noexcept { return m_name; }
-    [[nodiscard]] raspifb16::RGB565 traceColour() const noexcept { return m_traceColour; }
-    [[nodiscard]] raspifb16::RGB565 gridColour() const noexcept { return m_gridColour; }
+    [[nodiscard]] fb16::RGB565 traceColour() const noexcept { return m_traceColour; }
+    [[nodiscard]] fb16::RGB565 gridColour() const noexcept { return m_gridColour; }
 
     void addData(int value);
     [[nodiscard]] int max() const;
@@ -79,8 +79,8 @@ public:
 private:
 
     std::string m_name;
-    raspifb16::RGB565 m_traceColour;
-    raspifb16::RGB565 m_gridColour;
+    fb16::RGB565 m_traceColour;
+    fb16::RGB565 m_gridColour;
     std::vector<int> m_values;
     int m_width;
 };
@@ -90,7 +90,7 @@ private:
 struct TraceConfiguration
 {
     std::string m_name;
-    raspifb16::RGB565 m_traceColour;
+    fb16::RGB565 m_traceColour;
 };
 
 //-------------------------------------------------------------------------
@@ -111,8 +111,8 @@ public:
         const std::string& title,
         std::initializer_list<TraceConfiguration> traces);
 
-    void init(raspifb16::Interface565Font& font) override;
-    void update(time_t now, raspifb16::Interface565Font& font) override = 0;
+    void init(fb16::Interface565Font& font) override;
+    void update(time_t now, fb16::Interface565Font& font) override = 0;
 
 protected:
 
@@ -132,9 +132,9 @@ protected:
     std::vector<TraceData> m_traceData;
     std::vector<time_t> m_time;
 
-    static constexpr raspifb16::RGB565 sc_foreground{255, 255, 255};
-    static constexpr raspifb16::RGB565 sc_background{0, 0, 0};
-    static constexpr raspifb16::RGB565 sc_gridColour{48, 48, 48};
+    static constexpr fb16::RGB565 sc_foreground{255, 255, 255};
+    static constexpr fb16::RGB565 sc_background{0, 0, 0};
+    static constexpr fb16::RGB565 sc_gridColour{48, 48, 48};
 
 private:
 

@@ -38,7 +38,7 @@
 
 //-------------------------------------------------------------------------
 
-namespace raspifb16
+namespace fb16
 {
 
 //-------------------------------------------------------------------------
@@ -65,8 +65,7 @@ public:
     Image565Font8x8& operator=(const Image565Font8x8&) = delete;
     Image565Font8x8& operator=(Image565Font8x8&&) = delete;
 
-    [[nodiscard]] int getPixelHeight() const noexcept override;
-    [[nodiscard]] int getPixelWidth() const noexcept override;
+    [[nodiscard]] Dimensions565 getPixelDimensions() const noexcept override;
 
     std::optional<char> getCharacterCode(CharacterCode code) const noexcept override;
 
@@ -101,5 +100,5 @@ public:
 
 //-------------------------------------------------------------------------
 
-} // namespace raspifb16
+} // namespace fb16
 

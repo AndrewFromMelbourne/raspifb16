@@ -36,7 +36,7 @@
 
 //-------------------------------------------------------------------------
 
-namespace raspifb16
+namespace fb16
 {
 
 //-------------------------------------------------------------------------
@@ -58,20 +58,17 @@ maxRGB(
 [[nodiscard]] Image565
 resizeBilinearInterpolation(
     const Interface565& input,
-    int width,
-    int height);
+    fb16::Dimensions565 d);
 
 [[nodiscard]] Image565
 resizeLanczos3Interpolation(
     const Interface565& input,
-    int width,
-    int height);
+    fb16::Dimensions565 d);
 
 [[nodiscard]] Image565
 resizeNearestNeighbour(
     const Interface565& input,
-    int width,
-    int height);
+    fb16::Dimensions565 d);
 
 Image565&
 resizeToBilinearInterpolation(
@@ -130,5 +127,5 @@ scaleUp(
 
 //-------------------------------------------------------------------------
 
-} // namespace raspifb16
+} // namespace fb16
 

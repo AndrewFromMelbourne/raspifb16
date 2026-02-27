@@ -49,7 +49,7 @@ const char* defaultJoystick = "/dev/input/js0";
 
 //-------------------------------------------------------------------------
 
-using namespace raspifb16;
+using namespace fb16;
 
 //-------------------------------------------------------------------------
 
@@ -116,7 +116,7 @@ main(
 
     //---------------------------------------------------------------------
 
-    std::array<std::string, raspifb16::Joystick::BUTTON_COUNT> descriptions{
+    std::array<std::string, fb16::Joystick::BUTTON_COUNT> descriptions{
         "X",
         "A",
         "B",
@@ -131,7 +131,7 @@ main(
         "",
     };
 
-    std::array<std::string, raspifb16::Joystick::BUTTON_COUNT> tokens =
+    std::array<std::string, fb16::Joystick::BUTTON_COUNT> tokens =
     {
         "BUTTON_X",
         "BUTTON_A",
@@ -197,7 +197,7 @@ main(
         }
 
         std::string configDirectory{std::getenv("HOME") +
-                                    std::string{"/.config/raspifb16"}};
+                                    std::string{"/.config/fb16"}};
 
 
         if (std::filesystem::exists(configDirectory) or
@@ -221,7 +221,5 @@ main(
         std::println(std::cerr, "Error: {}", error.what());
         exit(EXIT_FAILURE);
     }
-
-    return 0;
 }
 

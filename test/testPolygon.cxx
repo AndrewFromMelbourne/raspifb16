@@ -45,7 +45,7 @@
 
 //-------------------------------------------------------------------------
 
-using namespace raspifb16;
+using namespace fb16;
 using namespace std::chrono_literals;
 
 //-------------------------------------------------------------------------
@@ -73,7 +73,7 @@ main(
 {
     std::string device{};
     const std::string program{basename(argv[0])};
-    auto interfaceType{raspifb16::InterfaceType565::FRAME_BUFFER_565};
+    auto interfaceType{fb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------
 
@@ -95,27 +95,23 @@ main(
         case 'd':
 
             device = optarg;
-
             break;
 
         case 'h':
 
             printUsage(std::cout, program);
             ::exit(EXIT_SUCCESS);
-
             break;
 
         case 'k':
 
-            interfaceType = raspifb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
-
+            interfaceType = fb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
             break;
 
         default:
 
             printUsage(std::cerr, program);
             ::exit(EXIT_FAILURE);
-
             break;
         }
     }
@@ -124,10 +120,8 @@ main(
 
     try
     {
-        auto fb{raspifb16::createInterface565(interfaceType, device)};
-
-        const int fheight = fb->getHeight();
-        const int fwidth = fb->getWidth();
+        auto fb{fb16::createInterface565(interfaceType, device)};
+        const auto fbd = fb->getDimensions();
 
         constexpr RGB565 white{255, 255, 255};
         constexpr RGB565 grey(192, 192, 192);
@@ -137,7 +131,7 @@ main(
 
         //-----------------------------------------------------------------
 
-        const int diameter = std::min(fwidth, fheight) / 4;
+        const int diameter = std::min(fbd.width(), fbd.height()) / 4;
         const int radius = (diameter / 2) - 5;
 
         //-----------------------------------------------------------------
@@ -157,14 +151,14 @@ main(
 
         //-----------------------------------------------------------------
 
-        const int jIncrement = fheight / 4;
-        const int iIncrement = fwidth / 4;
+        const int jIncrement = fbd.height() / 4;
+        const int iIncrement = fbd.width() / 4;
 
-        for (int j = 0; j <= fheight; j += jIncrement)
+        for (int j = 0; j <= fbd.height(); j += jIncrement)
         {
             const int index = j / jIncrement;
             const int startI = (index % 2 == 0) ? 0 : (iIncrement / 2);
-            for (int i = startI; i <= fwidth; i += iIncrement)
+            for (int i = startI; i <= fbd.width(); i += iIncrement)
             {
                 const std::array<Point565, 10> starVertices{
                     starVertex(0, radius, i, j),
@@ -197,6 +191,4 @@ main(
         std::println(std::cerr, "Error: {}", error.what());
         exit(EXIT_FAILURE);
     }
-
-    return 0;
 }

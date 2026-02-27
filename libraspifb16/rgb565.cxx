@@ -29,7 +29,7 @@
 
 //-------------------------------------------------------------------------
 
-raspifb16::RGB565::RGB565(
+fb16::RGB565::RGB565(
     RGB8 rgb) noexcept
 :
     m_rgb{rgbTo565(rgb.red, rgb.green, rgb.blue)}
@@ -38,8 +38,8 @@ raspifb16::RGB565::RGB565(
 
 //-------------------------------------------------------------------------
 
-raspifb16::RGB565
-raspifb16::RGB565::blend(
+fb16::RGB565
+fb16::RGB565::blend(
     uint8_t alpha,
     const RGB565& background) const noexcept
 {
@@ -48,8 +48,8 @@ raspifb16::RGB565::blend(
 
 //-------------------------------------------------------------------------
 
-raspifb16::RGB8
-raspifb16::RGB565::getRGB8() const noexcept
+fb16::RGB8
+fb16::RGB565::getRGB8() const noexcept
 {
     return RGB8{ getRed(), getGreen(), getBlue() };
 }
@@ -57,7 +57,7 @@ raspifb16::RGB565::getRGB8() const noexcept
 //-------------------------------------------------------------------------
 
 void
-raspifb16::RGB565::setRGB8(
+fb16::RGB565::setRGB8(
     RGB8 rgb8) noexcept
 {
     m_rgb = rgbTo565(rgb8.red, rgb8.green, rgb8.blue);
@@ -65,8 +65,8 @@ raspifb16::RGB565::setRGB8(
 
 //-------------------------------------------------------------------------
 
-raspifb16::RGB565
-raspifb16::RGB565::blend(
+fb16::RGB565
+fb16::RGB565::blend(
     uint8_t alpha,
     const RGB565& a,
     const RGB565& b) noexcept

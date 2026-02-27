@@ -2,7 +2,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Andrew Duncan
+// Copyright (c) 2026 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -29,69 +29,65 @@
 
 //-------------------------------------------------------------------------
 
-#include <cstddef>
-#include <cstdint>
-#include <initializer_list>
-#include <optional>
-#include <span>
-#include <vector>
-
-#include "dimensions.h"
-#include "rgb565.h"
-#include "interface565.h"
-#include "point.h"
-
-//-------------------------------------------------------------------------
-
 namespace fb16
 {
 
 //-------------------------------------------------------------------------
 
-class Image565
-:
-    public Interface565
+template<typename T>
+class Dimensions
 {
 public:
 
-    Image565() = default;
+    constexpr Dimensions() noexcept
+    :
+        m_width{},
+        m_height{}
+    {
+    }
 
-    explicit Image565(Dimensions565 d);
+    constexpr Dimensions(
+        T width,
+        T height) noexcept
+    :
+        m_width(width),
+        m_height(height)
+    {
+    }
 
-    Image565(Dimensions565 d,
-             std::initializer_list<uint16_t> buffer);
+    [[nodiscard]] constexpr T area() const noexcept { return m_width * m_height; }
 
-    Image565(Dimensions565 d,
-             std::span<const uint16_t> buffer);
+    [[nodiscard]] constexpr T width() const noexcept { return m_width; }
+    [[nodiscard]] constexpr T height() const noexcept { return m_height; }
 
-    ~Image565() override = default;
+    constexpr void
+    set(
+        T width,
+        T height) noexcept
+    {
+        m_width = width;
+        m_height = height;
+    }
 
-    Image565(const Image565&) = default;
-    Image565(Image565&&) = default;
-    Image565& operator=(const Image565&) = default;
-    Image565& operator=(Image565&&) = default;
+    constexpr void setWidth(T width) noexcept
+    {
+        m_width = width;
+    }
 
-    explicit Image565(const Interface565& i);
-    Image565& operator=(const Interface565& i);
+    constexpr void setHeight(T height) noexcept
+    {
+        m_height = height;
+    }
 
-    [[nodiscard]] Dimensions565 getDimensions() const noexcept override { return m_dimensions; }
-
-    [[nodiscard]] std::span<uint16_t> getBuffer() noexcept override { return m_buffer; };
-    [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept override { return m_buffer; };
-    [[nodiscard]] int getLineLengthPixels() const noexcept override { return m_dimensions.width(); };
-    [[nodiscard]] std::size_t offset(const Point565 p) const noexcept override;
+    friend bool operator<=>(const Dimensions& lhs, const Dimensions& rhs) = default;
 
 private:
 
-    void copy(const Interface565& i);
-
-    Dimensions565 m_dimensions;
-    std::vector<uint16_t> m_buffer{};
+    T m_width;
+    T m_height;
 };
 
 //-------------------------------------------------------------------------
 
 } // namespace fb16
-
-//-------------------------------------------------------------------------
 

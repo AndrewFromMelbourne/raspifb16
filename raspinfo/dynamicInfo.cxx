@@ -235,7 +235,7 @@ DynamicInfo::DynamicInfo(
     int fontHeight,
     int yPosition)
 :
-    Panel{width, 2 * fontHeight + 4, yPosition},
+    Panel{fb16::Dimensions565{width, 2 * fontHeight + 4}, yPosition},
     m_heading(255, 255, 0),
     m_foreground(255, 255, 255),
     m_background(0, 0, 0),
@@ -247,7 +247,7 @@ DynamicInfo::DynamicInfo(
 
 void
 DynamicInfo::init(
-    raspifb16::Interface565Font&)
+    fb16::Interface565Font&)
 {
 }
 
@@ -256,13 +256,13 @@ DynamicInfo::init(
 void
 DynamicInfo::update(
     time_t now,
-    raspifb16::Interface565Font& font)
+    fb16::Interface565Font& font)
 {
     getImage().clear(m_background);
 
     //---------------------------------------------------------------------
 
-    raspifb16::Point565 position = { 0, 0 };
+    fb16::Point565 position = { 0, 0 };
 
     position = font.drawString(position,
                           "ip(",
@@ -306,7 +306,7 @@ DynamicInfo::update(
 
     //---------------------------------------------------------------------
 
-    position.set(0, position.y() + font.getPixelHeight() + 4);
+    position.set(0, position.y() + font.getPixelDimensions().height() + 4);
 
     position = font.drawString(position,
                                "time ",
@@ -332,7 +332,7 @@ DynamicInfo::update(
                                m_foreground,
                                getImage());
 
-    const auto degreeCode{raspifb16::Interface565Font::CharacterCode::DEGREE_SYMBOL};
+    const auto degreeCode{fb16::Interface565Font::CharacterCode::DEGREE_SYMBOL};
     const auto degreeSymbol = font.getCharacterCode(degreeCode);
 
     position = font.drawChar(position,

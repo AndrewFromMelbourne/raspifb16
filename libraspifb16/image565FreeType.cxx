@@ -31,7 +31,7 @@
 
 //-------------------------------------------------------------------------
 
-namespace raspifb16
+namespace fb16
 {
 
 //-------------------------------------------------------------------------
@@ -90,19 +90,13 @@ Image565FreeType::getFontStyleName() const noexcept
 
 //-------------------------------------------------------------------------
 
-int
-Image565FreeType::getPixelHeight() const noexcept
+Dimensions565
+Image565FreeType::getPixelDimensions() const noexcept
 {
-    return (m_face->size->metrics.ascender +
-            abs(m_face->size->metrics.descender)) >> 6;
-}
-
-//-------------------------------------------------------------------------
-
-int
-Image565FreeType::getPixelWidth() const noexcept
-{
-    return m_face->size->metrics.max_advance >> 6;
+    const auto width = m_face->size->metrics.max_advance >> 6;
+    const auto height = (m_face->size->metrics.ascender +
+                         abs(m_face->size->metrics.descender)) >> 6;
+    return Dimensions565(width, height);
 }
 
 //-------------------------------------------------------------------------
@@ -206,6 +200,7 @@ Image565FreeType::drawString(
     const RGB565& rgb,
     Interface565& image)
 {
+    const auto d = getPixelDimensions();
     Point565 position{p};
     position.translateY(m_face->size->metrics.ascender >> 6);
 
@@ -217,7 +212,7 @@ Image565FreeType::drawString(
     {
         if (c == '\n')
         {
-            position.set(p.x(), position.y() + getPixelHeight());
+            position.set(p.x(), position.y() + d.height());
         }
         else
         {
@@ -311,5 +306,5 @@ Image565FreeType::drawChar(
 
 //-------------------------------------------------------------------------
 
-} // namespace raspifb16
+} // namespace fb16
 

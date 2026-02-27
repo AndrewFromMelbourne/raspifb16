@@ -33,18 +33,19 @@
 #include <optional>
 #include <span>
 
+#include "dimensions.h"
 #include "point.h"
 #include "rgb565.h"
 
 //-------------------------------------------------------------------------
 
-namespace raspifb16
+namespace fb16
 {
 
 //-------------------------------------------------------------------------
 
+using Dimensions565 = Dimensions<int>;
 using Point565 = Point<int>;
-class Image565;
 
 //-------------------------------------------------------------------------
 
@@ -57,8 +58,7 @@ public:
     Interface565();
     virtual ~Interface565() = 0;
 
-    [[nodiscard]] virtual int getWidth() const noexcept = 0;
-    [[nodiscard]] virtual int getHeight() const noexcept = 0;
+    [[nodiscard]] virtual Dimensions565 getDimensions() const noexcept = 0;
 
     void clear(const RGB565& rgb) { clear(rgb.get565()); }
     void clear(uint16_t rgb = 0);
@@ -91,15 +91,17 @@ public:
     [[nodiscard]] std::span<uint16_t> getRow(int y);
     [[nodiscard]] std::span<const uint16_t> getRow(int y) const;
 
-    bool putImage(const Point565, const Image565&);
+    bool putImage(const Point565, const Interface565&);
 
     [[nodiscard]] bool
     validPixel(const Point565 p) const
     {
+        const auto d = getDimensions();
+
         return (p.x() >= 0) and
                (p.y() >= 0) and
-               (p.x() < getWidth()) and
-               (p.y() < getHeight());
+               (p.x() < d.width()) and
+               (p.y() < d.height());
     }
 
     [[nodiscard]] virtual std::span<uint16_t> getBuffer() noexcept = 0;
@@ -119,7 +121,7 @@ private:
     bool
     putImagePartial(
         const Point565 p,
-        const Image565& image);
+        const Interface565& image);
 
     std::span<uint16_t> getBufferStart() noexcept;
 };
@@ -133,5 +135,5 @@ center(
 
 //-------------------------------------------------------------------------
 
-} // namespace raspifb16
+} // namespace fb16
 

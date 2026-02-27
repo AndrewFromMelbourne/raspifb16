@@ -41,7 +41,7 @@
 
 //-------------------------------------------------------------------------
 
-namespace raspifb16
+namespace fb16
 {
 
 //-------------------------------------------------------------------------
@@ -102,8 +102,7 @@ public:
 
     void clearBuffers(uint16_t rgb = 0) override;
 
-    [[nodiscard]] int getWidth() const noexcept override { return m_width; }
-    [[nodiscard]] int getHeight() const noexcept override { return m_height; }
+    [[nodiscard]] Dimensions565 getDimensions() const noexcept override { return m_dimensions; }
 
     [[nodiscard]] std::span<uint16_t> getBuffer() noexcept override;
     [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept override;
@@ -144,8 +143,7 @@ private:
 
     [[nodiscard]] bool useAtomic() const noexcept { return m_hasAtomic and m_hasUniversalPlanes; }
 
-    int m_width;
-    int m_height;
+    Dimensions565 m_dimensions;
 
     fd::FileDescriptor m_fd;
 
@@ -166,5 +164,5 @@ private:
 
 //-------------------------------------------------------------------------
 
-} // namespace raspifb16
+} // namespace fb16
 
