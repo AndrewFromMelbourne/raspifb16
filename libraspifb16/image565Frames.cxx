@@ -60,7 +60,7 @@ fb16::Image565Frames::Image565Frames(
 
     if (m_buffer.size() < minBufferSize)
     {
-        m_buffer.resize(minBufferSize);
+        m_buffer.reserve(minBufferSize);
     }
 }
 
@@ -81,7 +81,7 @@ fb16::Image565Frames::Image565Frames(
 
     if (m_buffer.size() < minBufferSize)
     {
-        m_buffer.resize(minBufferSize);
+        m_buffer.reserve(minBufferSize);
     }
 }
 

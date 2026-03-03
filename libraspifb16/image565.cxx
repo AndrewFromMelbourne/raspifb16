@@ -57,7 +57,7 @@ fb16::Image565::Image565(
 
     if (m_buffer.size() < minBufferSize)
     {
-        m_buffer.resize(minBufferSize);
+        m_buffer.reserve(minBufferSize);
     }
 }
 
@@ -75,7 +75,7 @@ fb16::Image565::Image565(
 
     if (m_buffer.size() < minBufferSize)
     {
-        m_buffer.resize(minBufferSize);
+        m_buffer.reserve(minBufferSize);
     }
 }
 
@@ -111,7 +111,7 @@ fb16::Image565::copy(
     const fb16::Interface565& i)
 {
     m_dimensions = i.getDimensions();
-    m_buffer.resize(m_dimensions.area());
+    m_buffer.reserve(m_dimensions.area());
 
     for (auto y = 0 ; y < m_dimensions.height() ; ++y)
     {
