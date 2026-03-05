@@ -75,7 +75,7 @@ fb16::Image565Frames::Image565Frames(
     m_numberOfFrames{numberOfFrames},
     m_buffer{}
 {
-    m_buffer.assign(buffer.begin(), buffer.end());
+    m_buffer.assign(cbegin(buffer), cend(buffer));
 
     const std::size_t minBufferSize = d.width() * d.height() * numberOfFrames;
 

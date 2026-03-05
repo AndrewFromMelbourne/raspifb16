@@ -184,7 +184,7 @@ fb16::Interface565::putImage(
         auto row = image.getRow(j);
         const auto ost = offset(Point565{p.x(), j + p.y()});
 
-        std::ranges::copy(row, getBuffer().subspan(ost).begin());
+        std::ranges::copy(row, begin(getBuffer().subspan(ost)));
     }
 
     return true;
@@ -247,7 +247,7 @@ fb16::Interface565::putImagePartial(
         auto row = image.getRow(j).subspan(xStart, xLength);
         const auto ost = offset(Point565{x, j - yStart + y});
 
-        std::ranges::copy(row, getBuffer().subspan(ost).begin());
+        std::ranges::copy(row, begin(getBuffer().subspan(ost)));
     }
 
     return true;

@@ -185,7 +185,7 @@ RaspInfo::messageLog(
             { LOG_DEBUG, "debug" }
         };
 
-        if (const auto it = priorityMap.find(priority); it != priorityMap.end())
+        if (const auto it = priorityMap.find(priority); it != cend(priorityMap))
         {
             std::print(std::cerr, "{}", it->second);
         }

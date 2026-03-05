@@ -166,9 +166,9 @@ Interface565Menu::getValue(
         return item.m_id < id;
     };
 
-    const auto item = std::lower_bound(begin(m_items), end(m_items), id, compare);
+    const auto item = std::lower_bound(cbegin(m_items), cend(m_items), id, compare);
 
-    if ((item != m_items.end()) and (item->m_id == id))
+    if ((item != cend(m_items)) and (item->m_id == id))
     {
         return item->m_value;
     }
@@ -277,7 +277,7 @@ Interface565Menu::setValue(
 
     auto item = std::lower_bound(begin(m_items), end(m_items), id, compare);
 
-    if ((item != m_items.end()) and (item->m_id == id))
+    if ((item != end(m_items)) and (item->m_id == id))
     {
         item->m_value = value;
         return true;

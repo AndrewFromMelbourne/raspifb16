@@ -188,10 +188,10 @@ decodeQoi(
     }
 
     const auto pixels = header.getWidth() * header.getHeight();
-    auto d{data.begin()};
+    auto d{cbegin(data)};
     int run{};
 
-    for (auto i = 0U ; (i < pixels) and (d != data.end()) ; ++i)
+    for (auto i = 0U ; (i < pixels) and (d != cend(data)) ; ++i)
     {
         if (run)
         {
