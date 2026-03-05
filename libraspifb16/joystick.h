@@ -87,6 +87,8 @@ public:
     [[nodiscard]] int numberOfButtons() const noexcept;
     [[nodiscard]] int numberOfAxes() const noexcept;
 
+    void buttonsClear();
+
     [[nodiscard]] bool buttonPressed(int button);
     [[nodiscard]] bool buttonDown(int button) const;
     [[nodiscard]] JoystickAxes getAxes(int joystickNumber) const;

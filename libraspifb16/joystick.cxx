@@ -106,6 +106,17 @@ fb16::Joystick::Joystick(const std::string& device, bool blocking)
 
 //-------------------------------------------------------------------------
 
+void
+fb16::Joystick::buttonsClear()
+{
+    for (auto& button : m_buttons)
+    {
+        button.pressed = false;
+    }
+}
+
+//-------------------------------------------------------------------------
+
 bool
 fb16::Joystick::buttonDown(int button) const
 {
