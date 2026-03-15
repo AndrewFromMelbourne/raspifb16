@@ -2636,6 +2636,39 @@ Image565Font8x8::getCharacterCode(Interface565Font::CharacterCode code) const no
 
 //-------------------------------------------------------------------------
 
+Dimensions565
+Image565Font8x8::getStringDimensions(
+    std::string_view s)
+{
+    if (s.size() == 0)
+    {
+        return Dimensions565{};
+    }
+
+    Dimensions565 d{0, sc_fontHeight};
+    auto pixelWidth{0};
+
+    for (const auto c : s)
+    {
+        if (c == '\n')
+        {
+            d.setWidth(std::max(d.width(), pixelWidth));
+            d.setHeight(d.height() + sc_fontHeight);
+            pixelWidth = 0;
+        }
+        else
+        {
+            pixelWidth += sc_fontWidth;
+        }
+    }
+
+    d.setWidth(std::max(d.width(), pixelWidth));
+
+    return d;
+}
+
+//-------------------------------------------------------------------------
+
 Point565
 Image565Font8x8::drawChar(
     const Point565 p,

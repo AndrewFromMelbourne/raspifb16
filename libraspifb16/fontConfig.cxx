@@ -2,7 +2,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Andrew Duncan
+// Copyright (c) 2023 Andrew Duncan
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -25,16 +25,9 @@
 //
 //-------------------------------------------------------------------------
 
-#pragma once
-
-//-------------------------------------------------------------------------
-
-#include <cstdint>
-#include <string>
-
-#include "interface565.h"
-#include "interface565Font.h"
-#include "point.h"
+#include "fontConfig.h"
+#include "image565Font8x16.h"
+#include "image565FreeType.h"
 
 //-------------------------------------------------------------------------
 
@@ -43,65 +36,61 @@ namespace fb16
 
 //-------------------------------------------------------------------------
 
-using Point565 = Point<int>;
-
-//-------------------------------------------------------------------------
-
-class RGB565;
-
-//-------------------------------------------------------------------------
-
-class Image565Font8x16
-:
-    public Interface565Font
+std::unique_ptr<fb16::Interface565Font>
+createFont(
+    const FontConfig& fontConfig)
 {
-public:
+    if (not fontConfig.m_fontFile.empty())
+    {
+        try
+        {
+            return std::make_unique<fb16::Image565FreeType>(fontConfig);
+        }
+        catch (const std::exception& error)
+        {
+            // ignore exception.
+        }
+    }
 
-    Image565Font8x16() = default;
-    ~Image565Font8x16() override = default;
-
-    Image565Font8x16(const Image565Font8x16&) = delete;
-    Image565Font8x16(Image565Font8x16&&) = delete;
-    Image565Font8x16& operator=(const Image565Font8x16&) = delete;
-    Image565Font8x16& operator=(Image565Font8x16&&) = delete;
-
-    [[nodiscard]] Dimensions565 getPixelDimensions() const noexcept override;
-
-    [[nodiscard]] std::optional<char> getCharacterCode(CharacterCode code) const noexcept override;
-
-    [[nodiscard]] Dimensions565 getStringDimensions(std::string_view s) override;
+    return std::make_unique<fb16::Image565Font8x16>();
+}
 
 
-    Point565
-    drawChar(
-        const Point565 p,
-        uint8_t c,
-        const RGB565& rgb,
-        Interface565& image) override;
+//-------------------------------------------------------------------------
 
-    Point565
-    drawChar(
-        const Point565 p,
-        uint8_t c,
-        uint16_t rgb,
-        Interface565& image) override;
+FontConfig
+parseFontConfig(
+    const std::string_view fontConfigStr,
+    int defaultPixelHeight) noexcept
+{
+    FontConfig config;
+    config.m_pixelHeight = defaultPixelHeight;
 
-    Point565
-    drawString(
-        const Point565 p,
-        std::string_view sv,
-        const RGB565& rgb,
-        Interface565& image) override;
+    size_t separatorPos = fontConfigStr.find(':');
 
-    Point565
-    drawString(
-        const Point565 p,
-        std::string_view sv,
-        uint16_t rgb,
-        Interface565& image) override;
-};
+    if (separatorPos == std::string_view::npos)
+    {
+        config.m_fontFile = std::string(fontConfigStr);
+    }
+    else
+    {
+        config.m_fontFile = std::string(fontConfigStr.substr(0, separatorPos));
+
+        std::string_view pixelHeightStr = fontConfigStr.substr(separatorPos + 1);
+
+        try
+        {
+            config.m_pixelHeight = std::stoi(std::string(pixelHeightStr));
+        }
+        catch (const std::exception&)
+        {
+            // Ignore errors and use default pixel height
+        }
+    }
+
+    return config;
+}
 
 //-------------------------------------------------------------------------
 
 } // namespace fb16
-

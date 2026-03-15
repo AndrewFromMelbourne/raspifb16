@@ -31,7 +31,7 @@
 
 void
 Panel::show(
-    fb16::Interface565& fb) const
+    fb16::Interface565Base& fb) const
 {
     fb.putImage(fb16::Point565(0, m_yPosition), m_image);
 }

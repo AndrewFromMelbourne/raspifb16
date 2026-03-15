@@ -46,14 +46,6 @@ class RGB565;
 
 //-------------------------------------------------------------------------
 
-struct FontConfig
-{
-    std::string m_fontFile;
-    int m_pixelHeight{};
-};
-
-//-------------------------------------------------------------------------
-
 class Interface565Font
 {
 public:
@@ -63,8 +55,8 @@ public:
         DEGREE_SYMBOL
     };
 
-    Interface565Font();
-    virtual ~Interface565Font() = 0;
+    Interface565Font() = default;
+    virtual ~Interface565Font() = default;
 
     Interface565Font(const Interface565Font&) = delete;
     Interface565Font(Interface565Font&&) = delete;
@@ -75,6 +67,9 @@ public:
 
     [[nodiscard]] virtual std::optional<char> getCharacterCode(CharacterCode code) const noexcept = 0;
 
+    [[nodiscard]] virtual Dimensions565 getStringDimensions(std::string_view s) = 0;
+
+
     virtual Point565
     drawChar(
         const Point565 p,
@@ -103,13 +98,6 @@ public:
         const RGB565& rgb,
         Interface565& image) = 0;
 };
-
-//-------------------------------------------------------------------------
-
-FontConfig
-parseFontConfig(
-    const std::string_view fontConfigStr,
-    int defaultPixelHeight) noexcept;
 
 //-------------------------------------------------------------------------
 

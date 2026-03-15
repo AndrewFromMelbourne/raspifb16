@@ -59,12 +59,11 @@ public:
     void messageLog(int priority, std::string_view message) const;
     std::optional<int> parseCommandLine(int argc, char* argv[]);
     void perrorLog(std::string_view s) const;
-    [[nodiscard]] std::string programName() const noexcept { return m_programName; }
+    [[nodiscard]] const std::string& programName() const noexcept { return m_programName; }
     void run();
 
 private:
 
-    std::string getHostname() const;
     void init();
     int panelTop() const;
     void printUsage(std::ostream& stream);
@@ -72,7 +71,7 @@ private:
 
     std::string m_device{};
     std::atomic<bool>* m_display{nullptr};
-    std::unique_ptr<fb16::Interface565> m_fb{nullptr};
+    std::unique_ptr<fb16::Interface565Base> m_fb{nullptr};
     std::unique_ptr<fb16::Interface565Font> m_font{nullptr};
     fb16::FontConfig m_fontConfig;
     std::string m_hostname{};

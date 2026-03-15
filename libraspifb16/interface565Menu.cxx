@@ -68,29 +68,32 @@ Interface565Menu::MenuItem::incrementValue() noexcept
 //-------------------------------------------------------------------------
 
 Interface565Menu::Interface565Menu(
-    RGB565 foregroundColour,
-    RGB565 backgroundColour,
-    RGB565 selectionColour,
+    RGB565 colourForeground,
+    RGB565 colourBackground,
+    RGB565 colourSelection,
+    const FontConfig& fontConfig,
     std::initializer_list<MenuItem> items)
 :
-    m_foregroundColour{foregroundColour},
-    m_backgroundColour{backgroundColour},
-    m_selectionColour{selectionColour},
+    m_colourForeground{colourForeground},
+    m_colourBackground{colourBackground},
+    m_colourSelection{colourSelection},
+    m_font{createFont(fontConfig)},
     m_selected{0},
     m_items{items},
-    m_titleMaximum{0},
-    m_valueMaximum{0}
+    m_titleMaximumPixels{0},
+    m_valueMaximumPixels{0}
 {
     std::ranges::sort(m_items, std::less());
 
     for (const auto& item : m_items)
     {
-        const auto titleLength = item.m_title.length();
-        m_titleMaximum = std::max(titleLength, m_titleMaximum);
+        const auto titleDimensions = m_font->getStringDimensions(item.m_title);
+        m_titleMaximumPixels = std::max(titleDimensions.width(), m_titleMaximumPixels);
 
         for (const auto& value : item.m_values)
         {
-            m_valueMaximum = std::max(value.length(), m_valueMaximum);
+            const auto valueDimensions = m_font->getStringDimensions(value);
+            m_valueMaximumPixels = std::max(valueDimensions.width(), m_valueMaximumPixels);
         }
     }
 }
@@ -99,53 +102,62 @@ Interface565Menu::Interface565Menu(
 
 void
 Interface565Menu::draw(
-    fb16::FrameBuffer565& fb,
-    Interface565Font& font) const
+    fb16::FrameBuffer565& fb) const
 {
-    constexpr auto characterPadding{5};
-    constexpr auto padding{4};
-    const auto d = font.getPixelDimensions();
-    const auto characters = m_titleMaximum + m_valueMaximum + characterPadding;
-    const auto width = characters * d.width();
+    constexpr auto paddingPixels{6};
+    constexpr auto padding2Pixels{paddingPixels * 2};
+    constexpr auto padding3Pixels{paddingPixels * 3};
+    constexpr auto padding4Pixels{paddingPixels * 4};
+    const auto d = m_font->getPixelDimensions();
+    const auto width = m_titleMaximumPixels + m_valueMaximumPixels + padding3Pixels;
 
     boxFilled(
         fb,
         fb16::Point565(0, 0),
         fb16::Point565(
-            width + (padding * 2),
-            (m_items.size() * d.height()) + (padding * 2)),
-            m_backgroundColour);
+            width + padding2Pixels,
+            (m_items.size() * d.height()) + padding2Pixels),
+            m_colourBackground);
 
     box(
         fb,
         fb16::Point565(0, 0),
         fb16::Point565(
-            width + (padding * 2),
-            (m_items.size() * d.height()) + (padding * 2)),
-            m_selectionColour);
+            width + padding2Pixels,
+            (m_items.size() * d.height()) + padding2Pixels),
+            m_colourSelection);
 
     boxFilled(
         fb,
         fb16::Point565(
-            padding,
-            (m_selected * d.height()) + padding),
+            paddingPixels,
+            (m_selected * d.height()) + paddingPixels),
         fb16::Point565(
-            width + padding,
-            ((m_selected + 1) * d.height()) + padding),
-            m_selectionColour);
+            width + paddingPixels,
+            ((m_selected + 1) * d.height()) + paddingPixels),
+            m_colourSelection);
 
-    int yOffset = 0;
+    int yOffset = paddingPixels;
     for (const auto& item : m_items)
     {
-        font.drawString(
-            fb16::Point565(padding, yOffset + padding),
-            std::format(
-                " {0:<{1}} : {2}",
-                item.m_title,
-                m_titleMaximum,
-                item.m_values[item.m_value]),
-            m_foregroundColour,
+        m_font->drawString(
+            fb16::Point565(paddingPixels, yOffset),
+            std::format("{}", item.m_title),
+            m_colourForeground,
             fb);
+
+        m_font->drawChar(
+            fb16::Point565{m_titleMaximumPixels + padding2Pixels, yOffset},
+            '|',
+            m_colourForeground,
+            fb);
+
+        m_font->drawString(
+            fb16::Point565(m_titleMaximumPixels + padding4Pixels, yOffset),
+            std::format("{}", item.m_values[item.m_value]),
+            m_colourForeground,
+            fb);
+
         yOffset += d.height();
     }
 }
@@ -277,7 +289,7 @@ Interface565Menu::setValue(
 
     auto item = std::lower_bound(begin(m_items), end(m_items), id, compare);
 
-    if ((item != end(m_items)) and (item->m_id == id))
+    if ((item != cend(m_items)) and (item->m_id == id))
     {
         item->m_value = value;
         return true;

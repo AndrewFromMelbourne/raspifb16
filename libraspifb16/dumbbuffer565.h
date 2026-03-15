@@ -36,7 +36,7 @@
 #include "drmMode.h"
 #include "point.h"
 #include "fileDescriptor.h"
-#include "interface565.h"
+#include "interface565Base.h"
 #include "rgb565.h"
 
 //-------------------------------------------------------------------------
@@ -56,13 +56,9 @@ class Image565;
 
 class DumbBuffer565
 :
-    public Interface565
+    public Interface565Base
 {
 public:
-
-    //---------------------------------------------------------------------
-
-    static constexpr std::size_t c_bytesPerPixel{2};
 
     //---------------------------------------------------------------------
 
@@ -119,13 +115,15 @@ public:
     void disown() noexcept override;
 
 
-    bool update() override;
+    bool update() noexcept override { return updateImpl(); }
 
 private:
 
     void createDumbBuffer(int index);
     void destroyDumbBuffer(int index);
     void setDumbBuffer(int index);
+
+    bool updateImpl() noexcept;
 
     void
     addAtomicProperties(

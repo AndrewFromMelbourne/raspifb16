@@ -38,7 +38,7 @@
 
 #include "dimensions.h"
 #include "rgb565.h"
-#include "interface565.h"
+#include "interface565Base.h"
 #include "point.h"
 
 //-------------------------------------------------------------------------
@@ -50,7 +50,7 @@ namespace fb16
 
 class Image565Frames
 :
-    public Interface565
+    public Interface565Base
 {
 public:
 

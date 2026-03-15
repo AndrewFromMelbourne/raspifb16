@@ -26,26 +26,14 @@
 //-------------------------------------------------------------------------
 
 #include "image565.h"
-#include "interface565.h"
+#include "interface565Base.h"
 
 #include <algorithm>
 
 //-------------------------------------------------------------------------
 
-fb16::Interface565::Interface565()
-{
-}
-
-//-------------------------------------------------------------------------
-
-fb16::Interface565::~Interface565()
-{
-}
-
-//-------------------------------------------------------------------------
-
 void
-fb16::Interface565::clear(uint16_t rgb)
+fb16::Interface565Base::clear(uint16_t rgb)
 {
     std::ranges::fill(getBufferStart(), rgb);
 }
@@ -53,7 +41,7 @@ fb16::Interface565::clear(uint16_t rgb)
 //-------------------------------------------------------------------------
 
 void
-fb16::Interface565::clearBuffers(uint16_t rgb)
+fb16::Interface565Base::clearBuffers(uint16_t rgb)
 {
     clear(rgb);
 
@@ -66,7 +54,7 @@ fb16::Interface565::clearBuffers(uint16_t rgb)
 //-------------------------------------------------------------------------
 
 bool
-fb16::Interface565::setPixel(
+fb16::Interface565Base::setPixel(
     const Point565 p,
     uint16_t rgb)
 {
@@ -83,7 +71,7 @@ fb16::Interface565::setPixel(
 //-------------------------------------------------------------------------
 
 std::optional<fb16::RGB565>
-fb16::Interface565::getPixelRGB(
+fb16::Interface565Base::getPixelRGB(
     const Point565 p) const
 {
     if (not validPixel(p))
@@ -97,7 +85,7 @@ fb16::Interface565::getPixelRGB(
 //-------------------------------------------------------------------------
 
 std::optional<fb16::RGB8>
-fb16::Interface565::getPixelRGB8(
+fb16::Interface565Base::getPixelRGB8(
     const Point565 p) const
 {
     if (not validPixel(p))
@@ -111,7 +99,7 @@ fb16::Interface565::getPixelRGB8(
 //-------------------------------------------------------------------------
 
 std::optional<uint16_t>
-fb16::Interface565::getPixel(
+fb16::Interface565Base::getPixel(
     const Point565 p) const
 {
     if (not validPixel(p))
@@ -124,7 +112,7 @@ fb16::Interface565::getPixel(
 //-------------------------------------------------------------------------
 
 std::span<uint16_t>
-fb16::Interface565::getRow(
+fb16::Interface565Base::getRow(
     int y)
 {
     const Point565 p{0, y};
@@ -142,7 +130,7 @@ fb16::Interface565::getRow(
 //-------------------------------------------------------------------------
 
 std::span<const uint16_t>
-fb16::Interface565::getRow(
+fb16::Interface565Base::getRow(
     int y) const
 {
     const Point565 p{0, y};
@@ -160,9 +148,9 @@ fb16::Interface565::getRow(
 //-------------------------------------------------------------------------
 
 bool
-fb16::Interface565::putImage(
+fb16::Interface565Base::putImage(
     const Point565 p,
-    const Interface565& image)
+    const Interface565Base& image)
 {
     const auto id = image.getDimensions();
     const auto d = getDimensions();
@@ -193,9 +181,9 @@ fb16::Interface565::putImage(
 //-------------------------------------------------------------------------
 
 bool
-fb16::Interface565::putImagePartial(
+fb16::Interface565Base::putImagePartial(
     const Point565 p,
-    const Interface565& image)
+    const Interface565Base& image)
 {
     const auto id = image.getDimensions();
     const auto d = getDimensions();
@@ -256,23 +244,9 @@ fb16::Interface565::putImagePartial(
 //-------------------------------------------------------------------------
 
 std::span<uint16_t>
-fb16::Interface565::getBufferStart() noexcept
+fb16::Interface565Base::getBufferStart() noexcept
 {
     return getBuffer().subspan(offset(Point565{0, 0}),
                                getLineLengthPixels() * getDimensions().height());
-}
-
-//-------------------------------------------------------------------------
-
-fb16::Point565
-fb16::center(
-    const fb16::Interface565& frame,
-    const fb16::Interface565& image) noexcept
-{
-    const auto fd = frame.getDimensions();
-    const auto id = image.getDimensions();
-
-    return {(fd.width() - id.width()) / 2,
-            (fd.height() - id.height()) / 2};
 }
 

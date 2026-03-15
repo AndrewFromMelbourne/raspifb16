@@ -57,6 +57,7 @@ pkg_check_modules(SYSTEMD REQUIRED libsystemd)
 #--------------------------------------------------------------------------
 
 add_library(raspifb16 STATIC libraspifb16/fileDescriptor.cxx
+                             libraspifb16/fontConfig.cxx
                              libraspifb16/framebuffer565.cxx
                              libraspifb16/image565.cxx
                              libraspifb16/image565Font8x8.cxx
@@ -65,9 +66,8 @@ add_library(raspifb16 STATIC libraspifb16/fileDescriptor.cxx
                              libraspifb16/image565Graphics.cxx
                              libraspifb16/image565Process.cxx
                              libraspifb16/image565Qoi.cxx
-                             libraspifb16/interface565.cxx
+                             libraspifb16/interface565Base.cxx
                              libraspifb16/interface565Factory.cxx
-                             libraspifb16/interface565Font.cxx
                              libraspifb16/interface565Menu.cxx
                              libraspifb16/joystick.cxx
                              libraspifb16/rgb565.cxx)
@@ -218,15 +218,15 @@ target_link_libraries(testRotate raspifb16
 #--------------------------------------------------------------------------
 
 if (FREETYPE_FOUND)
-add_executable(testft test/testft.cxx)
-target_link_libraries(testft raspifb16
-                             ${FREETYPE_LIBRARIES}
-                             ${DRM_LIBRARIES})
+add_executable(testFont test/testFont.cxx)
+target_link_libraries(testFont raspifb16
+                               ${FREETYPE_LIBRARIES}
+                               ${DRM_LIBRARIES})
 
-add_executable(testft2 test/testft2.cxx)
-target_link_libraries(testft2 raspifb16
-                              ${FREETYPE_LIBRARIES}
-                              ${DRM_LIBRARIES})
+add_executable(testFontWide test/testFontWide.cxx)
+target_link_libraries(testFontWide raspifb16
+                                   ${FREETYPE_LIBRARIES}
+                                   ${DRM_LIBRARIES})
 endif()
 
 #--------------------------------------------------------------------------

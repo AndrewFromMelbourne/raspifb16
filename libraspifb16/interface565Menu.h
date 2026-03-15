@@ -31,10 +31,12 @@
 
 #include <compare>
 #include <initializer_list>
+#include <memory>
 #include <string>
 #include <string_view>
 #include <vector>
 
+#include "fontConfig.h"
 #include "framebuffer565.h"
 #include "interface565.h"
 #include "interface565Font.h"
@@ -94,11 +96,12 @@ public:
 
     Interface565Menu(
         RGB565 forgroundColour,
-        RGB565 backgroundColour,
-        RGB565 selectionColour,
+        RGB565 colourBackground,
+        RGB565 colourSelection,
+        const FontConfig& fontConfig,
         std::initializer_list<MenuItem> items);
 
-    void draw(fb16::FrameBuffer565& fb, Interface565Font& font) const;
+    void draw(fb16::FrameBuffer565& fb) const;
     std::size_t getValue(std::size_t id) const;
     Update update(fb16::Joystick& js);
     bool setValue(std::size_t id, std::size_t value);
@@ -108,13 +111,14 @@ private:
     void decrementSelected() noexcept;
     void incrementSelected() noexcept;
 
-    RGB565 m_foregroundColour;
-    RGB565 m_backgroundColour;
-    RGB565 m_selectionColour;
+    RGB565 m_colourForeground;
+    RGB565 m_colourBackground;
+    RGB565 m_colourSelection;
+    std::unique_ptr<Interface565Font> m_font;
     std::size_t m_selected;
     std::vector<MenuItem> m_items;
-    std::size_t m_titleMaximum;
-    std::size_t m_valueMaximum;
+    int m_titleMaximumPixels;
+    int m_valueMaximumPixels;
 };
 
 //-------------------------------------------------------------------------

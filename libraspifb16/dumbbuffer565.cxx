@@ -118,7 +118,7 @@ fb16::DumbBuffer565::DumbBuffer565(
     setDumbBuffer(m_dbFront);
 
     clear();
-    update();
+    updateImpl();
     clear();
 }
 
@@ -127,7 +127,7 @@ fb16::DumbBuffer565::DumbBuffer565(
 fb16::DumbBuffer565::~DumbBuffer565()
 {
     clear();
-    update();
+    updateImpl();
     clear();
 
     if (useAtomic())
@@ -160,7 +160,7 @@ fb16::DumbBuffer565::clearBuffers(
     uint16_t rgb)
 {
     clear(rgb);
-    update();
+    updateImpl();
     clear(rgb);
 }
 
@@ -187,7 +187,7 @@ fb16::DumbBuffer565::getBuffer() const noexcept
 std::size_t
 fb16::DumbBuffer565::getBufferSize() const noexcept
 {
-    return getLineLengthPixels() * m_dimensions.height();
+    return static_cast<std::size_t>(getLineLengthPixels()) * m_dimensions.height();
 }
 
 //-------------------------------------------------------------------------
@@ -236,7 +236,7 @@ fb16::DumbBuffer565::disown() noexcept
 //-------------------------------------------------------------------------
 
 bool
-fb16::DumbBuffer565::update()
+fb16::DumbBuffer565::updateImpl() noexcept
 {
     std::swap(m_dbFront, m_dbBack);
     const auto& dbf = m_dbs[m_dbFront];
@@ -250,9 +250,7 @@ fb16::DumbBuffer565::update()
 
         if (result < 0)
         {
-            throw std::system_error(errno,
-                                    std::system_category(),
-                                    "unable to flip using atomic");
+            return false;
         }
     }
     else

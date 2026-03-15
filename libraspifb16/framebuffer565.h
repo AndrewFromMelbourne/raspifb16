@@ -37,7 +37,7 @@
 #include <linux/fb.h>
 
 #include "fileDescriptor.h"
-#include "interface565.h"
+#include "interface565Base.h"
 #include "point.h"
 #include "rgb565.h"
 
@@ -54,15 +54,13 @@ class Image565;
 
 class FrameBuffer565
 :
-    public Interface565
+    public Interface565Base
 {
 public:
 
-    static constexpr std::size_t c_bytesPerPixel{2};
-
     explicit FrameBuffer565(const std::string& device);
 
-    ~FrameBuffer565();
+    ~FrameBuffer565() override;
 
     FrameBuffer565(const FrameBuffer565& fb) = delete;
     FrameBuffer565& operator=(const FrameBuffer565& fb) = delete;
@@ -76,7 +74,10 @@ public:
 
     [[nodiscard]] std::span<uint16_t> getBuffer() noexcept override { return {m_fbp, getBufferSize()}; };
     [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept override { return {m_fbp, getBufferSize()}; }
-    [[nodiscard]] std::size_t getBufferSize() const noexcept { return m_lineLengthPixels * getDimensions().height(); }
+    [[nodiscard]] std::size_t getBufferSize() const noexcept
+    {
+        return  static_cast<std::size_t>(m_lineLengthPixels) * getDimensions().height();
+    }
     [[nodiscard]] int getLineLengthPixels() const noexcept override { return m_lineLengthPixels; }
     [[nodiscard]] std::size_t offset(const Point565 p) const noexcept override;
 

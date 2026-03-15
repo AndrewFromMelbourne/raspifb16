@@ -54,7 +54,7 @@ public:
 
     void init();
     bool update(fb16::Joystick& js);
-    void draw(fb16::Interface565& fb);
+    void draw(fb16::Interface565Base& fb);
 
 private:
 

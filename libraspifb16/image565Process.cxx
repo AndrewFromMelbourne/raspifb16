@@ -83,7 +83,7 @@ private:
 
 void
 rowsRotate(
-    fb16::Image565& image,
+    const fb16::Image565& image,
     fb16::Image565& output,
     double sinAngle,
     double cosAngle,
@@ -158,7 +158,7 @@ rowsRotate(
 
 void
 boxBlurRows(
-    const fb16::Interface565& input,
+    const fb16::Interface565Base& input,
     fb16::Image565& rb,
     int radius,
     int jStart,
@@ -244,7 +244,7 @@ boxBlurColumns(
 
 fb16::Image565
 fb16::boxBlur(
-    const fb16::Interface565& input,
+    const fb16::Interface565Base& input,
     int radius)
 {
     const auto d = input.getDimensions();
@@ -262,7 +262,7 @@ fb16::boxBlur(
 
 fb16::Image565
 fb16::enlighten(
-    const fb16::Interface565& input,
+    const fb16::Interface565Base& input,
     double strength)
 {
     auto flerp = [](double value1, double value2, double alpha)->double
@@ -313,7 +313,7 @@ fb16::enlighten(
 
 fb16::Image565
 fb16::maxRGB(
-    const fb16::Interface565& input)
+    const fb16::Interface565Base& input)
 {
     fb16::Image565 output{input.getDimensions()};
     auto* buffer = output.getBuffer().data();
@@ -332,7 +332,7 @@ fb16::maxRGB(
 
 fb16::Image565
 fb16::resizeBilinearInterpolation(
-    const fb16::Interface565& input,
+    const fb16::Interface565Base& input,
     fb16::Dimensions565 d)
 {
     if ((d.width() <= 0) or (d.height() <= 0))
@@ -350,7 +350,7 @@ fb16::resizeBilinearInterpolation(
 
 fb16::Image565
 fb16::resizeLanczos3Interpolation(
-    const fb16::Interface565& input,
+    const fb16::Interface565Base& input,
     fb16::Dimensions565 d)
 {
     if ((d.width() <= 0) or (d.height() <= 0))
@@ -368,7 +368,7 @@ fb16::resizeLanczos3Interpolation(
 
 fb16::Image565
 fb16::resizeNearestNeighbour(
-    const fb16::Interface565& input,
+    const fb16::Interface565Base& input,
     fb16::Dimensions565 d)
 {
     if ((d.width() <= 0) or (d.height() <= 0))
@@ -386,7 +386,7 @@ fb16::resizeNearestNeighbour(
 
 void
 rowsBilinearInterpolation(
-    const fb16::Interface565& input,
+    const fb16::Interface565Base& input,
     fb16::Image565& output,
     int jStart,
     int jEnd)
@@ -446,7 +446,7 @@ rowsBilinearInterpolation(
 
 fb16::Image565&
 fb16::resizeToBilinearInterpolation(
-    const fb16::Interface565& input,
+    const fb16::Interface565Base& input,
     fb16::Image565& output)
 {
     rowsBilinearInterpolation(input, output, 0, output.getDimensions().height());
@@ -478,7 +478,7 @@ lanczosKernel(float x, int a)
 
 void
 rowsLanczos3Interpolation(
-    const fb16::Interface565& input,
+    const fb16::Interface565Base& input,
     fb16::Image565& output,
     int jStart,
     int jEnd)
@@ -548,7 +548,7 @@ rowsLanczos3Interpolation(
 
 fb16::Image565&
 fb16::resizeToLanczos3Interpolation(
-    const fb16::Interface565& input,
+    const fb16::Interface565Base& input,
     fb16::Image565& output)
 {
     rowsLanczos3Interpolation(input, output, 0, output.getDimensions().height());
@@ -559,7 +559,7 @@ fb16::resizeToLanczos3Interpolation(
 
 void
 rowsNearestNeighbour(
-    const fb16::Interface565& input,
+    const fb16::Interface565Base& input,
     fb16::Image565& output,
     int jStart,
     int jEnd)
@@ -590,7 +590,7 @@ rowsNearestNeighbour(
 
 fb16::Image565&
 fb16::resizeToNearestNeighbour(
-    const fb16::Interface565& input,
+    const fb16::Interface565Base& input,
     fb16::Image565& output)
 {
     rowsNearestNeighbour(input, output, 0, output.getDimensions().height());
@@ -601,7 +601,7 @@ fb16::resizeToNearestNeighbour(
 
 fb16::Image565
 fb16::rotate(
-    const fb16::Interface565& input,
+    const fb16::Interface565Base& input,
     uint32_t background,
     double angle)
 {
@@ -688,7 +688,7 @@ fb16::rotate(
 
 fb16::Image565
 fb16::rotate90(
-    const fb16::Interface565& input)
+    const fb16::Interface565Base& input)
 {
     const auto id = input.getDimensions();
     const Dimensions565 od{ id.height(), id.width()};
@@ -714,7 +714,7 @@ fb16::rotate90(
 
 fb16::Image565
 fb16::rotate180(
-    const fb16::Interface565& input)
+    const fb16::Interface565Base& input)
 {
     const auto d = input.getDimensions();
     Image565 output{d};
@@ -739,7 +739,7 @@ fb16::rotate180(
 
 fb16::Image565
 fb16::rotate270(
-    const fb16::Interface565& input)
+    const fb16::Interface565Base& input)
 {
     const auto id = input.getDimensions();
     const Dimensions565 od{ id.height(), id.width()};
@@ -765,7 +765,7 @@ fb16::rotate270(
 
 fb16::Image565
 fb16::scaleUp(
-    const fb16::Interface565& input,
+    const fb16::Interface565Base& input,
     uint8_t scale)
 {
     const auto id = input.getDimensions();

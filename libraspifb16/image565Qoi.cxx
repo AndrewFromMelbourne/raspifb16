@@ -63,7 +63,7 @@ class QoiHeader
 {
 public:
 
-    QoiHeader(const std::array<uint8_t, QOI_HEADER_SIZE>& data);
+    explicit QoiHeader(const std::array<uint8_t, QOI_HEADER_SIZE>& data);
 
     uint32_t getWidth() const noexcept { return m_width; }
     uint32_t getHeight() const noexcept { return m_height; }
@@ -72,10 +72,10 @@ public:
 
 private:
 
-    uint32_t m_width;
-    uint32_t m_height;
-    uint8_t m_channels;
-    uint8_t m_colorSpace;
+    uint32_t m_width{};
+    uint32_t m_height{};
+    uint8_t m_channels{};
+    uint8_t m_colorSpace{};
 };
 
 //-------------------------------------------------------------------------
@@ -149,10 +149,10 @@ void checkFooter(
 
 struct QoiRGBA
 {
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-    uint8_t a;
+    uint8_t r{};
+    uint8_t g{};
+    uint8_t b{};
+    uint8_t a{};
 };
 
 //-------------------------------------------------------------------------
@@ -181,11 +181,6 @@ decodeQoi(
     QoiRGBA currentRGBA{ .r = 0, .g = 0, .b = 0, .a = 255 };
 
     std::array<QoiRGBA, 64> hashTableRGBA;
-
-    for (auto& rgba : hashTableRGBA)
-    {
-        rgba = QoiRGBA{ .r = 0, .g = 0, .b = 0, .a = 0 };
-    }
 
     const auto pixels = header.getWidth() * header.getHeight();
     auto d{cbegin(data)};

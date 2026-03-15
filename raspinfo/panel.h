@@ -59,7 +59,7 @@ public:
     [[nodiscard]] fb16::Image565& getImage() noexcept { return m_image; }
     [[nodiscard]] const fb16::Image565& getImage() const noexcept { return m_image; }
 
-    void show(fb16::Interface565& fb) const;
+    void show(fb16::Interface565Base& fb) const;
     virtual void init(fb16::Interface565Font& font) = 0;
     virtual void update(time_t now, fb16::Interface565Font& font) = 0;
 

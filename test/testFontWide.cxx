@@ -1,4 +1,3 @@
-//-------------------------------------------------------------------------
 //
 // The MIT License (MIT)
 //
@@ -35,6 +34,7 @@
 #include <system_error>
 #include <thread>
 
+#include "fontConfig.h"
 #include "image565FreeType.h"
 #include "interface565Factory.h"
 #include "point.h"
@@ -52,10 +52,10 @@ printUsage(
     const std::string& name)
 {
     std::println(stream, "");
-    std::println(stream, "Usage: {}", name);
+    std::println(stream, "Usage: {} <options>", name);
     std::println(stream, "");
     std::println(stream, "    --character,-c - index character to draw");
-    std::println(stream, "    --device,-d - device to use");
+    std::println(stream, "    --device,-d - dri device to use");
     std::println(stream, "    --font,-f - font file to use[:pixel height]");
     std::println(stream, "    --help,-h - print usage and exit");
     std::println(stream, "    --kmsdrm,-k - use KMS/DRM dumb buffer");
@@ -70,10 +70,10 @@ main(
     char *argv[])
 {
     std::string device{};
-    const std::string program{basename(argv[0])};
-    FontConfig fontConfig{};
-    uint32_t c{'A'};
+    const std::string program = basename(argv[0]);
+    std::string fontConfigString{};
     auto interfaceType{fb16::InterfaceType565::FRAME_BUFFER_565};
+    uint32_t c{'A'};
 
     //---------------------------------------------------------------------
 
@@ -105,7 +105,7 @@ main(
 
         case 'f':
 
-            fontConfig = fb16::parseFontConfig(optarg, 32);
+            fontConfigString = optarg;
             break;
 
         case 'h':
@@ -129,7 +129,7 @@ main(
 
     //---------------------------------------------------------------------
 
-    if (fontConfig.m_fontFile.empty())
+    if (fontConfigString.empty())
     {
         std::println(std::cerr, "Error: Font file must be specfied");
         exit(EXIT_FAILURE);
@@ -140,20 +140,29 @@ main(
     try
     {
         constexpr RGB565 black{0, 0, 0};
+        constexpr RGB565 grey{15, 15, 15};
         constexpr RGB565 white{255, 255, 255};
         auto fb{fb16::createInterface565(interfaceType, device)};
-
-        Image565 image(fb->getDimensions());
-        image.clear(black);
+        FontConfig fontConfig{fb16::parseFontConfig(
+            fontConfigString,
+            fb->getDimensions().height() / 2)
+        };
 
         //-----------------------------------------------------------------
 
         Image565FreeType ft{fontConfig};
+
+        const auto dimension = ft.getWideCharDimensions(c);
+        Image565 image{dimension};
+        image.clear(grey);
+
         ft.drawWideChar(Point565{0, 0}, c, white, image);
+
+        std::println("{} x {}", dimension.width(), dimension.height());
 
         //-----------------------------------------------------------------
 
-        fb->putImage(Point565{0, 0}, image);
+        fb->putImage(center(*fb, image), image);
         fb->update();
 
         //-----------------------------------------------------------------

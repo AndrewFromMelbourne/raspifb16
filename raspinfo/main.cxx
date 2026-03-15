@@ -33,6 +33,7 @@
 #include <exception>
 #include <format>
 
+#include "fontConfig.h"
 #include "raspinfo.h"
 
 //-------------------------------------------------------------------------
@@ -73,7 +74,7 @@ signalHandler(
 
 void
 setSignalHandler(
-    RaspInfo& info) noexcept
+    const RaspInfo& info) noexcept
 {
     for (auto signal : { SIGINT, SIGTERM, SIGUSR1, SIGUSR2 })
     {

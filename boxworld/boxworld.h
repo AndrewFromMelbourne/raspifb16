@@ -77,7 +77,7 @@ public:
 
     void init();
     void update(fb16::Joystick& js);
-    void draw(fb16::Interface565& fb,
+    void draw(fb16::Interface565Base& fb,
               fb16::Interface565Font& font);
 
 private:
@@ -85,8 +85,8 @@ private:
     void findPlayer();
     void swapPieces(const Location& location1, const Location& location2);
     void isLevelSolved();
-    void drawBoard(fb16::Interface565& fb);
-    void drawText(fb16::Interface565& fb,
+    void drawBoard(fb16::Interface565Base& fb);
+    void drawText(fb16::Interface565Base& fb,
                   fb16::Interface565Font& font);
 
     //---------------------------------------------------------------------

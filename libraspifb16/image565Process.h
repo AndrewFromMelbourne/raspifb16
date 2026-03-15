@@ -30,7 +30,7 @@
 //-------------------------------------------------------------------------
 
 #include "image565.h"
-#include "interface565.h"
+#include "interface565Base.h"
 #include "rgb565.h"
 #include "point.h"
 
@@ -43,57 +43,57 @@ namespace fb16
 
 [[nodiscard]] Image565
 boxBlur(
-    const Interface565& input,
+    const Interface565Base& input,
     int radius);
 
 [[nodiscard]] Image565
 enlighten(
-    const Interface565& input,
+    const Interface565Base& input,
     double strength);
 
 [[nodiscard]] Image565
 maxRGB(
-    const Interface565& input);
+    const Interface565Base& input);
 
 [[nodiscard]] Image565
 resizeBilinearInterpolation(
-    const Interface565& input,
+    const Interface565Base& input,
     fb16::Dimensions565 d);
 
 [[nodiscard]] Image565
 resizeLanczos3Interpolation(
-    const Interface565& input,
+    const Interface565Base& input,
     fb16::Dimensions565 d);
 
 [[nodiscard]] Image565
 resizeNearestNeighbour(
-    const Interface565& input,
+    const Interface565Base& input,
     fb16::Dimensions565 d);
 
 Image565&
 resizeToBilinearInterpolation(
-    const Interface565& input,
+    const Interface565Base& input,
     Image565& output);
 
 Image565&
 resizeToLanczos3Interpolation(
-    const Interface565& input,
+    const Interface565Base& input,
     Image565& output);
 
 Image565&
 resizeToNearestNeighbour(
-    const Interface565& input,
+    const Interface565Base& input,
     Image565& output);
 
 [[nodiscard]] Image565
 rotate(
-    const Interface565& input,
+    const Interface565Base& input,
     uint32_t background,
     double angle);
 
 [[nodiscard]] inline Image565
 rotate(
-    const Interface565& input,
+    const Interface565Base& input,
     const RGB565& background,
     double angle)
 {
@@ -102,7 +102,7 @@ rotate(
 
 [[nodiscard]] inline Image565
 rotate(
-    const Interface565& input,
+    const Interface565Base& input,
     double angle)
 {
     return rotate(input, 0, angle);
@@ -110,19 +110,19 @@ rotate(
 
 [[nodiscard]] Image565
 rotate90(
-    const Interface565& input);
+    const Interface565Base& input);
 
 [[nodiscard]] Image565
 rotate180(
-    const Interface565& input);
+    const Interface565Base& input);
 
 [[nodiscard]] Image565
 rotate270(
-    const Interface565& input);
+    const Interface565Base& input);
 
 [[nodiscard]] Image565
 scaleUp(
-    const Interface565& input,
+    const Interface565Base& input,
     uint8_t scale);
 
 //-------------------------------------------------------------------------

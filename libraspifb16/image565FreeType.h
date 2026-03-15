@@ -35,6 +35,7 @@
 #include <cstdint>
 #include <string>
 
+#include "fontConfig.h"
 #include "image565.h"
 #include "interface565Font.h"
 #include "point.h"
@@ -72,6 +73,9 @@ public:
     [[nodiscard]] Dimensions565 getPixelDimensions() const noexcept override;
 
     [[nodiscard]] std::optional<char> getCharacterCode(CharacterCode code) const noexcept override;
+
+    [[nodiscard]] Dimensions565 getStringDimensions(std::string_view s) override;
+    [[nodiscard]] Dimensions565 getWideCharDimensions(uint32_t c);
 
     [[nodiscard]] int getPixelSize() const noexcept
     {

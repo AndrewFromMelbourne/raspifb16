@@ -51,7 +51,7 @@ namespace fb16
 
 //-------------------------------------------------------------------------
 
-std::unique_ptr<Interface565>
+std::unique_ptr<Interface565Base>
 createInterface565(
     InterfaceType565 type,
     const std::string& device)
@@ -77,7 +77,7 @@ createInterface565(
     {
         uint32_t connectorId{0};
 
-        const auto connectorString = std::getenv("RASPIFB16_DRM_CONNECTOR");
+        const auto* connectorString = std::getenv("RASPIFB16_DRM_CONNECTOR");
 
         if (connectorString)
         {

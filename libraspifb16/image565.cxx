@@ -82,7 +82,7 @@ fb16::Image565::Image565(
 //-------------------------------------------------------------------------
 
 fb16::Image565::Image565(
-    const Interface565& i)
+    const Interface565Base& i)
 :
     m_dimensions{i.getDimensions()},
     m_buffer(i.getDimensions().area())
@@ -94,7 +94,7 @@ fb16::Image565::Image565(
 
 fb16::Image565&
 fb16::Image565::operator=(
-    const fb16::Interface565& i)
+    const fb16::Interface565Base& i)
 {
     if (&i != this)
     {
@@ -108,7 +108,7 @@ fb16::Image565::operator=(
 
 void
 fb16::Image565::copy(
-    const fb16::Interface565& i)
+    const fb16::Interface565Base& i)
 {
     m_dimensions = i.getDimensions();
     m_buffer.reserve(m_dimensions.area());

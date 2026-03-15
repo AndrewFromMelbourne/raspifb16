@@ -28,6 +28,7 @@
 #include <stdexcept>
 
 #include "image565FreeType.h"
+#include "interface565Null.h"
 
 //-------------------------------------------------------------------------
 
@@ -118,6 +119,38 @@ Image565FreeType::getCharacterCode(Interface565Font::CharacterCode code) const n
 
 //-------------------------------------------------------------------------
 
+fb16::Dimensions565
+Image565FreeType::getStringDimensions(
+    std::string_view s)
+{
+    constexpr RGB565 c{0};
+    Interface565Null n{};
+
+    Point565 p = drawString(Point565{0, 0}, s, c, n);
+
+    const auto d = getPixelDimensions();
+
+    return Dimensions565{p.x(), p.y() + d.height()};
+}
+
+//-------------------------------------------------------------------------
+
+fb16::Dimensions565
+Image565FreeType::getWideCharDimensions(
+    uint32_t c)
+{
+    constexpr RGB565 rgb{0};
+    Interface565Null n{};
+
+    Point565 p = drawWideChar(Point565{0, 0}, c, rgb, n);
+
+    const auto d = getPixelDimensions();
+
+    return Dimensions565{p.x(), p.y() + d.height()};
+}
+
+//-------------------------------------------------------------------------
+
 bool
 Image565FreeType::setPixelSize(
     int pixelSize) noexcept
@@ -204,7 +237,7 @@ Image565FreeType::drawString(
     Point565 position{p};
     position.translateY(m_face->size->metrics.ascender >> 6);
 
-    const auto slot{m_face->glyph};
+    auto slot{m_face->glyph};
     const auto use_kerning{FT_HAS_KERNING(m_face)};
     FT_UInt previous{0};
 
@@ -233,7 +266,7 @@ Image565FreeType::drawString(
 
             if (FT_Load_Glyph(m_face, glyph_index, FT_LOAD_RENDER) == 0)
             {
-                const auto slot{m_face->glyph};
+                slot = m_face->glyph;
 
                 drawChar(position.x() + slot->bitmap_left,
                         position.y() - slot->bitmap_top,

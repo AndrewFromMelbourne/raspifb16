@@ -55,83 +55,38 @@ public:
 
     static constexpr auto c_bytesPerPixel{2};
 
-    Interface565();
-    virtual ~Interface565() = 0;
+    virtual ~Interface565() = default;
 
     [[nodiscard]] virtual Dimensions565 getDimensions() const noexcept = 0;
 
-    void clear(const RGB565& rgb) { clear(rgb.get565()); }
-    void clear(uint16_t rgb = 0);
+    virtual void clear(const RGB565& rgb) = 0;
+    virtual void clear(uint16_t rgb = 0) = 0;
 
-    void clearBuffers(const RGB565& rgb) { clearBuffers(rgb.get565()); }
-    virtual void clearBuffers(uint16_t rgb = 0);
+    [[nodiscard]] virtual std::optional<RGB565> getPixelRGB(const Point565 p) const = 0;
+    [[nodiscard]] virtual std::optional<RGB8> getPixelRGB8(const Point565 p) const = 0;
+    [[nodiscard]] virtual std::optional<uint16_t> getPixel(const Point565 p) const = 0;
 
-    bool
-    setPixelRGB(
-        const Point565 p,
-        const RGB565& rgb)
-    {
-        return setPixel(p, rgb.get565());
-    }
+    virtual bool setPixelRGB(const Point565 p, const RGB565& rgb) = 0;
+    virtual bool setPixelRGB8(const Point565 p, RGB8 rgb) = 0;
+    virtual bool setPixel(const Point565 p, uint16_t rgb) = 0;
 
-    bool
-    setPixelRGB8(
-        const Point565 p,
-        RGB8 rgb)
-    {
-        return setPixel(p, RGB565(rgb).get565());
-    }
-
-    bool setPixel(const Point565 p, uint16_t rgb);
-
-    [[nodiscard]] std::optional<RGB565> getPixelRGB(const Point565 p) const;
-    [[nodiscard]] virtual std::optional<RGB8> getPixelRGB8(const Point565 p) const;
-    [[nodiscard]] std::optional<uint16_t> getPixel(const Point565 p) const;
-
-    [[nodiscard]] std::span<uint16_t> getRow(int y);
-    [[nodiscard]] std::span<const uint16_t> getRow(int y) const;
-
-    bool putImage(const Point565, const Interface565&);
-
-    [[nodiscard]] bool
-    validPixel(const Point565 p) const
-    {
-        const auto d = getDimensions();
-
-        return (p.x() >= 0) and
-               (p.y() >= 0) and
-               (p.x() < d.width()) and
-               (p.y() < d.height());
-    }
-
-    [[nodiscard]] virtual std::span<uint16_t> getBuffer() noexcept = 0;
-    [[nodiscard]] virtual std::span<const uint16_t> getBuffer() const noexcept = 0;
-    [[nodiscard]] virtual int getLineLengthPixels() const noexcept = 0;
-    [[nodiscard]] virtual size_t offset(const Point565 p) const noexcept = 0;
-
-    [[nodiscard]] virtual bool ownable() const noexcept { return false; }
-    [[nodiscard]] virtual bool owned() noexcept { return false; }
-    virtual void own() noexcept {}
-    virtual void disown() noexcept {}
-
-    virtual bool update() { return false; }
-
-private:
-
-    bool
-    putImagePartial(
-        const Point565 p,
-        const Interface565& image);
-
-    std::span<uint16_t> getBufferStart() noexcept;
+    [[nodiscard]] virtual bool validPixel(const Point565 p) const = 0;
 };
 
 //-------------------------------------------------------------------------
 
-Point565
+inline Point565
 center(
     const Interface565& frame,
-    const Interface565& image) noexcept;
+    const Interface565& image) noexcept
+{
+    const auto fd = frame.getDimensions();
+    const auto id = image.getDimensions();
+
+    return {(fd.width() - id.width()) / 2,
+            (fd.height() - id.height()) / 2};
+}
+
 
 //-------------------------------------------------------------------------
 

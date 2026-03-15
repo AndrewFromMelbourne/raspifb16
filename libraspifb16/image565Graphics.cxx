@@ -43,7 +43,7 @@ namespace
 
 void
 trim(
-    const fb16::Interface565& iface,
+    const fb16::Interface565Base& iface,
     fb16::Point565& p1,
     fb16::Point565& p2)
 {
@@ -125,7 +125,7 @@ namespace fb16
 
 void
 box(
-    Interface565& iface,
+    Interface565Base& iface,
     Point565 p1,
     Point565 p2,
     uint16_t rgb)
@@ -141,7 +141,7 @@ box(
 
 void
 boxFilled(
-    Interface565& iface,
+    Interface565Base& iface,
     Point565 p1,
     Point565 p2,
     uint16_t rgb)
@@ -163,7 +163,7 @@ boxFilled(
 
 void
 boxFilled(
-    Interface565& iface,
+    Interface565Base& iface,
     Point565 p1,
     Point565 p2,
     const RGB565& rgb,
@@ -193,7 +193,7 @@ boxFilled(
 
 void
 line(
-    Interface565& iface,
+    Interface565Base& iface,
     Point565 p1,
     Point565 p2,
     uint16_t rgb)
@@ -304,7 +304,7 @@ line(
 
 void
 horizontalLine(
-    Interface565& iface,
+    Interface565Base& iface,
     int x1,
     int x2,
     int y,
@@ -338,7 +338,7 @@ horizontalLine(
 
 void
 verticalLine(
-    Interface565& iface,
+    Interface565Base& iface,
     int x,
     int y1,
     int y2,
@@ -374,7 +374,7 @@ verticalLine(
 
 void
 circleLines(
-    Interface565& iface,
+    Interface565Base& iface,
     int x,
     int y,
     int i,
@@ -389,7 +389,7 @@ circleLines(
 
 void
 circlePoints(
-    Interface565& iface,
+    Interface565Base& iface,
     int x,
     int y,
     int i,
@@ -414,7 +414,7 @@ circlePoints(
 
 void
 circle(
-    Interface565& iface,
+    Interface565Base& iface,
     Point565 p,
     int r,
     uint16_t rgb)
@@ -447,7 +447,7 @@ circle(
 
 void
 circleFilled(
-    Interface565& iface,
+    Interface565Base& iface,
     Point565 p,
     int r,
     uint16_t rgb)
@@ -495,7 +495,7 @@ circleFilled(
 
 void
 polygon(
-    Interface565& iface,
+    Interface565Base& iface,
     std::span<const Point565> vertices,
     uint16_t rgb)
 {
@@ -523,7 +523,7 @@ polygon(
 
 void
 polygonFilled(
-    Interface565& iface,
+    Interface565Base& iface,
     std::span<const Point565> vertices,
     uint16_t rgb)
 {
@@ -556,14 +556,15 @@ polygonFilled(
         return p1.x() + (y - p1.y()) * xChange / yChange;
     };
 
-    auto minY = vertices[0].y();
-    auto maxY = vertices[0].y();
-
-    for (const auto& p : vertices)
+    auto compareY = [](const auto& a, const auto& b) -> bool
     {
-        minY = std::min(minY, p.y());
-        maxY = std::max(maxY, p.y());
-    }
+        return a.y() < b.y();
+    };
+
+    auto minMaxY = std::minmax_element(begin(vertices), end(vertices), compareY);
+
+    const auto minY = minMaxY.first->y();
+    const auto maxY = minMaxY.second->y();
 
     for (int y = minY; y <= maxY; ++y)
     {
@@ -602,7 +603,7 @@ polygonFilled(
 
 void
 polyline(
-    Interface565& iface,
+    Interface565Base& iface,
     std::span<const Point565> vertices,
     uint16_t rgb)
 {

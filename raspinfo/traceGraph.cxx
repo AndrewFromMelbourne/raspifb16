@@ -99,7 +99,7 @@ TraceGraph::draw()
 
     //---------------------------------------------------------------------
 
-    for (auto& trace : m_traceData)
+    for (const auto& trace : m_traceData)
     {
         for (auto i2 = 1 ; i2 < m_columns ; ++i2)
         {

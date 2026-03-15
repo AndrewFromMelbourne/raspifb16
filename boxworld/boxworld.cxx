@@ -165,7 +165,7 @@ Boxworld::update(Joystick& js)
 
 void
 Boxworld::draw(
-    Interface565& fb,
+    Interface565Base& fb,
     Interface565Font& font)
 {
     m_image.clear(m_backgroundRGB);
@@ -201,7 +201,7 @@ Boxworld::draw(
 //-------------------------------------------------------------------------
 
 void
-Boxworld::drawBoard(Interface565& fb)
+Boxworld::drawBoard(Interface565Base& fb)
 {
     const int xOffset = 40;
     const int yOffset = 11;
@@ -242,7 +242,7 @@ Boxworld::drawBoard(Interface565& fb)
 
 void
 Boxworld::drawText(
-    Interface565& fb,
+    Interface565Base& fb,
     Interface565Font& font)
 {
     m_topTextImage.clear(m_backgroundRGB);
@@ -272,7 +272,7 @@ Boxworld::drawText(
     m_bottomTextImage.clear(m_backgroundRGB);
 
     position = Point565{ 2, 0 };
-    auto& undoRGB = ((m_canUndo) ? m_textRGB : m_disabledRGB);
+    const auto& undoRGB = ((m_canUndo) ? m_textRGB : m_disabledRGB);
 
     position = font.drawString(position,
                                "(X): ",
@@ -297,9 +297,9 @@ Boxworld::drawText(
     const int halfWidth = 2 + (m_bottomTextImage.getDimensions().width() / 2);
 
     position = Point565{ halfWidth, 0 };
-    auto& nextRGB = ((m_level < (Level::c_levelCount - 1))
-                  ? m_textRGB
-                  : m_disabledRGB);
+    const auto& nextRGB = ((m_level < (Level::c_levelCount - 1))
+                        ? m_textRGB
+                        : m_disabledRGB);
 
     position = font.drawString(position,
                                "(A): ",
@@ -311,9 +311,9 @@ Boxworld::drawText(
                                m_bottomTextImage);
 
     position = Point565{ halfWidth, 8 };
-    auto& previousRGB = ((m_level > 0)
-                      ? m_textRGB
-                      : m_disabledRGB);
+    const auto& previousRGB = ((m_level > 0)
+                            ? m_textRGB
+                            : m_disabledRGB);
 
     position = font.drawString(position,
                                "(B): ",

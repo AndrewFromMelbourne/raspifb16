@@ -82,23 +82,6 @@ RaspInfo::RaspInfo(
 
 //-------------------------------------------------------------------------
 
-std::string
-RaspInfo::getHostname() const
-{
-    char hostname[256];
-    if (::gethostname(hostname, sizeof(hostname)) == 0)
-    {
-        return hostname;
-    }
-    else
-    {
-        perrorLog("Error getting hostname");
-        return "localhost";
-    }
-}
-
-//-------------------------------------------------------------------------
-
 void
 RaspInfo::init()
 {

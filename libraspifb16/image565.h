@@ -38,7 +38,7 @@
 
 #include "dimensions.h"
 #include "rgb565.h"
-#include "interface565.h"
+#include "interface565Base.h"
 #include "point.h"
 
 //-------------------------------------------------------------------------
@@ -50,7 +50,7 @@ namespace fb16
 
 class Image565
 :
-    public Interface565
+    public Interface565Base
 {
 public:
 
@@ -71,8 +71,8 @@ public:
     Image565& operator=(const Image565&) = default;
     Image565& operator=(Image565&&) = default;
 
-    explicit Image565(const Interface565& i);
-    Image565& operator=(const Interface565& i);
+    explicit Image565(const Interface565Base& i);
+    Image565& operator=(const Interface565Base& i);
 
     [[nodiscard]] Dimensions565 getDimensions() const noexcept override { return m_dimensions; }
 
@@ -83,7 +83,7 @@ public:
 
 private:
 
-    void copy(const Interface565& i);
+    void copy(const Interface565Base& i);
 
     Dimensions565 m_dimensions;
     std::vector<uint16_t> m_buffer{};

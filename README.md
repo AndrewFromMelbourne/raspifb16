@@ -29,7 +29,7 @@ Test blending a blue background with a red foreground at alpha value from 0 to 2
 Test DRM/KMS double buffering by displaying one red and one greem buffer.  
 **WARNING:** causes a strobing effect.
 
-## testft and testft2
+## testFont and testFontWide
 Tests programs for truetype fonts (Requires Freetype2).
 
 ## testLines
@@ -73,6 +73,13 @@ A wifi access point scanner.
 	cd build
 	cmake ..
 	make
+
+For a debug build with sanitizers
+
+    mkdir debug
+    cd debug
+    cmake -DCMAKE_BUILD_TYPE=Debug ..
+    make
 
 # The down side of double buffering
 

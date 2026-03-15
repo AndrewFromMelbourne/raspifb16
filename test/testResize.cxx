@@ -157,7 +157,7 @@ main(
         Point565 t{0, 0};
         Point565 p{ imageOffset, 0 };
 
-        auto show = [&](std::string_view title, Image565& image)
+        auto show = [&](std::string_view title, const Image565& image)
         {
             font.drawString(t, title, white, *fb);
             fb->putImage(p, image);

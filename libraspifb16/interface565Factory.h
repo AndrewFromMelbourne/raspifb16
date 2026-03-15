@@ -32,7 +32,7 @@
 #include <memory>
 #include <string>
 
-#include "interface565.h"
+#include "interface565Base.h"
 
 //-------------------------------------------------------------------------
 
@@ -49,7 +49,7 @@ enum class InterfaceType565
 
 //-------------------------------------------------------------------------
 
-[[nodiscard]] std::unique_ptr<Interface565>
+[[nodiscard]] std::unique_ptr<Interface565Base>
 createInterface565(
     InterfaceType565 type,
     const std::string& device);

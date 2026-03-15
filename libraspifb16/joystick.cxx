@@ -49,7 +49,7 @@ namespace
 
 std::optional<js_event>
 readJoystickEvent(
-    fd::FileDescriptor& joystickFd)
+    const fd::FileDescriptor& joystickFd)
 {
     js_event event{};
     const auto bytes{::read(joystickFd.fd(), &event, sizeof(event))};

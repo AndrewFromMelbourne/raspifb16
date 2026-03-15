@@ -81,7 +81,7 @@ getIpAddress()
     {
         if (ifa ->ifa_addr->sa_family == AF_INET)
         {
-            void *addr = &((sockaddr_in *)ifa->ifa_addr)->sin_addr;
+            void *addr = &reinterpret_cast<sockaddr_in*>(ifa->ifa_addr)->sin_addr;
 
             if (std::string(ifa->ifa_name) != std::string("lo"))
             {

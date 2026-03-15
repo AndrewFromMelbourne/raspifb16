@@ -47,7 +47,7 @@ public:
 
     Level(const LevelType& level) noexcept;
 
-    [[nodiscard]] const LevelType level() const noexcept;
+    [[nodiscard]] const LevelType& level() const noexcept;
 
 private:
 
