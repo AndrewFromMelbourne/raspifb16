@@ -136,6 +136,14 @@ public:
         return (getRed() == getGreen()) and (getGreen() == getBlue());
     }
 
+    [[nodiscard]] constexpr RGB565 toGrey() const noexcept
+    {
+        const auto grey = static_cast<uint8_t>(((getRed() * 299) +
+                                                (getGreen() * 587) +
+                                                (getBlue() * 114)) / 1000);
+        return {grey, grey, grey};
+    }
+
     //---------------------------------------------------------------------
 
     void setGrey(uint8_t grey) noexcept { setRGB(grey, grey, grey); }

@@ -125,6 +125,10 @@ scaleUp(
     const Interface565Base& input,
     uint8_t scale);
 
+[[nodiscard]] Image565
+toGrey(
+    const Interface565Base& input);
+
 //-------------------------------------------------------------------------
 
 } // namespace fb16

@@ -152,6 +152,29 @@ rowsRotate(
 
 //-------------------------------------------------------------------------
 
+void
+rowsToGrey(
+    const fb16::Interface565Base& input,
+    fb16::Image565& output,
+    int jStart,
+    int jEnd)
+{
+    const auto id = input.getDimensions();
+    auto inputi = input.getBuffer().data() + (jStart * id.width());
+
+    for (auto j = jStart ; j < jEnd ; ++j)
+    {
+        for (int i = 0 ; i < id.width() ; ++i)
+        {
+            auto pixel = *(inputi++);
+            Point p{i, j};
+            output.setPixel(p,fb16::RGB565(pixel).toGrey().get565());
+        }
+    }
+}
+
+//-------------------------------------------------------------------------
+
 }
 
 //=========================================================================
@@ -788,6 +811,20 @@ fb16::scaleUp(
             }
         }
     }
+
+    return output;
+}
+
+//-------------------------------------------------------------------------
+
+fb16::Image565
+fb16::toGrey(
+    const Interface565Base& input)
+{
+    const auto id = input.getDimensions();
+    Image565 output{id};
+
+    rowsToGrey(input, output, 0, id.height());
 
     return output;
 }
