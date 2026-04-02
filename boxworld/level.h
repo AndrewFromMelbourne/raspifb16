@@ -45,8 +45,7 @@ public:
     using LevelRow = std::array<uint8_t, c_levelWidth>;
     using LevelType = std::array<LevelRow, c_levelHeight>;
 
-    // cppcheck-suppress noExplicitConstructor
-    Level(const LevelType& level) noexcept;
+    explicit Level(const LevelType& level) noexcept;
 
     [[nodiscard]] const LevelType& level() const noexcept;
 

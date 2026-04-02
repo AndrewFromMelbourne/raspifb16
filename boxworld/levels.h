@@ -41,7 +41,7 @@ public:
 
     Levels();
 
-    [[nodiscard]] const Level::LevelType level(int number) const;
+    [[nodiscard]] Level::LevelType level(int number) const;
 
 private:
 
