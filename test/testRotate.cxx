@@ -145,7 +145,12 @@ main(
 
     for (auto signal : { SIGINT, SIGTERM })
     {
-        if (std::signal(signal, signalHandler) == SIG_ERR)
+        struct sigaction sa{};
+
+        sa.sa_handler = signalHandler;
+        sa.sa_flags = 0;
+
+        if (sigaction(signal, &sa, nullptr) == -1)
         {
             std::println(
                 std::cerr,
