@@ -151,7 +151,7 @@ main(
 
         //----------------------------------------------------------------
 
-        Joystick js(joystick, true);
+        Joystick js(joystick, Joystick::ReadType::BLOCKING);
         std::vector<std::string> configuration;
 
         for (auto i = 0U ; i < descriptions.size() ; ++i)

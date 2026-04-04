@@ -175,8 +175,7 @@ main(
 
     try
     {
-        constexpr bool block{true};
-        Joystick js(joystick, block);
+        Joystick js(joystick, Joystick::ReadType::BLOCKING);
         auto fb{fb16::createInterface565(interfaceType, device)};
 
         Puzzle puzzle{fitToScreen};

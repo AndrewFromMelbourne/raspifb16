@@ -70,7 +70,8 @@ add_library(raspifb16 STATIC libraspifb16/fileDescriptor.cxx
                              libraspifb16/interface565Factory.cxx
                              libraspifb16/interface565Menu.cxx
                              libraspifb16/joystick.cxx
-                             libraspifb16/rgb565.cxx)
+                             libraspifb16/rgb565.cxx
+                             libraspifb16/tokenize.cxx)
 
 if (FREETYPE_FOUND)
 target_include_directories(raspifb16 PUBLIC ${FREETYPE_INCLUDE_DIRS})

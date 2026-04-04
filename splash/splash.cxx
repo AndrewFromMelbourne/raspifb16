@@ -43,6 +43,14 @@ using namespace fb16;
 
 //-------------------------------------------------------------------------
 
+namespace
+{
+const std::string defaultJoystick{"/dev/input/js0"};
+}
+
+
+//-------------------------------------------------------------------------
+
 void
 printUsage(
     std::ostream& stream,
@@ -53,6 +61,7 @@ printUsage(
     std::println(stream, "");
     std::println(stream, "    --device,-d - device to use");
     std::println(stream, "    --help,-h - print usage and exit");
+    std::println(stream, "    --joystick,-j - joystick device to use, default {}", defaultJoystick);
     std::println(stream, "    --kmsdrm,-k - use KMS/DRM dumb buffer");
     std::println(stream, "    --qoi,-q - qoi file to display");
     std::println(stream, "");
@@ -66,17 +75,19 @@ main(
     char *argv[])
 {
     std::string device{};
+    std::string joystick{defaultJoystick};
     const std::string program{basename(argv[0])};
     std::string qoi{};
     auto interfaceType{fb16::InterfaceType565::FRAME_BUFFER_565};
 
     //---------------------------------------------------------------------
 
-    static const char* sopts = "d:hkq:";
+    static const char* sopts = "d:hj:kq:";
     static option lopts[] =
     {
         { "device", required_argument, nullptr, 'd' },
         { "help", no_argument, nullptr, 'h' },
+        { "joystick", required_argument, nullptr, 'j' },
         { "kmsdrm", no_argument, nullptr, 'k' },
         { "qoi", required_argument, nullptr, 'q' },
         { nullptr, no_argument, nullptr, 0 }
@@ -100,24 +111,25 @@ main(
             ::exit(EXIT_SUCCESS);
 
             break;
+        case 'j':
+
+            joystick = optarg;
+            break;
 
         case 'k':
 
             interfaceType = fb16::InterfaceType565::KMSDRM_DUMB_BUFFER_565;
-
             break;
 
         case 'q':
 
             qoi = optarg;
-
             break;
 
         default:
 
             printUsage(std::cerr, program);
             ::exit(EXIT_FAILURE);
-
             break;
         }
     }
@@ -132,8 +144,7 @@ main(
 
     try
     {
-        constexpr bool block{true};
-        Joystick js{block};
+        Joystick js{joystick, Joystick::ReadType::BLOCKING};
         auto fb{fb16::createInterface565(interfaceType, device)};
 
         const auto image = readQoi(qoi);

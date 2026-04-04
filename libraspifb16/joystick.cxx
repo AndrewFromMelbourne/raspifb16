@@ -69,18 +69,18 @@ readJoystickEvent(
 //=========================================================================
 
 
-fb16::Joystick::Joystick(bool blocking)
+fb16::Joystick::Joystick(ReadType readType)
 :
-    Joystick("/dev/input/js0", blocking)
+    Joystick("/dev/input/js0", readType)
 {
 }
 
 //-------------------------------------------------------------------------
 
-fb16::Joystick::Joystick(const std::string& device, bool blocking)
+fb16::Joystick::Joystick(const std::string& device, ReadType readType)
 :
-    m_joystickFd{::open(device.c_str(), O_RDONLY | ((blocking) ? 0 : O_NONBLOCK))},
-    m_blocking(blocking),
+    m_joystickFd{::open(device.c_str(), O_RDONLY | ((readType == ReadType::BLOCKING) ? 0 : O_NONBLOCK))},
+    m_readType(readType),
     m_buttonCount(0),
     m_joystickCount(0),
     m_buttons(),
@@ -322,7 +322,7 @@ fb16::Joystick::rawButtonPressed(int button)
 void
 fb16::Joystick::read()
 {
-    if (m_blocking)
+    if (m_readType == ReadType::BLOCKING)
     {
         auto event{readJoystickEvent(m_joystickFd)};
         if (event)
@@ -358,7 +358,7 @@ readConfig()
     };
 
     std::string configFile{std::getenv("HOME") +
-                           std::string{"/.config/fb16/joystickButtons"}};
+                           std::string{"/.config/drmfb16/joystickButtons"}};
 
     std::ifstream ifs{configFile.c_str()};
 

@@ -81,8 +81,14 @@ public:
         BUTTON_COUNT = 12,
     };
 
-    explicit Joystick(bool blocking = false);
-    explicit Joystick(const std::string& device, bool blocking = false);
+    enum class ReadType
+    {
+        BLOCKING,
+        NON_BLOCKING
+    };
+
+    explicit Joystick(ReadType readType = ReadType::NON_BLOCKING);
+    explicit Joystick(const std::string& device, ReadType readType = ReadType::NON_BLOCKING);
 
     [[nodiscard]] int numberOfButtons() const noexcept;
     [[nodiscard]] int numberOfAxes() const noexcept;
@@ -108,7 +114,7 @@ private:
 
     fd::FileDescriptor m_joystickFd;
 
-    bool m_blocking;
+    ReadType m_readType;
 
     int m_buttonCount;
     int m_joystickCount;
