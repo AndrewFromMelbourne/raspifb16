@@ -69,7 +69,6 @@ public:
 
     [[nodiscard]] virtual Dimensions565 getStringDimensions(std::string_view s) = 0;
 
-
     virtual Point565
     drawChar(
         const Point565 p,

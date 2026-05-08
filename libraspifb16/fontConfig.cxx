@@ -55,7 +55,6 @@ createFont(
     return std::make_unique<fb16::Image565Font8x16>();
 }
 
-
 //-------------------------------------------------------------------------
 
 FontConfig

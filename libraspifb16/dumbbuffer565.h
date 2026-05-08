@@ -114,7 +114,6 @@ public:
     void own() noexcept override;
     void disown() noexcept override;
 
-
     bool update() noexcept override { return updateImpl(); }
 
 private:

@@ -68,7 +68,6 @@ readJoystickEvent(
 
 //=========================================================================
 
-
 fb16::Joystick::Joystick(ReadType readType)
 :
     Joystick("/dev/input/js0", readType)

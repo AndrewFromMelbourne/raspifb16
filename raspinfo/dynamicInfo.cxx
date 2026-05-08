@@ -340,7 +340,6 @@ DynamicInfo::update(
                              m_foreground,
                              getImage());
 
-
     position = font.drawString(position,
                                "C",
                                m_foreground,

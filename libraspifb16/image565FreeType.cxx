@@ -37,7 +37,6 @@ namespace fb16
 
 //-------------------------------------------------------------------------
 
-
 Image565FreeType::Image565FreeType(
     const std::string& fontFile,
     int pixelSize)

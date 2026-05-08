@@ -372,7 +372,6 @@ fb16::DumbBuffer565::destroyDumbBuffer(
     drm::drmIoctl(m_fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dmdd);
 }
 
-
 //-------------------------------------------------------------------------
 
 void

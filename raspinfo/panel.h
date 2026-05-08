@@ -51,7 +51,6 @@ public:
         m_image{d}
     { }
 
-
     virtual ~Panel() = default;
 
     [[nodiscard]] int getBottom() const noexcept { return m_yPosition + m_image.getDimensions().height(); }

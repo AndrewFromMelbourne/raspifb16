@@ -199,7 +199,6 @@ main(
         std::string configDirectory{std::getenv("HOME") +
                                     std::string{"/.config/fb16"}};
 
-
         if (std::filesystem::exists(configDirectory) or
             std::filesystem::create_directories(configDirectory))
         {

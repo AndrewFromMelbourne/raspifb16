@@ -71,7 +71,6 @@ public:
 
     [[nodiscard]] Dimensions565 getStringDimensions(std::string_view s) override;
 
-
     Point565
     drawChar(
         const Point565 p,

@@ -136,7 +136,6 @@ Boxworld::update(Joystick& js)
         const Location next{ .x = m_player.x + dx, .y = m_player.y + dy };
         const auto piece1 = m_board[next.y][next.x] & ~c_targetMask;
 
-
         if (piece1 == PASSAGE)
         {
             swapPieces(m_player, next);

@@ -48,7 +48,6 @@ namespace
 const std::string defaultJoystick{"/dev/input/js0"};
 }
 
-
 //-------------------------------------------------------------------------
 
 void
