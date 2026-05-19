@@ -139,7 +139,6 @@ main(
 
     try
     {
-        constexpr RGB565 black{0, 0, 0};
         constexpr RGB565 grey{15, 15, 15};
         constexpr RGB565 white{255, 255, 255};
         auto fb{fb16::createInterface565(interfaceType, device)};
