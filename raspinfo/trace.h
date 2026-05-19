@@ -119,6 +119,7 @@ protected:
     void addData(std::initializer_list<int> data, time_t now);
     virtual void draw() = 0;
 
+    int m_width;
     int m_traceHeight;
     int m_fontHeight;
     int m_traceScale;
