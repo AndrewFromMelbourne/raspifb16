@@ -117,7 +117,7 @@ Boxworld::update(Joystick& js)
     }
     else
     {
-        auto value = js.getAxes(0);
+        auto value = js.getDpad();
 
         if (not value.x and not value.y)
         {

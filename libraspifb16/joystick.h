@@ -90,6 +90,12 @@ public:
     explicit Joystick(ReadType readType = ReadType::NON_BLOCKING);
     explicit Joystick(const std::string& device, ReadType readType = ReadType::NON_BLOCKING);
 
+    [[nodiscard]] static std::string configurationDirectory() noexcept;
+    [[nodiscard]] std::string configurationFile() const noexcept;
+
+    [[nodiscard]] int dpadAxes() const noexcept { return m_joystickDpad; }
+    [[nodiscard]] std::string name() const noexcept { return m_name; }
+
     [[nodiscard]] int numberOfButtons() const noexcept;
     [[nodiscard]] int numberOfAxes() const noexcept;
 
@@ -98,6 +104,7 @@ public:
     [[nodiscard]] bool buttonPressed(int button);
     [[nodiscard]] bool buttonDown(int button) const;
     [[nodiscard]] JoystickAxes getAxes(int joystickNumber) const;
+    [[nodiscard]] JoystickAxes getDpad() const { return getAxes(m_joystickDpad); }
 
     [[nodiscard]] int rawButton(int button) const;
     [[nodiscard]] bool rawButtonPressed(int button);
@@ -116,13 +123,16 @@ private:
 
     ReadType m_readType;
 
+    std::string m_name;
+
     int m_buttonCount;
     int m_joystickCount;
 
-    std::vector<ButtonState> m_buttons;
-    std::vector<ButtonState> m_rawButtons;
-    std::vector<JoystickAxes> m_joysticks;
-    std::vector<Buttons> m_buttonNumbers;
+    std::vector<ButtonState> m_buttons{BUTTON_COUNT};
+    std::vector<ButtonState> m_rawButtons{};
+    std::vector<JoystickAxes> m_joysticks{};
+    int m_joystickDpad{};
+    std::vector<Buttons> m_buttonNumbers{BUTTON_COUNT};
 };
 
 //-------------------------------------------------------------------------

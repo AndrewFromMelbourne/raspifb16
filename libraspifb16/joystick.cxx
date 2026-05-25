@@ -35,6 +35,7 @@
 #include <fstream>
 #include <map>
 #include <optional>
+#include <ranges>
 #include <regex>
 #include <system_error>
 
@@ -64,6 +65,18 @@ readJoystickEvent(
 
 //-------------------------------------------------------------------------
 
+std::string
+    spaceToUnderscore(
+        std::string_view s)
+{
+    std::string result;
+    auto function = [](char c) { return (c == ' ') ? '_' : c; };
+    std::ranges::copy(std::views::transform(s, function), std::back_inserter(result));
+    return result;
+}
+
+//-------------------------------------------------------------------------
+
 }
 
 //=========================================================================
@@ -82,9 +95,10 @@ fb16::Joystick::Joystick(const std::string& device, ReadType readType)
     m_readType(readType),
     m_buttonCount(0),
     m_joystickCount(0),
-    m_buttons(),
+    m_buttons(BUTTON_COUNT),
     m_rawButtons(),
     m_joysticks(),
+    m_joystickDpad(0),
     m_buttonNumbers{
         BUTTON_X,
         BUTTON_A,
@@ -101,6 +115,22 @@ fb16::Joystick::Joystick(const std::string& device, ReadType readType)
     }
 {
     init();
+}
+
+//-------------------------------------------------------------------------
+
+std::string
+fb16::Joystick::configurationDirectory() noexcept
+{
+    return std::getenv("HOME") + std::string{"/.config/raspifb16"};
+}
+
+//-------------------------------------------------------------------------
+
+std::string
+fb16::Joystick::configurationFile() const noexcept
+{
+    return configurationDirectory() + "/joystick_" + spaceToUnderscore(m_name) + ".conf";
 }
 
 //-------------------------------------------------------------------------
@@ -185,6 +215,16 @@ fb16::Joystick::init()
     }
     m_buttonCount = buttonCount;
 
+    char name[128];
+    if (ioctl(m_joystickFd.fd(), JSIOCGNAME(sizeof(name)), name) != -1)
+    {
+        m_name = name;
+    }
+    else
+    {
+        m_name = "Unknown Joystick";
+    }
+
     m_buttons.resize(m_buttonCount, ButtonState{ false, false });
     m_rawButtons.resize(m_buttonCount, ButtonState{ false, false });
     m_joysticks.resize(m_joystickCount, JoystickAxes{ 0, 0 });
@@ -246,7 +286,7 @@ fb16::Joystick::process(const js_event& event)
         {
             const auto axis{event.number / 2};
 
-            if (axis < 3)
+            if (axis < m_joystickCount)
             {
                 auto axes = m_joysticks.at(axis);
 
@@ -356,10 +396,7 @@ readConfig()
         {"BUTTON_START", BUTTON_START},
     };
 
-    std::string configFile{std::getenv("HOME") +
-                           std::string{"/.config/drmfb16/joystickButtons"}};
-
-    std::ifstream ifs{configFile.c_str()};
+    std::ifstream ifs{configurationFile().c_str()};
 
     if (ifs)
     {
@@ -372,15 +409,29 @@ readConfig()
             {
                 std::smatch match;
 
-                if (std::regex_match(line, match, pattern))
+                if (not std::regex_match(line, match, pattern))
                 {
-                    const auto key = match[1].str();
-                    const auto value = std::stoul(match[2].str());
+                    continue;
+                }
 
+                const auto key = match[1].str();
+                const auto value = std::stoul(match[2].str());
+
+                if (key.starts_with("BUTTON_"))
+                {
                     if (value < m_buttonNumbers.size())
                     {
                         const auto button = stringToButton.at(key);
                         m_buttonNumbers[value] = button;
+                    }
+                }
+                else if (key == "AXES_DPAD")
+                {
+                    const int joystickNumber = static_cast<int>(value);
+
+                    if (joystickNumber < m_joystickCount)
+                    {
+                        m_joystickDpad = joystickNumber;
                     }
                 }
             }
