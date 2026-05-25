@@ -215,10 +215,10 @@ fb16::Joystick::init()
     }
     m_buttonCount = buttonCount;
 
-    char name[128];
-    if (ioctl(m_joystickFd.fd(), JSIOCGNAME(sizeof(name)), name) != -1)
+    char jsname[128];
+    if (ioctl(m_joystickFd.fd(), JSIOCGNAME(sizeof(jsname)), jsname) != -1)
     {
-        m_name = name;
+        m_name = jsname;
     }
     else
     {

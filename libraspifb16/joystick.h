@@ -94,7 +94,7 @@ public:
     [[nodiscard]] std::string configurationFile() const noexcept;
 
     [[nodiscard]] int dpadAxes() const noexcept { return m_joystickDpad; }
-    [[nodiscard]] std::string name() const noexcept { return m_name; }
+    [[nodiscard]] const std::string& name() const noexcept { return m_name; }
 
     [[nodiscard]] int numberOfButtons() const noexcept;
     [[nodiscard]] int numberOfAxes() const noexcept;
