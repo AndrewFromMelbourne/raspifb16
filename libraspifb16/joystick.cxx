@@ -265,6 +265,11 @@ fb16::Joystick::process(const js_event& event)
     {
         case JS_EVENT_BUTTON:
         {
+            if (event.number >= m_buttonNumbers.size())
+            {
+                return;
+            }
+
             auto number = m_buttonNumbers[event.number];
 
             if (event.value)
