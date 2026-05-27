@@ -210,7 +210,6 @@ main(
 
         //-----------------------------------------------------------------
 
-
         std::print("Write conifiguration file? [y/N] ");
 
         std::string reply;
