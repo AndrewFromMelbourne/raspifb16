@@ -37,7 +37,7 @@
 
 //-------------------------------------------------------------------------
 
-class DynamicInfo
+class DynamicInfo final
 :
     public Panel
 {

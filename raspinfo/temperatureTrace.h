@@ -37,7 +37,7 @@
 
 //-------------------------------------------------------------------------
 
-class TemperatureTrace
+class TemperatureTrace final
 :
     public TraceGraph
 {

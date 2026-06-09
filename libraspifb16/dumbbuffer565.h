@@ -54,7 +54,7 @@ class Image565;
 
 //-------------------------------------------------------------------------
 
-class DumbBuffer565
+class DumbBuffer565 final
 :
     public Interface565Base
 {

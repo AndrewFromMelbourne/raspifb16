@@ -52,7 +52,7 @@ class Image565;
 
 //-------------------------------------------------------------------------
 
-class FrameBuffer565
+class FrameBuffer565 final
 :
     public Interface565Base
 {

@@ -48,7 +48,7 @@ namespace fb16
 
 //-------------------------------------------------------------------------
 
-class Image565Frames
+class Image565Frames final
 :
     public Interface565Base
 {

@@ -69,7 +69,7 @@ CpuStats operator-(const CpuStats& lhs, const CpuStats& rhs) noexcept;
 
 //-------------------------------------------------------------------------
 
-class CpuTrace
+class CpuTrace final
 :
     public TraceStack
 {

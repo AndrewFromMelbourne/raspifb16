@@ -58,7 +58,7 @@ NetworkStats operator-(const NetworkStats& lhs, const NetworkStats& rhs) noexcep
 
 //-------------------------------------------------------------------------
 
-class NetworkTrace
+class NetworkTrace final
 :
     public TraceGraph
 {

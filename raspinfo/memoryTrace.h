@@ -58,7 +58,7 @@ private:
 
 //-------------------------------------------------------------------------
 
-class MemoryTrace
+class MemoryTrace final
 :
     public TraceStack
 {
