@@ -88,7 +88,7 @@ public:
         const std::string& device = "",
         uint32_t connectorId = 0);
 
-    ~DumbBuffer565() override;
+    ~DumbBuffer565() final;
 
     DumbBuffer565(const DumbBuffer565& fb) = delete;
     DumbBuffer565& operator=(const DumbBuffer565& fb) = delete;
@@ -96,25 +96,25 @@ public:
     DumbBuffer565(DumbBuffer565&& fb) = delete;
     DumbBuffer565& operator=(DumbBuffer565&& fb) = delete;
 
-    void clearBuffers(uint16_t rgb = 0) override;
+    void clearBuffers(uint16_t rgb = 0) final;
 
-    [[nodiscard]] Dimensions565 getDimensions() const noexcept override { return m_dimensions; }
+    [[nodiscard]] Dimensions565 getDimensions() const noexcept final { return m_dimensions; }
 
-    [[nodiscard]] std::span<uint16_t> getBuffer() noexcept override;
-    [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept override;
+    [[nodiscard]] std::span<uint16_t> getBuffer() noexcept final;
+    [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept final;
     [[nodiscard]] std::size_t getBufferSize() const noexcept;
     [[nodiscard]] drm::drmVersion_ptr getDrmVersion() noexcept { return drm::drmGetVersion(m_fd); }
-    [[nodiscard]] int getLineLengthPixels() const noexcept override;
+    [[nodiscard]] int getLineLengthPixels() const noexcept final;
     [[nodiscard]] bool hasAtomic() const noexcept { return m_hasAtomic; }
     [[nodiscard]] bool hasUniversalPlanes() const noexcept { return m_hasUniversalPlanes; }
-    [[nodiscard]] std::size_t offset(const Point565 p) const noexcept override;
+    [[nodiscard]] std::size_t offset(const Point565 p) const noexcept final;
 
-    [[nodiscard]] bool ownable() const noexcept override { return true; }
-    [[nodiscard]] bool owned() noexcept override;
-    void own() noexcept override;
-    void disown() noexcept override;
+    [[nodiscard]] bool ownable() const noexcept final { return true; }
+    [[nodiscard]] bool owned() noexcept final;
+    void own() noexcept final;
+    void disown() noexcept final;
 
-    bool update() noexcept override { return updateImpl(); }
+    bool update() noexcept final { return updateImpl(); }
 
 private:
 

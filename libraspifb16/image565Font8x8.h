@@ -51,53 +51,53 @@ class RGB565;
 
 //-------------------------------------------------------------------------
 
-class Image565Font8x8
+class Image565Font8x8 final
 :
     public Interface565Font
 {
 public:
 
     Image565Font8x8() = default;
-    ~Image565Font8x8() override = default;
+    ~Image565Font8x8() final = default;
 
     Image565Font8x8(const Image565Font8x8&) = delete;
     Image565Font8x8(Image565Font8x8&&) = delete;
     Image565Font8x8& operator=(const Image565Font8x8&) = delete;
     Image565Font8x8& operator=(Image565Font8x8&&) = delete;
 
-    [[nodiscard]] Dimensions565 getPixelDimensions() const noexcept override;
+    [[nodiscard]] Dimensions565 getPixelDimensions() const noexcept final;
 
-    std::optional<char> getCharacterCode(CharacterCode code) const noexcept override;
+    std::optional<char> getCharacterCode(CharacterCode code) const noexcept final;
 
-    [[nodiscard]] Dimensions565 getStringDimensions(std::string_view s) override;
+    [[nodiscard]] Dimensions565 getStringDimensions(std::string_view s) final;
 
     Point565
     drawChar(
         const Point565 p,
         uint8_t c,
         const RGB565& rgb,
-        Interface565& image) override;
+        Interface565& image) final;
 
     Point565
     drawChar(
         const Point565 p,
         uint8_t c,
         uint16_t rgb,
-        Interface565& image) override;
+        Interface565& image) final;
 
     Point565
     drawString(
         const Point565 p,
         std::string_view sv,
         const RGB565& rgb,
-        Interface565& image) override;
+        Interface565& image) final;
 
     Point565
     drawString(
         const Point565 p,
         std::string_view sv,
         uint16_t rgb,
-        Interface565& image) override;
+        Interface565& image) final;
 };
 
 //-------------------------------------------------------------------------

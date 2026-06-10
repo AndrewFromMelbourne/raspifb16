@@ -51,7 +51,7 @@ class RGB565;
 
 //-------------------------------------------------------------------------
 
-class Image565FreeType
+class Image565FreeType final
 :
     public Interface565Font
 {
@@ -60,7 +60,7 @@ public:
     Image565FreeType() = default;
     Image565FreeType(const std::string& fontFile, int pixelSize);
     explicit Image565FreeType(const FontConfig& fontConfig);
-    ~Image565FreeType() override;
+    ~Image565FreeType() final;
 
     Image565FreeType(const Image565FreeType&) = delete;
     Image565FreeType(Image565FreeType&&) = delete;
@@ -70,11 +70,11 @@ public:
     [[nodiscard]] std::string getFontFamilyName() const noexcept;
     [[nodiscard]] std::string getFontStyleName() const noexcept;
 
-    [[nodiscard]] Dimensions565 getPixelDimensions() const noexcept override;
+    [[nodiscard]] Dimensions565 getPixelDimensions() const noexcept final;
 
-    [[nodiscard]] std::optional<char> getCharacterCode(CharacterCode code) const noexcept override;
+    [[nodiscard]] std::optional<char> getCharacterCode(CharacterCode code) const noexcept final;
 
-    [[nodiscard]] Dimensions565 getStringDimensions(std::string_view s) override;
+    [[nodiscard]] Dimensions565 getStringDimensions(std::string_view s) final;
     [[nodiscard]] Dimensions565 getWideCharDimensions(uint32_t c);
 
     [[nodiscard]] int getPixelSize() const noexcept
@@ -89,14 +89,14 @@ public:
         const Point565 p,
         uint8_t c,
         const RGB565& rgb,
-        Interface565& image) override;
+        Interface565& image) final;
 
     Point565
     drawChar(
         const Point565 p,
         uint8_t c,
         uint16_t rgb,
-        Interface565& image) override;
+        Interface565& image) final;
 
     Point565
     drawWideChar(
@@ -110,14 +110,14 @@ public:
         const Point565 p,
         std::string_view sv,
         const RGB565& rgb,
-        Interface565& image) override;
+        Interface565& image) final;
 
     Point565
     drawString(
         const Point565 p,
         std::string_view sv,
         uint16_t rgb,
-        Interface565& image) override;
+        Interface565& image) final;
 
 private:
 

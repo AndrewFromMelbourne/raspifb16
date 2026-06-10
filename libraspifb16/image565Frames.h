@@ -68,23 +68,23 @@ public:
              std::span<const uint16_t> buffer,
              uint8_t numberOfFrames = 1);
 
-    ~Image565Frames() override = default;
+    ~Image565Frames() final = default;
 
     Image565Frames(const Image565Frames&) = default;
     Image565Frames(Image565Frames&&) = default;
     Image565Frames& operator=(const Image565Frames&) = default;
     Image565Frames& operator=(Image565Frames&&) = default;
 
-    [[nodiscard]] Dimensions565 getDimensions() const noexcept override { return m_dimensions; }
+    [[nodiscard]] Dimensions565 getDimensions() const noexcept final { return m_dimensions; }
 
     [[nodiscard]] uint8_t getFrame() const noexcept { return m_frame; }
     [[nodiscard]] uint8_t getNumberOfFrames() const noexcept { return m_numberOfFrames; }
     void setFrame(uint8_t frame) noexcept;
 
-    [[nodiscard]] std::span<uint16_t> getBuffer() noexcept override { return m_buffer; };
-    [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept override { return m_buffer; };
-    [[nodiscard]] int getLineLengthPixels() const noexcept override { return m_dimensions.width(); };
-    [[nodiscard]] std::size_t offset(const Point565 p) const noexcept override;
+    [[nodiscard]] std::span<uint16_t> getBuffer() noexcept final { return m_buffer; };
+    [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept final { return m_buffer; };
+    [[nodiscard]] int getLineLengthPixels() const noexcept final { return m_dimensions.width(); };
+    [[nodiscard]] std::size_t offset(const Point565 p) const noexcept final;
 
 private:
 

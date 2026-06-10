@@ -60,7 +60,7 @@ public:
 
     explicit FrameBuffer565(const std::string& device);
 
-    ~FrameBuffer565() override;
+    ~FrameBuffer565() final;
 
     FrameBuffer565(const FrameBuffer565& fb) = delete;
     FrameBuffer565& operator=(const FrameBuffer565& fb) = delete;
@@ -68,18 +68,18 @@ public:
     FrameBuffer565(FrameBuffer565&& fb) = delete;
     FrameBuffer565& operator=(FrameBuffer565&& fb) = delete;
 
-    [[nodiscard]] Dimensions565 getDimensions() const noexcept override;
+    [[nodiscard]] Dimensions565 getDimensions() const noexcept final;
 
     bool hideCursor() noexcept;
 
-    [[nodiscard]] std::span<uint16_t> getBuffer() noexcept override { return {m_fbp, getBufferSize()}; };
-    [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept override { return {m_fbp, getBufferSize()}; }
+    [[nodiscard]] std::span<uint16_t> getBuffer() noexcept final { return {m_fbp, getBufferSize()}; };
+    [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept final { return {m_fbp, getBufferSize()}; }
     [[nodiscard]] std::size_t getBufferSize() const noexcept
     {
         return  static_cast<std::size_t>(m_lineLengthPixels) * getDimensions().height();
     }
-    [[nodiscard]] int getLineLengthPixels() const noexcept override { return m_lineLengthPixels; }
-    [[nodiscard]] std::size_t offset(const Point565 p) const noexcept override;
+    [[nodiscard]] int getLineLengthPixels() const noexcept final { return m_lineLengthPixels; }
+    [[nodiscard]] std::size_t offset(const Point565 p) const noexcept final;
 
 private:
 

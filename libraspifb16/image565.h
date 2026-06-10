@@ -64,7 +64,7 @@ public:
     Image565(Dimensions565 d,
              std::span<const uint16_t> buffer);
 
-    ~Image565() override = default;
+    ~Image565() final = default;
 
     Image565(const Image565&) = default;
     Image565(Image565&&) = default;
@@ -74,12 +74,12 @@ public:
     explicit Image565(const Interface565Base& i);
     Image565& operator=(const Interface565Base& i);
 
-    [[nodiscard]] Dimensions565 getDimensions() const noexcept override { return m_dimensions; }
+    [[nodiscard]] Dimensions565 getDimensions() const noexcept final { return m_dimensions; }
 
-    [[nodiscard]] std::span<uint16_t> getBuffer() noexcept override { return m_buffer; };
-    [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept override { return m_buffer; };
-    [[nodiscard]] int getLineLengthPixels() const noexcept override { return m_dimensions.width(); };
-    [[nodiscard]] std::size_t offset(const Point565 p) const noexcept override;
+    [[nodiscard]] std::span<uint16_t> getBuffer() noexcept final { return m_buffer; };
+    [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept final { return m_buffer; };
+    [[nodiscard]] int getLineLengthPixels() const noexcept final { return m_dimensions.width(); };
+    [[nodiscard]] std::size_t offset(const Point565 p) const noexcept final;
 
 private:
 
