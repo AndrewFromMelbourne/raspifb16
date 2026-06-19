@@ -100,8 +100,8 @@ public:
 
     [[nodiscard]] Dimensions565 getDimensions() const noexcept final { return m_dimensions; }
 
-    [[nodiscard]] std::span<uint16_t> getBuffer() noexcept final;
-    [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept final;
+    [[nodiscard]] std::span<uint16_t> getBuffer() & noexcept final;
+    [[nodiscard]] std::span<const uint16_t> getBuffer() const & noexcept final;
     [[nodiscard]] std::size_t getBufferSize() const noexcept;
     [[nodiscard]] drm::drmVersion_ptr getDrmVersion() noexcept { return drm::drmGetVersion(m_fd); }
     [[nodiscard]] int getLineLengthPixels() const noexcept final;

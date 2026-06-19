@@ -76,8 +76,8 @@ public:
 
     [[nodiscard]] Dimensions565 getDimensions() const noexcept final { return m_dimensions; }
 
-    [[nodiscard]] std::span<uint16_t> getBuffer() noexcept final { return m_buffer; };
-    [[nodiscard]] std::span<const uint16_t> getBuffer() const noexcept final { return m_buffer; };
+    [[nodiscard]] std::span<uint16_t> getBuffer() & noexcept final { return m_buffer; };
+    [[nodiscard]] std::span<const uint16_t> getBuffer() const & noexcept final { return m_buffer; };
     [[nodiscard]] int getLineLengthPixels() const noexcept final { return m_dimensions.width(); };
     [[nodiscard]] std::size_t offset(const Point565 p) const noexcept final;
 

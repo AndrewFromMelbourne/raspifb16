@@ -96,8 +96,8 @@ public:
                (p.y() < d.height());
     }
 
-    [[nodiscard]] virtual std::span<uint16_t> getBuffer() noexcept = 0;
-    [[nodiscard]] virtual std::span<const uint16_t> getBuffer() const noexcept = 0;
+    [[nodiscard]] virtual std::span<uint16_t> getBuffer() & noexcept = 0;
+    [[nodiscard]] virtual std::span<const uint16_t> getBuffer() const & noexcept = 0;
     [[nodiscard]] virtual int getLineLengthPixels() const noexcept = 0;
     [[nodiscard]] virtual size_t offset(const Point565 p) const noexcept = 0;
 
@@ -112,7 +112,7 @@ private:
 
     bool putImagePartial(const Point565 p, const Interface565Base& image);
 
-    std::span<uint16_t> getBufferStart() noexcept;
+    std::span<uint16_t> getBufferStart() & noexcept;
 };
 
 //-------------------------------------------------------------------------

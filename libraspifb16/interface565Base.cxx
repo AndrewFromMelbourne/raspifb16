@@ -244,7 +244,7 @@ fb16::Interface565Base::putImagePartial(
 //-------------------------------------------------------------------------
 
 std::span<uint16_t>
-fb16::Interface565Base::getBufferStart() noexcept
+fb16::Interface565Base::getBufferStart() & noexcept
 {
     return getBuffer().subspan(offset(Point565{0, 0}),
                                getLineLengthPixels() * getDimensions().height());

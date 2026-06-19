@@ -167,7 +167,7 @@ fb16::DumbBuffer565::clearBuffers(
 //-------------------------------------------------------------------------
 
 std::span<uint16_t>
-fb16::DumbBuffer565::getBuffer() noexcept
+fb16::DumbBuffer565::getBuffer() & noexcept
 {
     const auto& dbb = m_dbs[m_dbBack];
     return {dbb.m_fbp, getBufferSize()};
@@ -176,7 +176,7 @@ fb16::DumbBuffer565::getBuffer() noexcept
 //-------------------------------------------------------------------------
 
 std::span<const uint16_t>
-fb16::DumbBuffer565::getBuffer() const noexcept
+fb16::DumbBuffer565::getBuffer() const & noexcept
 {
     const auto& dbb = m_dbs[m_dbBack];
     return {dbb.m_fbp, getBufferSize()};
