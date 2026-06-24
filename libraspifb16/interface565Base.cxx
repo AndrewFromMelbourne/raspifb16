@@ -113,7 +113,7 @@ fb16::Interface565Base::getPixel(
 
 std::span<uint16_t>
 fb16::Interface565Base::getRow(
-    int y)
+    int y) &
 {
     const Point565 p{0, y};
 
@@ -131,7 +131,7 @@ fb16::Interface565Base::getRow(
 
 std::span<const uint16_t>
 fb16::Interface565Base::getRow(
-    int y) const
+    int y) const &
 {
     const Point565 p{0, y};
 

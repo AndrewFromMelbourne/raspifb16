@@ -62,8 +62,8 @@ public:
     [[nodiscard]] virtual std::optional<RGB8> getPixelRGB8(const Point565 p) const override;
     [[nodiscard]] std::optional<uint16_t> getPixel(const Point565 p) const override;
 
-    [[nodiscard]] std::span<uint16_t> getRow(int y);
-    [[nodiscard]] std::span<const uint16_t> getRow(int y) const;
+    [[nodiscard]] std::span<uint16_t> getRow(int y) &;
+    [[nodiscard]] std::span<const uint16_t> getRow(int y) const &;
 
     bool
     setPixelRGB(
@@ -98,6 +98,10 @@ public:
 
     [[nodiscard]] virtual std::span<uint16_t> getBuffer() & noexcept = 0;
     [[nodiscard]] virtual std::span<const uint16_t> getBuffer() const & noexcept = 0;
+
+    [[nodiscard]] std::span<uint16_t> getBuffer() && noexcept = delete;
+    [[nodiscard]] std::span<const uint16_t> getBuffer() const && noexcept = delete;
+
     [[nodiscard]] virtual int getLineLengthPixels() const noexcept = 0;
     [[nodiscard]] virtual size_t offset(const Point565 p) const noexcept = 0;
 

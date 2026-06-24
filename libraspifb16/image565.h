@@ -78,6 +78,10 @@ public:
 
     [[nodiscard]] std::span<uint16_t> getBuffer() & noexcept final { return m_buffer; };
     [[nodiscard]] std::span<const uint16_t> getBuffer() const & noexcept final { return m_buffer; };
+
+    [[nodiscard]] std::span<uint16_t> getBuffer() && noexcept = delete;
+    [[nodiscard]] std::span<const uint16_t> getBuffer() const && noexcept = delete;
+
     [[nodiscard]] int getLineLengthPixels() const noexcept final { return m_dimensions.width(); };
     [[nodiscard]] std::size_t offset(const Point565 p) const noexcept final;
 

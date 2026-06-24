@@ -74,6 +74,10 @@ public:
 
     [[nodiscard]] std::span<uint16_t> getBuffer() & noexcept final { return {m_fbp, getBufferSize()}; };
     [[nodiscard]] std::span<const uint16_t> getBuffer() const & noexcept final { return {m_fbp, getBufferSize()}; }
+
+    [[nodiscard]] std::span<uint16_t> getBuffer() && noexcept = delete;
+    [[nodiscard]] std::span<const uint16_t> getBuffer() const && noexcept = delete;
+
     [[nodiscard]] std::size_t getBufferSize() const noexcept
     {
         return  static_cast<std::size_t>(m_lineLengthPixels) * getDimensions().height();
