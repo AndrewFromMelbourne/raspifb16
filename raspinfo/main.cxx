@@ -108,9 +108,7 @@ main(
 
     //---------------------------------------------------------------------
 
-    const auto result = info.parseCommandLine(argc, argv);
-
-    if (result.has_value())
+    if (const auto result = info.parseCommandLine(argc, argv); result.has_value())
     {
         return result.value();
     }
