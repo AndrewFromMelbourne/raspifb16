@@ -56,10 +56,10 @@ pkg_check_modules(SYSTEMD REQUIRED libsystemd)
 
 #--------------------------------------------------------------------------
 
-find_program(CPPCHECK_EXECUTABLE NAMES cppcheck REQUIRED)
+find_program(CPPCHECK_EXECUTABLE NAMES cppcheck)
 
 if (CPPCHECK_EXECUTABLE)
-    message(STATUS "cppcheck found. Static analysis will be performed at compile time.")
+    message(STATUS "cppcheck found. Static analysis will be performed at compile time using ${CPPCHECK_EXECUTABLE}.")
     set(CMAKE_CXX_CPPCHECK
         "${CPPCHECK_EXECUTABLE}"
         "--check-level=exhaustive"
