@@ -56,6 +56,27 @@ pkg_check_modules(SYSTEMD REQUIRED libsystemd)
 
 #--------------------------------------------------------------------------
 
+find_program(CPPCHECK_EXECUTABLE NAMES cppcheck REQUIRED)
+
+if (CPPCHECK_EXECUTABLE)
+    message(STATUS "cppcheck found. Static analysis will be performed at compile time.")
+    set(CMAKE_CXX_CPPCHECK
+        "${CPPCHECK_EXECUTABLE}"
+        "--check-level=exhaustive"
+        "--enable=all"
+        "--force"
+        "--inconclusive"
+        "--std=c++23"
+        "--quiet"
+        "--suppress=checkersReport"
+        "--suppress=functionStatic"
+        "--suppress=missingIncludeSystem"
+        "--suppress=unmatchedSuppression"
+        "--suppress=unusedFunction")
+endif()
+
+#--------------------------------------------------------------------------
+
 add_library(raspifb16 STATIC libraspifb16/fileDescriptor.cxx
                              libraspifb16/fontConfig.cxx
                              libraspifb16/framebuffer565.cxx

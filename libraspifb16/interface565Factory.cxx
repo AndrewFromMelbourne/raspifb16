@@ -96,8 +96,6 @@ createInterface565(
 #else
         throw std::invalid_argument("There is no KMSDRM library installed");
 #endif
-
-        break;
     };
 
     return nullptr;

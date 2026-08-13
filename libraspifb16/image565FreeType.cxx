@@ -317,7 +317,7 @@ Image565FreeType::drawChar(
 {
     for (unsigned j = 0 ; j < bitmap.rows ; ++j)
     {
-        const auto row{bitmap.buffer + (j * bitmap.pitch)};
+        const auto* row{bitmap.buffer + (j * bitmap.pitch)};
 
         for (unsigned i = 0 ; i < bitmap.width ; ++i)
         {

@@ -30,9 +30,9 @@
 //-------------------------------------------------------------------------
 
 fb16::RGB565::RGB565(
-    RGB8 rgb) noexcept
+    RGB8 rgb8) noexcept
 :
-    m_rgb{rgbTo565(rgb.red, rgb.green, rgb.blue)}
+    m_rgb{rgbTo565(rgb8.red, rgb8.green, rgb8.blue)}
 {
 }
 

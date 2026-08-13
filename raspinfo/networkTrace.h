@@ -66,7 +66,7 @@ public:
 
     NetworkTrace(
         int width,
-        int graphHeight,
+        int traceHeight,
         int fontHeight,
         int yPosition,
         int gridHeight = 20);

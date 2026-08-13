@@ -65,7 +65,7 @@ public:
         m_blue -= rgb8.blue;
     }
 
-    [[nodiscard]] fb16::RGB565 average(int count) noexcept
+    [[nodiscard]] fb16::RGB565 average(int count) const noexcept
     {
         return fb16::RGB565{static_cast<uint8_t>(m_red / count),
                                  static_cast<uint8_t>(m_green / count),

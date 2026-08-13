@@ -95,7 +95,7 @@ public:
     //---------------------------------------------------------------------
 
     Interface565Menu(
-        RGB565 forgroundColour,
+        RGB565 colourForeground,
         RGB565 colourBackground,
         RGB565 colourSelection,
         const FontConfig& fontConfig,

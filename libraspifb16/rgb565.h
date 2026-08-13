@@ -86,7 +86,7 @@ public:
 
     //---------------------------------------------------------------------
 
-    explicit RGB565(RGB8 rbg) noexcept;
+    explicit RGB565(RGB8 rgb8) noexcept;
 
     //---------------------------------------------------------------------
 
@@ -157,7 +157,7 @@ public:
 
     //---------------------------------------------------------------------
 
-    void setRGB8(RGB8 rgb) noexcept;
+    void setRGB8(RGB8 rgb8) noexcept;
     constexpr void set565(uint16_t rgb) noexcept { m_rgb = rgb; }
 
     [[nodiscard]] static RGB565 blend(uint8_t alpha, const RGB565& a, const RGB565& b) noexcept;
