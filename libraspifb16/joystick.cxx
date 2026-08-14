@@ -317,12 +317,12 @@ fb16::Joystick::process(const js_event& event)
 int
 fb16::Joystick::rawButton(int button) const
 {
-    for (auto i = 0U ; i < m_buttonNumbers.size() ; ++i)
+    const auto it = std::find_if(m_buttonNumbers.begin(),
+                                 m_buttonNumbers.end(),
+                                 [button](Buttons b) { return b == button; });
+    if (it != m_buttonNumbers.end())
     {
-        if (m_buttonNumbers[i] == button)
-        {
-            return i;
-        }
+        return std::distance(m_buttonNumbers.begin(), it);
     }
 
     return m_buttonCount;
