@@ -126,9 +126,9 @@ main(
         //-----------------------------------------------------------------
 
         constexpr auto offset{10};
-        const auto width = std::min(fbd.width(), fbd.height()) - (2 * offset);
-        const auto xOffset = (fbd.width() - width) / 2;
-        const auto yOffset = (fbd.height() - width) / 2;
+        const auto width = std::min(fbd.getWidth(), fbd.getHeight()) - (2 * offset);
+        const auto xOffset = (fbd.getWidth() - width) / 2;
+        const auto yOffset = (fbd.getHeight() - width) / 2;
 
         constexpr RGB565 white{255, 255, 255};
         constexpr RGB565 black{0, 0, 0};

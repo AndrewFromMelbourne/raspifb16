@@ -147,7 +147,7 @@ main(
         constexpr int scale{3};
         constexpr fb16::Dimensions565 sd{scale * width, scale * height};
         constexpr int imageOffset{200};
-        constexpr int yStep{sd.height() + 8};
+        constexpr int yStep{sd.getHeight() + 8};
 
         auto imageSu = scaleUp(image, scale);
         auto imageNn = resizeNearestNeighbour(image, sd);

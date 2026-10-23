@@ -217,15 +217,15 @@ Puzzle::draw(Interface565Base& fb)
     const auto id = m_image.getDimensions();
     const auto fbd = fb.getDimensions();
 
-    const auto zoom = std::min(fbd.width() / id.width(), fbd.height() / id.height());
+    const auto zoom = std::min(fbd.getWidth() / id.getWidth(), fbd.getHeight() / id.getHeight());
 
     if ((zoom > 1) and m_fitToScreen)
     {
         const auto zoomed = scaleUp(m_image, zoom);
         const auto zd = zoomed.getDimensions();
 
-        const int xOffset = (fbd.width() - zd.width()) / 2;
-        const int yOffset = (fbd.height() - zd.height()) / 2;
+        const int xOffset = (fbd.getWidth() - zd.getWidth()) / 2;
+        const int yOffset = (fbd.getHeight() - zd.getHeight()) / 2;
 
         const Point565 p{ xOffset, yOffset };
 
@@ -233,8 +233,8 @@ Puzzle::draw(Interface565Base& fb)
     }
     else
     {
-        const int xOffset = (fbd.width() - id.width()) / 2;
-        const int yOffset = (fbd.height() - id.height()) / 2;
+        const int xOffset = (fbd.getWidth() - id.getWidth()) / 2;
+        const int yOffset = (fbd.getHeight() - id.getHeight()) / 2;
 
         const Point565 p{ xOffset, yOffset };
         fb.putImage(p, m_image);

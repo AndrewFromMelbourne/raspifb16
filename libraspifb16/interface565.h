@@ -83,8 +83,8 @@ center(
     const auto fd = frame.getDimensions();
     const auto id = image.getDimensions();
 
-    return {(fd.width() - id.width()) / 2,
-            (fd.height() - id.height()) / 2};
+    return {(fd.getWidth() - id.getWidth()) / 2,
+            (fd.getHeight() - id.getHeight()) / 2};
 }
 
 //-------------------------------------------------------------------------

@@ -149,26 +149,26 @@ main(
         p = ft.drawString(p, "abcdefghijklmnopqrstuvwxyz ", white, image);
         p = ft.drawString(p, "0123456789", white, image);
 
-        p.set(0, p.y() + ftd.height());
+        p.set(0, p.getY() + ftd.getHeight());
 
         p = ft.drawString(p, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", white, image);
 
-        p.set(0, p.y() + ftd.height());
+        p.set(0, p.getY() + ftd.getHeight());
 
         p = ft.drawChar(p, '@', white, image);
 
-        p.set(0, p.y() + ftd.height());
+        p.set(0, p.getY() + ftd.getHeight());
 
         for (int j = 0 ; j < 16 ; ++j)
         {
             for (auto i = 0 ; i < 16 ; ++i)
             {
                 auto c = static_cast<uint8_t>(i + (j * 16));
-                p.setX(i * ftd.width());
+                p.setX(i * ftd.getWidth());
                 ft.drawChar(p, c, white, image);
             }
 
-            p.setY(p.y() + ftd.height());
+            p.setY(p.getY() + ftd.getHeight());
         }
 
         //-----------------------------------------------------------------

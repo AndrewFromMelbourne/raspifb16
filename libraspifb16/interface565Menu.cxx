@@ -88,12 +88,12 @@ Interface565Menu::Interface565Menu(
     for (const auto& item : m_items)
     {
         const auto titleDimensions = m_font->getStringDimensions(item.m_title);
-        m_titleMaximumPixels = std::max(titleDimensions.width(), m_titleMaximumPixels);
+        m_titleMaximumPixels = std::max(titleDimensions.getWidth(), m_titleMaximumPixels);
 
         for (const auto& value : item.m_values)
         {
             const auto valueDimensions = m_font->getStringDimensions(value);
-            m_valueMaximumPixels = std::max(valueDimensions.width(), m_valueMaximumPixels);
+            m_valueMaximumPixels = std::max(valueDimensions.getWidth(), m_valueMaximumPixels);
         }
     }
 }
@@ -116,7 +116,7 @@ Interface565Menu::draw(
         fb16::Point565(0, 0),
         fb16::Point565(
             width + padding2Pixels,
-            (m_items.size() * d.height()) + padding2Pixels),
+            (m_items.size() * d.getHeight()) + padding2Pixels),
             m_colourBackground);
 
     box(
@@ -124,17 +124,17 @@ Interface565Menu::draw(
         fb16::Point565(0, 0),
         fb16::Point565(
             width + padding2Pixels,
-            (m_items.size() * d.height()) + padding2Pixels),
+            (m_items.size() * d.getHeight()) + padding2Pixels),
             m_colourSelection);
 
     boxFilled(
         fb,
         fb16::Point565(
             paddingPixels,
-            (m_selected * d.height()) + paddingPixels),
+            (m_selected * d.getHeight()) + paddingPixels),
         fb16::Point565(
             width + paddingPixels,
-            ((m_selected + 1) * d.height()) + paddingPixels),
+            ((m_selected + 1) * d.getHeight()) + paddingPixels),
             m_colourSelection);
 
     int yOffset = paddingPixels;
@@ -158,7 +158,7 @@ Interface565Menu::draw(
             m_colourForeground,
             fb);
 
-        yOffset += d.height();
+        yOffset += d.getHeight();
     }
 }
 

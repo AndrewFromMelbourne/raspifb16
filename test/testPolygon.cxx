@@ -131,7 +131,7 @@ main(
 
         //-----------------------------------------------------------------
 
-        const int diameter = std::min(fbd.width(), fbd.height()) / 4;
+        const int diameter = std::min(fbd.getWidth(), fbd.getHeight()) / 4;
         const int radius = (diameter / 2) - 5;
 
         //-----------------------------------------------------------------
@@ -151,14 +151,14 @@ main(
 
         //-----------------------------------------------------------------
 
-        const int jIncrement = fbd.height() / 4;
-        const int iIncrement = fbd.width() / 4;
+        const int jIncrement = fbd.getHeight() / 4;
+        const int iIncrement = fbd.getWidth() / 4;
 
-        for (int j = 0; j <= fbd.height(); j += jIncrement)
+        for (int j = 0; j <= fbd.getHeight(); j += jIncrement)
         {
             const int index = j / jIncrement;
             const int startI = (index % 2 == 0) ? 0 : (iIncrement / 2);
-            for (int i = startI; i <= fbd.width(); i += iIncrement)
+            for (int i = startI; i <= fbd.getWidth(); i += iIncrement)
             {
                 const std::array<Point565, 10> starVertices{
                     starVertex(0, radius, i, j),

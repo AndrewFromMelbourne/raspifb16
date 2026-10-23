@@ -187,7 +187,7 @@ fb16::DumbBuffer565::getBuffer() const & noexcept
 std::size_t
 fb16::DumbBuffer565::getBufferSize() const noexcept
 {
-    return static_cast<std::size_t>(getLineLengthPixels()) * m_dimensions.height();
+    return static_cast<std::size_t>(getLineLengthPixels()) * m_dimensions.getHeight();
 }
 
 //-------------------------------------------------------------------------
@@ -206,7 +206,7 @@ fb16::DumbBuffer565::offset(
     const Point565 p) const noexcept
 {
     const auto& dbb = m_dbs[m_dbBack];
-    return p.x() + p.y() * dbb.m_lineLengthPixels;
+    return p.getX() + p.getY() * dbb.m_lineLengthPixels;
 }
 
 //-------------------------------------------------------------------------

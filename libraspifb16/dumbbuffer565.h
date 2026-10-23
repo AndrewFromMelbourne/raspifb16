@@ -75,11 +75,11 @@ public:
 
     struct AtomicProperty
     {
-        uint32_t m_objectId;
-        uint32_t m_objectType;
-        uint32_t m_propertyId;
-        std::string m_propertyName;
-        uint64_t m_value;
+        uint32_t m_objectId{};
+        uint32_t m_objectType{};
+        uint32_t m_propertyId{};
+        std::string m_propertyName{};
+        uint64_t m_value{};
     };
 
     //---------------------------------------------------------------------

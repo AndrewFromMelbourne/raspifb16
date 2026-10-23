@@ -74,7 +74,7 @@ public:
 
     void addData(int value);
     [[nodiscard]] int max() const;
-    [[nodiscard]] int value(int i) const { return m_values[i]; }
+    [[nodiscard]] int getValue(int i) const { return m_values[i]; }
 
 private:
 

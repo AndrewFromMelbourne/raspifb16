@@ -95,34 +95,34 @@ RaspInfo::init()
 
     //---------------------------------------------------------------------
 
-    const int traceHeight = (fbd.height() == 240) ? 80 : 100;
+    const int traceHeight = (fbd.getHeight() == 240) ? 80 : 100;
     const int gridHeight = traceHeight / 5;
 
     m_panels.push_back(
-        std::make_unique<DynamicInfo>(fbd.width(),
-                                      ftd.height(),
+        std::make_unique<DynamicInfo>(fbd.getWidth(),
+                                      ftd.getHeight(),
                                       panelTop()));
 
     m_panels.push_back(
-        std::make_unique<CpuTrace>(fbd.width(),
+        std::make_unique<CpuTrace>(fbd.getWidth(),
                                    traceHeight,
-                                   ftd.height(),
+                                   ftd.getHeight(),
                                    panelTop(),
                                    gridHeight));
 
     m_panels.push_back(
-        std::make_unique<MemoryTrace>(fbd.width(),
+        std::make_unique<MemoryTrace>(fbd.getWidth(),
                                        traceHeight,
-                                       ftd.height(),
+                                       ftd.getHeight(),
                                        panelTop(),
                                        gridHeight));
 
-    if (fbd.height() >= 400)
+    if (fbd.getHeight() >= 400)
     {
         m_panels.push_back(
-            std::make_unique<NetworkTrace>(fbd.width(),
+            std::make_unique<NetworkTrace>(fbd.getWidth(),
                                            traceHeight,
-                                           ftd.height(),
+                                           ftd.getHeight(),
                                            panelTop(),
                                            gridHeight));
     }

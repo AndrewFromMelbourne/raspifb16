@@ -174,6 +174,6 @@ std::size_t
 fb16::FrameBuffer565::offset(
     const Point565 p) const noexcept
 {
-    return p.x() + p.y() * m_lineLengthPixels;
+    return p.getX() + p.getY() * m_lineLengthPixels;
 }
 

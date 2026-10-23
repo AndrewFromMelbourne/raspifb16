@@ -220,9 +220,9 @@ main(
             }
         };
 
-        for (auto y : { -ihwidth, (fbd.height() / 2) - ihwidth, fbd.height() - ihwidth })
+        for (auto y : { -ihwidth, (fbd.getHeight() / 2) - ihwidth, fbd.getHeight() - ihwidth })
         {
-            for (auto x : { -ihwidth, (fbd.width() / 2) - ihwidth, fbd.width() - ihwidth })
+            for (auto x : { -ihwidth, (fbd.getWidth() / 2) - ihwidth, fbd.getWidth() - ihwidth })
             {
                 fb->putImage(Point565{x, y}, image);
             }

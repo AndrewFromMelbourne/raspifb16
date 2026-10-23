@@ -183,8 +183,8 @@ main(
 
         const Point565 textLocation
         {
-            (fbd.width() - tid.width()) / 2,
-            (fbd.height() - tid.height()) / 3
+            (fbd.getWidth() - tid.getWidth()) / 2,
+            (fbd.getHeight() - tid.getHeight()) / 3
         };
 
         fb->putImage(textLocation, textImage);

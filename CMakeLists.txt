@@ -68,6 +68,7 @@ if (CPPCHECK_EXECUTABLE)
         "--inconclusive"
         "--std=c++23"
         "--quiet"
+        "--suppress=*:/usr/*"
         "--suppress=checkersReport"
         "--suppress=functionStatic"
         "--suppress=missingIncludeSystem"

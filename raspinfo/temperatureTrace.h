@@ -50,7 +50,7 @@ public:
         int yPosition,
         int gridHeight = 20);
 
-    void update(time_t now, fb16::Interface565Font& font) final;
+    void update(time_t now, fb16::Interface565Font&) final;
 };
 
 //-------------------------------------------------------------------------

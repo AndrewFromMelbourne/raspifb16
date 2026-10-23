@@ -40,7 +40,7 @@ fb16::Image565Frames::Image565Frames(
     m_dimensions{d},
     m_frame{0},
     m_numberOfFrames{numberOfFrames},
-    m_buffer(d.width() * d.height() * numberOfFrames)
+    m_buffer(d.getWidth() * d.getHeight() * numberOfFrames)
 {
 }
 
@@ -56,7 +56,7 @@ fb16::Image565Frames::Image565Frames(
     m_numberOfFrames{numberOfFrames},
     m_buffer{buffer}
 {
-    const std::size_t minBufferSize = d.width() * d.height() * numberOfFrames;
+    const std::size_t minBufferSize = d.getWidth() * d.getHeight() * numberOfFrames;
 
     if (m_buffer.size() < minBufferSize)
     {
@@ -77,7 +77,7 @@ fb16::Image565Frames::Image565Frames(
 {
     m_buffer.assign(cbegin(buffer), cend(buffer));
 
-    const std::size_t minBufferSize = d.width() * d.height() * numberOfFrames;
+    const std::size_t minBufferSize = d.getWidth() * d.getHeight() * numberOfFrames;
 
     if (m_buffer.size() < minBufferSize)
     {
@@ -103,7 +103,7 @@ std::size_t
 fb16::Image565Frames::offset(
     const Point565 p) const noexcept
 {
-    return p.x() + (p.y() * m_dimensions.width()) +
-                    (m_frame * m_dimensions.width() * m_dimensions.height());
+    return p.getX() + (p.getY() * m_dimensions.getWidth()) +
+                    (m_frame * m_dimensions.getWidth() * m_dimensions.getHeight());
 }
 

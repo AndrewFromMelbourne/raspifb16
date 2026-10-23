@@ -47,68 +47,68 @@ trim(
     fb16::Point565& p1,
     fb16::Point565& p2)
 {
-    if ((p1.x() == p2.x()) or (p1.y() == p2.y()))
+    if ((p1.getX() == p2.getX()) or (p1.getY() == p2.getY()))
     {
         return;
     }
 
     const auto id = iface.getDimensions();
 
-    const auto minX = std::min(p1.x(), p2.x());
-    const auto maxX = std::max(p1.x(), p2.x());
+    const auto minX = std::min(p1.getX(), p2.getX());
+    const auto maxX = std::max(p1.getX(), p2.getX());
 
-    const auto minY = std::min(p1.y(), p2.y());
-    const auto maxY = std::max(p1.y(), p2.y());
+    const auto minY = std::min(p1.getY(), p2.getY());
+    const auto maxY = std::max(p1.getY(), p2.getY());
 
     if ((minX > 0) and
-        (maxX < id.width()) and
+        (maxX < id.getWidth()) and
         (minY > 0) and
-        (maxY < id.height()))
+        (maxY < id.getHeight()))
     {
         return;
     }
 
-    if (p1.y() > p2.y())
+    if (p1.getY() > p2.getY())
     {
         std::swap(p1, p2);
     }
 
-    auto rise = p2.y() - p1.y();
-    auto run = p2.x() - p1.x();
-    auto c = p1.y() - (rise * p1.x()) / run;
+    auto rise = p2.getY() - p1.getY();
+    auto run = p2.getX() - p1.getX();
+    auto c = p1.getY() - (rise * p1.getX()) / run;
 
-    if (p1.y() < 0)
+    if (p1.getY() < 0)
     {
         p1.setY(0);
-        p1.setX((p1.y() - c) * run / rise);
+        p1.setX((p1.getY() - c) * run / rise);
     }
 
-    if (p2.y() >= id.height())
+    if (p2.getY() >= id.getHeight())
     {
-        p2.setY(id.height() - 1);
-        p2.setX((p2.y() - c) * run / rise);
+        p2.setY(id.getHeight() - 1);
+        p2.setX((p2.getY() - c) * run / rise);
     }
 
-    if (p1.x() > p2.x())
+    if (p1.getX() > p2.getX())
     {
         std::swap(p1, p2);
 
     }
 
-    rise = p2.y() - p1.y();
-    run = p2.x() - p1.x();
-    c = p1.y() - (rise * p1.x()) / run;
+    rise = p2.getY() - p1.getY();
+    run = p2.getX() - p1.getX();
+    c = p1.getY() - (rise * p1.getX()) / run;
 
-    if (p1.x() < 0)
+    if (p1.getX() < 0)
     {
         p1.setX(0);
-        p1.setY((rise * p1.x()) / run + c);
+        p1.setY((rise * p1.getX()) / run + c);
     }
 
-    if (p2.x() >= id.width())
+    if (p2.getX() >= id.getWidth())
     {
-        p2.setX(id.width() - 1);
-        p2.setY((rise * p2.x()) / run + c);
+        p2.setX(id.getWidth() - 1);
+        p2.setY((rise * p2.getX()) / run + c);
     }
 }
 
@@ -131,10 +131,10 @@ box(
     uint16_t rgb)
 {
     trim(iface, p1, p2);
-    verticalLine(iface, p1.x(), p1.y(), p2.y(), rgb);
-    horizontalLine(iface, p1.x(), p2.x(), p1.y(), rgb);
-    verticalLine(iface, p2.x(), p1.y(), p2.y(), rgb);
-    horizontalLine(iface, p1.x(), p2.x(), p2.y(), rgb);
+    verticalLine(iface, p1.getX(), p1.getY(), p2.getY(), rgb);
+    horizontalLine(iface, p1.getX(), p2.getX(), p1.getY(), rgb);
+    verticalLine(iface, p2.getX(), p1.getY(), p2.getY(), rgb);
+    horizontalLine(iface, p1.getX(), p2.getX(), p2.getY(), rgb);
 }
 
 //-------------------------------------------------------------------------
@@ -148,14 +148,14 @@ boxFilled(
 {
     trim(iface, p1, p2);
 
-    if (p1.y() > p2.y())
+    if (p1.getY() > p2.getY())
     {
         std::swap(p1, p2);
     }
 
-    for (auto y = p1.y(); y <= p2.y(); ++y)
+    for (auto y = p1.getY(); y <= p2.getY(); ++y)
     {
-         horizontalLine(iface, p1.x(), p2.x(), y, rgb);
+         horizontalLine(iface, p1.getX(), p2.getX(), y, rgb);
     }
 }
 
@@ -171,12 +171,12 @@ boxFilled(
 {
     trim(iface, p1, p2);
 
-    Point565 pa{std::min(p1.x(), p2.x()), std::min(p1.y(), p2.y())};
-    Point565 pb{std::max(p1.x(), p2.x()), std::max(p1.y(), p2.y())};
+    Point565 pa{std::min(p1.getX(), p2.getX()), std::min(p1.getY(), p2.getY())};
+    Point565 pb{std::max(p1.getX(), p2.getX()), std::max(p1.getY(), p2.getY())};
 
-    for (auto j = pa.y() ; j <= pb.y() ; ++j)
+    for (auto j = pa.getY() ; j <= pb.getY() ; ++j)
     {
-        for (auto i = pa.x() ; i <= pb.x() ; ++i)
+        for (auto i = pa.getX() ; i <= pb.getX() ; ++i)
         {
             const Point p{i, j};
             auto background = iface.getPixelRGB(p);
@@ -201,46 +201,46 @@ line(
     trim(iface, p1, p2);
 
     const auto id = iface.getDimensions();
-    const auto minX = std::min(p1.x(), p2.x());
-    const auto maxX = std::max(p1.x(), p2.x());
+    const auto minX = std::min(p1.getX(), p2.getX());
+    const auto maxX = std::max(p1.getX(), p2.getX());
 
-    if ((maxX < 0) or (minX >= id.width()))
+    if ((maxX < 0) or (minX >= id.getWidth()))
     {
         return;
     }
 
-    const auto minY = std::min(p1.y(), p2.y());
-    const auto maxY = std::max(p1.y(), p2.y());
+    const auto minY = std::min(p1.getY(), p2.getY());
+    const auto maxY = std::max(p1.getY(), p2.getY());
 
-    if ((maxY < 0) or (minY >= id.height()))
+    if ((maxY < 0) or (minY >= id.getHeight()))
     {
         return;
     }
 
-    if (p1.y() == p2.y())
+    if (p1.getY() == p2.getY())
     {
-        horizontalLine(iface, p1.x(), p2.x(), p1.y(), rgb);
+        horizontalLine(iface, p1.getX(), p2.getX(), p1.getY(), rgb);
         return;
     }
 
-    if (p1.x() == p2.x())
+    if (p1.getX() == p2.getX())
     {
-        verticalLine(iface, p1.x(), p1.y(), p2.y(), rgb);
+        verticalLine(iface, p1.getX(), p1.getY(), p2.getY(), rgb);
         return;
     }
 
-    const auto dx = std::abs(p2.x() - p1.x());
-    const auto dy = std::abs(p2.y() - p1.y());
+    const auto dx = std::abs(p2.getX() - p1.getX());
+    const auto dy = std::abs(p2.getY() - p1.getY());
 
     if (dx > dy)
     {
-        if (p1.x() > p2.x())
+        if (p1.getX() > p2.getX())
         {
             std::swap(p1, p2);
         }
 
-        const auto sign_y = (p1.y() <= p2.y()) ? 1 : -1;
-        auto y = p1.y();
+        const auto sign_y = (p1.getY() <= p2.getY()) ? 1 : -1;
+        auto y = p1.getY();
         auto d = 2 * dy - dx;
         const auto incrE = 2 * dy;
         const auto incrNE = 2 * (dy - dx);
@@ -250,7 +250,7 @@ line(
             iface.setPixel(p1, rgb);
         }
 
-        for (auto x = p1.x(); x != p2.x(); ++x)
+        for (auto x = p1.getX(); x != p2.getX(); ++x)
         {
             if (d <= 0)
             {
@@ -267,13 +267,13 @@ line(
     }
     else
     {
-        if (p1.y() > p2.y())
+        if (p1.getY() > p2.getY())
         {
             std::swap(p1, p2);
         }
 
-        const auto sign_x = (p1.x() <= p2.x()) ? 1 : -1;
-        auto x = p1.x();
+        const auto sign_x = (p1.getX() <= p2.getX()) ? 1 : -1;
+        auto x = p1.getX();
         auto d = 2 * dx - dy;
         const auto incrN = 2 * dx;
         const auto incrNE = 2 * (dx - dy);
@@ -283,7 +283,7 @@ line(
             iface.setPixel(p1, rgb);
         }
 
-        for (auto y = p1.y(); y != p2.y(); ++y)
+        for (auto y = p1.getY(); y != p2.getY(); ++y)
         {
             if (d <= 0)
             {
@@ -312,7 +312,7 @@ horizontalLine(
 {
     const auto id = iface.getDimensions();
 
-    if ((y < 0) or (y >= id.height()))
+    if ((y < 0) or (y >= id.getHeight()))
     {
         return;
     }
@@ -323,9 +323,9 @@ horizontalLine(
     }
 
     x1 = std::max(x1, 0);
-    x2 = std::min(x2, id.width() - 1);
+    x2 = std::min(x2, id.getWidth() - 1);
 
-    if ((x1 >= id.width()) or (x2 < 0))
+    if ((x1 >= id.getWidth()) or (x2 < 0))
     {
         return;
     }
@@ -346,7 +346,7 @@ verticalLine(
 {
     const auto id = iface.getDimensions();
 
-    if (x < 0 or x >= id.width())
+    if (x < 0 or x >= id.getWidth())
     {
         return;
     }
@@ -357,9 +357,9 @@ verticalLine(
     }
 
     y1 = std::max(y1, 0);
-    y2 = std::min(y2, id.height() - 1);
+    y2 = std::min(y2, id.getHeight() - 1);
 
-    if ((y1 >= id.height()) or (y2 < 0))
+    if ((y1 >= id.getHeight()) or (y2 < 0))
     {
         return;
     }
@@ -426,7 +426,7 @@ circle(
 
     for (int i = 0 ;  i <= j ; ++i)
     {
-        circlePoints(iface, p.x(), p.y(), i, j, rgb);
+        circlePoints(iface, p.getX(), p.getY(), i, j, rgb);
 
         deltaE += 2;
         if (d < 0)
@@ -463,7 +463,7 @@ circleFilled(
         }
         else
         {
-            circleLines(iface, p.x(), p.y(), i - 1, j, rgb);
+            circleLines(iface, p.getX(), p.getY(), i - 1, j, rgb);
 
             d += (2 * (i - j)) + 5;
             --j;
@@ -474,7 +474,7 @@ circleFilled(
 
     while (j > 0)
     {
-        circleLines(iface, p.x(), p.y(), i, j, rgb);
+        circleLines(iface, p.getX(), p.getY(), i, j, rgb);
 
         if (d < 0)
         {
@@ -488,7 +488,7 @@ circleFilled(
         --j;
     }
 
-    circleLines(iface, p.x(), p.y(), r - 1, 0, rgb);
+    circleLines(iface, p.getX(), p.getY(), r - 1, 0, rgb);
 }
 
 //=========================================================================
@@ -542,29 +542,29 @@ polygonFilled(
                             const Point565& p2,
                             int y) -> std::optional<int>
     {
-        const auto minY = std::min(p1.y(), p2.y());
-        const auto maxY = std::max(p1.y(), p2.y());
+        const auto minY = std::min(p1.getY(), p2.getY());
+        const auto maxY = std::max(p1.getY(), p2.getY());
 
         if (y < minY or y >= maxY)
         {
             return std::nullopt;
         }
 
-        const auto xChange = p2.x() - p1.x();
-        const auto yChange = p2.y() - p1.y();
+        const auto xChange = p2.getX() - p1.getX();
+        const auto yChange = p2.getY() - p1.getY();
 
-        return p1.x() + (y - p1.y()) * xChange / yChange;
+        return p1.getX() + (y - p1.getY()) * xChange / yChange;
     };
 
     auto compareY = [](const auto& a, const auto& b) -> bool
     {
-        return a.y() < b.y();
+        return a.getY() < b.getY();
     };
 
     auto minMaxY = std::minmax_element(begin(vertices), end(vertices), compareY);
 
-    const auto minY = minMaxY.first->y();
-    const auto maxY = minMaxY.second->y();
+    const auto minY = minMaxY.first->getY();
+    const auto maxY = minMaxY.second->getY();
 
     for (int y = minY; y <= maxY; ++y)
     {
@@ -591,7 +591,7 @@ polygonFilled(
             const auto x1 = intersects[i];
             const auto x2 = intersects[i + 1];
 
-            if (x2 >= 0 and x1 < id.width())
+            if (x2 >= 0 and x1 < id.getWidth())
             {
                 horizontalLine(iface, x1, x2, y, rgb);
             }

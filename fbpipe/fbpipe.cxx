@@ -126,8 +126,8 @@ main(
         const auto fbd = fb->getDimensions();
         const auto ftd = font.getPixelDimensions();
 
-        const int columns = fbd.width() / ftd.width();
-        const int rows = fbd.height() / ftd.height();
+        const int columns = fbd.getWidth() / ftd.getWidth();
+        const int rows = fbd.getHeight() / ftd.getHeight();
 
         Image565 image{fbd};
         image.clear(black);
@@ -156,7 +156,7 @@ main(
                     white,
                     image);
 
-                y += ftd.height();
+                y += ftd.getHeight();
             }
 
             fb->putImage(Point565{0, 0}, image);

@@ -47,7 +47,7 @@ public:
                 int fontHeight,
                 int yPosition);
 
-    void init(fb16::Interface565Font& font) final;
+    void init(fb16::Interface565Font&) final;
     void update(time_t now, fb16::Interface565Font& font) final;
 
 private:

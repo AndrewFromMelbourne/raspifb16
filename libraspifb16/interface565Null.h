@@ -104,10 +104,10 @@ public:
     {
         const auto d = getDimensions();
 
-        return ((p.x() >= 0) and
-                (p.x() < d.width()) and
-                (p.y() >= 0) and
-                (p.y() < d.height()));
+        return ((p.getX() >= 0) and
+                (p.getX() < d.getWidth()) and
+                (p.getY() >= 0) and
+                (p.getY() < d.getHeight()));
     }
 
 private:

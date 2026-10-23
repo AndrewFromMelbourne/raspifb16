@@ -119,7 +119,7 @@ main(
 
         //-----------------------------------------------------------------
 
-        std::println("Dimensions: {}x{}", fbd.width(), fbd.height());
+        std::println("Dimensions: {}x{}", fbd.getWidth(), fbd.getHeight());
         std::println("hasAtomic: {}", fb.hasAtomic());
         std::println("hasUniversalPlanes: {}", fb.hasUniversalPlanes());
         auto drmVersion = fb.getDrmVersion();

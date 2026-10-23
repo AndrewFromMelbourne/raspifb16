@@ -48,8 +48,8 @@ public:
     {
     }
 
-    [[nodiscard]] constexpr T x() const  noexcept{ return m_x; }
-    [[nodiscard]] constexpr T y() const  noexcept{ return m_y; }
+    [[nodiscard]] constexpr T getX() const  noexcept{ return m_x; }
+    [[nodiscard]] constexpr T getY() const  noexcept{ return m_y; }
 
     constexpr void
     set(

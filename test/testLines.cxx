@@ -124,8 +124,8 @@ main(
 
         constexpr RGB565 white{255, 255, 255};
 
-        const auto halfWidth = fbd.width() / 2;
-        const auto halfHeight = fbd.height() / 2;
+        const auto halfWidth = fbd.getWidth() / 2;
+        const auto halfHeight = fbd.getHeight() / 2;
 
         const auto outerRadius = static_cast<int>(std::hypot(halfWidth,
                                                              halfHeight));
@@ -143,13 +143,13 @@ main(
             const auto cosValue = std::cos((i * 2.0 * M_PI) / lines);
 
             fb16::Point565 inner{
-                center.x() + static_cast<int>(innerRadius * sinValue),
-                center.y() - static_cast<int>(innerRadius * cosValue)
+                center.getX() + static_cast<int>(innerRadius * sinValue),
+                center.getY() - static_cast<int>(innerRadius * cosValue)
             };
 
             fb16::Point565 outer{
-                center.x() + static_cast<int>(outerRadius * sinValue),
-                center.y() - static_cast<int>(outerRadius * cosValue)
+                center.getX() + static_cast<int>(outerRadius * sinValue),
+                center.getY() - static_cast<int>(outerRadius * cosValue)
             };
 
             fb16::line(*fb, inner, outer, white);

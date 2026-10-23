@@ -80,7 +80,7 @@ public:
 
     [[nodiscard]] std::size_t getBufferSize() const noexcept
     {
-        return  static_cast<std::size_t>(m_lineLengthPixels) * getDimensions().height();
+        return  static_cast<std::size_t>(m_lineLengthPixels) * getDimensions().getHeight();
     }
     [[nodiscard]] int getLineLengthPixels() const noexcept final { return m_lineLengthPixels; }
     [[nodiscard]] std::size_t offset(const Point565 p) const noexcept final;

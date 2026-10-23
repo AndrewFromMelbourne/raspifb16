@@ -126,7 +126,7 @@ main(
 
         //-----------------------------------------------------------------
 
-        const auto side = std::min(fbd.width(), fbd.height());
+        const auto side = std::min(fbd.getWidth(), fbd.getHeight());
         const auto boxSide = (side - 15) / 16;
         const auto dimension = (boxSide * 16) + 15;
 

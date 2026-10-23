@@ -69,7 +69,7 @@ TraceGraph::draw()
     boxFilled(
         getImage(),
         fb16::Point565(0, 0),
-        fb16::Point565(getImage().getDimensions().width() - 1, m_traceHeight),
+        fb16::Point565(getImage().getDimensions().getWidth() - 1, m_traceHeight),
         sc_background);
 
     //---------------------------------------------------------------------
@@ -79,7 +79,7 @@ TraceGraph::draw()
         horizontalLine(
             getImage(),
             0,
-            getImage().getDimensions().width() - 1,
+            getImage().getDimensions().getWidth() - 1,
             j,
             sc_gridColour);
     }
@@ -105,8 +105,8 @@ TraceGraph::draw()
         {
             const auto i1 = i2 - 1;
 
-            const int y1 = (trace.value(i1) * m_traceHeight)/m_traceScale;
-            const int y2 = (trace.value(i2) * m_traceHeight)/m_traceScale;
+            const int y1 = (trace.getValue(i1) * m_traceHeight)/m_traceScale;
+            const int y2 = (trace.getValue(i2) * m_traceHeight)/m_traceScale;
 
             line(
                 getImage(),

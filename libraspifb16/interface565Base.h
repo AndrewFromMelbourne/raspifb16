@@ -83,17 +83,17 @@ public:
 
     bool setPixel(const Point565 p, uint16_t rgb) override;
 
-    bool putImage(const Point565, const Interface565Base&);
+    bool putImage(const Point565 p, const Interface565Base& image);
 
     [[nodiscard]] bool
     validPixel(const Point565 p) const override
     {
         const auto d = getDimensions();
 
-        return (p.x() >= 0) and
-               (p.y() >= 0) and
-               (p.x() < d.width()) and
-               (p.y() < d.height());
+        return (p.getX() >= 0) and
+               (p.getY() >= 0) and
+               (p.getX() < d.getWidth()) and
+               (p.getY() < d.getHeight());
     }
 
     [[nodiscard]] virtual std::span<uint16_t> getBuffer() & noexcept = 0;

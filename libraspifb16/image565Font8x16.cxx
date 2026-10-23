@@ -4700,8 +4700,8 @@ Image565Font8x16::getStringDimensions(
     {
         if (c == '\n')
         {
-            d.setWidth(std::max(d.width(), pixelWidth));
-            d.setHeight(d.height() + sc_fontHeight);
+            d.setWidth(std::max(d.getWidth(), pixelWidth));
+            d.setHeight(d.getHeight() + sc_fontHeight);
             pixelWidth = 0;
         }
         else
@@ -4710,7 +4710,7 @@ Image565Font8x16::getStringDimensions(
         }
     }
 
-    d.setWidth(std::max(d.width(), pixelWidth));
+    d.setWidth(std::max(d.getWidth(), pixelWidth));
 
     return d;
 }
@@ -4737,9 +4737,9 @@ Image565Font8x16::drawChar(
     Interface565& image)
 {
     const auto d = getPixelDimensions();
-    const auto width = d.width();
+    const auto width = d.getWidth();
 
-    for (auto j = 0 ; j < d.height() ; ++j)
+    for (auto j = 0 ; j < d.getHeight() ; ++j)
     {
         const auto byte = font[c][j];
 
@@ -4750,14 +4750,14 @@ Image565Font8x16::drawChar(
                 if ((byte >> (width - i - 1)) & 1)
                 {
                     image.setPixel(
-                        Point565(p.x() + i, p.y() + j),
+                        Point565(p.getX() + i, p.getY() + j),
                         rgb);
                 }
             }
         }
     }
 
-    return Point565(p.x() + width, p.y());
+    return Point565(p.getX() + width, p.getY());
 }
 
 //-------------------------------------------------------------------------
@@ -4790,16 +4790,16 @@ Image565Font8x16::drawString(
         if (c == '\n')
         {
             position.set(
-                start.x(),
-                position.y() + d.height());
+                start.getX(),
+                position.getY() + d.getHeight());
         }
         else
         {
             drawChar(position, c, rgb, image);
 
             position.set(
-                position.x() + d.width(),
-                position.y());
+                position.getX() + d.getWidth(),
+                position.getY());
         }
     }
 

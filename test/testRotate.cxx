@@ -214,8 +214,8 @@ main(
             const auto rd = rotated.getDimensions();
             const Point565 p
             {
-                (fbd.width() - rd.width()) / 2,
-                (fbd.height() - rd.height()) / 2
+                (fbd.getWidth() - rd.getWidth()) / 2,
+                (fbd.getHeight() - rd.getHeight()) / 2
             };
 
             const auto start = std::chrono::steady_clock::now();

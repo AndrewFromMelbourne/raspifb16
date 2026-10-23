@@ -70,7 +70,7 @@ TraceStack::draw()
 
         for (const auto& trace : m_traceData)
         {
-            int value = (trace.value(i) * m_traceHeight)
+            int value = (trace.getValue(i) * m_traceHeight)
                           / m_traceScale;
 
             for (int v = 0 ; v < value ; ++v)

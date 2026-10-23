@@ -58,8 +58,8 @@ namespace
 
 struct IpAddress
 {
-    std::string address;
-    char interface;
+    std::string address{};
+    char interface{};
 };
 
 //-------------------------------------------------------------------------
@@ -306,7 +306,7 @@ DynamicInfo::update(
 
     //---------------------------------------------------------------------
 
-    position.set(0, position.y() + font.getPixelDimensions().height() + 4);
+    position.set(0, position.getY() + font.getPixelDimensions().getHeight() + 4);
 
     position = font.drawString(position,
                                "time ",

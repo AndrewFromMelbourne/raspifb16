@@ -144,7 +144,7 @@ main(
         auto fb{fb16::createInterface565(interfaceType, device)};
         FontConfig fontConfig{fb16::parseFontConfig(
             fontConfigString,
-            fb->getDimensions().height() / 2)
+            fb->getDimensions().getHeight() / 2)
         };
 
         //-----------------------------------------------------------------
@@ -157,7 +157,7 @@ main(
 
         ft.drawWideChar(Point565{0, 0}, c, white, image);
 
-        std::println("{} x {}", dimension.width(), dimension.height());
+        std::println("{} x {}", dimension.getWidth(), dimension.getHeight());
 
         //-----------------------------------------------------------------
 

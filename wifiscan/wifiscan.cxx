@@ -419,7 +419,7 @@ main(
                                                white,
                                                image);
 
-                    position.set(0, position.y() + font.getPixelDimensions().height());
+                    position.set(0, position.getY() + font.getPixelDimensions().getHeight());
                 }
 
                 fb->putImage(Point565{0, 0}, image);

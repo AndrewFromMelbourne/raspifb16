@@ -113,10 +113,10 @@ fb16::Image565::copy(
     m_dimensions = i.getDimensions();
     m_buffer.reserve(m_dimensions.area());
 
-    for (auto y = 0 ; y < m_dimensions.height() ; ++y)
+    for (auto y = 0 ; y < m_dimensions.getHeight() ; ++y)
     {
         auto destination = getRow(y);
-        auto source = i.getRow(y).subspan(0, m_dimensions.width());
+        auto source = i.getRow(y).subspan(0, m_dimensions.getWidth());
         std::ranges::copy(source, begin(destination));
     }
 }
@@ -127,6 +127,6 @@ std::size_t
 fb16::Image565::offset(
     const Point565 p) const noexcept
 {
-    return p.x() + (p.y() * m_dimensions.width());
+    return p.getX() + (p.getY() * m_dimensions.getWidth());
 }
 

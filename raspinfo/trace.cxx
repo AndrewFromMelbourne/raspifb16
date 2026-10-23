@@ -115,13 +115,13 @@ Trace::init(
 
         const auto ftd = font.getPixelDimensions();
 
-        const fb16::Point565 p1{position.x() + ftd.width() / 4,
-                                position.y() + ftd.height() / 4};
-        const fb16::Point565 p2{position.x() + (3 * ftd.width()) / 4,
-                                position.y() + (3 * ftd.height()) / 4};
+        const fb16::Point565 p1{position.getX() + ftd.getWidth() / 4,
+                                position.getY() + ftd.getHeight() / 4};
+        const fb16::Point565 p2{position.getX() + (3 * ftd.getWidth()) / 4,
+                                position.getY() + (3 * ftd.getHeight()) / 4};
 
         boxFilled(getImage(), p1, p2, trace.traceColour());
-        position.setX(position.x() + ftd.width());
+        position.setX(position.getX() + ftd.getWidth());
     }
 
     position = font.drawString(position,
@@ -133,7 +133,7 @@ Trace::init(
     {
         horizontalLine(getImage(),
                        0,
-                       getImage().getDimensions().width() - 1,
+                       getImage().getDimensions().getWidth() - 1,
                        j,
                        sc_gridColour);
     }
@@ -223,7 +223,7 @@ void
 Trace::storeTime(
     time_t now)
 {
-    if (m_columns < getImage().getDimensions().width())
+    if (m_columns < getImage().getDimensions().getWidth())
     {
         ++m_columns;
         m_time.push_back(now);

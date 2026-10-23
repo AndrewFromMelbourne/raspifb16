@@ -53,7 +53,7 @@ public:
 
     virtual ~Panel() = default;
 
-    [[nodiscard]] int getBottom() const noexcept { return m_yPosition + m_image.getDimensions().height(); }
+    [[nodiscard]] int getBottom() const noexcept { return m_yPosition + m_image.getDimensions().getHeight(); }
 
     [[nodiscard]] fb16::Image565& getImage() noexcept { return m_image; }
     [[nodiscard]] const fb16::Image565& getImage() const noexcept { return m_image; }
